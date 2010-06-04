@@ -15,8 +15,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -35,6 +38,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	protected SVNRevision endRevision;
 	protected long limit;
 	protected boolean includeMerged;
+	protected boolean isRetryIfMergeInfoNotSupported;
 	
 	public GetLogMessagesOperation(IRepositoryResource resource) {
 		this(resource, false);
@@ -55,6 +59,10 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	
 	public void setIncludeMerged(boolean includeMerged) {
 		this.includeMerged = includeMerged;
+	}
+	
+	public void setRetryIfMergeInfoNotSupported(boolean isRetryIfMergeInfoNotSupported) {
+		this.isRetryIfMergeInfoNotSupported = isRetryIfMergeInfoNotSupported;
 	}
 	
 	public boolean getStopOnCopy() {
@@ -101,7 +109,21 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 			long options = this.discoverPaths ? ISVNConnector.Options.DISCOVER_PATHS : ISVNConnector.Options.NONE;
 			options |= this.stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
 			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
-			this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
+			
+			try {
+				this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
+			} catch (SVNConnectorException ex) {
+				/*
+				 * If SVN server doesn't support merged revisions, then we re-call without this option
+				 */
+				if (this.isRetryIfMergeInfoNotSupported && 
+					ex.getErrorId() == SVNErrorCodes.unsupportedFeature && 
+					(options & Options.INCLUDE_MERGED_REVISIONS) != 0) {
+					
+					options &= ~Options.INCLUDE_MERGED_REVISIONS;  
+					this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
+				}
+			}
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

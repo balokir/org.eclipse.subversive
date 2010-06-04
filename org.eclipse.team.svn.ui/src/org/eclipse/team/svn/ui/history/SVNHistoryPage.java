@@ -840,6 +840,11 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		if (this.endRevision != null) {
 			msgOp.setEndRevision(this.endRevision);
 		}
+		
+		/* if merge info isn't supported by server then retry without it,
+		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=257669
+		 */		
+		msgOp.setRetryIfMergeInfoNotSupported(true);
 		// set revision range here
 		return msgOp;
 	}
