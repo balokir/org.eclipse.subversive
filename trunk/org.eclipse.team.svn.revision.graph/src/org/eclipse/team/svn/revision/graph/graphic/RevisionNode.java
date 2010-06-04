@@ -50,22 +50,6 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	protected int x;
 	protected int y;	
 	
-	
-	public static class NodeMergeData {
-		public final String path;
-		public final long[] revisions;
-		
-		public NodeMergeData(String path, long revision) {
-			this.path = path;
-			this.revisions = new long[] {revision};
-		}
-		
-		public NodeMergeData(String path, long[] revisions) {
-			this.path = path;
-			this.revisions = revisions;
-		}
-	} 
-	
 	public RevisionNode(PathRevision pathRevision, RevisionRootNode rootNode) {
 		this.pathRevision = pathRevision;
 		this.rootNode = rootNode;
