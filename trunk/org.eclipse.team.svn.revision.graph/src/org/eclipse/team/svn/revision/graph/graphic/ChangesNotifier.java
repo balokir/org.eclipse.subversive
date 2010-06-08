@@ -31,6 +31,12 @@ public class ChangesNotifier {
 	//used by RevisionNode to notify that its connections were changed
 	public final static String REFRESH_NODE_CONNECTIONS_PROPERTY = "refreshNodeConnections"; //$NON-NLS-1$
 	
+	//used by RevisionNode to notify that its merge source connections were changed
+	public final static String REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY = "refreshMergeSourceConnections"; //$NON-NLS-1$
+	
+	//used by RevisionNode to notify that its merge target connections were changed
+	public final static String REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY = "refreshMergeTargetConnections"; //$NON-NLS-1$
+	
 	protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

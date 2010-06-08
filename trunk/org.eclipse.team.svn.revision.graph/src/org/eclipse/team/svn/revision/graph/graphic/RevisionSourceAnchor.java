@@ -17,30 +17,46 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
 /**
- * Anchor for source revision node:
+ * Anchor for source revision node.
+ * 
+ * For general connection: 
  * depending on relationship between source and target nodes
  * it's positioned in the middle of top or right side of the source node
+ * 
+ * For merge connection:
+ * it's positioned either in the left or right
  * 
  * @author Igor Burilo
  */
 public class RevisionSourceAnchor extends AbstractConnectionAnchor {
-
+	
+	//make a little vertical offset in order not to intersect with general connections
+	public final static int VERTICAL_OFFSET = 3;
+	
 	protected RevisionNode source;
 	protected RevisionNode target;
+	protected boolean isMergeConnection;
 	
-	public RevisionSourceAnchor(IFigure figure, RevisionNode source, RevisionNode target) {
+	public RevisionSourceAnchor(IFigure figure, RevisionNode source, RevisionNode target, boolean isMergeConnection) {
 		super(figure);
 		this.source = source;
 		this.target = target;
+		this.isMergeConnection = isMergeConnection;
 	}
 
 	public Point getLocation(Point reference) {
-		boolean isTop = 
-			this.target.getAction() == RevisionNodeAction.RENAME || 
-			this.target.getPrevious() != null; 
-		
+		Point point;
 		Rectangle rect = getOwner().getBounds();
-		Point point = isTop ? rect.getTop() : rect.getRight();
+		if (!this.isMergeConnection) {
+			boolean isTop = 
+				this.target.getAction() == RevisionNodeAction.RENAME || 
+				this.target.getPrevious() != null; 
+			
+			point = isTop ? rect.getTop() : rect.getRight();									
+		} else {
+			point = this.source.x <= this.target.x ? rect.getRight() : rect.getLeft();			
+			point.y += RevisionSourceAnchor.VERTICAL_OFFSET;
+		}
 		getOwner().translateToAbsolute(point);
 		return point;
 	}

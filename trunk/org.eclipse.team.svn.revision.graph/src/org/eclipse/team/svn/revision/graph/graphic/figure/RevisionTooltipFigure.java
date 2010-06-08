@@ -189,9 +189,7 @@ public class RevisionTooltipFigure extends Figure {
 			RevisionNode copiedFrom = this.revisionNode.getCopiedFrom();
 			this.copyText.setText(copiedFrom.getPath() + "@" + copiedFrom.getRevision()); //$NON-NLS-1$
 		}
-		
-		
-		
+				
 		//merged from
 		if (this.revisionNode.hasMergedFrom()) {
 			StringBuilder str = new StringBuilder();

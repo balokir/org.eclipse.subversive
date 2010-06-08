@@ -45,6 +45,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 	public static final String GROUP_1 = "group1"; //$NON-NLS-1$
 	public static final String GROUP_2 = "group2"; //$NON-NLS-1$
 	public static final String GROUP_3 = "group3"; //$NON-NLS-1$
+	public static final String GROUP_4 = "group4"; //$NON-NLS-1$
 	
 	protected ActionRegistry actionRegistry;
 	protected RevisionGraphEditor graphEditor;
@@ -68,6 +69,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_1));
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_2));
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_3));
+		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_4));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	
 		List<EditPart> editParts = this.getViewer().getSelectedEditParts();
@@ -154,6 +156,18 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		
 		action = this.actionRegistry.getAction(AddRevisionLinksAction.AddRevisionLinksAction_ID);
 		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_3, action);
+		
+		action = this.actionRegistry.getAction(ShowMergeToConnectionsAction.ShowMergeToConnectionsAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
+		
+		action = this.actionRegistry.getAction(HideMergeToConnectionsAction.HideMergeToConnectionsAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
+		
+		action = this.actionRegistry.getAction(ShowMergeFromConnectionsAction.ShowMergeFromConnectionsAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
+		
+		action = this.actionRegistry.getAction(HideMergeFromConnectionsAction.HideMergeFromConnectionsAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
 	}
 
 	protected Action addMenuItem(EditPartViewer viewer, MenuManager menuManager, String label, final SelectionAction action) {

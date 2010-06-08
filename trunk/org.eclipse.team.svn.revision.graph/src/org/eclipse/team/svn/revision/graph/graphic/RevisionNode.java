@@ -11,10 +11,13 @@
 package org.eclipse.team.svn.revision.graph.graphic;
 
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
@@ -49,6 +52,12 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	protected int x;
 	protected int y;	
+	
+	protected LinkedHashSet<MergeConnectionNode> mergeSourceConnections = new LinkedHashSet<MergeConnectionNode>();
+	protected LinkedHashSet<MergeConnectionNode> mergeTargetConnections = new LinkedHashSet<MergeConnectionNode>();
+	//TODO correctly handle these flags
+	protected boolean isAddedAllMergeSourceConnections;
+	protected boolean isAddedAllMergeTargetConnections;
 	
 	public RevisionNode(PathRevision pathRevision, RevisionRootNode rootNode) {
 		this.pathRevision = pathRevision;
@@ -399,6 +408,187 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return this.pathRevision.toString() + 
 			", location: " + this.x + ", " + this.y +  //$NON-NLS-1$ //$NON-NLS-2$
 			", size: " + this.width + ", " + this.height;  //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	
+	//--- Merge connection methods
+	
+	public List<MergeConnectionNode> getMergeSourceConnections() {
+		return !this.mergeSourceConnections.isEmpty() ?
+			new ArrayList<MergeConnectionNode>(this.mergeSourceConnections) : 
+			Collections.<MergeConnectionNode>emptyList(); 						
+	}
+	
+	public List<MergeConnectionNode> getMergeTargetConnections() {
+		return !this.mergeTargetConnections.isEmpty() ?
+			new ArrayList<MergeConnectionNode>(this.mergeTargetConnections) : 
+			Collections.<MergeConnectionNode>emptyList(); 						
+	}
+	
+	/**
+	 * Add all merge connections where this revision node is merge source
+	 */
+	public void addAllMergeSourceConnections() {
+		if (!this.hasMergeTo()) {
+			return;
+		}
+		boolean isChanged = false;		
+		NodeMergeData[] mergeToDatas = this.getMergeTo();
+		for (NodeMergeData mergeToData : mergeToDatas) {
+			for (long revision : mergeToData.revisions) {
+				
+				System.out.println("Looking for node: " + mergeToData.path + "@" + revision);
+				
+				RevisionNode endNode = this.findRevisionNode(mergeToData.path, revision);
+				if (endNode != null) {
+					
+					System.out.println("Add merge connection");
+					
+					MergeConnectionNode mergeConNode = new MergeConnectionNode(this, endNode);
+					if (this.mergeSourceConnections.add(mergeConNode)) {
+						isChanged = true;
+						endNode.addMergeTargetConnection(mergeConNode);
+					}
+				} else {
+					System.err.println("Failed to find node");
+				}
+			}
+		}
+		
+		if (isChanged) {
+			this.isAddedAllMergeSourceConnections = true;			
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
+		}
+	}
+	
+	/**
+	 * Add all merge connections where this revision node is merge target
+	 */
+	public void addAllMergeTargetConnections() {
+		if (!this.hasMergedFrom()) {
+			return;
+		}
+		boolean isChanged = false;		
+		NodeMergeData[] mergeFromDatas = this.getMergedFrom();
+		for (NodeMergeData mergeFromData : mergeFromDatas) {
+			for (long revision : mergeFromData.revisions) {
+				
+				System.out.println("Looking for node: " + mergeFromData.path + "@" + revision);
+				
+				RevisionNode startNode = this.findRevisionNode(mergeFromData.path, revision);
+				if (startNode != null) {
+					
+					System.out.println("Add merge connection");
+					
+					MergeConnectionNode mergeConNode = new MergeConnectionNode(startNode, this);
+					if (this.mergeTargetConnections.add(mergeConNode)) {
+						isChanged = true;
+						startNode.addMergeSourceConnection(mergeConNode);
+					}
+				} else {
+					System.err.println("Failed to find node");
+				}
+			}
+		}
+		
+		if (isChanged) {
+			this.isAddedAllMergeTargetConnections = true;			
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
+		}
+	}
+	
+	/**
+	 * Remove all merge connections where this revision node is merge source
+	 */
+	public void removeAllMergeSourceConnections() {
+		if (this.mergeSourceConnections.isEmpty()) {
+			return;
+		}		
+		boolean isChanged = false;		
+		Iterator<MergeConnectionNode> iter = this.mergeSourceConnections.iterator();
+		while (iter.hasNext()) {
+			MergeConnectionNode con = iter.next();
+			con.getTarget().removeMergeTargetConnection(con);			
+			
+			iter.remove();
+			isChanged = true;
+		}
+		
+		if (isChanged) {
+			this.isAddedAllMergeSourceConnections = false;			
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
+		}		
+	}
+	
+	/**
+	 * Remove all merge connections where this revision node is merge target
+	 */
+	public void removeAllMergeTargetConnections() {
+		if (this.mergeTargetConnections.isEmpty()) {
+			return;
+		}		
+		boolean isChanged = false;		
+		Iterator<MergeConnectionNode> iter = this.mergeTargetConnections.iterator();
+		while (iter.hasNext()) {
+			MergeConnectionNode con = iter.next();
+			con.getSource().removeMergeSourceConnection(con);
+			
+			iter.remove();
+			isChanged = true;
+		}
+		
+		if (isChanged) {
+			this.isAddedAllMergeTargetConnections = false;			
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
+		}		
+	}
+	
+	public boolean isAddedAllMergeSourceConnections() {
+		return this.isAddedAllMergeSourceConnections;
+	}
+	
+	public boolean isAddedAllMergeTargetConnections() {
+		return this.isAddedAllMergeTargetConnections;
+	}		
+	
+	protected void addMergeTargetConnection(MergeConnectionNode conn) {						
+		if (conn.target == this && this.mergeTargetConnections.add(conn)) {			
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
+		}							
+	}
+	
+	protected void addMergeSourceConnection(MergeConnectionNode conn) {
+		if (conn.source == this && this.mergeSourceConnections.add(conn)) {			
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
+		}	
+	}
+	
+	protected void removeMergeTargetConnection(MergeConnectionNode conn) {		
+		if (conn.target == this && this.mergeTargetConnections.remove(conn)) {
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
+		}
+	}
+	
+	protected void removeMergeSourceConnection(MergeConnectionNode conn) {		
+		if (conn.source == this && this.mergeSourceConnections.remove(conn)) {
+			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
+		}
+	}
+	
+	protected RevisionNode findRevisionNode(String path, long revision) {
+		/*
+		 * TODO optimize search (hash) ?
+		 * 
+		 * TODO handle that there can be several nodes with the same path+revision
+		 * Node is unique on path+revision+action. But we don't know action here
+		 */		
+		List<RevisionNode> children = this.rootNode.getChildren();
+		for (RevisionNode node : children) {
+			if (path.equals(node.getPath()) && revision == node.getRevision()) {				
+				return node;
+			}
+		}
+		return null;
 	}
 		
 }

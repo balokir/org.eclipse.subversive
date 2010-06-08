@@ -12,6 +12,7 @@ package org.eclipse.team.svn.revision.graph.graphic.editpart;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.draw2d.ConnectionAnchor;
@@ -28,6 +29,7 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.SelectionEditPolicy;
 import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
+import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
@@ -76,7 +78,8 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	 */
 	@Override
 	public void deactivate() {
-		getCastedModel().removePropertyChangeListener(this);
+		RevisionNode node = getCastedModel();
+		node.removePropertyChangeListener(this);
 		
 		if (this.nodeMouseMotionListener != null) {
 			this.revisionFigure.removeMouseMotionListener(this.nodeMouseMotionListener);
@@ -85,6 +88,15 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		if (this.collapseDecoration != null) {
 			this.collapseDecoration.removeDecoration();
 		}
+		
+		/* 
+		 * TODO
+		 * Remove all merge connections. But there's a problem with current approach: 
+		 * when node becomes active again(e.g. expanded) then merge connections
+		 * are not restored. We need to somehow remember merge connections. 		
+		 */
+		node.removeAllMergeSourceConnections();
+		node.removeAllMergeTargetConnections();
 		
 		super.deactivate();
 	} 	
@@ -140,13 +152,36 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	@Override
 	protected List<RevisionConnectionNode> getModelSourceConnections() {
 		RevisionRootNode root = this.getRevisionRootNode();
-		return root.getConnections(this.getCastedModel(), true);
+		RevisionNode model = this.getCastedModel();
+		List<RevisionConnectionNode> connections = root.getConnections(model, true);
+				
+		//add merge connections
+		List<MergeConnectionNode> mergeFrom = model.getMergeSourceConnections();
+		if (!mergeFrom.isEmpty()) {
+			List<RevisionConnectionNode> result = new ArrayList<RevisionConnectionNode>(connections);
+			result.addAll(mergeFrom);
+			return result;
+		} else {
+			return connections;
+		}
 	}
 	
 	@Override
-	protected List<RevisionConnectionNode> getModelTargetConnections() {
+	protected List<RevisionConnectionNode> getModelTargetConnections() {	
 		RevisionRootNode root = this.getRevisionRootNode();
-		return root.getConnections(this.getCastedModel(), false);
+		RevisionNode model = this.getCastedModel();
+		List<RevisionConnectionNode> connections = root.getConnections(model, false);						
+		
+		//add merge connections
+		List<MergeConnectionNode> mergeTo = model.getMergeTargetConnections();
+		if (!mergeTo.isEmpty()) {			
+			List<RevisionConnectionNode> result = new ArrayList<RevisionConnectionNode>(connections);
+			result.addAll(mergeTo);
+			return result;
+		} else {
+			return connections;
+		}
+						
 	}	
 	
 	@Override
@@ -179,7 +214,7 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	 */
 	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {	
 		RevisionConnectionNode conNode = ((RevisionConnectionEditPart) connection).getCastedModel(); 
-		return new RevisionSourceAnchor(this.getFigure(), conNode.getSource(), conNode.getTarget());
+		return new RevisionSourceAnchor(this.getFigure(), conNode.getSource(), conNode.getTarget(), conNode instanceof MergeConnectionNode);
 	}
 
 	/* (non-Javadoc)
@@ -194,7 +229,8 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef.ConnectionEditPart)
 	 */
 	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
-		return new RevisionTargetAnchor(this.getFigure());
+		RevisionConnectionNode conNode = ((RevisionConnectionEditPart) connection).getCastedModel();
+		return new RevisionTargetAnchor(this.getFigure(), conNode.getSource(), conNode.getTarget(), conNode instanceof MergeConnectionNode);
 	}
 
 	/* (non-Javadoc)
@@ -218,6 +254,10 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 			//remove old decoration			
 			this.collapseDecoration.internalShowExpanded(false);
 			this.collapseDecoration.removeDecoration();			
+		} else if (ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY.equals(evt.getPropertyName())) {
+			this.refreshSourceConnections();
+		} else if (ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY.equals(evt.getPropertyName())) {
+			this.refreshTargetConnections();
 		}
 	}
 	
