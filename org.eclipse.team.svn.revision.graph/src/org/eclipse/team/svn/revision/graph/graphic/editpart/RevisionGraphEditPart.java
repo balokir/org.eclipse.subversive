@@ -19,15 +19,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.draw2d.ConnectionLayer;
+import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
+import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionRouter;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.revision.graph.graphic.layout.GraphLayoutManager;
@@ -39,14 +39,21 @@ import org.eclipse.team.svn.revision.graph.graphic.layout.GraphLayoutManager;
  */
 public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
 	
+	//TODO move all graph constants in one place
+	public final static int NODES_HORIZONTAL_OFFSET = 40;
+	
+	//connection routers shared by connections
+	protected final MergeConnectionRouter mergeConnectionRouter = new MergeConnectionRouter();
+	protected final ConnectionRouter connectionRouter = new ManhattanConnectionRouter();
+	
 	@Override
 	protected IFigure createFigure() {
 		Figure f = new FreeformLayer();
 		//f.setBorder(new MarginBorder(3));
 		//f.setOpaque(true);
 		//f.setLayoutManager(new FreeformLayout());
-						
-		f.setLayoutManager(new GraphLayoutManager(this, 40));
+					
+		f.setLayoutManager(new GraphLayoutManager(this, NODES_HORIZONTAL_OFFSET));
 		
 		return f;
 	}
@@ -72,7 +79,10 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 	public void activate() {		
 		super.activate();
 				
-		getCastedModel().addPropertyChangeListener(this);
+		RevisionRootNode model = getCastedModel();
+		model.addPropertyChangeListener(this);
+		
+		this.mergeConnectionRouter.setRevisionRootNode(model);
 	}
 	
 	/* (non-Javadoc)
@@ -83,18 +93,6 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 		getCastedModel().removePropertyChangeListener(this);
 		
 		super.deactivate();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.editparts.AbstractEditPart#refreshVisuals()
-	 */
-	@Override
-	protected void refreshVisuals() {
-		super.refreshVisuals();
-		
-		//set connections router
-		ConnectionLayer connectionLayer = (ConnectionLayer) getLayer(LayerConstants.CONNECTION_LAYER);
-		connectionLayer.setConnectionRouter(new ManhattanConnectionRouter());
 	}
 	
 	/* (non-Javadoc)
@@ -113,6 +111,14 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 			RevisionEditPart editPart = (RevisionEditPart) iter.next();
 			editPart.applyLayoutResults();									
 		}	
+	}
+	
+	public ConnectionRouter getConnectionRouter() {
+		return this.connectionRouter;
+	}
+	
+	public MergeConnectionRouter getMergeConnectionRouter() {
+		return this.mergeConnectionRouter;
 	}
 	
 	/* (non-Javadoc)

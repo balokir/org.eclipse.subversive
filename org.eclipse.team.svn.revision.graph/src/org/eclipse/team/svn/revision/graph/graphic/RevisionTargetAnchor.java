@@ -16,20 +16,38 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 
 /**
- * Anchor for target revision node:
+ * Anchor for target revision node.
+ * 
+ * For general connection:
  * it's positioned in the middle of bottom side of the node
+ * 
+ * For merge connection:
+ * it's positioned either in the left or right
  * 
  * @author Igor Burilo
  */
 public class RevisionTargetAnchor extends AbstractConnectionAnchor {
 
-	public RevisionTargetAnchor(IFigure figure) {
+	protected RevisionNode source;
+	protected RevisionNode target;
+	protected boolean isMergeConnection;
+	
+	public RevisionTargetAnchor(IFigure figure, RevisionNode source, RevisionNode target, boolean isMergeConnection) {
 		super(figure);
+		this.source = source;
+		this.target = target;
+		this.isMergeConnection = isMergeConnection;
 	}
 	
 	public Point getLocation(Point reference) {
+		Point point;
 		Rectangle rect = getOwner().getBounds();
-		Point point = rect.getBottom();
+		if (!this.isMergeConnection) {
+			point = rect.getBottom();
+		} else {
+			point = this.target.x > this.source.x ? rect.getLeft() : rect.getRight();
+			point.y += RevisionSourceAnchor.VERTICAL_OFFSET;
+		}	
 		getOwner().translateToAbsolute(point);
 		return point;
 	}

@@ -12,6 +12,7 @@ package org.eclipse.team.svn.revision.graph.graphic.editpart;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
+import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
@@ -32,6 +33,8 @@ public class GraphEditPartFactory implements EditPartFactory {
 			editPart = new RevisionGraphEditPart();
 		} else if (model instanceof RevisionNode) {
 			editPart = new RevisionEditPart();
+		} else if (model instanceof MergeConnectionNode) {
+			editPart = new MergeConnectionEditPart();
 		} else if (model instanceof RevisionConnectionNode) {
 			editPart = new RevisionConnectionEditPart();			
 		}

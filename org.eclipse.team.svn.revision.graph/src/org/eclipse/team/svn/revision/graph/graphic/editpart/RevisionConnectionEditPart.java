@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.editpart;
 
+import org.eclipse.draw2d.ConnectionRouter;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionConnectionNode;
 
@@ -27,5 +30,14 @@ public class RevisionConnectionEditPart extends AbstractConnectionEditPart {
 	@Override
 	protected void createEditPolicies() {
 		
+	}
+	
+	@Override
+	protected IFigure createFigure() {
+		PolylineConnection figure = new PolylineConnection();		
+		//set router
+		ConnectionRouter router = ((RevisionGraphEditPart) this.getViewer().getContents()).getConnectionRouter();
+		figure.setConnectionRouter(router);		
+		return figure;
 	}
 }

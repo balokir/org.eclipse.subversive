@@ -12,6 +12,7 @@ package org.eclipse.team.svn.revision.graph.graphic;
 
 
 /**
+ * Connection between revision nodes
  * 
  * @author Igor Burilo
  */
