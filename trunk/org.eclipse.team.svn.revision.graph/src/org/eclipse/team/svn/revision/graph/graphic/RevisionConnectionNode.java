@@ -46,7 +46,7 @@ public class RevisionConnectionNode {
 			return true;
 		}		
 		//check on class in order to avoid problems with derived classes
-		if (this.getClass().equals(obj.getClass())) {
+		if (obj != null && this.getClass().equals(obj.getClass())) {
 			RevisionConnectionNode node = (RevisionConnectionNode) obj;
 			return this.source.equals(node.source) && this.target.equals(node.target);
 		}
