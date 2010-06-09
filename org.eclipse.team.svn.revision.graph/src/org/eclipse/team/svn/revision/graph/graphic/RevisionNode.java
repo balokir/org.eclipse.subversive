@@ -436,21 +436,13 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		NodeMergeData[] mergeToDatas = this.getMergeTo();
 		for (NodeMergeData mergeToData : mergeToDatas) {
 			for (long revision : mergeToData.revisions) {
-				
-				System.out.println("Looking for node: " + mergeToData.path + "@" + revision);
-				
-				RevisionNode endNode = this.findRevisionNode(mergeToData.path, revision);
+				RevisionNode endNode = this.findRevisionNodeForMerge(mergeToData.path, revision);
 				if (endNode != null) {
-					
-					System.out.println("Add merge connection");
-					
 					MergeConnectionNode mergeConNode = new MergeConnectionNode(this, endNode);
 					if (this.mergeSourceConnections.add(mergeConNode)) {
 						isChanged = true;
 						endNode.addMergeTargetConnection(mergeConNode);
 					}
-				} else {
-					System.err.println("Failed to find node");
 				}
 			}
 		}
@@ -472,21 +464,13 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		NodeMergeData[] mergeFromDatas = this.getMergedFrom();
 		for (NodeMergeData mergeFromData : mergeFromDatas) {
 			for (long revision : mergeFromData.revisions) {
-				
-				System.out.println("Looking for node: " + mergeFromData.path + "@" + revision);
-				
-				RevisionNode startNode = this.findRevisionNode(mergeFromData.path, revision);
+				RevisionNode startNode = this.findRevisionNodeForMerge(mergeFromData.path, revision);
 				if (startNode != null) {
-					
-					System.out.println("Add merge connection");
-					
 					MergeConnectionNode mergeConNode = new MergeConnectionNode(startNode, this);
 					if (this.mergeTargetConnections.add(mergeConNode)) {
 						isChanged = true;
 						startNode.addMergeSourceConnection(mergeConNode);
 					}
-				} else {
-					System.err.println("Failed to find node");
 				}
 			}
 		}
@@ -575,7 +559,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		}
 	}
 	
-	protected RevisionNode findRevisionNode(String path, long revision) {
+	protected RevisionNode findRevisionNodeForMerge(String path, long revision) {
 		/*
 		 * TODO optimize search (hash) ?
 		 * 
@@ -584,8 +568,9 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		 */		
 		List<RevisionNode> children = this.rootNode.getChildren();
 		for (RevisionNode node : children) {
-			if (path.equals(node.getPath()) && revision == node.getRevision()) {				
-				return node;
+			if (path.equals(node.getPath()) && revision == node.getRevision()) {
+				//don't return merge info for node without changes
+				return node.getAction() != RevisionNodeAction.NONE ? node : null;
 			}
 		}
 		return null;

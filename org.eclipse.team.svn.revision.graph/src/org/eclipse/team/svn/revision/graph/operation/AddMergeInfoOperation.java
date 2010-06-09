@@ -84,10 +84,16 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 		this.preprocess();
 						
 		/*
-		 * Find merges: merge paths have common history
+		 * Important:
+		 * 	Find merges: merge paths have common history
+		 * 
+		 * 	We don't try to look for merges in nodes which
+		 * 	don't have changes for particular path (there can be cases
+		 * 	where node has no changes but has merges into it) as
+		 * 	there's no much sense in such merge info for user
 		 * 
 		 * At first process 'merged from' and then 'merge to'
-		 * in order to be able to re-use 'merged from' results
+		 * in order to be able to re-use 'merged from' results   
 		 */
 		
 		PathRevision startNode = model.getStartNodeInGraph();
@@ -157,6 +163,9 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 		} 
 	}
 	
+	/*
+	 * During processing we can find merges from nodes without changes
+	 */
 	protected void processMergedFrom(PathRevision node) {
 		/*
 		 * Example of merges:
@@ -413,12 +422,20 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 	/*
 	 * if there's path or children for node's path then return true
 	 * 
-	 * Note:
+	 * Important:
 	 * as we take children into account to determine
 	 * whether we have merge then there's a possibility that
 	 * during calculation of merge targets we'll detect merges that
 	 * didn't not really happen from current path, indeed merge happened
-	 * at one of its children, but there's no way to exclude it.  
+	 * at one of its children, but there's no way to exclude it.
+	 * 
+	 * Note:
+	 * If there was merge but node's path or children are not modified we
+	 * don't consider this as merge. But it's acceptable as this node will be
+	 * marked as node without changes.
+	 * From the other side if we also try to take into account such merges we may
+	 * return not existing merges (this can happen if nodes have common
+	 * ancestor) which is not applicable.
 	 */
 	protected boolean hasMergeSource(PathRevision node) {
 		int nodePath = node.getPathIndex();
