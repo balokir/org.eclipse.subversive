@@ -55,6 +55,9 @@ public class RevisionRootNode extends ChangesNotifier {
 		
 	protected Map<RevisionNode, List<RevisionConnectionNode>> currentSourceConnections = new HashMap<RevisionNode, List<RevisionConnectionNode>>();
 	protected Map<RevisionNode, List<RevisionConnectionNode>> currentTargetConnections = new HashMap<RevisionNode, List<RevisionConnectionNode>>();
+	 
+	//nodes which have incoming or outgoing merges
+	protected Set<RevisionNode> nodesWithMerges = new HashSet<RevisionNode>();
 	
 	public RevisionRootNode(IRepositoryResource resource, PathRevision node, RepositoryCache repositoryCache) {
 		this.resource = resource;
@@ -66,6 +69,8 @@ public class RevisionRootNode extends ChangesNotifier {
 	public void init() {		
 		this.createRevisionNodesModel();
 		this.setCurrentStartNode(this.initialStartNode);
+		
+		this.initNodesWithMerges();
 		
 		this.simpleSetMode(isSimpleMode);
 		
@@ -357,6 +362,34 @@ public class RevisionRootNode extends ChangesNotifier {
 			this.firePropertyChange(RevisionRootNode.FILTER_NODES_PROPERTY, null, new Boolean(this.isSimpleMode));
 		}
 	}
+	
+	protected void initNodesWithMerges() {
+		new TopRightTraverseVisitor<RevisionNode>() {
+			protected void visit(RevisionNode node) {
+				if (node.hasMergedFrom() || node.hasMergeTo()) {
+					RevisionRootNode.this.nodesWithMerges.add(node);
+				}
+				
+			}			
+		}.traverse(this.currentStartNode);		
+	}
+	
+	public boolean hasNodesWithMerges() {
+		return !this.nodesWithMerges.isEmpty();
+	}
+	
+	/**
+	 * Clear all merge connections
+	 */
+	public void clearAllMerges() {
+		//at first try to remove target connections as they send less notifications
+		for (RevisionNode node : this.nodesWithMerges) {			
+			node.removeAllMergeTargetConnections();
+		}
+		for (RevisionNode node : this.nodesWithMerges) {			
+			node.removeAllMergeSourceConnections();
+		}		
+	}	
 	
 	//--- Expand/Collapse
 	

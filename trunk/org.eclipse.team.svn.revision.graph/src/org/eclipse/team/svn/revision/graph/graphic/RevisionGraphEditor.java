@@ -48,14 +48,14 @@ import org.eclipse.team.svn.revision.graph.graphic.actions.CreateBranchTagAction
 import org.eclipse.team.svn.revision.graph.graphic.actions.CreatePatchAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ExportAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ExtractAction;
-import org.eclipse.team.svn.revision.graph.graphic.actions.HideMergeFromConnectionsAction;
-import org.eclipse.team.svn.revision.graph.graphic.actions.HideMergeToConnectionsAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.HideIncomingMergeConnectionsAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.HideOutgoingMergeConnectionsAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.OpenAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.RevisionGraphContextMenuManager;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowAnnotationAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowHistoryAction;
-import org.eclipse.team.svn.revision.graph.graphic.actions.ShowMergeFromConnectionsAction;
-import org.eclipse.team.svn.revision.graph.graphic.actions.ShowMergeToConnectionsAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ShowIncomingMergeConnectionsAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ShowOutgoingMergeConnectionsAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowPropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphScalableRootEditPart;
@@ -359,19 +359,19 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		registry.registerAction(action);
 		selectedActions.add(action.getId());
 		
-		action = new ShowMergeToConnectionsAction(this);
+		action = new ShowOutgoingMergeConnectionsAction(this);
 		registry.registerAction(action);
 		selectedActions.add(action.getId());
 		
-		action = new HideMergeToConnectionsAction(this);
+		action = new HideOutgoingMergeConnectionsAction(this);
 		registry.registerAction(action);
 		selectedActions.add(action.getId());		
 		
-		action = new ShowMergeFromConnectionsAction(this);
+		action = new ShowIncomingMergeConnectionsAction(this);
 		registry.registerAction(action);
 		selectedActions.add(action.getId());	
 		
-		action = new HideMergeFromConnectionsAction(this);
+		action = new HideIncomingMergeConnectionsAction(this);
 		registry.registerAction(action);
 		selectedActions.add(action.getId());		
 	}

@@ -45,7 +45,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 	public static final String GROUP_1 = "group1"; //$NON-NLS-1$
 	public static final String GROUP_2 = "group2"; //$NON-NLS-1$
 	public static final String GROUP_3 = "group3"; //$NON-NLS-1$
-	public static final String GROUP_4 = "group4"; //$NON-NLS-1$
+	public static final String GROUP_MERGE = "merge"; //$NON-NLS-1$
 	
 	protected ActionRegistry actionRegistry;
 	protected RevisionGraphEditor graphEditor;
@@ -69,7 +69,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_1));
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_2));
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_3));
-		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_4));
+		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_MERGE));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	
 		List<EditPart> editParts = this.getViewer().getSelectedEditParts();
@@ -157,17 +157,52 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		action = this.actionRegistry.getAction(AddRevisionLinksAction.AddRevisionLinksAction_ID);
 		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_3, action);
 		
-		action = this.actionRegistry.getAction(ShowMergeToConnectionsAction.ShowMergeToConnectionsAction_ID);
-		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
+		/*
+		 * TODO place merge actions in the top of menu ?
+		 * 
+		 * merge actions
+		 * 
+		 * call 'update' for merge actions as they may change their enablement status
+		 * without changing selection
+		 */
 		
-		action = this.actionRegistry.getAction(HideMergeToConnectionsAction.HideMergeToConnectionsAction_ID);
-		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
+		//check if there are outgoing merges at all
+		boolean hasOutgoingMerges = false;
+		for (RevisionEditPart editPart : revisionEditParts) {
+			if (editPart.getCastedModel().hasMergeTo()) {
+				hasOutgoingMerges = true;
+				break;
+			} 
+		}
 		
-		action = this.actionRegistry.getAction(ShowMergeFromConnectionsAction.ShowMergeFromConnectionsAction_ID);
-		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
+		if (hasOutgoingMerges) {
+			action = this.actionRegistry.getAction(ShowOutgoingMergeConnectionsAction.ShowOutgoingMergeConnectionsAction_ID);
+			menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_MERGE, action);
+			((ShowOutgoingMergeConnectionsAction) action).update();
+			
+			action = this.actionRegistry.getAction(HideOutgoingMergeConnectionsAction.HideOutgoingMergeConnectionsAction_ID);
+			menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_MERGE, action);
+			((HideOutgoingMergeConnectionsAction) action).update(); 
+		}
 		
-		action = this.actionRegistry.getAction(HideMergeFromConnectionsAction.HideMergeFromConnectionsAction_ID);
-		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_4, action);
+		//check if there are incoming merges at all
+		boolean hasIncomingMerges = false;
+		for (RevisionEditPart editPart : revisionEditParts) {
+			if (editPart.getCastedModel().hasMergedFrom()) {
+				hasIncomingMerges = true;
+				break;
+			} 
+		}
+		
+		if (hasIncomingMerges) {
+			action = this.actionRegistry.getAction(ShowIncomingMergeConnectionsAction.ShowIncomingMergeConnectionsAction_ID);
+			menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_MERGE, action);
+			((ShowIncomingMergeConnectionsAction) action).update();
+			
+			action = this.actionRegistry.getAction(HideIncomingMergeConnectionsAction.HideIncomingMergeConnectionsAction_ID);
+			menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_MERGE, action);		
+			((HideIncomingMergeConnectionsAction) action).update();	
+		}		
 	}
 
 	protected Action addMenuItem(EditPartViewer viewer, MenuManager menuManager, String label, final SelectionAction action) {
