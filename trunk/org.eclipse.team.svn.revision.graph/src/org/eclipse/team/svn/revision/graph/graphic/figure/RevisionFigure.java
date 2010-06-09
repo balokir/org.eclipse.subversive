@@ -86,8 +86,8 @@ public class RevisionFigure extends Figure {
 	protected TextFlow pathTextFlow;
 	protected Label commentFigure;
 		
-	protected Label mergeToLabel;
-	protected Label mergeFromLabel;
+	protected Label outgoingMergeLabel;
+	protected Label incomingMergeLabel;
 	
 	static {
 		//images
@@ -190,7 +190,7 @@ public class RevisionFigure extends Figure {
 		revisionParent.add(this.statusFigure);		
 		
 		//merge
-		if (this.revisionNode.hasMergedFrom() || this.revisionNode.hasMergeTo()) {
+		if (this.revisionNode.hasIncomingMerges() || this.revisionNode.hasOutgoingMerges()) {
 			Figure mergeParent = new Figure();
 			this.add(mergeParent);		
 			FlowLayout mergeParentLayout = new FlowLayout(true);
@@ -204,17 +204,17 @@ public class RevisionFigure extends Figure {
 			mergeTextLabel.setFont(boldFont);							
 			
 			//incoming
-			if (this.revisionNode.hasMergedFrom()) {
-				this.mergeFromLabel = new Label();
-				mergeParent.add(this.mergeFromLabel);			
-				this.mergeFromLabel.setIcon(INCOMING_MERGE_IMAGE);
+			if (this.revisionNode.hasIncomingMerges()) {
+				this.incomingMergeLabel = new Label();
+				mergeParent.add(this.incomingMergeLabel);			
+				this.incomingMergeLabel.setIcon(INCOMING_MERGE_IMAGE);
 			}			
 			
 			//outgoing
-			if (this.revisionNode.hasMergeTo()) {
-				this.mergeToLabel = new Label();
-				mergeParent.add(this.mergeToLabel);				
-				this.mergeToLabel.setIcon(OUTGOING_MERGE_IMAGE);
+			if (this.revisionNode.hasOutgoingMerges()) {
+				this.outgoingMergeLabel = new Label();
+				mergeParent.add(this.outgoingMergeLabel);				
+				this.outgoingMergeLabel.setIcon(OUTGOING_MERGE_IMAGE);
 			}
 		}
 				
@@ -333,22 +333,22 @@ public class RevisionFigure extends Figure {
 		 * show number of merges and number of revisions
 		 * in these merges, e.g. 2 (40 revs) 
 		 */
-		if (this.revisionNode.hasMergedFrom()) {
+		if (this.revisionNode.hasIncomingMerges()) {
 			StringBuilder str = new StringBuilder();
-			NodeMergeData[] md = this.revisionNode.getMergedFrom();
+			NodeMergeData[] md = this.revisionNode.getIncomingMerges();
 			str.append(md.length).append(" ("); //$NON-NLS-1$
 			int revsCount = 0;
 			for (NodeMergeData data : md) {
 				revsCount += data.getRevisionsCount();
 			}
 			str.append(revsCount).append(" ").append(SVNRevisionGraphMessages.RevisionFigure_Revisions).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-			this.mergeFromLabel.setText(str.toString());
+			this.incomingMergeLabel.setText(str.toString());
 		}
 		//shown only number of merges
-		if (this.revisionNode.hasMergeTo()) {
-			NodeMergeData[] md = this.revisionNode.getMergeTo();
+		if (this.revisionNode.hasOutgoingMerges()) {
+			NodeMergeData[] md = this.revisionNode.getOutgoingMerges();
 			String str = String.valueOf(md.length);
-			this.mergeToLabel.setText(str);
+			this.outgoingMergeLabel.setText(str);
 		}		
 	}
 	

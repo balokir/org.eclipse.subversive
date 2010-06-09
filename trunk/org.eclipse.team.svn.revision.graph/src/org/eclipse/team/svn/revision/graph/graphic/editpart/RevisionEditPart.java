@@ -95,8 +95,8 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		 * when node becomes active again(e.g. expanded) then merge connections
 		 * are not restored. We need to somehow remember merge connections. 		
 		 */
-		node.removeAllMergeSourceConnections();
-		node.removeAllMergeTargetConnections();
+		node.removeAllOutgoingMergeConnections();
+		node.removeAllIncomingMergeConnections();
 		
 		super.deactivate();
 	} 	
@@ -156,10 +156,10 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		List<RevisionConnectionNode> connections = root.getConnections(model, true);
 				
 		//add merge connections
-		List<MergeConnectionNode> mergeFrom = model.getMergeSourceConnections();
-		if (!mergeFrom.isEmpty()) {
+		List<MergeConnectionNode> outgoingMerges = model.getOutgoingMergeConnections();
+		if (!outgoingMerges.isEmpty()) {
 			List<RevisionConnectionNode> result = new ArrayList<RevisionConnectionNode>(connections);
-			result.addAll(mergeFrom);
+			result.addAll(outgoingMerges);
 			return result;
 		} else {
 			return connections;
@@ -173,10 +173,10 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		List<RevisionConnectionNode> connections = root.getConnections(model, false);						
 		
 		//add merge connections
-		List<MergeConnectionNode> mergeTo = model.getMergeTargetConnections();
-		if (!mergeTo.isEmpty()) {			
+		List<MergeConnectionNode> incomingMerges = model.getIncomingMergeConnections();
+		if (!incomingMerges.isEmpty()) {			
 			List<RevisionConnectionNode> result = new ArrayList<RevisionConnectionNode>(connections);
-			result.addAll(mergeTo);
+			result.addAll(incomingMerges);
 			return result;
 		} else {
 			return connections;

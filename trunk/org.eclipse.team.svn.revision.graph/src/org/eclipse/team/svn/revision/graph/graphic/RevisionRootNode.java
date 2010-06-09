@@ -366,7 +366,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected void initNodesWithMerges() {
 		new TopRightTraverseVisitor<RevisionNode>() {
 			protected void visit(RevisionNode node) {
-				if (node.hasMergedFrom() || node.hasMergeTo()) {
+				if (node.hasIncomingMerges() || node.hasOutgoingMerges()) {
 					RevisionRootNode.this.nodesWithMerges.add(node);
 				}
 				
@@ -384,10 +384,10 @@ public class RevisionRootNode extends ChangesNotifier {
 	public void clearAllMerges() {
 		//at first try to remove target connections as they send less notifications
 		for (RevisionNode node : this.nodesWithMerges) {			
-			node.removeAllMergeTargetConnections();
+			node.removeAllIncomingMergeConnections();
 		}
 		for (RevisionNode node : this.nodesWithMerges) {			
-			node.removeAllMergeSourceConnections();
+			node.removeAllOutgoingMergeConnections();
 		}		
 	}	
 	

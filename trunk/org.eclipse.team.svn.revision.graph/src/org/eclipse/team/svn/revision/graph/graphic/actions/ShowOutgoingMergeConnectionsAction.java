@@ -27,7 +27,7 @@ public class ShowOutgoingMergeConnectionsAction extends BaseRevisionGraphAction 
 	protected static AbstractRevisionEditPartFilter filter = new AbstractRevisionEditPartFilter() {		
 		public boolean accept(RevisionEditPart editPart) {
 			RevisionNode node = editPart.getCastedModel();
-			return node.getAction() != RevisionNodeAction.NONE && node.hasMergeTo();
+			return node.getAction() != RevisionNodeAction.NONE && node.hasOutgoingMerges();
 		}		
 	};
 	
@@ -46,7 +46,7 @@ public class ShowOutgoingMergeConnectionsAction extends BaseRevisionGraphAction 
 	public void run() {				
 		RevisionEditPart[] editParts = this.getSelectedEditParts(filter);
 		for (RevisionEditPart editPart : editParts) {
-			editPart.getCastedModel().addAllMergeSourceConnections();
+			editPart.getCastedModel().addAllOutgoingMergeConnections();
 		}	
 	}
 	

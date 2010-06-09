@@ -45,8 +45,8 @@ public class RevisionTooltipFigure extends Figure {
 	protected Label dateText;
 	protected Label copyText;
 		
-	protected Label mergedFromText;
-	protected Label mergedToText;
+	protected Label incomingMergeText;
+	protected Label outgoingMergeText;
 	
 	protected Label commentText;
 	
@@ -116,9 +116,9 @@ public class RevisionTooltipFigure extends Figure {
 			layout.setConstraint(this.copyText, new GridData());	
 		}
 		
-		//merged from
-		if (this.revisionNode.hasMergedFrom()) {
-			Label mergedFromLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_MergedFrom);
+		//incoming merge
+		if (this.revisionNode.hasIncomingMerges()) {
+			Label mergedFromLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_IncomingMerge);
 			parent.add(mergedFromLabel);
 			data = new GridData();
 			data.horizontalAlignment = SWT.LEFT;
@@ -127,18 +127,18 @@ public class RevisionTooltipFigure extends Figure {
 			layout.setConstraint(mergedFromLabel, data);			
 			mergedFromLabel.setFont(boldFont);
 			
-			this.mergedFromText = new Label();
-			parent.add(this.mergedFromText);
+			this.incomingMergeText = new Label();
+			parent.add(this.incomingMergeText);
 			data = new GridData();
 			data.horizontalAlignment = SWT.LEFT;
 			data.grabExcessHorizontalSpace = true;
 			data.horizontalSpan = 2;
-			layout.setConstraint(this.mergedFromText, data);
+			layout.setConstraint(this.incomingMergeText, data);
 		}
 		
-		//merged from
-		if (this.revisionNode.hasMergeTo()) {
-			Label mergedToLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_MergeTo);
+		//outgoing merge
+		if (this.revisionNode.hasOutgoingMerges()) {
+			Label mergedToLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_OutgoingMerge);
 			parent.add(mergedToLabel);
 			data = new GridData();
 			data.horizontalAlignment = SWT.LEFT;
@@ -147,13 +147,13 @@ public class RevisionTooltipFigure extends Figure {
 			layout.setConstraint(mergedToLabel, data);
 			mergedToLabel.setFont(boldFont);			
 			
-			this.mergedToText = new Label();
-			parent.add(this.mergedToText);
+			this.outgoingMergeText = new Label();
+			parent.add(this.outgoingMergeText);
 			data = new GridData();
 			data.horizontalAlignment = SWT.LEFT;
 			data.grabExcessHorizontalSpace = true;
 			data.horizontalSpan = 2;
-			layout.setConstraint(this.mergedToText, data);
+			layout.setConstraint(this.outgoingMergeText, data);
 		}
 		
 		//comment
@@ -190,10 +190,10 @@ public class RevisionTooltipFigure extends Figure {
 			this.copyText.setText(copiedFrom.getPath() + "@" + copiedFrom.getRevision()); //$NON-NLS-1$
 		}
 				
-		//merged from
-		if (this.revisionNode.hasMergedFrom()) {
+		//incoming merge
+		if (this.revisionNode.hasIncomingMerges()) {
 			StringBuilder str = new StringBuilder();
-			NodeMergeData[] mergedData = this.revisionNode.getMergedFrom();
+			NodeMergeData[] mergedData = this.revisionNode.getIncomingMerges();
 						
 			/*
 			 * As there can be many revisions then we sort and
@@ -228,13 +228,13 @@ public class RevisionTooltipFigure extends Figure {
 					str.append("\n"); //$NON-NLS-1$
 				}
 			}
-			this.mergedFromText.setText(str.toString());
+			this.incomingMergeText.setText(str.toString());
 		}
 		
-		//merge to
-		if (this.revisionNode.hasMergeTo()) {
+		//outgoing merge
+		if (this.revisionNode.hasOutgoingMerges()) {
 			StringBuilder str = new StringBuilder();
-			NodeMergeData[] mergedData = this.revisionNode.getMergeTo();
+			NodeMergeData[] mergedData = this.revisionNode.getOutgoingMerges();
 			for (int i = 0; i < mergedData.length; i ++) {
 				str.append(mergedData[i].path).append(": "); //$NON-NLS-1$
 				
@@ -252,7 +252,7 @@ public class RevisionTooltipFigure extends Figure {
 				}
 			}
 												
-			this.mergedToText.setText(str.toString());
+			this.outgoingMergeText.setText(str.toString());
 		}				
 		
 		String comment = this.revisionNode.getMessage();
