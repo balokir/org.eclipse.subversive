@@ -11,7 +11,12 @@
 package org.eclipse.team.svn.revision.graph.graphic;
 
 /**
- * Merge data for revision node
+ * Merge data for revision node.
+ * 
+ * We use this class to hold merge information instead of using
+ * links to {@link RevisionNode}s because merge info may contain nodes
+ * which don't exist in revision graph, e.g. because nodes don't have
+ * changes for particular path, because of renames etc.
  * 
  * @author Igor Burilo
  */

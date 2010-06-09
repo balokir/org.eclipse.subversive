@@ -43,7 +43,6 @@ public class ShowMergeToConnectionsAction extends BaseRevisionGraphAction {
 		RevisionEditPart editPart = this.getSelectedEditPart();
 					
 		RevisionNode startNode = editPart.getCastedModel();
-		System.out.println("\nStart node: " + startNode.getPath() + "@" + startNode.getRevision());
 		startNode.addAllMergeSourceConnections();				
 	}
 	
