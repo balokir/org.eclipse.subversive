@@ -14,6 +14,7 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionRouter;
 
 /**
@@ -22,6 +23,11 @@ import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionRouter;
  * @author Igor Burilo
  */
 public class MergeConnectionEditPart extends RevisionConnectionEditPart {	
+	
+	@Override
+	public MergeConnectionNode getCastedModel() {
+		return (MergeConnectionNode) getModel();
+	}
 	
 	@Override
 	protected IFigure createFigure() {					
