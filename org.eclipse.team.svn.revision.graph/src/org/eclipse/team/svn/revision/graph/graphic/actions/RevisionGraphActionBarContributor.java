@@ -25,6 +25,7 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 	
 	protected ChangeModeAction changeModetAction;
 	protected RefreshRevisionGraphAction refreshAction;
+	protected ClearMergesAction clearMergesAction;
 	
 	@Override
 	public void setActiveEditor(IEditorPart editor) {
@@ -33,13 +34,19 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 		this.editor = (RevisionGraphEditor)editor;
 		this.changeModetAction.setActiveEditor(this.editor);
 		this.refreshAction.setActiveEditor(this.editor);
+		this.clearMergesAction.setActiveEditor(this.editor);
 		
 		if (!(this.editor.getModel() instanceof RevisionRootNode)) {
 			this.changeModetAction.setEnabled(false);
 			this.refreshAction.setEnabled(false);
+			this.clearMergesAction.setEnabled(false);
 		} else {
 			RevisionRootNode rootNode = (RevisionRootNode) this.editor.getModel();
 			this.changeModetAction.setChecked(rootNode.isSimpleMode());
+			
+			if (!rootNode.isIncludeMergeInfo() || !rootNode.hasNodesWithMerges()) {
+				this.clearMergesAction.setEnabled(false);
+			}
 		}				
 	}
 	
@@ -50,6 +57,9 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 		
 		this.refreshAction = new RefreshRevisionGraphAction(this.editor);
 		addAction(this.refreshAction);
+		
+		this.clearMergesAction = new ClearMergesAction(this.editor);
+		addAction(this.clearMergesAction);
 	}
 	
 	@Override
@@ -58,6 +68,7 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 					
 		toolBarManager.add(this.refreshAction);  
 		toolBarManager.add(this.changeModetAction);  
+		toolBarManager.add(this.clearMergesAction);
 		
 		//toolBarManager.add(new Separator());
 			

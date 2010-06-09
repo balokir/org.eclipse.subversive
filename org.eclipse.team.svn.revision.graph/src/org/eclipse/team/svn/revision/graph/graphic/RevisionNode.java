@@ -54,10 +54,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	protected int y;	
 	
 	protected LinkedHashSet<MergeConnectionNode> mergeSourceConnections = new LinkedHashSet<MergeConnectionNode>();
-	protected LinkedHashSet<MergeConnectionNode> mergeTargetConnections = new LinkedHashSet<MergeConnectionNode>();
-	//TODO correctly handle these flags
-	protected boolean isAddedAllMergeSourceConnections;
-	protected boolean isAddedAllMergeTargetConnections;
+	protected LinkedHashSet<MergeConnectionNode> mergeTargetConnections = new LinkedHashSet<MergeConnectionNode>();	
 	
 	public RevisionNode(PathRevision pathRevision, RevisionRootNode rootNode) {
 		this.pathRevision = pathRevision;
@@ -413,6 +410,20 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	//--- Merge connection methods
 	
+	/**
+	 * Return whether we show target connections
+	 */
+	public boolean hasMergeTargetConnections() {
+		return !this.mergeTargetConnections.isEmpty();
+	}
+
+	/**
+	 * Return whether we show source connections
+	 */
+	public boolean hasMergeSourceConnections() {
+		return !this.mergeSourceConnections.isEmpty();
+	}
+	
 	public List<MergeConnectionNode> getMergeSourceConnections() {
 		return !this.mergeSourceConnections.isEmpty() ?
 			new ArrayList<MergeConnectionNode>(this.mergeSourceConnections) : 
@@ -432,7 +443,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		if (!this.hasMergeTo()) {
 			return;
 		}
-		boolean isChanged = false;		
+		boolean isChanged = false;
 		NodeMergeData[] mergeToDatas = this.getMergeTo();
 		for (NodeMergeData mergeToData : mergeToDatas) {
 			for (long revision : mergeToData.revisions) {
@@ -447,8 +458,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 			}
 		}
 		
-		if (isChanged) {
-			this.isAddedAllMergeSourceConnections = true;			
+		if (isChanged) {			
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
 		}
 	}
@@ -475,8 +485,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 			}
 		}
 		
-		if (isChanged) {
-			this.isAddedAllMergeTargetConnections = true;			
+		if (isChanged) {			
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
 		}
 	}
@@ -498,8 +507,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 			isChanged = true;
 		}
 		
-		if (isChanged) {
-			this.isAddedAllMergeSourceConnections = false;			
+		if (isChanged) {			
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
 		}		
 	}
@@ -521,18 +529,9 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 			isChanged = true;
 		}
 		
-		if (isChanged) {
-			this.isAddedAllMergeTargetConnections = false;			
+		if (isChanged) {			
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
 		}		
-	}
-	
-	public boolean isAddedAllMergeSourceConnections() {
-		return this.isAddedAllMergeSourceConnections;
-	}
-	
-	public boolean isAddedAllMergeTargetConnections() {
-		return this.isAddedAllMergeTargetConnections;
 	}		
 	
 	protected void addMergeTargetConnection(MergeConnectionNode conn) {						
