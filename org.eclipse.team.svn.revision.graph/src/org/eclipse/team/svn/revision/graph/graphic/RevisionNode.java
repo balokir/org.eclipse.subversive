@@ -53,8 +53,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	protected int x;
 	protected int y;	
 	
-	protected LinkedHashSet<MergeConnectionNode> mergeSourceConnections = new LinkedHashSet<MergeConnectionNode>();
-	protected LinkedHashSet<MergeConnectionNode> mergeTargetConnections = new LinkedHashSet<MergeConnectionNode>();	
+	protected LinkedHashSet<MergeConnectionNode> outgoingMergeConnections = new LinkedHashSet<MergeConnectionNode>();
+	protected LinkedHashSet<MergeConnectionNode> incomingMergeConnections = new LinkedHashSet<MergeConnectionNode>();	
 	
 	public RevisionNode(PathRevision pathRevision, RevisionRootNode rootNode) {
 		this.pathRevision = pathRevision;
@@ -244,12 +244,12 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return this.pathRevision.getDate();
 	}
 	
-	public boolean hasMergeTo() {
-		return this.pathRevision.hasMergeTo();
+	public boolean hasOutgoingMerges() {
+		return this.pathRevision.hasOutgoingMerges();
 	}
 	
-	public NodeMergeData[] getMergeTo() {
-		MergeData[] rawData = this.pathRevision.getMergeTo();
+	public NodeMergeData[] getOutgoingMerges() {
+		MergeData[] rawData = this.pathRevision.getOutgoingMerges();
 		NodeMergeData[] data = new NodeMergeData[rawData.length];
 		for (int i = 0; i < rawData.length; i ++) {
 			String path = this.rootNode.getRepositoryCache().getPathStorage().getPath(rawData[i].path);
@@ -258,12 +258,12 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return data;
 	}
 	
-	public boolean hasMergedFrom() {
-		return this.pathRevision.hasMergedFrom();
+	public boolean hasIncomingMerges() {
+		return this.pathRevision.hasIncomingMerges();
 	}
 	
-	public NodeMergeData[] getMergedFrom() {
-		MergeData[] rawData = this.pathRevision.getMergedFrom();
+	public NodeMergeData[] getIncomingMerges() {
+		MergeData[] rawData = this.pathRevision.getIncomingMerges();
 		NodeMergeData[] data = new NodeMergeData[rawData.length];
 		for (int i = 0; i < rawData.length; i ++) {
 			String path = this.rootNode.getRepositoryCache().getPathStorage().getPath(rawData[i].path);
@@ -411,48 +411,45 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	//--- Merge connection methods
 	
 	/**
-	 * Return whether we show target connections
+	 * Return whether we show incoming merge connections
 	 */
-	public boolean hasMergeTargetConnections() {
-		return !this.mergeTargetConnections.isEmpty();
+	public boolean hasIncomingMergeConnections() {
+		return !this.incomingMergeConnections.isEmpty();
 	}
 
 	/**
-	 * Return whether we show source connections
+	 * Return whether we show outgoing merge connections
 	 */
-	public boolean hasMergeSourceConnections() {
-		return !this.mergeSourceConnections.isEmpty();
+	public boolean hasOutgoingMergeConnections() {
+		return !this.outgoingMergeConnections.isEmpty();
 	}
 	
-	public List<MergeConnectionNode> getMergeSourceConnections() {
-		return !this.mergeSourceConnections.isEmpty() ?
-			new ArrayList<MergeConnectionNode>(this.mergeSourceConnections) : 
+	public List<MergeConnectionNode> getOutgoingMergeConnections() {
+		return !this.outgoingMergeConnections.isEmpty() ?
+			new ArrayList<MergeConnectionNode>(this.outgoingMergeConnections) : 
 			Collections.<MergeConnectionNode>emptyList(); 						
 	}
 	
-	public List<MergeConnectionNode> getMergeTargetConnections() {
-		return !this.mergeTargetConnections.isEmpty() ?
-			new ArrayList<MergeConnectionNode>(this.mergeTargetConnections) : 
+	public List<MergeConnectionNode> getIncomingMergeConnections() {
+		return !this.incomingMergeConnections.isEmpty() ?
+			new ArrayList<MergeConnectionNode>(this.incomingMergeConnections) : 
 			Collections.<MergeConnectionNode>emptyList(); 						
 	}
 	
-	/**
-	 * Add all merge connections where this revision node is merge source
-	 */
-	public void addAllMergeSourceConnections() {
-		if (!this.hasMergeTo()) {
+	public void addAllOutgoingMergeConnections() {
+		if (!this.hasOutgoingMerges()) {
 			return;
 		}
 		boolean isChanged = false;
-		NodeMergeData[] mergeToDatas = this.getMergeTo();
-		for (NodeMergeData mergeToData : mergeToDatas) {
-			for (long revision : mergeToData.revisions) {
-				List<RevisionNode> endNodes = this.findRevisionNodeForMerge(mergeToData.path, revision);
+		NodeMergeData[] outgoingMergeDatas = this.getOutgoingMerges();
+		for (NodeMergeData outgoingMergeData : outgoingMergeDatas) {
+			for (long revision : outgoingMergeData.revisions) {
+				List<RevisionNode> endNodes = this.findRevisionNodeForMerge(outgoingMergeData.path, revision);
 				for (RevisionNode endNode : endNodes) {
 					MergeConnectionNode mergeConNode = new MergeConnectionNode(this, endNode);
-					if (this.mergeSourceConnections.add(mergeConNode)) {
+					if (this.outgoingMergeConnections.add(mergeConNode)) {
 						isChanged = true;
-						endNode.addMergeTargetConnection(mergeConNode);
+						endNode.addIncomingMergeConnection(mergeConNode);
 					}
 				}
 			}
@@ -463,23 +460,20 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		}
 	}
 	
-	/**
-	 * Add all merge connections where this revision node is merge target
-	 */
-	public void addAllMergeTargetConnections() {
-		if (!this.hasMergedFrom()) {
+	public void addAllIncomingMergeConnections() {
+		if (!this.hasIncomingMerges()) {
 			return;
 		}
 		boolean isChanged = false;		
-		NodeMergeData[] mergeFromDatas = this.getMergedFrom();
-		for (NodeMergeData mergeFromData : mergeFromDatas) {
-			for (long revision : mergeFromData.revisions) {
-				List<RevisionNode> startNodes = this.findRevisionNodeForMerge(mergeFromData.path, revision);
+		NodeMergeData[] incomingMergeDatas = this.getIncomingMerges();
+		for (NodeMergeData incomingMergeData : incomingMergeDatas) {
+			for (long revision : incomingMergeData.revisions) {
+				List<RevisionNode> startNodes = this.findRevisionNodeForMerge(incomingMergeData.path, revision);
 				for (RevisionNode startNode : startNodes) {
 					MergeConnectionNode mergeConNode = new MergeConnectionNode(startNode, this);
-					if (this.mergeTargetConnections.add(mergeConNode)) {
+					if (this.incomingMergeConnections.add(mergeConNode)) {
 						isChanged = true;
-						startNode.addMergeSourceConnection(mergeConNode);
+						startNode.addOutgoingMergeConnection(mergeConNode);
 					}
 				}
 			}
@@ -490,18 +484,15 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		}
 	}
 	
-	/**
-	 * Remove all merge connections where this revision node is merge source
-	 */
-	public void removeAllMergeSourceConnections() {
-		if (this.mergeSourceConnections.isEmpty()) {
+	public void removeAllOutgoingMergeConnections() {
+		if (this.outgoingMergeConnections.isEmpty()) {
 			return;
 		}		
 		boolean isChanged = false;		
-		Iterator<MergeConnectionNode> iter = this.mergeSourceConnections.iterator();
+		Iterator<MergeConnectionNode> iter = this.outgoingMergeConnections.iterator();
 		while (iter.hasNext()) {
 			MergeConnectionNode con = iter.next();
-			con.getTarget().removeMergeTargetConnection(con);			
+			con.getTarget().removeIncomingMergeConnection(con);			
 			
 			iter.remove();
 			isChanged = true;
@@ -512,18 +503,15 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		}		
 	}
 	
-	/**
-	 * Remove all merge connections where this revision node is merge target
-	 */
-	public void removeAllMergeTargetConnections() {
-		if (this.mergeTargetConnections.isEmpty()) {
+	public void removeAllIncomingMergeConnections() {
+		if (this.incomingMergeConnections.isEmpty()) {
 			return;
 		}		
 		boolean isChanged = false;		
-		Iterator<MergeConnectionNode> iter = this.mergeTargetConnections.iterator();
+		Iterator<MergeConnectionNode> iter = this.incomingMergeConnections.iterator();
 		while (iter.hasNext()) {
 			MergeConnectionNode con = iter.next();
-			con.getSource().removeMergeSourceConnection(con);
+			con.getSource().removeOutgoingMergeConnection(con);
 			
 			iter.remove();
 			isChanged = true;
@@ -534,26 +522,26 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		}		
 	}		
 	
-	protected void addMergeTargetConnection(MergeConnectionNode conn) {						
-		if (conn.target == this && this.mergeTargetConnections.add(conn)) {			
+	protected void addIncomingMergeConnection(MergeConnectionNode conn) {						
+		if (conn.target == this && this.incomingMergeConnections.add(conn)) {			
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
 		}							
 	}
 	
-	protected void addMergeSourceConnection(MergeConnectionNode conn) {
-		if (conn.source == this && this.mergeSourceConnections.add(conn)) {			
+	protected void addOutgoingMergeConnection(MergeConnectionNode conn) {
+		if (conn.source == this && this.outgoingMergeConnections.add(conn)) {			
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
 		}	
 	}
 	
-	protected void removeMergeTargetConnection(MergeConnectionNode conn) {		
-		if (conn.target == this && this.mergeTargetConnections.remove(conn)) {
+	protected void removeIncomingMergeConnection(MergeConnectionNode conn) {		
+		if (conn.target == this && this.incomingMergeConnections.remove(conn)) {
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY, null, this);
 		}
 	}
 	
-	protected void removeMergeSourceConnection(MergeConnectionNode conn) {		
-		if (conn.source == this && this.mergeSourceConnections.remove(conn)) {
+	protected void removeOutgoingMergeConnection(MergeConnectionNode conn) {		
+		if (conn.source == this && this.outgoingMergeConnections.remove(conn)) {
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
 		}
 	}

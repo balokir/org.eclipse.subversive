@@ -169,7 +169,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		//check if there are outgoing merges at all
 		boolean hasOutgoingMerges = false;
 		for (RevisionEditPart editPart : revisionEditParts) {
-			if (editPart.getCastedModel().hasMergeTo()) {
+			if (editPart.getCastedModel().hasOutgoingMerges()) {
 				hasOutgoingMerges = true;
 				break;
 			} 
@@ -188,7 +188,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		//check if there are incoming merges at all
 		boolean hasIncomingMerges = false;
 		for (RevisionEditPart editPart : revisionEditParts) {
-			if (editPart.getCastedModel().hasMergedFrom()) {
+			if (editPart.getCastedModel().hasIncomingMerges()) {
 				hasIncomingMerges = true;
 				break;
 			} 

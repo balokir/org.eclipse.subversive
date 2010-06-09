@@ -106,7 +106,7 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 				}
 				if (node.action != RevisionNodeAction.NONE) {
 					if (AddMergeInfoOperation.this.mergeTargetRevisions.contains(node.getRevision())) {
-						AddMergeInfoOperation.this.processMergedFrom(node);
+						AddMergeInfoOperation.this.processIncomingMerges(node);
 					}
 				}
 			}			
@@ -120,14 +120,14 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 				}
 				if (node.action != RevisionNodeAction.NONE) {
 					if (AddMergeInfoOperation.this.mergeSourceRevisions.containsKey(node.getRevision())) {
-						AddMergeInfoOperation.this.processMergedTo(node);	
+						AddMergeInfoOperation.this.processOutgoingMerges(node);	
 					}
 				}
 			}			
 		}.traverse(startNode);
 	}
 	
-	protected void processMergedTo(PathRevision node) {
+	protected void processOutgoingMerges(PathRevision node) {
 		/*
 		 * Example of merges:
 		 *					br1@10 				
@@ -158,7 +158,7 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 					this.processRevision(mergeTargetRevision, detectedMerges, sourceHistory, false);					
 				}
 				
-				this.applyMergeToResults(node, detectedMerges);
+				this.applyOutgoingMergeResults(node, detectedMerges);
 			}
 		} 
 	}
@@ -166,7 +166,7 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 	/*
 	 * During processing we can find merges from nodes without changes
 	 */
-	protected void processMergedFrom(PathRevision node) {
+	protected void processIncomingMerges(PathRevision node) {
 		/*
 		 * Example of merges:
 		 * br1/src/com@7,8,9,10,20... -> br2@28
@@ -188,13 +188,13 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 					this.processRevision(mergeSourceRevision, detectedMerges, targetHistory, true);					
 				}
 				
-				this.applyMergeFromResults(node, detectedMerges);
+				this.applyIncomingMergeResults(node, detectedMerges);
 			}
 		}		
 	}
 	
 	protected void processRevision(CacheRevision mergeSourceRevision, MergeDataContainer detectedMerges, 
-		CopyFromHistoryContainer targetHistory, boolean isMergeFrom) {
+		CopyFromHistoryContainer targetHistory, boolean isIncomingMerge) {
 		
 		long sourceRevision = mergeSourceRevision.getRevision();
 		
@@ -227,7 +227,7 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 				}
 			}
 						
-			if (!isMergeFrom) {
+			if (!isIncomingMerge) {
 				//Note: source and target are reversed here
 				
 				//check if path is covered by merges detected during calculating 'merge from'	
@@ -259,7 +259,7 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 		}					
 	}
 	
-	protected void applyMergeFromResults(PathRevision node, MergeDataContainer detectedMerges) {				
+	protected void applyIncomingMergeResults(PathRevision node, MergeDataContainer detectedMerges) {				
 		int nodePath = node.getPathIndex();
 		for (MergeData mergeData : detectedMerges.mergeDataCol) {
 						
@@ -277,13 +277,13 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 				path = this.repositoryCache.getPathStorage().add(path, relativeParts);
 			}
 			
-			node.addMergedFrom(path, mergeData.mergeSourceRevisions);				
+			node.addIncomingMerges(path, mergeData.mergeSourceRevisions);				
 		}
 		
 		this.mergedFromDetectedMerges.add(node.getRevision(), detectedMerges);
 	}
 	
-	protected void applyMergeToResults(PathRevision node, MergeDataContainer detectedMerges) {				
+	protected void applyOutgoingMergeResults(PathRevision node, MergeDataContainer detectedMerges) {				
 		int nodePath = node.getPathIndex();
 		for (MergeData mergeData : detectedMerges.mergeDataCol) {
 						
@@ -305,7 +305,7 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 			}
 						
 			for (long rev : targetRevisions) {
-				node.addMergeTo(targetPath, rev);
+				node.addOutgoingMerge(targetPath, rev);
 			}				
 		}
 	}

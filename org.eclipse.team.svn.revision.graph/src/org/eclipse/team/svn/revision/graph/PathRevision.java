@@ -113,9 +113,9 @@ public class PathRevision extends NodeConnections<PathRevision> {
 	public final RevisionNodeAction action;			
 	
 	//don't group revisions by path
-	protected Map<Integer, MergeData> mergeTo = Collections.emptyMap();
+	protected Map<Integer, MergeData> outgoingMerges = Collections.emptyMap();
 	//group revisions by path
-	protected Map<Integer, MergeData> mergedFrom = Collections.emptyMap();
+	protected Map<Integer, MergeData> incomingMerges = Collections.emptyMap();
 	
 	protected PathRevisionConnectionsValidator validator;
 	
@@ -150,56 +150,56 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		return this.cacheRevision.getChangedPaths();
 	}		
 	
-	public void addMergeTo(int path, long revision) {
-		if (this.mergeTo == Collections.EMPTY_MAP) {			
-			this.mergeTo = new HashMap<Integer, MergeData>();
+	public void addOutgoingMerge(int path, long revision) {
+		if (this.outgoingMerges == Collections.EMPTY_MAP) {			
+			this.outgoingMerges = new HashMap<Integer, MergeData>();
 		}		
-		MergeData mergeData = this.mergeTo.get(path);
+		MergeData mergeData = this.outgoingMerges.get(path);
 		if (mergeData == null) {
 			mergeData = new MergeData(path);
-			this.mergeTo.put(path, mergeData);
+			this.outgoingMerges.put(path, mergeData);
 		}
 		mergeData.addRevision(revision);
 	}
 	
-	public boolean hasMergeTo() {
-		return !this.mergeTo.isEmpty();
+	public boolean hasOutgoingMerges() {
+		return !this.outgoingMerges.isEmpty();
 	}
 	
-	public MergeData[] getMergeTo() {
-		return this.mergeTo.values().toArray(new MergeData[0]);
+	public MergeData[] getOutgoingMerges() {
+		return this.outgoingMerges.values().toArray(new MergeData[0]);
 	}
 		
-	public void addMergedFrom(int path, long[] revisions) {
-		if (this.mergedFrom == Collections.EMPTY_MAP) {			
-			this.mergedFrom = new HashMap<Integer, MergeData>();
+	public void addIncomingMerges(int path, long[] revisions) {
+		if (this.incomingMerges == Collections.EMPTY_MAP) {			
+			this.incomingMerges = new HashMap<Integer, MergeData>();
 		}		
-		MergeData mergeData = this.mergedFrom.get(path);
+		MergeData mergeData = this.incomingMerges.get(path);
 		if (mergeData == null) {
 			mergeData = new MergeData(path);
-			this.mergedFrom.put(path, mergeData);
+			this.incomingMerges.put(path, mergeData);
 		}
 		mergeData.addRevisions(revisions);
 	}
 	
-	public void addMergedFrom(int path, Collection<Long> revisions) {
-		if (this.mergedFrom == Collections.EMPTY_MAP) {			
-			this.mergedFrom = new HashMap<Integer, MergeData>();
+	public void addIncomingMerges(int path, Collection<Long> revisions) {
+		if (this.incomingMerges == Collections.EMPTY_MAP) {			
+			this.incomingMerges = new HashMap<Integer, MergeData>();
 		}		
-		MergeData mergeData = this.mergedFrom.get(path);
+		MergeData mergeData = this.incomingMerges.get(path);
 		if (mergeData == null) {
 			mergeData = new MergeData(path);
-			this.mergedFrom.put(path, mergeData);
+			this.incomingMerges.put(path, mergeData);
 		}
 		mergeData.addRevisions(revisions);
 	}
 	
-	public boolean hasMergedFrom() {
-		return !this.mergedFrom.isEmpty();
+	public boolean hasIncomingMerges() {
+		return !this.incomingMerges.isEmpty();
 	}
 	
-	public MergeData[] getMergedFrom() {
-		return this.mergedFrom.values().toArray(new MergeData[0]);
+	public MergeData[] getIncomingMerges() {
+		return this.incomingMerges.values().toArray(new MergeData[0]);
 	}
 
 	public void insertNodeInRevisionsChain(PathRevision node) { 

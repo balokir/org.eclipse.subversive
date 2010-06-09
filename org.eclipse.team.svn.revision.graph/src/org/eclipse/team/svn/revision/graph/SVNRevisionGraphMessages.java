@@ -101,8 +101,8 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String CheckRepositoryConnectionOperation_MergeNotSupported;
 	public static String RevisionFigure_Merges;
 	public static String RevisionFigure_Revisions;
-	public static String RevisionTooltipFigure_MergedFrom;
-	public static String RevisionTooltipFigure_MergeTo;
+	public static String RevisionTooltipFigure_IncomingMerge;
+	public static String RevisionTooltipFigure_OutgoingMerge;
 	
 	static {
 		//load message values from bundle file
