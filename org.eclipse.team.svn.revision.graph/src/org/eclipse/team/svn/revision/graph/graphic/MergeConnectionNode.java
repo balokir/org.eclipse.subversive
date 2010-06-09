@@ -22,7 +22,8 @@ public class MergeConnectionNode extends RevisionConnectionNode {
 	}
 	
 	public boolean equals(Object obj) {
-		if (obj instanceof MergeConnectionNode) {
+		//check on class in order to avoid problems with derived classes
+		if (this.getClass().equals(obj.getClass())) {
 			return super.equals(obj);
 		}				
 		return false;
