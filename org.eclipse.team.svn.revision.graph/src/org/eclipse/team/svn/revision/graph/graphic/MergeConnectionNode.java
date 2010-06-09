@@ -22,9 +22,13 @@ public class MergeConnectionNode extends RevisionConnectionNode {
 	}
 	
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		//check on class in order to avoid problems with derived classes
-		if (this.getClass().equals(obj.getClass())) {
-			return super.equals(obj);
+		if (obj != null && this.getClass().equals(obj.getClass())) {
+			MergeConnectionNode node = (MergeConnectionNode) obj;
+			return this.source.equals(node.source) && this.target.equals(node.target);
 		}				
 		return false;
 	}

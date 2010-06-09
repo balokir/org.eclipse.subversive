@@ -436,8 +436,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		NodeMergeData[] mergeToDatas = this.getMergeTo();
 		for (NodeMergeData mergeToData : mergeToDatas) {
 			for (long revision : mergeToData.revisions) {
-				RevisionNode endNode = this.findRevisionNodeForMerge(mergeToData.path, revision);
-				if (endNode != null) {
+				List<RevisionNode> endNodes = this.findRevisionNodeForMerge(mergeToData.path, revision);
+				for (RevisionNode endNode : endNodes) {
 					MergeConnectionNode mergeConNode = new MergeConnectionNode(this, endNode);
 					if (this.mergeSourceConnections.add(mergeConNode)) {
 						isChanged = true;
@@ -464,8 +464,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		NodeMergeData[] mergeFromDatas = this.getMergedFrom();
 		for (NodeMergeData mergeFromData : mergeFromDatas) {
 			for (long revision : mergeFromData.revisions) {
-				RevisionNode startNode = this.findRevisionNodeForMerge(mergeFromData.path, revision);
-				if (startNode != null) {
+				List<RevisionNode> startNodes = this.findRevisionNodeForMerge(mergeFromData.path, revision);
+				for (RevisionNode startNode : startNodes) {
 					MergeConnectionNode mergeConNode = new MergeConnectionNode(startNode, this);
 					if (this.mergeTargetConnections.add(mergeConNode)) {
 						isChanged = true;
@@ -558,22 +558,26 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 			this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY, null, this);
 		}
 	}
-	
-	protected RevisionNode findRevisionNodeForMerge(String path, long revision) {
-		/*
-		 * TODO optimize search (hash) ?
-		 * 
-		 * TODO handle that there can be several nodes with the same path+revision
-		 * Node is unique on path+revision+action. But we don't know action here
-		 */		
+
+	 /*
+	 * there can be several nodes with the same path+revision
+	 * Node is unique on path+revision+action. But we don't know action here
+	 */
+	protected List<RevisionNode> findRevisionNodeForMerge(String path, long revision) {
+		List<RevisionNode> result = Collections.emptyList();
 		List<RevisionNode> children = this.rootNode.getChildren();
 		for (RevisionNode node : children) {
-			if (path.equals(node.getPath()) && revision == node.getRevision()) {
+			if (revision == node.getRevision() && path.equals(node.getPath())) {
 				//don't return merge info for node without changes
-				return node.getAction() != RevisionNodeAction.NONE ? node : null;
+				if (node.getAction() != RevisionNodeAction.NONE) {
+					if (result.isEmpty()) {
+						result = new ArrayList<RevisionNode>();
+					}
+					result.add(node);
+				}
 			}
 		}
-		return null;
+		return result;
 	}
 		
 }
