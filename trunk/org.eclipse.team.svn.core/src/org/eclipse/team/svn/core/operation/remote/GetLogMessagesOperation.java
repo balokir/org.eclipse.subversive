@@ -122,6 +122,8 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 					
 					options &= ~Options.INCLUDE_MERGED_REVISIONS;  
 					this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
+				} else {
+					throw ex;
 				}
 			}
 		}

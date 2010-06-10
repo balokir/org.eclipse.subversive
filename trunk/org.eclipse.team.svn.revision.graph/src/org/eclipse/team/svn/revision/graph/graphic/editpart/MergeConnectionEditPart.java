@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.editpart;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionRouter;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Edit part for merge connection
@@ -24,6 +26,12 @@ import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionRouter;
  */
 public class MergeConnectionEditPart extends RevisionConnectionEditPart {	
 	
+	public final static Color MERGE_LINES_COLOR = new Color(UIMonitorUtility.getDisplay(), 98, 148, 229);
+	
+	static {
+		SVNRevisionGraphPlugin.disposeOnShutdown(MERGE_LINES_COLOR);
+	}
+	
 	@Override
 	public MergeConnectionNode getCastedModel() {
 		return (MergeConnectionNode) getModel();
@@ -31,9 +39,8 @@ public class MergeConnectionEditPart extends RevisionConnectionEditPart {
 	
 	@Override
 	protected IFigure createFigure() {					
-		PolylineConnection figure = new PolylineConnection();	
-		//TODO make correct color
-		figure.setForegroundColor(ColorConstants.red);
+		PolylineConnection figure = new PolylineConnection();
+		figure.setForegroundColor(MERGE_LINES_COLOR);
 		//add arrow in the end
 		figure.setTargetDecoration(new PolygonDecoration());		
 		
