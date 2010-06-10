@@ -347,7 +347,11 @@ public class RevisionFigure extends Figure {
 		//shown only number of merges
 		if (this.revisionNode.hasOutgoingMerges()) {
 			NodeMergeData[] md = this.revisionNode.getOutgoingMerges();
-			String str = String.valueOf(md.length);
+			int revsCount = 0;
+			for (NodeMergeData data : md) {
+				revsCount += data.getRevisionsCount();
+			}
+			String str = String.valueOf(revsCount);
 			this.outgoingMergeLabel.setText(str);
 		}		
 	}
