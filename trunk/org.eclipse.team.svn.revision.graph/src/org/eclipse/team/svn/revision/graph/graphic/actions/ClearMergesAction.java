@@ -11,6 +11,7 @@
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
@@ -28,11 +29,10 @@ public class ClearMergesAction extends Action {
 	protected IEditorPart editor;
 	
 	public ClearMergesAction(IEditorPart editor) {
-		//TODO is it correct name ?
-		super("Clear Merge Connections");		
+		super(SVNRevisionGraphMessages.ClearMergesAction_ClearConnections);
 		this.editor = editor;
 		
-		this.setToolTipText("Clear Merge Connections");
+		this.setToolTipText(SVNRevisionGraphMessages.ClearMergesAction_ClearConnections);
 		//TODO make correct icon
 		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/clearmerges.gif")); //$NON-NLS-1$
 		this.setId(ClearMergesAction.ClearMergesAction_ID);		

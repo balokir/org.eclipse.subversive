@@ -103,6 +103,12 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String RevisionFigure_Revisions;
 	public static String RevisionTooltipFigure_IncomingMerge;
 	public static String RevisionTooltipFigure_OutgoingMerge;
+	public static String ClearMergesAction_ClearConnections;
+	public static String ShowIncomingMergeConnectionsAction_Title;
+	public static String ShowOutgoingMergeConnectionsAction_Title;
+	public static String HideIncomingMergeConnectionsAction_Title;
+	public static String HideOutgoingMergeConnectionsAction_Title;
+	public static String MergeLogEntryCallback_Progress;
 	
 	static {
 		//load message values from bundle file

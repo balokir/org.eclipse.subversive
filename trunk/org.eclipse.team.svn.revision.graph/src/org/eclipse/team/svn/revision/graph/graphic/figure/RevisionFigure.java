@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.graphic.figure;
 import java.util.Iterator;
 
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Graphics;
@@ -21,6 +22,8 @@ import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.MouseEvent;
+import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -208,6 +211,12 @@ public class RevisionFigure extends Figure {
 				this.incomingMergeLabel = new Label();
 				mergeParent.add(this.incomingMergeLabel);			
 				this.incomingMergeLabel.setIcon(INCOMING_MERGE_IMAGE);
+				this.incomingMergeLabel.setCursor(Cursors.HAND);
+				this.incomingMergeLabel.addMouseListener(new MouseListener.Stub() {
+					public void mousePressed(MouseEvent me) {
+						RevisionFigure.this.revisionNode.addAllIncomingMergeConnections();
+					}
+				});
 			}			
 			
 			//outgoing
@@ -215,6 +224,12 @@ public class RevisionFigure extends Figure {
 				this.outgoingMergeLabel = new Label();
 				mergeParent.add(this.outgoingMergeLabel);				
 				this.outgoingMergeLabel.setIcon(OUTGOING_MERGE_IMAGE);
+				this.outgoingMergeLabel.setCursor(Cursors.HAND);
+				this.outgoingMergeLabel.addMouseListener(new MouseListener.Stub() {
+					public void mousePressed(MouseEvent me) {
+						RevisionFigure.this.revisionNode.addAllOutgoingMergeConnections();
+					}
+				});
 			}
 		}
 				
