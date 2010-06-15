@@ -44,9 +44,12 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 			RevisionRootNode rootNode = (RevisionRootNode) this.editor.getModel();
 			this.changeModetAction.setChecked(rootNode.isSimpleMode());
 			
-			if (!rootNode.isIncludeMergeInfo() || !rootNode.hasNodesWithMerges()) {
-				this.clearMergesAction.setEnabled(false);
-			}
+			//TODO disable clear merges action if there'are no merge lines
+//			if (!rootNode.isIncludeMergeInfo() || !rootNode.hasNodesWithMerges()) {
+//				this.clearMergesAction.setEnabled(false);
+//			} else {
+//				this.clearMergesAction.setEnabled(true);
+//			}
 		}				
 	}
 	

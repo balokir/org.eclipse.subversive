@@ -38,8 +38,7 @@ import org.eclipse.team.svn.revision.graph.graphic.layout.GraphLayoutManager;
  * @author Igor Burilo
  */
 public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
-	
-	//TODO move all graph constants in one place
+		
 	public final static int NODES_HORIZONTAL_OFFSET = 40;
 	
 	//connection routers shared by connections
