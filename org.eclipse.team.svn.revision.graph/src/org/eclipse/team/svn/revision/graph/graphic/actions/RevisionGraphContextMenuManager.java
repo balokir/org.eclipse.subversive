@@ -157,9 +157,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		action = this.actionRegistry.getAction(AddRevisionLinksAction.AddRevisionLinksAction_ID);
 		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_3, action);
 		
-		/*
-		 * TODO place merge actions in the top of menu ?
-		 * 
+		/*		
 		 * merge actions
 		 * 
 		 * call 'update' for merge actions as they may change their enablement status

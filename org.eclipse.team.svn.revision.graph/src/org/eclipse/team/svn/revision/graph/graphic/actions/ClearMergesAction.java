@@ -32,8 +32,7 @@ public class ClearMergesAction extends Action {
 		super(SVNRevisionGraphMessages.ClearMergesAction_ClearConnections);
 		this.editor = editor;
 		
-		this.setToolTipText(SVNRevisionGraphMessages.ClearMergesAction_ClearConnections);
-		//TODO make correct icon
+		this.setToolTipText(SVNRevisionGraphMessages.ClearMergesAction_ClearConnections);	
 		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/clearmerges.gif")); //$NON-NLS-1$
 		this.setId(ClearMergesAction.ClearMergesAction_ID);		
 	}
