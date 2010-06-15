@@ -12,9 +12,12 @@ package org.eclipse.team.svn.revision.graph.graphic;
 
 import org.eclipse.draw2d.AbstractRouter;
 import org.eclipse.draw2d.Connection;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPart;
+import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionFigure;
 
 /**
  * Router for merge connections
@@ -23,32 +26,31 @@ import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPar
  */
 public class MergeConnectionRouter extends AbstractRouter {
 		
-	/*
-	 * we need to know all model in order to avoid intersections                                             
-	 * between revision nodes and merge connections
-	 */
-	protected RevisionRootNode rootNode;
-		
-	public void setRevisionRootNode(RevisionRootNode rootNode) {
-		this.rootNode = rootNode;
-	}
+	protected final static int MERGE_LINE_TO_NODE_OFFSET = 1; 
+	protected final static int NODES_HORIZONTAL_OFFSET = RevisionGraphEditPart.NODES_HORIZONTAL_OFFSET / 2;
+	//step by which try to find intersected figure
+	protected final static int HORIZONTAL_STEP = 5;
 	
-	public void route(Connection conn) {
+	public void route(Connection conn) {		
 		if ((conn.getSourceAnchor() == null) || (conn.getTargetAnchor() == null)) {
 			return;
-		}
-		
-//		IFigure startFigure = conn.getSourceAnchor().getOwner();
-//		IFigure endFigure = conn.getTargetAnchor().getOwner();						
-//		Rectangle startBound = startFigure.getBounds();
-//		Rectangle endBound = endFigure.getBounds();								
-		
+		}												
+																
+		PointList bendPoints = this.calculateInitialPoints(conn);
+		this.checkIntersectsWithNodes(conn, bendPoints);					
+		this.applyResult(conn, bendPoints);						
+	}
+	
+	/* 
+	 * Connection may intersect with revision nodes
+	 */
+	protected PointList calculateInitialPoints(Connection conn) {
 		//points in absolute coordinates
 		Point start = this.getStartPoint(conn);
 		Point end = this.getEndPoint(conn);
 		
 		Point point2 = new Point();
-		int offset = RevisionGraphEditPart.NODES_HORIZONTAL_OFFSET / 2;
+		int offset = NODES_HORIZONTAL_OFFSET;
 		if (end.x > start.x) {
 			offset = -offset;
 		}
@@ -63,14 +65,121 @@ public class MergeConnectionRouter extends AbstractRouter {
 		bendPoints.addPoint(start);						
 		bendPoints.addPoint(point2);
 		bendPoints.addPoint(point3);
-		bendPoints.addPoint(end);								
+		bendPoints.addPoint(end);	
 		
-		/*
-		 * TODO avoid intersects with revision nodes when drawing
-		 * horizontal lines which span several columns
-		 */
+		return bendPoints;
+	}
+	
+	/*
+	 * avoid intersects with revision nodes when drawing
+	 * horizontal lines which span several columns
+	 */
+	protected void checkIntersectsWithNodes(Connection conn, PointList bendPoints) {		
+		IFigure nodesParent = conn.getSourceAnchor().getOwner().getParent();														
+		if (nodesParent == null) {
+			//should not happen
+			return;
+		}		
 		
-		this.applyResult(conn, bendPoints);
+		//find intersection by going horizontally
+		boolean isChanged = false;
+		Point startPoint = bendPoints.getFirstPoint();
+		Point endPoint = bendPoints.getLastPoint();
+		if (startPoint.x != endPoint.x) {			
+			int pointIndex = 0;
+			if (startPoint.x < endPoint.x) {
+				//go right
+				int i = startPoint.x + 1;
+				while (i < endPoint.x) {										
+					//translate coordinates in order to be able to find figure
+					Point p = new Point(i, startPoint.y);
+					nodesParent.translateToRelative(p);
+										
+					IFigure figure = nodesParent.findFigureAt(p);
+					if (figure instanceof RevisionFigure) {						
+						//translate coordinates back to absolute
+						Rectangle figureBounds = figure.getBounds().getCopy();
+						nodesParent.translateToAbsolute(figureBounds);
+											
+						//create 2 new points to work around intersected node
+						Point point1 = new Point();
+						point1.x = figureBounds.x - NODES_HORIZONTAL_OFFSET;
+						point1.y = startPoint.y;
+						 
+						Point point2 = new Point();
+						point2.x = point1.x;
+						//go top or bottom					
+						boolean isGoTop = startPoint.y < figureBounds.bottom() / 2;
+						point2.y = isGoTop ? (figureBounds.y - MERGE_LINE_TO_NODE_OFFSET) : (figureBounds.bottom() + MERGE_LINE_TO_NODE_OFFSET); 
+						
+						bendPoints.insertPoint(point1, ++ pointIndex);
+						bendPoints.insertPoint(point2, ++ pointIndex);
+						
+						startPoint = point2;
+						i = figureBounds.right() + 1;			 
+						
+						isChanged = true;
+					} else {
+						i += HORIZONTAL_STEP;
+					}
+				}
+			} else {
+				//go left
+				int i = startPoint.x - 1;
+				while (i > endPoint.x) {
+					//translate coordinates in order to be able to find figure					
+					Point p = new Point(i, startPoint.y);
+					nodesParent.translateToRelative(p);															
+					
+					IFigure figure = nodesParent.findFigureAt(p);
+					if (figure instanceof RevisionFigure) {						
+						//translate coordinates back to absolute
+						Rectangle figureBounds = figure.getBounds().getCopy();
+						nodesParent.translateToAbsolute(figureBounds);											
+						
+						//create 2 new points to work around intersected node
+						Point point1 = new Point();
+						point1.x = figureBounds.right() + NODES_HORIZONTAL_OFFSET;
+						point1.y = startPoint.y;
+						 
+						Point point2 = new Point();
+						point2.x = point1.x;
+						//go top or bottom					
+						boolean isGoTop = startPoint.y < figureBounds.bottom() / 2;
+						point2.y = isGoTop ? (figureBounds.y - MERGE_LINE_TO_NODE_OFFSET) : (figureBounds.bottom() + MERGE_LINE_TO_NODE_OFFSET); 
+						
+						bendPoints.insertPoint(point1, ++ pointIndex);
+						bendPoints.insertPoint(point2, ++ pointIndex);
+						
+						startPoint = point2;
+						i = figureBounds.x - 1;
+						
+						isChanged = true;	
+					} else {
+						i -= HORIZONTAL_STEP;
+					}
+				}
+			}
+			
+			if (isChanged) {
+				/*
+				 * update one of the last points
+				 * 
+				 * Before processing we had following points:
+				 * 	start
+				 * 	some
+				 * 	pre-end
+				 * 	end
+				 * If we have intersects we insert new points which bend over
+				 * intersected revision nodes, so we need to update 'some' point too 
+				 */
+				int index = bendPoints.size() - 3;					
+				Point point = bendPoints.getPoint(index);
+				bendPoints.removePoint(index);
+				point.y = bendPoints.getPoint(index - 1).y;					
+				bendPoints.insertPoint(point, index);															
+			}		
+		}	
 	}
 	
 	/*
@@ -81,13 +190,12 @@ public class MergeConnectionRouter extends AbstractRouter {
 		points.removeAllPoints();
 
 		for (int i = 0; i < initialPoints.size(); i++) {
-			Point point = initialPoints.getPoint(i);
-			conn.translateToRelative(point);
+			Point point = initialPoints.getPoint(i);						
+			conn.translateToRelative(point);								
 			points.addPoint(point);
 		}
 		
 		//set points to connection
 		conn.setPoints(points);
-	}
-
+	}		
 }
