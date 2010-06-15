@@ -112,12 +112,7 @@ public class MergeInfoStorage {
 			bytes.writeInt(this.mergeInfo.size());
 			for (Map.Entry<Long, Set<Long>> entry : this.mergeInfo.entrySet()) {
 				long targetRev = entry.getKey();
-				Set<Long> sourceRevs = entry.getValue();
-				
-				/*
-				 * TODO possible improvement:
-				 * save revisions by ranges instead of individually ?
-				 */
+				Set<Long> sourceRevs = entry.getValue();				
 				bytes.writeLong(targetRev);
 				bytes.writeInt(sourceRevs.size());
 				for (long sourceRev : sourceRevs) {

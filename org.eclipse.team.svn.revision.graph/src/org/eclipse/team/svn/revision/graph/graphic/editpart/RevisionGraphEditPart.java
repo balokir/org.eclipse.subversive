@@ -81,8 +81,6 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 				
 		RevisionRootNode model = getCastedModel();
 		model.addPropertyChangeListener(this);
-		
-		this.mergeConnectionRouter.setRevisionRootNode(model);
 	}
 	
 	/* (non-Javadoc)

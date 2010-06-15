@@ -98,8 +98,8 @@ public class MergeLogEntryCallback implements ISVNLogEntryCallbackWithError {
 				ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
 			} else if (this.mergeDepth == 0) {
 				//show info for merge
-				ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, "Revision: " + this.mergeParentEntry.revision + 
-						". Add merge revision: " + entry.revision);						
+				ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, 						
+						SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.MergeLogEntryCallback_Progress, new Object[]{this.mergeParentEntry.revision, entry.revision}));
 				
 				this.mergeParentEntry.add(entry);									
 			}

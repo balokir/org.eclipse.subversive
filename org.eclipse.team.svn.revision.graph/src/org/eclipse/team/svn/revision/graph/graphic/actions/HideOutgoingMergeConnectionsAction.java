@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
@@ -34,9 +35,9 @@ public class HideOutgoingMergeConnectionsAction extends BaseRevisionGraphAction 
 	public HideOutgoingMergeConnectionsAction(IWorkbenchPart part) {
 		super(part);
 		
-		setText("Hide Outgoing Merges");
+		setText(SVNRevisionGraphMessages.HideOutgoingMergeConnectionsAction_Title);
 		setId(HideOutgoingMergeConnectionsAction_ID);
-		setToolTipText("Hide Outgoing Merges");		
+		setToolTipText(SVNRevisionGraphMessages.HideOutgoingMergeConnectionsAction_Title);		
 	}
 
 	protected boolean calculateEnabled() {

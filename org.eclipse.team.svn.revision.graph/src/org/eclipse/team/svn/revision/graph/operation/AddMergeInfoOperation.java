@@ -503,7 +503,6 @@ public class AddMergeInfoOperation extends AbstractActionOperation {
 				CacheChangedPath[] changedPaths = cacheRevision.getChangedPaths();
 				for (int j = 0; j < changedPaths.length; j ++) {
 					CacheChangedPath changedPath = changedPaths[j];
-					//TODO check this, whether we allow renames, replaces etc.
 					if (changedPath.getCopiedFromPathIndex() != RepositoryCache.UNKNOWN_INDEX) {
 						CopyDataContainer dataContainer = this.copyStructure.get(changedPath.getPathIndex());
 						if (dataContainer == null) {
