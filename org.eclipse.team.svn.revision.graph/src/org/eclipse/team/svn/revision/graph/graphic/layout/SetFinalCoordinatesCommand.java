@@ -21,12 +21,12 @@ import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
  * 
  * @author Igor Burilo
  */
-public class SetFinalCoordinates extends AbstractLayoutCommand {
+public class SetFinalCoordinatesCommand extends AbstractLayoutCommand {
 
 	protected final int widthOffset;
 	protected SetYCommand setYcommand;
 	
-	public SetFinalCoordinates(RevisionNode startNode, int widthOffset, SetYCommand setYcommand) {
+	public SetFinalCoordinatesCommand(RevisionNode startNode, int widthOffset, SetYCommand setYcommand) {
 		super(startNode);
 		this.widthOffset = widthOffset;
 		this.setYcommand = setYcommand;
@@ -38,7 +38,7 @@ public class SetFinalCoordinates extends AbstractLayoutCommand {
 		new TopRightTraverseVisitor<RevisionNode>() {			
 			@Override
 			protected void visit(RevisionNode node) {				
-				node.setX(node.getX() * (node.getWidth() + SetFinalCoordinates.this.widthOffset));							
+				node.setX(node.getX() * (node.getWidth() + SetFinalCoordinatesCommand.this.widthOffset));							
 				node.setY(maxY - (node.getY() + node.getHeight()));				
 			}
 		}.traverse(this.startNode);

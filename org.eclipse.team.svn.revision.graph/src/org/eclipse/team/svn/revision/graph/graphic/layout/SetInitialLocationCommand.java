@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.graphic.GraphConstants;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 
 /** 
@@ -23,9 +24,6 @@ import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
  * @author Igor Burilo
  */
 public class SetInitialLocationCommand extends AbstractLayoutCommand {
-
-	//vertical distance between neighbor nodes
-	public final static int VERTICAL_OFFSET = 3;
 	
 	public SetInitialLocationCommand(RevisionNode startNode) {
 		super(startNode);
@@ -47,7 +45,7 @@ public class SetInitialLocationCommand extends AbstractLayoutCommand {
 			while (previous.getNext() != null) {
 				RevisionNode next = previous.getNext();				
 				next.setX(previous.getX());
-				next.setY(previous.getY() + previous.getHeight() + SetInitialLocationCommand.VERTICAL_OFFSET);
+				next.setY(previous.getY() + previous.getHeight() + GraphConstants.NEIGHBOUR_NODES_VERTICAL_OFFSET);
 				previous = next;
 				
 				this.processCopyTo(next, queue);
@@ -70,7 +68,7 @@ public class SetInitialLocationCommand extends AbstractLayoutCommand {
 				RevisionNode copiedTo = copiedTos[i];
 				int nextNodeColumn = copiedTo.getAction() == RevisionNodeAction.RENAME ? column : (column + ++copyToCount);
 				copiedTo.setX(nextNodeColumn);
-				copiedTo.setY(row + node.getHeight() + SetInitialLocationCommand.VERTICAL_OFFSET);
+				copiedTo.setY(row + node.getHeight() + GraphConstants.NEIGHBOUR_NODES_VERTICAL_OFFSET);
 				
 				queue.offer(copiedTo);
 			}

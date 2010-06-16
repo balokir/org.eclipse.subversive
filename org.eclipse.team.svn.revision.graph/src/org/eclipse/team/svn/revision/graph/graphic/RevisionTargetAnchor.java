@@ -46,7 +46,7 @@ public class RevisionTargetAnchor extends AbstractConnectionAnchor {
 			point = rect.getBottom();
 		} else {
 			point = this.target.x > this.source.x ? rect.getLeft() : rect.getRight();
-			point.y += RevisionSourceAnchor.VERTICAL_OFFSET;
+			point.y += GraphConstants.MERGE_TO_GENERAL_CONNECTION_VERTICAL_OFFSET;
 		}	
 		getOwner().translateToAbsolute(point);
 		return point;

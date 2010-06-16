@@ -39,6 +39,7 @@ import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.graphic.GraphConstants;
 import org.eclipse.team.svn.revision.graph.graphic.NodeMergeData;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -49,10 +50,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Igor Burilo
  */
 public class RevisionFigure extends Figure {
-
-	protected final static int FIGURE_WIDTH = 200;
-			
-	protected final static int SHADOW_OFFSET = 2;
 	
 	public final static Color TRUNK_COLOR;
 	public final static Color BRANCH_COLOR;
@@ -167,7 +164,7 @@ public class RevisionFigure extends Figure {
 		this.setOpaque(true);
 		
 		//set border in order to change client area because of shadow
-		this.setBorder(new MarginBorder(0, 0, SHADOW_OFFSET, SHADOW_OFFSET));
+		this.setBorder(new MarginBorder(0, 0, GraphConstants.NODE_SHADOW_OFFSET, GraphConstants.NODE_SHADOW_OFFSET));
 	}
 	
 	protected void createControls() {
@@ -241,7 +238,7 @@ public class RevisionFigure extends Figure {
 			//wrap path using text layout
 			FlowPage pathFlowPageFigure = new FlowPage();
 			data = new GridData();
-			data.widthHint = RevisionFigure.FIGURE_WIDTH - 10;
+			data.widthHint = GraphConstants.NODE_WIDTH - 10;
 			data.horizontalAlignment = SWT.CENTER;
 			data.grabExcessHorizontalSpace = true;
 			layout.setConstraint(pathFlowPageFigure, data);
@@ -258,7 +255,7 @@ public class RevisionFigure extends Figure {
 			this.commentFigure = new Label();
 			this.add(commentFigure);
 			data = new GridData();
-			data.widthHint = RevisionFigure.FIGURE_WIDTH - 10;
+			data.widthHint = GraphConstants.NODE_WIDTH - 10;
 			data.horizontalAlignment = SWT.BEGINNING;							
 			layout.setConstraint(this.commentFigure, data);
 			this.commentFigure.setLabelAlignment(PositionConstants.LEFT);
@@ -277,7 +274,8 @@ public class RevisionFigure extends Figure {
 		
 		//shadow		
 		Rectangle shadowBounds = initialBounds.getCopy();
-		shadowBounds.resize(-SHADOW_OFFSET, - SHADOW_OFFSET).translate(SHADOW_OFFSET, SHADOW_OFFSET);
+		shadowBounds.resize(-GraphConstants.NODE_SHADOW_OFFSET, - GraphConstants.NODE_SHADOW_OFFSET)
+			.translate(GraphConstants.NODE_SHADOW_OFFSET, GraphConstants.NODE_SHADOW_OFFSET);
 		g.setBackgroundColor(ColorConstants.gray);		
 		g.fillRoundRectangle(shadowBounds, corner.width, corner.height);							
 		
@@ -285,7 +283,7 @@ public class RevisionFigure extends Figure {
 		g.setLineWidthFloat(lineWidth);
 		
 		Rectangle mainBounds = initialBounds.getCopy();
-		mainBounds.resize(-SHADOW_OFFSET, -SHADOW_OFFSET);
+		mainBounds.resize(-GraphConstants.NODE_SHADOW_OFFSET, -GraphConstants.NODE_SHADOW_OFFSET);
 										
 		g.setBackgroundColor(this.nodeColor);		
 		g.setForegroundColor(this.borderColor);
@@ -372,7 +370,7 @@ public class RevisionFigure extends Figure {
 	}
 	
 	public void init() {
-		this.setPreferredSize(RevisionFigure.FIGURE_WIDTH, this.getPreferredSize().height);
+		this.setPreferredSize(GraphConstants.NODE_WIDTH, this.getPreferredSize().height);
 	}
 		
 	public void setSelected(boolean isSelected) {

@@ -27,6 +27,7 @@ import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
+import org.eclipse.team.svn.revision.graph.graphic.GraphConstants;
 import org.eclipse.team.svn.revision.graph.graphic.MergeConnectionRouter;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
@@ -38,8 +39,6 @@ import org.eclipse.team.svn.revision.graph.graphic.layout.GraphLayoutManager;
  * @author Igor Burilo
  */
 public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
-		
-	public final static int NODES_HORIZONTAL_OFFSET = 40;
 	
 	//connection routers shared by connections
 	protected final MergeConnectionRouter mergeConnectionRouter = new MergeConnectionRouter();
@@ -48,11 +47,8 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 	@Override
 	protected IFigure createFigure() {
 		Figure f = new FreeformLayer();
-		//f.setBorder(new MarginBorder(3));
 		//f.setOpaque(true);
-		//f.setLayoutManager(new FreeformLayout());
-					
-		f.setLayoutManager(new GraphLayoutManager(this, NODES_HORIZONTAL_OFFSET));
+		f.setLayoutManager(new GraphLayoutManager(this, GraphConstants.NODES_HORIZONTAL_OFFSET));
 		
 		return f;
 	}

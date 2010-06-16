@@ -16,7 +16,6 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionFigure;
 
 /**
@@ -25,9 +24,9 @@ import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionFigure;
  * @author Igor Burilo
  */
 public class MergeConnectionRouter extends AbstractRouter {
-		
-	protected final static int MERGE_LINE_TO_NODE_OFFSET = 1; 
-	protected final static int NODES_HORIZONTAL_OFFSET = RevisionGraphEditPart.NODES_HORIZONTAL_OFFSET / 2;
+		 
+	protected final static int HORIZONTAL_OFFSET = GraphConstants.NODES_HORIZONTAL_OFFSET / 2;
+	
 	//step by which try to find intersected figure
 	protected final static int HORIZONTAL_STEP = 5;
 	
@@ -50,7 +49,7 @@ public class MergeConnectionRouter extends AbstractRouter {
 		Point end = this.getEndPoint(conn);
 		
 		Point point2 = new Point();
-		int offset = NODES_HORIZONTAL_OFFSET;
+		int offset = HORIZONTAL_OFFSET;
 		if (end.x > start.x) {
 			offset = -offset;
 		}
@@ -103,14 +102,16 @@ public class MergeConnectionRouter extends AbstractRouter {
 											
 						//create 2 new points to work around intersected node
 						Point point1 = new Point();
-						point1.x = figureBounds.x - NODES_HORIZONTAL_OFFSET;
+						point1.x = figureBounds.x - HORIZONTAL_OFFSET;
 						point1.y = startPoint.y;
 						 
 						Point point2 = new Point();
 						point2.x = point1.x;
 						//go top or bottom					
 						boolean isGoTop = startPoint.y < figureBounds.bottom() / 2;
-						point2.y = isGoTop ? (figureBounds.y - MERGE_LINE_TO_NODE_OFFSET) : (figureBounds.bottom() + MERGE_LINE_TO_NODE_OFFSET); 
+						point2.y = isGoTop ?
+							(figureBounds.y - GraphConstants.MERGE_LINE_TO_NODE_OFFSET) :
+							(figureBounds.bottom() + GraphConstants.MERGE_LINE_TO_NODE_OFFSET); 
 						
 						bendPoints.insertPoint(point1, ++ pointIndex);
 						bendPoints.insertPoint(point2, ++ pointIndex);
@@ -139,14 +140,16 @@ public class MergeConnectionRouter extends AbstractRouter {
 						
 						//create 2 new points to work around intersected node
 						Point point1 = new Point();
-						point1.x = figureBounds.right() + NODES_HORIZONTAL_OFFSET;
+						point1.x = figureBounds.right() + HORIZONTAL_OFFSET;
 						point1.y = startPoint.y;
 						 
 						Point point2 = new Point();
 						point2.x = point1.x;
 						//go top or bottom					
 						boolean isGoTop = startPoint.y < figureBounds.bottom() / 2;
-						point2.y = isGoTop ? (figureBounds.y - MERGE_LINE_TO_NODE_OFFSET) : (figureBounds.bottom() + MERGE_LINE_TO_NODE_OFFSET); 
+						point2.y = isGoTop ?
+							(figureBounds.y - GraphConstants.MERGE_LINE_TO_NODE_OFFSET) :
+							(figureBounds.bottom() + GraphConstants.MERGE_LINE_TO_NODE_OFFSET); 
 						
 						bendPoints.insertPoint(point1, ++ pointIndex);
 						bendPoints.insertPoint(point2, ++ pointIndex);
