@@ -30,9 +30,6 @@ import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
  */
 public class RevisionSourceAnchor extends AbstractConnectionAnchor {
 	
-	//make a little vertical offset in order not to intersect with general connections
-	public final static int VERTICAL_OFFSET = 3;
-	
 	protected RevisionNode source;
 	protected RevisionNode target;
 	protected boolean isMergeConnection;
@@ -55,7 +52,7 @@ public class RevisionSourceAnchor extends AbstractConnectionAnchor {
 			point = isTop ? rect.getTop() : rect.getRight();									
 		} else {
 			point = this.source.x <= this.target.x ? rect.getRight() : rect.getLeft();			
-			point.y += RevisionSourceAnchor.VERTICAL_OFFSET;
+			point.y += GraphConstants.MERGE_TO_GENERAL_CONNECTION_VERTICAL_OFFSET;
 		}
 		getOwner().translateToAbsolute(point);
 		return point;

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.layout;
 
+import org.eclipse.team.svn.revision.graph.graphic.GraphConstants;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPart;
 
@@ -33,7 +34,8 @@ public class GraphLayoutManager extends AbstractGraphLayoutManager {
 		AbstractLayoutCommand[] commands = new AbstractLayoutCommand[]{
 			new SetInitialLocationCommand(startNode),
 			setYcommand,
-			new SetFinalCoordinates(startNode, this.widthOffset, setYcommand)
+			new SetFinalCoordinatesCommand(startNode, this.widthOffset, setYcommand),
+			new SetMarginCommand(startNode, GraphConstants.GRAPH_MARGIN)
 		};	
 		return commands;
 	}	

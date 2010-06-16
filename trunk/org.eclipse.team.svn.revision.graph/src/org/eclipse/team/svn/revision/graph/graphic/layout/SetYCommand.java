@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.graphic.layout;
 import java.util.ArrayList;
 
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.graphic.GraphConstants;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 
 /** 
@@ -112,10 +113,10 @@ public class SetYCommand extends AbstractLayoutCommand {
 					bottomCurrentNode.getPrevious() == null && bottomCurrentNode.getCopiedFrom() == null) {
 					
 					//nodes have direct connection: add vertical offset between them 
-					offset = diff == 0 ? 0 : SetInitialLocationCommand.VERTICAL_OFFSET;
+					offset = diff == 0 ? 0 : GraphConstants.NEIGHBOUR_NODES_VERTICAL_OFFSET;
 				} else {
 					//nodes don't have direct connection: add double vertical offset between them
-					offset = this.getHeightOffset(columnData) + 2 * SetInitialLocationCommand.VERTICAL_OFFSET;
+					offset = this.getHeightOffset(columnData) + 2 * GraphConstants.NEIGHBOUR_NODES_VERTICAL_OFFSET;
 				}			
 				
 				if (diff >= maxDiff) {

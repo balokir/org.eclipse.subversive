@@ -18,6 +18,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
+import org.eclipse.team.svn.revision.graph.graphic.GraphConstants;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPart;
@@ -44,7 +45,10 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 			result.union(((IFigure) children.get(i)).getBounds());
 		}		
 		result.resize(container.getInsets().getWidth(), container.getInsets().getHeight());
-		return result.getSize();	
+		
+		Dimension size = result.getSize();
+		size.expand(GraphConstants.GRAPH_MARGIN.right, GraphConstants.GRAPH_MARGIN.bottom);
+		return size;	
 	}
 		
 	public void layout(IFigure container) {	
