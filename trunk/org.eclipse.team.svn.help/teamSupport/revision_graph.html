@@ -25,16 +25,57 @@
     <b>Revision Graph features:</b>
 	<ul>
 		<li>Displaying of the revision graph for resource</li>
+		<li>Show merge information for revision node</li>
 		<li>Switching between compact and full data representation (In compact view revision with no copy operations are filtered out. Full data representation displays all revisions)</li>
 		<li>Supported actions for displayed revisions: compare revisions, show content, export content, display history and other operations, available for History View (the same list of actions is available in the revision Graph)</li>
 		<li>Graph zooming and thubnailing in Outline view</li>
 		<li>Expanding/collapsing revisions</li>
 	</ul>
 	</p>
+				
+	<p>
+		<b>Revision Graph options:</b>				
+	</p>
+	You can specify whether to show merge info and other options in revision graph options dialog:
+	<br/><br/>
+	<img border = "0" src="../images/graph_dialog.png" alt="SVN Revision Graph Options"/>
+	
 	<p>This is how <i>'SVN Revision Graph'</i> looks like:</p>
 	<img border = "0" src="../images/svn_revision_graph.png" alt="SVN Revision Graph"/>
+	
+	<p><b>Merge information:</b></p>
+	<p>
+		If you selected to show merge information and there were merges then merge information is presented on graph.
+		Each revision node may have incoming and(or) outgoing merges which are shown on revision node by corresponding
+		blue arrows directed to left or right. For each type of merges there's number near the arrow which means number
+		of merges, for incoming merges there are also shown revision numbers (in brackets) affected by merges.
+		By default, merge connections between nodes are not shown, as there can be lots of merge connections which
+		can significantly complicate graph presentation and understanding. If you want to see merge connections for revision node you
+		can either click on blue merge arrow on revision node or call corresponding action from node's context menu such
+		as 'Show Outgoing Merges' or 'Show Incoming Merges'. In order to differ merge connections from general connections
+		merge connections are shown in blue. If you want to hide merge connections for revision node you can either call
+		corresponding context menu actions ('Hide Outgoing Merges' or 'Hide Incoming Merges') or call 'Clear Merge Connections'
+		action from toolbar which hides all merge connections on graph. 
+		
+		This is how merge information is presented:		
+	</p>
+	<img border = "0" src="../images/graph_merges.png" alt="SVN Revision Graph with Merges"/>
+			 
+	<p>Merge information is also shown on tooltip for revision node where you can see all merge paths and revisions:</p>	
+	<img border = "0" src="../images/graph_merge_info.png" alt="Merge info for revision node"/>
+	
+	<p>
+		<b>Known issues:</b>
+		<ul>
+			<li>There can be cases where merge info is shown for revision node but indeed merge happened not on that path but on one of its children.</li>		
+			<li>Incoming and outgoing merges on revision nodes may not exactly match to each other if there were renames or moves.</li>
+		</ul>	 
+	</p>
+	
 	<p><b><i>Toolbar</i></b></p>
+	<img border = "0" src="../images/graph_toolbar.png" alt="SVN Revision Graph"/>	
 	<p><b>Refresh</b> - contacts SVN repository and updates revision graph.</p>
+	<p><b>Clear Merge Connections</b> - removes all merge connections if any from graph.</p>
 	<p><b>Show Only Revisions with Copies</b> - filter out revisions which have modifications but don't have copies.</p>
 	<p><b>Zoom</b> - allows to change zooming.</p>
 	<p><b><i>Pop-up menu</i></b></p>	
@@ -52,6 +93,10 @@
 	<p><b>Branch from</b> - creates a branch from a selected revision.</p>
 	<p><b>Tag from</b> - creates a tag from a selected revision.</p>
 	<p><b>Add Revision Link...</b> - creates a revision link and adds it to a revisions folder.</p>
+	<p><b>Show Outgoing Merges</b> - shows outgoing merges for revision node.</p>
+	<p><b>Show Incoming Merges</b> - shows incoming merges for revision node.</p>
+	<p><b>Hide Outgoing Merges</b> - hides outgoing merges for revision node.</p>
+	<p><b>Hide Incoming Merges</b> - hides incoming merges for revision node.</p>
 	<img border="0" src="../images/rel_tops.png" alt="Related topics"/>
 	<br/>
 	<a href="../preferences/pref_graph.html">Revision Graph</a>
