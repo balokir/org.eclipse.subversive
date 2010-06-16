@@ -23,6 +23,7 @@ import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -167,6 +168,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory());
+		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
 		
 		Object model = this.getModel();
 		if (model instanceof RevisionRootNode) {

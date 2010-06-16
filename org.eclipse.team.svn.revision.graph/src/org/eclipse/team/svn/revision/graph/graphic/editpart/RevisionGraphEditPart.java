@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.gef.EditPart;
@@ -46,10 +45,9 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 	
 	@Override
 	protected IFigure createFigure() {
-		Figure f = new FreeformLayer();
+		Figure f = new Figure();
 		//f.setOpaque(true);
 		f.setLayoutManager(new GraphLayoutManager(this, GraphConstants.NODES_HORIZONTAL_OFFSET));
-		
 		return f;
 	}
 	
