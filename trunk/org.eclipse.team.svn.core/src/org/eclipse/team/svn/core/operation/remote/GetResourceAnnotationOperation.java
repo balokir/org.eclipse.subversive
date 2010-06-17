@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.connector.SVNAnnotationData;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -39,6 +40,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	protected byte []content;
 	protected boolean includeMerged;
 	protected SVNRevisionRange revisions;
+	protected boolean isRetryIfMergeInfoNotSupported;
 	
 	public GetResourceAnnotationOperation(IRepositoryResource resource, SVNRevisionRange revisions) {
 		super("Operation_GetAnnotation", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
@@ -51,6 +53,10 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	
 	public void setIncludeMerged(boolean includeMerged) {
 		this.includeMerged = includeMerged;
+	}
+	
+	public void setRetryIfMergeInfoNotSupported(boolean isRetryIfMergeInfoNotSupported) {
+		this.isRetryIfMergeInfoNotSupported = isRetryIfMergeInfoNotSupported;
 	}
 	
 	public IRepositoryResource getRepositoryResource() {
@@ -74,24 +80,39 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn blame " + url + "@" + resource.getPegRevision() + " -r 0:" + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
 			long options = ISVNConnector.Options.IGNORE_MIME_TYPE;
-			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;			
-			proxy.annotate(
-				SVNUtility.getEntryReference(resource),
-				this.revisions.from,
-				this.revisions.to,
-				options, new ISVNAnnotationCallback() {
-					public void annotate(String line, SVNAnnotationData data) {
-						lines.add(data);
-						try {
-							stream.write((line + "\n").getBytes()); //$NON-NLS-1$
-						} 
-						catch (IOException e) {
-							throw new RuntimeException(e);
-						}
-					}
-				}, 
-				new SVNProgressMonitor(this, monitor, null)
-			);
+			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
+			
+			ISVNAnnotationCallback callback = new ISVNAnnotationCallback() {
+				public void annotate(String line, SVNAnnotationData data) {
+					lines.add(data);
+					try {
+						stream.write((line + "\n").getBytes()); //$NON-NLS-1$
+					} catch (IOException e) { throw new RuntimeException(e); }
+				}
+			};
+			
+			try {
+				proxy.annotate(
+						SVNUtility.getEntryReference(resource),
+						this.revisions.from, this.revisions.to,
+						options, callback, new SVNProgressMonitor(this, monitor, null));
+			} catch (SVNConnectorException ex) {
+				/*
+				 * If SVN server doesn't support merged revisions, then we re-call without this option
+				 */
+				if (this.isRetryIfMergeInfoNotSupported && 
+					ex.getErrorId() == SVNErrorCodes.unsupportedFeature && 
+					(options & Options.INCLUDE_MERGED_REVISIONS) != 0) {
+					
+					options &= ~Options.INCLUDE_MERGED_REVISIONS;
+					proxy.annotate(
+							SVNUtility.getEntryReference(resource),
+							this.revisions.from, this.revisions.to,
+							options, callback, new SVNProgressMonitor(this, monitor, null));
+				} else {
+					throw ex;
+				}
+			}
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
