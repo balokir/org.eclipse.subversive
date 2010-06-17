@@ -8,6 +8,16 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20100617-1700 [17 June 2010]
+
+Features:
+ * Add merge information to revision graph (bug 313134)
+
+Fixes:
+ * [Show History] Error: Retrieval of mergeinfo unsupported (bug 257669) 
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20100528-1600 [28 May 2010]
 
 Fixes:
