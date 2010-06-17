@@ -71,6 +71,7 @@ public class BuiltInAnnotate {
 	public void open(IWorkbenchPage page, IRepositoryResource remote, IFile resource, SVNRevisionRange revisions) {
 		GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(remote, revisions);
 		annotateOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
+		annotateOp.setRetryIfMergeInfoNotSupported(true);
 		IActionOperation showOp = this.prepareBuiltInAnnotate(annotateOp, page, remote, resource);
 		CompositeOperation op = new CompositeOperation(showOp.getId(), showOp.getMessagesClass());
 		op.add(annotateOp);
