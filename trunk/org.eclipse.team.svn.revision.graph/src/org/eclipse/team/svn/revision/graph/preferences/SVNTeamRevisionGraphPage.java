@@ -207,7 +207,7 @@ public class SVNTeamRevisionGraphPage extends AbstractSVNRevisionGraphPreference
 	}	
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
-		String path = SVNRevisionGraphPlugin.instance().getStateLocation().toString();
+		String path = SVNRevisionGraphPreferences.getDefaultCacheString(store, SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME);
 		this.pathSelectionComposite.setSelectedPath(path);
 	}
 	

@@ -11,7 +11,7 @@
 package org.eclipse.team.svn.revision.graph.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 
 /**
  * Default preferences initializer
@@ -21,6 +21,6 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 public class SVNRevisionGraphPreferencesInitializer extends AbstractPreferenceInitializer {
 
 	public void initializeDefaultPreferences() {
-		SVNRevisionGraphPreferences.setDefaultValues(SVNTeamUIPlugin.instance().getPreferenceStore());
+		SVNRevisionGraphPreferences.setDefaultValues(SVNRevisionGraphPlugin.instance().getPreferenceStore());
 	}
 }
