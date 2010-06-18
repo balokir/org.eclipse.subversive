@@ -30,6 +30,10 @@ public class SVNRevisionGraphPreferences {
 	public static void setDefaultValues(IPreferenceStore store) {
 		store.setDefault(SVNRevisionGraphPreferences.fullCacheName(SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME), SVNRevisionGraphPlugin.instance().getStateLocation().toString());
 	}
+
+	public static String getDefaultCacheString(IPreferenceStore store, String shortName) {
+		return store.getDefaultString(SVNRevisionGraphPreferences.fullCacheName(shortName));
+	}
 	
 	public static String getCacheString(IPreferenceStore store, String shortName) {
 		return store.getString(SVNRevisionGraphPreferences.fullCacheName(shortName));
