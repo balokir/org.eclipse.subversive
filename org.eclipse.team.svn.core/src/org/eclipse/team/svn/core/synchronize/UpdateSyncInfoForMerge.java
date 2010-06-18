@@ -45,15 +45,27 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
  */
 public class UpdateSyncInfoForMerge extends UpdateSyncInfo implements IMergeSyncInfo {
 
-	protected IResourceChange baseStatus;
+	protected IResourceChange mergeBaseStatus;
+	protected IResourceChange mergeRemoteStatus;
 	
 	public UpdateSyncInfoForMerge(ILocalResource local, IResourceChange baseStatus, IResourceChange remoteStatus, IResourceVariantComparator comparator) {
 		super(local, null, comparator);
-		this.baseStatus = baseStatus;
-		this.remoteStatus = remoteStatus;
+		this.mergeBaseStatus = baseStatus;
+		this.mergeRemoteStatus = remoteStatus;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.core.synchronize.IMergeSyncInfo#getBaseResource()
+	 */
 	public IResourceChange getBaseResource() {
-		return this.baseStatus;
+		return this.mergeBaseStatus;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.core.synchronize.IMergeSyncInfo#getRemoteResource()
+	 */
+	public IResourceChange getRemoteResource() {
+		return this.mergeRemoteStatus;
+	}
+		
 }
