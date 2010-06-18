@@ -38,6 +38,10 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo implements IMergeSyncInfo
 		this.baseStatus = base;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.SyncInfo#calculateKind()
+	 */
+	@Override
 	protected int calculateKind() throws TeamException {
 		String localKind = this.local == null ? IStateFilter.ST_NOTEXISTS : this.local.getStatus();
 		int localMask = this.local == null ? 0 : this.local.getChangeMask();
@@ -97,12 +101,26 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo implements IMergeSyncInfo
 		return SyncInfo.IN_SYNC;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo#getBaseChangeResource()
+	 */
 	@Override
 	public ILocalResource getBaseChangeResource() {
 		return this.baseStatus == null ? this.local : this.baseStatus;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.core.synchronize.IMergeSyncInfo#getBaseResource()
+	 */
 	public IResourceChange getBaseResource() {
 		return this.baseStatus;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.core.synchronize.IMergeSyncInfo#getRemoteResource()
+	 */
+	public IResourceChange getRemoteResource() {
+		return this.remoteStatus;
+	}
+	
 }

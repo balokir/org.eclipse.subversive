@@ -53,10 +53,6 @@ public abstract class AbstractSVNSyncInfo extends SyncInfo {
 		return this.local;
 	}
 	
-	public IResourceChange getRemoteResource() {
-		return this.remoteStatus;
-	}
-	
 	/**
 	 * If resource is deleted on repository or there are no remote changes 
 	 * then remote resource variant, see {@link SyncInfo#getRemote()},
