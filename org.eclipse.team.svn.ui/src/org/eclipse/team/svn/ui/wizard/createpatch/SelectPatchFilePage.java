@@ -329,13 +329,15 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 				public Object[] getChildren(Object element) {
 					if (element instanceof IProject || element instanceof IFolder) {
 						try {
-							return SVNRemoteStorage.instance().getRegisteredChildren((IContainer)element);
+							Object[] result = SVNRemoteStorage.instance().getRegisteredChildren((IContainer)element);
+							return result != null ? result : new Object[0];
 						}
 						catch (Exception e) {
 							// do nothing
 						}
 					}
-					return super.getChildren(element);
+					Object[] result = super.getChildren(element);
+					return result != null ? result : new Object[0];
 				}
 			}); 
 			this.changeViewer.setLabelProvider(new WorkbenchLabelProvider()); 
