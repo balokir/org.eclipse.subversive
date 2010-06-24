@@ -23,19 +23,27 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
  */
 public class FetchSkippedRevisionsOperation extends BaseFetchOperation {
 	
-	public FetchSkippedRevisionsOperation(IRepositoryResource resource, RepositoryCache repositoryCache) {
-		super("Operation_FetchSkippedRevisions", resource, repositoryCache);	 //$NON-NLS-1$
+	public FetchSkippedRevisionsOperation(IRepositoryResource resource, RepositoryCache repositoryCache, boolean isSkipFetchErrors) {
+		super("Operation_FetchSkippedRevisions", resource, repositoryCache, isSkipFetchErrors);	 //$NON-NLS-1$
 	}
 	
 	protected void prepareData(IProgressMonitor monitor) throws Exception {		
-		this.startRevision = this.repositoryCache.getCacheInfo().getStartSkippedRevision();
-		this.endRevision = this.repositoryCache.getCacheInfo().getEndSkippedRevision();			
-		this.canRun = this.startRevision != 0;
+		long startRevision = this.repositoryCache.getCacheInfo().getStartSkippedRevision();
+		long endRevision = this.repositoryCache.getCacheInfo().getEndSkippedRevision();
+		this.canRun = startRevision != 0;
 		if (this.canRun) {
 			this.logOptions = Options.DISCOVER_PATHS;
 			this.revProps = ISVNConnector.DEFAULT_LOG_ENTRY_PROPS;
-			this.logEntryCallback = new LogEntriesCallback(this, monitor, (int) (this.endRevision - this.startRevision + 1), this.repositoryCache);	
+			this.logEntryCallback = new LogEntriesCallback(this, monitor, (int) (endRevision - startRevision + 1), this.repositoryCache);	
 		}
+	}
+	
+	protected long getStartSkippedRevision() {
+		return this.repositoryCache.getCacheInfo().getStartSkippedRevision();
+	}
+	
+	protected long getEndSkippedRevision() {
+		return this.repositoryCache.getCacheInfo().getEndSkippedRevision();
 	}
 
 }

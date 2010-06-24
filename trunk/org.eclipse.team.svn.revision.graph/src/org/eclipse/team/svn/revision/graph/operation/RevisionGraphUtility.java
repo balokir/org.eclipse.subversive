@@ -71,7 +71,7 @@ public class RevisionGraphUtility {
 		op.add(checkConnectionOp);				
 		
 		//create cache
-		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false, checkConnectionOp);
+		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false, checkConnectionOp, panel.isSkipFetchErrors());
 		op.add(createCacheOp, new IActionOperation[]{checkConnectionOp});
 				
 		//create model
@@ -94,6 +94,7 @@ public class RevisionGraphUtility {
 								RevisionRootNode rootNode = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());
 								rootNode.simpleSetMode(!panel.isShowAllRevisions());
 								rootNode.setIncludeMergeInfo(checkConnectionOp.getRepositoryConnectionInfo().isSupportMergeInfo);
+								rootNode.setSkipFetchErrors(panel.isSkipFetchErrors());
 								modelObject = rootNode;
 							} else {
 								modelObject = SVNRevisionGraphMessages.NoData;

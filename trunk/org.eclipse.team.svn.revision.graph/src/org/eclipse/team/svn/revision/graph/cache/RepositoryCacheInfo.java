@@ -293,7 +293,7 @@ public class RepositoryCacheInfo {
 	 * - if there are references to cache and this method is called, then update cache
 	 */
 	public CacheResult createCacheData(IRepositoryResource resource,
-		RepositoryConnectionInfo connectionData, IProgressMonitor monitor) {
+		RepositoryConnectionInfo connectionData, boolean isSkipFetchErrors, IProgressMonitor monitor) {
 		
 		boolean isRefresh = false;
 		RepositoryCache previousCache = null;
@@ -320,11 +320,11 @@ public class RepositoryCacheInfo {
 			RepositoryCache cache;
 			IActionOperation op;
 			if (isRefresh) {
-				op = this.getCreateOperation(resource, previousCache, true, connectionData);
+				op = this.getCreateOperation(resource, previousCache, true, connectionData, isSkipFetchErrors);
 				cache = previousCache;
 			} else {
 				cache = new RepositoryCache(this.getCacheDataFile(), this);			
-				op = this.getCreateOperation(resource, cache, false, connectionData);
+				op = this.getCreateOperation(resource, cache, false, connectionData, isSkipFetchErrors);
 			}			
 			
 			//call synchronously				
@@ -357,7 +357,7 @@ public class RepositoryCacheInfo {
 	}
 	
 	public CacheResult refreshCacheData(IRepositoryResource resource, 
-		RepositoryConnectionInfo connectionData, IProgressMonitor monitor) {
+		RepositoryConnectionInfo connectionData, boolean isSkipFetchErrors, IProgressMonitor monitor) {
 		
 		RepositoryCache previousCache = null;
 		synchronized (this.calculateLock) {
@@ -374,7 +374,7 @@ public class RepositoryCacheInfo {
 		}
 		
 		try {		
-			IActionOperation op = this.getCreateOperation(resource, previousCache, true, connectionData);				
+			IActionOperation op = this.getCreateOperation(resource, previousCache, true, connectionData, isSkipFetchErrors);				
 			
 			//call synchronously				
 			ProgressMonitorUtility.doTask(UIMonitorUtility.DEFAULT_FACTORY.getLogged(op), monitor, 1, 1);			
@@ -394,7 +394,7 @@ public class RepositoryCacheInfo {
 	}
 	
 	protected IActionOperation getCreateOperation(IRepositoryResource resource, RepositoryCache cache, 
-		boolean isRefresh, RepositoryConnectionInfo connectionData) {
+		boolean isRefresh, RepositoryConnectionInfo connectionData, boolean isSkipFetchErrors) {
 		
 		CompositeOperation op = new CompositeOperation(isRefresh ? "Operation_RefreshCache" : "Operation_CreateCache", SVNRevisionGraphMessages.class); //$NON-NLS-1$ //$NON-NLS-2$						
 		
@@ -405,17 +405,17 @@ public class RepositoryCacheInfo {
 		}							
 		
 		if (connectionData.hasConnection) {
-			FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, cache);
+			FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, cache, isSkipFetchErrors);
 			op.add(fetchSkippedOp, prepareDataOp != null ? new IActionOperation[]{prepareDataOp} : new IActionOperation[0]);
 			
-			FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, cache, connectionData.lastRepositoryRevision);
+			FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, cache, connectionData.lastRepositoryRevision, isSkipFetchErrors);
 			op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});
 									
 			if (connectionData.isSupportMergeInfo) {
-				FetchSkippedMergeInfoOperation fetchSkippedMergeOp = new FetchSkippedMergeInfoOperation(resource, cache);
+				FetchSkippedMergeInfoOperation fetchSkippedMergeOp = new FetchSkippedMergeInfoOperation(resource, cache, isSkipFetchErrors);
 				op.add(fetchSkippedMergeOp, new IActionOperation[]{fetchNewOp});
 				
-				FetchNewMergeInfoOperation fetchNewMergeOp = new FetchNewMergeInfoOperation(resource, cache, connectionData.lastRepositoryRevision);
+				FetchNewMergeInfoOperation fetchNewMergeOp = new FetchNewMergeInfoOperation(resource, cache, connectionData.lastRepositoryRevision, isSkipFetchErrors);
 				op.add(fetchNewMergeOp, new IActionOperation[]{fetchSkippedMergeOp});		
 			}
 		}	

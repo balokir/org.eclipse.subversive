@@ -26,29 +26,37 @@ public class FetchNewRevisionsOperation extends BaseFetchOperation {
 	
 	protected long lastRepositoryRevision;
 	
-	public FetchNewRevisionsOperation(IRepositoryResource resource, RepositoryCache repositoryCache, long lastRepositoryRevision) {
-		super("Operation_FetchNewRevisions", resource, repositoryCache); //$NON-NLS-1$
+	public FetchNewRevisionsOperation(IRepositoryResource resource, RepositoryCache repositoryCache, long lastRepositoryRevision, boolean isSkipFetchErrors) {
+		super("Operation_FetchNewRevisions", resource, repositoryCache, isSkipFetchErrors); //$NON-NLS-1$
 		this.lastRepositoryRevision = lastRepositoryRevision;
 	}
 	
 	protected void prepareData(IProgressMonitor monitor) throws Exception {
 		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
 		
-		this.startRevision = cacheInfo.getLastProcessedRevision() + 1;
-		this.endRevision = this.lastRepositoryRevision;
+		long startRevision = cacheInfo.getLastProcessedRevision() + 1;
+		long endRevision = this.lastRepositoryRevision;
 		
 		this.canRun = this.lastRepositoryRevision > cacheInfo.getLastProcessedRevision();
 		if (this.canRun) {
 			this.logOptions = Options.DISCOVER_PATHS;
 			this.revProps = ISVNConnector.DEFAULT_LOG_ENTRY_PROPS;
-			this.logEntryCallback = new LogEntriesCallback(this, monitor, (int) (this.endRevision - this.startRevision + 1), this.repositoryCache);
+			this.logEntryCallback = new LogEntriesCallback(this, monitor, (int) (endRevision - startRevision + 1), this.repositoryCache);
 				
-			cacheInfo.setSkippedRevisions(this.startRevision, this.endRevision);
-			cacheInfo.setLastProcessedRevision(this.endRevision);
+			cacheInfo.setSkippedRevisions(startRevision, endRevision);
+			cacheInfo.setLastProcessedRevision(endRevision);
 			cacheInfo.save();	
 			
-			this.repositoryCache.expandRevisionsCount(this.endRevision);
+			this.repositoryCache.expandRevisionsCount(endRevision);
 		}
+	}
+	
+	protected long getStartSkippedRevision() {
+		return this.repositoryCache.getCacheInfo().getStartSkippedRevision();
+	}
+	
+	protected long getEndSkippedRevision() {
+		return this.repositoryCache.getCacheInfo().getEndSkippedRevision();
 	}
 		
 }

@@ -34,24 +34,26 @@ public class CreateCacheDataOperation extends AbstractActionOperation implements
 	protected IRepositoryResource resource;
 	protected boolean isRefresh;
 	protected IRepositoryConnectionInfoProvider repositoryConnectionInfoProvider;	
+	protected boolean isSkipFetchErrors;
 	
 	protected RepositoryCache repositoryCache;
 	
 	public CreateCacheDataOperation(IRepositoryResource resource, boolean isRefresh, 
-		IRepositoryConnectionInfoProvider repositoryConnectionInfoProvider) {
+		IRepositoryConnectionInfoProvider repositoryConnectionInfoProvider, boolean isSkipFetchErrors) {
 		
 		super("Operation_CreateCacheData", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 		this.isRefresh = isRefresh;
 		this.repositoryConnectionInfoProvider = repositoryConnectionInfoProvider;
+		this.isSkipFetchErrors = isSkipFetchErrors;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(this.resource);
 		RepositoryConnectionInfo connectionData = this.repositoryConnectionInfoProvider.getRepositoryConnectionInfo();
 		CacheResult cacheResult = this.isRefresh ? 
-				cacheInfo.refreshCacheData(this.resource, connectionData, monitor) :
-				cacheInfo.createCacheData(this.resource, connectionData, monitor);
+				cacheInfo.refreshCacheData(this.resource, connectionData, this.isSkipFetchErrors, monitor) :
+				cacheInfo.createCacheData(this.resource, connectionData, this.isSkipFetchErrors, monitor);
 		
 		if (cacheResult.status == CacheResultEnum.BROKEN) {
 			throw new ActivityCancelledException();
