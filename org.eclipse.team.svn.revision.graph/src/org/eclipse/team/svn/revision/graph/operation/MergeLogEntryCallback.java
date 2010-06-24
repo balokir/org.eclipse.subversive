@@ -113,14 +113,33 @@ public class MergeLogEntryCallback implements ISVNLogEntryCallbackWithError {
 	}
 	
 	//update skipped revisions counters
-	protected void updateSkippedRevisions() {
+	protected boolean updateSkippedRevisions() {
+		boolean hasRevisionsToProcess = true;
 		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
 		long start = cacheInfo.getMergeStartSkippedRevision();
 		long end = cacheInfo.getMergeEndSkippedRevision();		
 		if (start > --end) {
 			start = end = 0;
+			hasRevisionsToProcess = false;
 		} 		
 		cacheInfo.setMergeSkippedRevisions(start, end);
+		return hasRevisionsToProcess;
+	}
+	
+	public boolean skipRevision() {
+		this.currentWork ++;
+		
+		//if we skip revision then don't write any intermediate merge info
+		this.mergeDepth = -1;
+		this.mergeParentEntry = null;
+		
+		return this.updateSkippedRevisions();
+	}
+	
+	public void retryRevision() {
+		//clear any intermediate merge data
+		this.mergeDepth = -1;
+		this.mergeParentEntry = null;
 	}
 	
 	public Throwable getError() {

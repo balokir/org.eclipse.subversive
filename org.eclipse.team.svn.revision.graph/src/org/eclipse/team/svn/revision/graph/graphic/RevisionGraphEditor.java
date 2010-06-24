@@ -224,7 +224,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		op.add(checkConnectionOp);
 				
 		//update cache
-		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true, checkConnectionOp);
+		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true, checkConnectionOp, previousModel.isSkipFetchErrors());
 		op.add(updateCacheOp, new IActionOperation[]{checkConnectionOp});		
 		
 		//create model
@@ -248,6 +248,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 								((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);							
 								modelObject.simpleSetMode(previousModel.isSimpleMode());
 								modelObject.setIncludeMergeInfo(previousModel.isIncludeMergeInfo());
+								modelObject.setSkipFetchErrors(previousModel.isSkipFetchErrors());
 								modelObject.init();			
 														
 								viewer.setContents(modelObject);	

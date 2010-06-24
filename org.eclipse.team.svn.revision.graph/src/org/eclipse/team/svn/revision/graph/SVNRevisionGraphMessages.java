@@ -98,6 +98,7 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String ShowRevisionGraphPanel_ShowAllRevisions;
 	public static String ShowRevisionGraphPanel_ShowMergeInfo;
 	public static String ShowRevisionGraphPanel_Title;
+	public static String ShowRevisionGraphPanel_SkipErrors;
 	public static String CheckRepositoryConnectionOperation_MergeNotSupported;
 	public static String RevisionFigure_Merges;
 	public static String RevisionFigure_Revisions;
@@ -109,6 +110,8 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String HideIncomingMergeConnectionsAction_Title;
 	public static String HideOutgoingMergeConnectionsAction_Title;
 	public static String MergeLogEntryCallback_Progress;
+	public static String BaseFetchOperation_SkipMessage;
+	public static String BaseFetchOperation_RetryMessage;
 	
 	static {
 		//load message values from bundle file

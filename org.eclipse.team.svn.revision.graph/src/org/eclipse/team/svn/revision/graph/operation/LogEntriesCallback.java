@@ -16,6 +16,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
 import org.eclipse.team.svn.revision.graph.operation.BaseFetchOperation.ISVNLogEntryCallbackWithError;
 
 /**
@@ -66,12 +67,7 @@ public class LogEntriesCallback implements ISVNLogEntryCallbackWithError {
 					this.repositoryCache.save(this.monitor);
 				}
 				
-				long start = this.repositoryCache.getCacheInfo().getStartSkippedRevision();
-				long end = this.repositoryCache.getCacheInfo().getEndSkippedRevision();		
-				if (start > --end) {
-					start = end = 0;
-				} 		
-				this.repositoryCache.getCacheInfo().setSkippedRevisions(start, end);				
+				this.updateSkippedRevisions();
 			} catch (Throwable e) {
 				this.error = e;				
 				this.monitor.setCanceled(true);				
@@ -79,6 +75,28 @@ public class LogEntriesCallback implements ISVNLogEntryCallbackWithError {
 		}				
 	}		
 	
+	protected boolean updateSkippedRevisions() {
+		boolean hasRevisionsToProcess = true;
+		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
+		long start = cacheInfo.getStartSkippedRevision();
+		long end = cacheInfo.getEndSkippedRevision();		
+		if (start > --end) {
+			start = end = 0;
+			hasRevisionsToProcess = false;
+		} 		
+		this.repositoryCache.getCacheInfo().setSkippedRevisions(start, end);
+		return hasRevisionsToProcess;
+	}
+	
+	public boolean skipRevision() {		
+		this.currentWork ++;
+		return this.updateSkippedRevisions();
+	}
+	
+	public void retryRevision() {
+		//do nothing
+	}
+		
 	public Throwable getError() {
 		return this.error;
 	}

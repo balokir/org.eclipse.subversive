@@ -25,27 +25,35 @@ public class FetchNewMergeInfoOperation extends BaseFetchOperation {
 
 	protected long lastRepositoryRevision;
 	
-	public FetchNewMergeInfoOperation(IRepositoryResource resource, RepositoryCache repositoryCache, long lastRepositoryRevision) {	
-		super("Operation_FetchNewMergeInfo", resource, repositoryCache); //$NON-NLS-1$
+	public FetchNewMergeInfoOperation(IRepositoryResource resource, RepositoryCache repositoryCache, long lastRepositoryRevision, boolean isSkipFetchErrors) {	
+		super("Operation_FetchNewMergeInfo", resource, repositoryCache, isSkipFetchErrors); //$NON-NLS-1$
 		this.lastRepositoryRevision = lastRepositoryRevision;
 	}
 	
 	protected void prepareData(IProgressMonitor monitor) throws Exception {
 		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
 		
-		this.startRevision = cacheInfo.getMergeLastProcessedRevision() + 1;
-		this.endRevision = this.lastRepositoryRevision;
+		long startRevision = cacheInfo.getMergeLastProcessedRevision() + 1;
+		long endRevision = this.lastRepositoryRevision;
 		
 		this.canRun = this.lastRepositoryRevision > cacheInfo.getMergeLastProcessedRevision();
 		if (this.canRun) {
 			this.logOptions = ISVNConnector.Options.INCLUDE_MERGED_REVISIONS;
 			//don't retrieve any revision properties, e.g. author, date, comment
 			this.revProps = new String[] {""}; //$NON-NLS-1$
-			this.logEntryCallback = new MergeLogEntryCallback(this, monitor, (int) (this.endRevision - this.startRevision + 1), this.repositoryCache);
+			this.logEntryCallback = new MergeLogEntryCallback(this, monitor, (int) (endRevision - startRevision + 1), this.repositoryCache);
 				
-			cacheInfo.setMergeSkippedRevisions(this.startRevision, this.endRevision);
-			cacheInfo.setMergeLastProcessedRevision(this.endRevision);
+			cacheInfo.setMergeSkippedRevisions(startRevision, endRevision);
+			cacheInfo.setMergeLastProcessedRevision(endRevision);
 			cacheInfo.save();							
 		}
+	}
+	
+	protected long getStartSkippedRevision() {
+		return this.repositoryCache.getCacheInfo().getMergeStartSkippedRevision();
+	}
+	
+	protected long getEndSkippedRevision() {
+		return this.repositoryCache.getCacheInfo().getMergeEndSkippedRevision();
 	}
 }
