@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -35,6 +37,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
@@ -61,6 +64,9 @@ public class SVNTeamRevisionGraphPage extends AbstractSVNRevisionGraphPreference
 	protected Button removeButton;
 	protected Button exportButton;
 	protected Button importButton; 
+	protected Button skipErrorsButton;
+	
+	protected boolean isSkipFetchErrors;
 	
 	public SVNTeamRevisionGraphPage() {	
 		this.cachesManager = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager();
@@ -74,6 +80,37 @@ public class SVNTeamRevisionGraphPage extends AbstractSVNRevisionGraphPreference
 	protected Control createContentsImpl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);		
 		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;		
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		this.createCacheComposite(composite);
+				
+		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		separator.setLayoutData(data);
+		separator.setVisible(false);
+
+		//other options
+		this.skipErrorsButton = new Button(composite, SWT.CHECK);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.skipErrorsButton.setLayoutData(data);				
+		this.skipErrorsButton.setText(SVNRevisionGraphMessages.SVNTeamRevisionGraphPage_SkipErrors);
+		this.skipErrorsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamRevisionGraphPage.this.isSkipFetchErrors = SVNTeamRevisionGraphPage.this.skipErrorsButton.getSelection();			  
+			}
+		});	
+		
+		//Setting context help
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.revisionGraphPreferencesContext"); //$NON-NLS-1$
+		
+		return composite;
+	}
+	
+	protected void createCacheComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);		
+		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -82,11 +119,6 @@ public class SVNTeamRevisionGraphPage extends AbstractSVNRevisionGraphPreference
 		this.createCachesViewer(composite);		
 		this.createButtons(composite);						
 		this.createDirectorySelection(composite);	
-
-		//Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.revisionGraphPreferencesContext"); //$NON-NLS-1$
-		
-		return composite;
 	}
 	
 	protected void createCachesViewer(Composite parent) {
@@ -203,21 +235,28 @@ public class SVNTeamRevisionGraphPage extends AbstractSVNRevisionGraphPreference
 			this.cachesViewer.add(caches);	
 		}						
 		
+		this.skipErrorsButton.setSelection(this.isSkipFetchErrors);
+		
 		this.selectionChanged();		
 	}	
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
 		String path = SVNRevisionGraphPreferences.getDefaultCacheString(store, SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME);
 		this.pathSelectionComposite.setSelectedPath(path);
+		
+		this.isSkipFetchErrors = SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {		
 		String path = SVNRevisionGraphPreferences.getCacheString(store, SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME);
 		this.pathSelectionComposite.setSelectedPath(path);
+		
+		this.isSkipFetchErrors = SVNRevisionGraphPreferences.getGraphBoolean(store, SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS);
 	}
 
 	protected void saveValues(IPreferenceStore store) {
 		SVNRevisionGraphPreferences.setCacheString(store, SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME, this.pathSelectionComposite.getSelectedPath());
+		SVNRevisionGraphPreferences.setGraphBoolean(store, SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS, this.isSkipFetchErrors);
 	}
 	
 	protected void selectionChanged() {

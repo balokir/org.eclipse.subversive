@@ -29,8 +29,7 @@ import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 public class ShowRevisionGraphPanel extends AbstractDialogPanel {
 	
 	protected boolean isShowAllRevisions;
-	protected boolean canIncludeMergeInfo;	
-	protected boolean isSkipFetchErrors;
+	protected boolean canIncludeMergeInfo;
 	
 	public ShowRevisionGraphPanel() {
 		 this.dialogTitle = SVNRevisionGraphMessages.ShowRevisionGraphPanel_Title;
@@ -57,26 +56,14 @@ public class ShowRevisionGraphPanel extends AbstractDialogPanel {
 			public void widgetSelected(SelectionEvent e) {
 				ShowRevisionGraphPanel.this.canIncludeMergeInfo = includeMergeInfoButton.getSelection();			  
 			}
-		});
-		
-		final Button skipFetchErrorsButton = new Button(parent, SWT.CHECK);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		skipFetchErrorsButton.setLayoutData(data);		
-		skipFetchErrorsButton.setText(SVNRevisionGraphMessages.ShowRevisionGraphPanel_SkipErrors);
-		skipFetchErrorsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				ShowRevisionGraphPanel.this.isSkipFetchErrors = skipFetchErrorsButton.getSelection();			  
-			}
 		});		
 		
         boolean isMergeSupported = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() > ISVNConnectorFactory.APICompatibility.SVNAPI_1_4_x;
 
         this.isShowAllRevisions = false;
         this.canIncludeMergeInfo = isMergeSupported;
-        this.isSkipFetchErrors = true; 
         
         showAllRevisionsButton.setSelection(this.isShowAllRevisions);
-        skipFetchErrorsButton.setSelection(this.isSkipFetchErrors);
         includeMergeInfoButton.setSelection(this.canIncludeMergeInfo);
         if (!isMergeSupported) {
         	 includeMergeInfoButton.setEnabled(false);
@@ -103,9 +90,5 @@ public class ShowRevisionGraphPanel extends AbstractDialogPanel {
 	
 	public boolean isShowAllRevisions() {
 		return this.isShowAllRevisions;
-	}
-	
-	public boolean isSkipFetchErrors() {
-		return this.isSkipFetchErrors;
 	}
 }

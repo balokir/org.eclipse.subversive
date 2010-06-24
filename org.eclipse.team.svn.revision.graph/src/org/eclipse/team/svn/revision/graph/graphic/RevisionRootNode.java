@@ -48,7 +48,6 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	protected boolean isSimpleMode;
 	protected boolean isIncludeMergeInfo;
-	protected boolean isSkipFetchErrors;
 	
 	protected NodesFilterManager filterManager;
 		
@@ -271,14 +270,6 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	public boolean isIncludeMergeInfo() {
 		return this.isIncludeMergeInfo;
-	}
-	
-	public void setSkipFetchErrors(boolean isSkipFetchErrors) {
-		this.isSkipFetchErrors = isSkipFetchErrors;
-	}
-	
-	public boolean isSkipFetchErrors() {
-		return this.isSkipFetchErrors;
 	}
 	
 	public String getRevisionPath(int pathIndex) {

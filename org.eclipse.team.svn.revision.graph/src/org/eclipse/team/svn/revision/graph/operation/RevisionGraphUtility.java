@@ -26,6 +26,7 @@ import org.eclipse.team.svn.revision.graph.ShowRevisionGraphPanel;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditorInput;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
+import org.eclipse.team.svn.revision.graph.preferences.SVNRevisionGraphPreferences;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -71,7 +72,8 @@ public class RevisionGraphUtility {
 		op.add(checkConnectionOp);				
 		
 		//create cache
-		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false, checkConnectionOp, panel.isSkipFetchErrors());
+		boolean isSkipFetchErrors = SVNRevisionGraphPreferences.getGraphBoolean(SVNRevisionGraphPlugin.instance().getPreferenceStore(), SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS);
+		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false, checkConnectionOp, isSkipFetchErrors);
 		op.add(createCacheOp, new IActionOperation[]{checkConnectionOp});
 				
 		//create model
@@ -94,7 +96,6 @@ public class RevisionGraphUtility {
 								RevisionRootNode rootNode = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());
 								rootNode.simpleSetMode(!panel.isShowAllRevisions());
 								rootNode.setIncludeMergeInfo(checkConnectionOp.getRepositoryConnectionInfo().isSupportMergeInfo);
-								rootNode.setSkipFetchErrors(panel.isSkipFetchErrors());
 								modelObject = rootNode;
 							} else {
 								modelObject = SVNRevisionGraphMessages.NoData;

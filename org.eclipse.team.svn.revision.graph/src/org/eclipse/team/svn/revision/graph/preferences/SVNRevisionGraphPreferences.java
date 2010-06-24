@@ -21,14 +21,19 @@ import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 public class SVNRevisionGraphPreferences {
 
 	public static final String CACHE_BASE = "preference.cache."; //$NON-NLS-1$
+	public static final String GRAPH_BASE = "preference.graph."; //$NON-NLS-1$
 	
 	public static final String CACHE_DIRECTORY_NAME = "directory"; //$NON-NLS-1$
+	public static final String GRAPH_SKIP_ERRORS = "skip.errors"; //$NON-NLS-1$
+	
+	public static final boolean GRAPH_SKIP_ERRORS_DEFAULT = true;
 	
 	private SVNRevisionGraphPreferences() {	
 	}
 	
 	public static void setDefaultValues(IPreferenceStore store) {
 		store.setDefault(SVNRevisionGraphPreferences.fullCacheName(SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME), SVNRevisionGraphPlugin.instance().getStateLocation().toString());
+		store.setDefault(SVNRevisionGraphPreferences.fullGraphName(SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS), SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS_DEFAULT);
 	}
 
 	public static String getDefaultCacheString(IPreferenceStore store, String shortName) {
@@ -43,7 +48,19 @@ public class SVNRevisionGraphPreferences {
 		store.setValue(SVNRevisionGraphPreferences.fullCacheName(shortName), value);
 	}
 	
+	public static boolean getGraphBoolean(IPreferenceStore store, String shortName) {
+		return store.getBoolean(SVNRevisionGraphPreferences.fullGraphName(shortName));
+	}
+	
+	public static void setGraphBoolean(IPreferenceStore store, String shortName, boolean value) {
+		store.setValue(SVNRevisionGraphPreferences.fullGraphName(shortName), value);
+	}
+	
 	public static String fullCacheName(String shortName) {
 		return SVNRevisionGraphPreferences.CACHE_BASE + shortName;
+	}
+		
+	public static String fullGraphName(String shortName) {
+		return SVNRevisionGraphPreferences.GRAPH_BASE + shortName;
 	}
 }
