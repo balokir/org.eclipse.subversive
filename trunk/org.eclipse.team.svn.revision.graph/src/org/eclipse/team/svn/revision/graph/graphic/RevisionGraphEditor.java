@@ -65,6 +65,7 @@ import org.eclipse.team.svn.revision.graph.operation.CheckRepositoryConnectionOp
 import org.eclipse.team.svn.revision.graph.operation.CreateCacheDataOperation;
 import org.eclipse.team.svn.revision.graph.operation.CreateRevisionGraphModelOperation;
 import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
+import org.eclipse.team.svn.revision.graph.preferences.SVNRevisionGraphPreferences;
 import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IEditorInput;
@@ -224,7 +225,8 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		op.add(checkConnectionOp);
 				
 		//update cache
-		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true, checkConnectionOp, previousModel.isSkipFetchErrors());
+		boolean isSkipFetchErrors = SVNRevisionGraphPreferences.getGraphBoolean(SVNRevisionGraphPlugin.instance().getPreferenceStore(), SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS);
+		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true, checkConnectionOp, isSkipFetchErrors);
 		op.add(updateCacheOp, new IActionOperation[]{checkConnectionOp});		
 		
 		//create model
@@ -248,7 +250,6 @@ public class RevisionGraphEditor extends GraphicalEditor {
 								((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);							
 								modelObject.simpleSetMode(previousModel.isSimpleMode());
 								modelObject.setIncludeMergeInfo(previousModel.isIncludeMergeInfo());
-								modelObject.setSkipFetchErrors(previousModel.isSkipFetchErrors());
 								modelObject.init();			
 														
 								viewer.setContents(modelObject);	
