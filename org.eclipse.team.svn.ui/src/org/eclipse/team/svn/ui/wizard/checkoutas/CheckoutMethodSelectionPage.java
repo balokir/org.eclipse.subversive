@@ -193,7 +193,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		separator.setLayoutData(data);		
 		
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
+		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE, false);
 		this.recureDepthSelector.setLayoutData(data);			
 
 		this.revisionComposite = new RevisionComposite(composite, this, false, new String[]{SVNUIMessages.RevisionComposite_Revision, SVNUIMessages.RevisionComposite_HeadRevision}, SVNRevision.HEAD, false);

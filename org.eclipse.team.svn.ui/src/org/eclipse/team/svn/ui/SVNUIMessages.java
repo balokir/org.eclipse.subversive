@@ -1151,6 +1151,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RecurseDepthSelector_Infinity;
 	public static String RecurseDepthSelector_Label;
 	public static String RecurseDepthSelector_Unknown;
+	public static String RecurseDepthSelector_Exclude;
 	public static String RelocationChoicesPanel_ChangeLocation;
 	public static String RelocationChoicesPanel_CreateLocation;
 	public static String RelocationChoicesPanel_Description;
@@ -1809,6 +1810,12 @@ public class SVNUIMessages extends BaseMessages {
 	
 	public static String BranchTagSelectionComposite_NoBranches;
 	public static String BranchTagSelectionComposite_NoTags;
+	
+	public static String DepthSelectionComposite_DepthGroup;
+	public static String DepthSelectionComposite_PathLabel;
+	public static String DepthSelectionComposite_RepositoryPanelDescription;
+	public static String DepthSelectionComposite_RepositoryPanelMessage;
+	public static String DepthSelectionComposite_UpdateDepth;
 	
 	static {
 		//load message values from bundle file

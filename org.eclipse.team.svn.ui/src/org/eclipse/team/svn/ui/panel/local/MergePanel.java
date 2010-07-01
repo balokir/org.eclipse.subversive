@@ -237,9 +237,8 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         this.ignoreAncestrySimpleButton.setText(SVNUIMessages.MergePanel_Button_IgnoreAncestry);
         this.ignoreAncestrySimpleButton.setSelection(this.ignoreAncestry);
 		
-		this.depthSelectorSimple = new DepthSelectionComposite(parent, SWT.NONE);
+		this.depthSelectorSimple = new DepthSelectionComposite(parent, SWT.NONE, true);
 		this.depthSelectorSimple.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.depthSelectorSimple.addAndSelectWorkingCopyDepth();
 		
 		return parent;
 	}
@@ -309,9 +308,8 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         this.ignoreAncestryButton.setText(SVNUIMessages.MergePanel_Button_IgnoreAncestry);
         this.ignoreAncestryButton.setSelection(this.ignoreAncestry);
 		
-		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
+		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE, true);
 		this.depthSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.depthSelector.addAndSelectWorkingCopyDepth();
         
 		return parent;
 	}

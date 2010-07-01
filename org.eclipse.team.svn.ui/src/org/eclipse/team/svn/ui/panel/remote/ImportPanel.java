@@ -101,7 +101,7 @@ public class ImportPanel extends AbstractDialogPanel {
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		separator.setVisible(false);
 		
-		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
+		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE, false);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		this.depthSelector.setLayoutData(data);
