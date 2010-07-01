@@ -79,7 +79,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 		if (dialog.open() == 0) {
 			IRepositoryResource []destinations = panel.getSelection(resources);
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			SwitchOperation mainOp = new SwitchOperation(resources, destinations, panel.getDepth(), ignoreExternals);
+			SwitchOperation mainOp = new SwitchOperation(resources, destinations, panel.getDepth(), panel.isStickyDepth(), ignoreExternals);
 			
 			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 

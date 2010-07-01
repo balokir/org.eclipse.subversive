@@ -45,8 +45,9 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
 			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			separator.setVisible(false);
 			
-    		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
-			this.depthSelector.addAndSelectWorkingCopyDepth();
+			boolean canShowUpdateDepthPath = false;
+    		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE, true, true, canShowUpdateDepthPath, this.selectedResource, this);
+
     		GridData data = new GridData(GridData.FILL_HORIZONTAL);
     		this.depthSelector.setLayoutData(data);
     	}
@@ -57,6 +58,13 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
     		return Depth.INFINITY;
     	}
     	return this.depthSelector.getDepth();
+    }
+    
+    public boolean isStickyDepth() {
+    	if (this.depthSelector == null) {
+    		return false;
+    	}
+    	return this.depthSelector.isStickyDepth(); 
     }
     
 	public String getHelpId() {

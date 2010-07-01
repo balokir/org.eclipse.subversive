@@ -176,7 +176,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		
 		tableViewer.setInput(this.selectedResources);
 		
-		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
+		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE, false);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.recureDepthSelector.setLayoutData(data);
 		

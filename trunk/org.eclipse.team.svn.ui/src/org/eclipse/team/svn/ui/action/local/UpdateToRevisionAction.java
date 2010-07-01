@@ -14,8 +14,6 @@ package org.eclipse.team.svn.ui.action.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -44,8 +42,6 @@ public class UpdateToRevisionAction extends AbstractRecursiveTeamAction {
 				return;
 			}
 		}
-		SVNRevision revision = SVNRevision.HEAD;		
-		int depth = ISVNConnector.Depth.INFINITY;
 		
 		//get revision and depth
 		IResource resourceForRevisionSelection;
@@ -56,14 +52,13 @@ public class UpdateToRevisionAction extends AbstractRecursiveTeamAction {
 		} else {
 			resourceForRevisionSelection = resources[0];
 		}
+		
+		boolean canShowUpdateDepthPath = resources.length == 1;		
 		IRepositoryResource repositoryResource = SVNRemoteStorage.instance().asRepositoryResource(resourceForRevisionSelection);		
-		UpdateToRevisionPanel panel = new UpdateToRevisionPanel(repositoryResource);
+		UpdateToRevisionPanel panel = new UpdateToRevisionPanel(repositoryResource, canShowUpdateDepthPath);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
-			revision = panel.getRevision();
-			depth = panel.getDepth();
-			
-			this.runScheduled(UpdateAction.getUpdateOperation(resources, revision, depth));
+			this.runScheduled(UpdateAction.getUpdateOperation(resources, panel.getRevision(), panel.getDepth(), panel.isStickyDepth(), panel.getUpdateDepthPath()));
 		}				
 	}
 	
