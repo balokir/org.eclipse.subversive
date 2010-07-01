@@ -43,6 +43,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class UpdateOperation extends AbstractConflictDetectionOperation implements IResourceProvider {
 	protected SVNRevision selectedRevision;
 	protected int depth = ISVNConnector.Depth.INFINITY;
+	protected boolean isStickyDepth;
+	protected String updateDepthPath;
 	protected boolean ignoreExternals;
 	
 	public UpdateOperation(IResource []resources, boolean ignoreExternals) {
@@ -65,8 +67,10 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		this.ignoreExternals = ignoreExternals;
 	}
 	
-	public void setDepth(int depth) {
+	public void setDepthOptions(int depth, boolean isStickyDepth, String updateDepthPath) {
 		this.depth = depth;
+		this.isStickyDepth = isStickyDepth;
+		this.updateDepthPath = updateDepthPath;
 	}
 	
 	public int getOperationWeight() {
@@ -96,14 +100,21 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 			    FileUtility.reorder(wcResources, true);
 			}
 			final String []paths = FileUtility.asPathArray(wcResources);
-
+			
+			//append update depth path
+			if (this.isStickyDepth && this.updateDepthPath != null &&  paths.length == 1) {
+				String newPath = paths[0] + "/" + this.updateDepthPath;
+				newPath = FileUtility.normalizePath(newPath);
+				paths[0] = newPath;
+			}						
+			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
 					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn update"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + SVNUtility.getDepthArg(UpdateOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + SVNUtility.getDepthArg(UpdateOperation.this.depth, UpdateOperation.this.isStickyDepth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 			});
 			
@@ -111,6 +122,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					long options = UpdateOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
+					options |= UpdateOperation.this.isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE;
 					proxy.update(
 					    paths, 
 					    UpdateOperation.this.selectedRevision, 

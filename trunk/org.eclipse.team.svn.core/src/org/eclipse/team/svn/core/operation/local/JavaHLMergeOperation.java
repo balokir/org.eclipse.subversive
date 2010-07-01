@@ -137,7 +137,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			if (changes.length() > 0) {
 				changes = " -c " + changes; //$NON-NLS-1$
 			}
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge" + changes + ranges + " \"" + from.getUrl() + "@" + from.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) +(this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge" + changes + ranges + " \"" + from.getUrl() + "@" + from.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth, false) +(this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			proxy.merge(ref1, this.revisions, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
@@ -157,7 +157,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
 			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 			options |= this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE;
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth, false) + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$
 			proxy.merge(ref1, ref2, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
