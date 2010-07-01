@@ -42,21 +42,24 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class SwitchOperation extends AbstractRepositoryOperation implements IUnresolvedConflictDetector {
 	protected IResource []resources;
 	protected int depth;
+	protected boolean isStickyDepth;
 	protected UnresolvedConflictDetectorHelper conflictDetectorHelper; 
 	protected boolean ignoreExternals;
 	
-	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth, boolean ignoreExternals) {
+	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth, boolean isStickyDepth, boolean ignoreExternals) {
 		super("Operation_Switch", SVNMessages.class, destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
+		this.isStickyDepth = isStickyDepth;
 		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
 		this.ignoreExternals = ignoreExternals;
 	}
 
-	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth, boolean ignoreExternals) {
+	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth, boolean isStickyDepth, boolean ignoreExternals) {
 		super("Operation_Switch", SVNMessages.class, destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
+		this.isStickyDepth = isStickyDepth;
 		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
 		this.ignoreExternals = ignoreExternals;
 	}
@@ -85,7 +88,8 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 				public void run(IProgressMonitor monitor) throws Exception {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
 					long options = SwitchOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
-					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(SwitchOperation.this.ignoreExternals) + SVNUtility.getDepthArg(SwitchOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					options |= SwitchOperation.this.isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE;
+					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(SwitchOperation.this.ignoreExternals) + SVNUtility.getDepthArg(SwitchOperation.this.depth, SwitchOperation.this.isStickyDepth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					proxy.doSwitch(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
 							options, new ConflictDetectionProgressMonitor(SwitchOperation.this, monitor, null));
 					

@@ -1253,8 +1253,8 @@ public final class SVNUtility {
 		return operatedProjects.toArray(new IProject[0]);
 	}
 	
-	public static String getDepthArg(int depth) {
-		String depthArg = " --depth "; //$NON-NLS-1$
+	public static String getDepthArg(int depth, boolean isStickyDepth) {
+		String depthArg = isStickyDepth ? " --set-depth " : " --depth "; //$NON-NLS-1$
 		if (depth == Depth.EMPTY) {
 			return depthArg + "empty "; //$NON-NLS-1$
 		}
@@ -1266,6 +1266,9 @@ public final class SVNUtility {
 		}
 		if (depth == Depth.UNKNOWN) {
 			return ""; //$NON-NLS-1$
+		}
+		if (depth == Depth.EXCLUDE) {
+			return depthArg + "exclude "; //$NON-NLS-1$
 		}
 		return depthArg + "files "; //$NON-NLS-1$
 	}
