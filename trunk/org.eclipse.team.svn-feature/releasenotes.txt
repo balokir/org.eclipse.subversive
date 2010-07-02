@@ -131,8 +131,7 @@ Version 0.7.9.I20100512-1900 release date: 12 May 2010
 2.1. System Requirements
 
    Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
-    * 3.3 (tested with 3.3.2)
-    * 3.4 (tested with 3.4)
+    * 3.4
     * 3.5
     * 3.6
    
