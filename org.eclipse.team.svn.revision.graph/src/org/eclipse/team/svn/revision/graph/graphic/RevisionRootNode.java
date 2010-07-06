@@ -48,6 +48,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	protected boolean isSimpleMode;
 	protected boolean isIncludeMergeInfo;
+	protected boolean isTruncatePaths;
 	
 	protected NodesFilterManager filterManager;
 		
@@ -75,6 +76,8 @@ public class RevisionRootNode extends ChangesNotifier {
 		this.simpleSetMode(isSimpleMode);
 		
 		this.filter(false);
+		
+		this.truncatePaths();
 	}
 	
 	public List<RevisionNode> getChildren() {
@@ -262,6 +265,32 @@ public class RevisionRootNode extends ChangesNotifier {
 		this.simpleSetMode(isSimpleMode);
 			
 		this.filter(true);
+	}
+	
+	public boolean simpleSetTruncatePaths(boolean isTruncatePaths) {
+		if (this.isTruncatePaths == isTruncatePaths) {
+			return false;
+		}
+		this.isTruncatePaths = isTruncatePaths;
+		return true;
+	}
+	
+	public void setTruncatePaths(final boolean isTruncatePaths) {
+		if (this.simpleSetTruncatePaths(isTruncatePaths)) {
+			this.truncatePaths();
+		}		
+	}
+	
+	protected void truncatePaths() {
+		new TopRightTraverseVisitor.AllNodesVisitor() {
+			protected void visit(RevisionNode node) {			
+				node.setTruncatePath(RevisionRootNode.this.isTruncatePaths);
+			}
+		}.traverse(this.currentStartNode);
+	}
+	
+	public boolean isTruncatePaths() {
+		return this.isTruncatePaths;
 	}
 	
 	public void setIncludeMergeInfo(boolean isIncludeMergeInfo) {

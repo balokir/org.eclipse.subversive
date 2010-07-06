@@ -37,6 +37,9 @@ public class ChangesNotifier {
 	//used by RevisionNode to notify that its merge target connections were changed
 	public final static String REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY = "refreshMergeTargetConnections"; //$NON-NLS-1$
 	
+	//used by RevisionNode to notify that truncate path property was changed
+	public final static String TRUNCATE_NODE_PATH_PROPERTY = "truncateNodePath"; //$NON-NLS-1$
+	
 	protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

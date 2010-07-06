@@ -96,6 +96,9 @@ public class RevisionGraphUtility {
 								RevisionRootNode rootNode = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());
 								rootNode.simpleSetMode(!panel.isShowAllRevisions());
 								rootNode.setIncludeMergeInfo(checkConnectionOp.getRepositoryConnectionInfo().isSupportMergeInfo);
+								//by default paths are truncated
+								boolean isTruncatePaths = true;
+								rootNode.simpleSetTruncatePaths(isTruncatePaths);
 								modelObject = rootNode;
 							} else {
 								modelObject = SVNRevisionGraphMessages.NoData;

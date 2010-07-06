@@ -58,7 +58,7 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 		Iterator<?> iter = this.graphPart.getChildren().iterator();
 		while (iter.hasNext()) {
 			RevisionEditPart editPart = (RevisionEditPart) iter.next();
-			Dimension size = editPart.getRevisionFigure().getPreferredSize(-1, -1);
+			Dimension size = editPart.getRevisionFigure().getPreferredSize(GraphConstants.NODE_WIDTH, -1);
 			RevisionNode node = editPart.getCastedModel();
 			node.setSize(size.width, size.height);
 		}		

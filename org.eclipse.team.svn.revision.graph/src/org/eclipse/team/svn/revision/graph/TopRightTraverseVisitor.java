@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
+
 /**
  * Allow to traverse nodes and visit
  * 
@@ -57,4 +59,17 @@ public abstract class TopRightTraverseVisitor<T extends NodeConnections<T>> {
 	
 	protected abstract void visit(T node);	
 
+	/**
+	 * Traverse all revision nodes even if some nodes filtered or collapsed
+	 */
+	public static abstract class AllNodesVisitor extends TopRightTraverseVisitor<RevisionNode> {
+		@Override
+		protected RevisionNode getNext(RevisionNode node) {
+			return node.internalGetNext();
+		};		
+		@Override
+		protected Collection<RevisionNode> getCopiedToAsCollection(RevisionNode node) {
+			return node.internalGetCopiedToAsCollection();
+		}
+	}
 }
