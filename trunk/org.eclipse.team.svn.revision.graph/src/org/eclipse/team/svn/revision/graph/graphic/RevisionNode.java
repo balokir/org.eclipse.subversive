@@ -37,6 +37,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	protected final ChangesNotifier changesNotifier;		
 	
 	protected boolean isFiltered;
+	protected boolean isTruncatePath;
 	
 	protected boolean isNextCollapsed;
 	protected boolean isPreviousCollapsed;
@@ -270,6 +271,15 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 			data[i] = new NodeMergeData(path, rawData[i].getRevisions());
 		}
 		return data;
+	}
+	
+	public void setTruncatePath(boolean isTruncatePath) {
+		this.isTruncatePath = isTruncatePath;
+		this.changesNotifier.firePropertyChange(ChangesNotifier.TRUNCATE_NODE_PATH_PROPERTY, null, null);
+	}
+	
+	public boolean isTruncatePath() {
+		return this.isTruncatePath;
 	}
 	
 	public void setFiltered(boolean isFiltered) {

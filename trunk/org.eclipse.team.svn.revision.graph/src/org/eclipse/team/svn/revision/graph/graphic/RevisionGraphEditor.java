@@ -249,6 +249,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 								RevisionRootNode modelObject = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());							
 								((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);							
 								modelObject.simpleSetMode(previousModel.isSimpleMode());
+								modelObject.simpleSetTruncatePaths(previousModel.isTruncatePaths());
 								modelObject.setIncludeMergeInfo(previousModel.isIncludeMergeInfo());
 								modelObject.init();			
 														

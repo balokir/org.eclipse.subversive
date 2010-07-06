@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic;
 
-import java.util.Collection;
-
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.graphic.AbstractRevisionNodeFilter.AndRevisionNodeFilter;
 
@@ -33,21 +31,10 @@ public class NodesFilterManager {
 	
 	public void applyFilters(RevisionNode startNode) {
 		final AbstractRevisionNodeFilter filter = this.filters.filters.isEmpty() ? AbstractRevisionNodeFilter.ACCEPT_ALL_FILTER : this.filters;
-		new TopRightTraverseVisitor<RevisionNode>() {
-			
+		new TopRightTraverseVisitor.AllNodesVisitor() {
 			protected void visit(RevisionNode node) {
 				boolean isAccepted = filter.accept(node);
 				node.setFiltered(!isAccepted);
-			}
-			
-			@Override
-			protected RevisionNode getNext(RevisionNode node) {
-				return node.internalGetNext();
-			};
-			
-			@Override
-			protected Collection<RevisionNode> getCopiedToAsCollection(RevisionNode node) {
-				return node.internalGetCopiedToAsCollection();
 			}
 		}.traverse(startNode);
 	}

@@ -26,6 +26,7 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 	protected ChangeModeAction changeModetAction;
 	protected RefreshRevisionGraphAction refreshAction;
 	protected ClearMergesAction clearMergesAction;
+	protected TruncatePathsAction truncatePathsAction;
 	
 	@Override
 	public void setActiveEditor(IEditorPart editor) {
@@ -35,14 +36,17 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 		this.changeModetAction.setActiveEditor(this.editor);
 		this.refreshAction.setActiveEditor(this.editor);
 		this.clearMergesAction.setActiveEditor(this.editor);
+		this.truncatePathsAction.setActiveEditor(this.editor);
 		
 		if (!(this.editor.getModel() instanceof RevisionRootNode)) {
 			this.changeModetAction.setEnabled(false);
 			this.refreshAction.setEnabled(false);
 			this.clearMergesAction.setEnabled(false);
+			this.truncatePathsAction.setEnabled(false);
 		} else {
 			RevisionRootNode rootNode = (RevisionRootNode) this.editor.getModel();
 			this.changeModetAction.setChecked(rootNode.isSimpleMode());
+			this.truncatePathsAction.setChecked(rootNode.isTruncatePaths());
 			
 			//TODO disable clear merges action if there'are no merge lines
 //			if (!rootNode.isIncludeMergeInfo() || !rootNode.hasNodesWithMerges()) {
@@ -63,6 +67,9 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 		
 		this.clearMergesAction = new ClearMergesAction(this.editor);
 		addAction(this.clearMergesAction);
+		
+		this.truncatePathsAction = new TruncatePathsAction(this.editor);
+		addAction(this.truncatePathsAction);
 	}
 	
 	@Override
@@ -70,7 +77,8 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 		super.contributeToToolBar(toolBarManager);
 					
 		toolBarManager.add(this.refreshAction);  
-		toolBarManager.add(this.changeModetAction);  
+		toolBarManager.add(this.changeModetAction);
+		toolBarManager.add(this.truncatePathsAction);
 		toolBarManager.add(this.clearMergesAction);
 		
 		//toolBarManager.add(new Separator());

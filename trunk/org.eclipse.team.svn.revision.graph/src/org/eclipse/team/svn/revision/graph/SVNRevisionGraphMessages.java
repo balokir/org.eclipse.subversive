@@ -54,6 +54,7 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	
 	public static String ShowRevisionGraphAction;
 	public static String ShowRevisionsWithCopiesAction;
+	public static String TruncatePathsAction;
 	public static String CompareWithHeadAction;
 	public static String CompareWithPreviousRevisionAction;
 	public static String RevisionTooltipFigure_Author;

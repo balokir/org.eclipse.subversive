@@ -27,9 +27,6 @@ import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.draw2d.text.FlowPage;
-import org.eclipse.draw2d.text.ParagraphTextLayout;
-import org.eclipse.draw2d.text.TextFlow;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -83,7 +80,7 @@ public class RevisionFigure extends Figure {
 		
 	protected Label revisionFigure;
 	protected Label statusFigure;
-	protected TextFlow pathTextFlow;
+	protected PathFigure pathFigure;
 	protected Label commentFigure;
 		
 	protected Label outgoingMergeLabel;
@@ -171,7 +168,7 @@ public class RevisionFigure extends Figure {
 		GridLayout layout = new GridLayout();		
 		//layout.marginHeight = layout.marginWidth = 2;
 		//layout.horizontalSpacing = layout.verticalSpacing = 3; 		
-		this.setLayoutManager(layout);												
+		this.setLayoutManager(layout);
 							
 		Figure revisionParent = new Figure();
 		this.add(revisionParent);		
@@ -234,19 +231,12 @@ public class RevisionFigure extends Figure {
 		if (this.revisionNode.getAction() == RevisionNodeAction.ADD || 
 			this.revisionNode.getAction() == RevisionNodeAction.COPY ||
 			this.revisionNode.getAction() == RevisionNodeAction.RENAME) {
-			
-			//wrap path using text layout
-			FlowPage pathFlowPageFigure = new FlowPage();
+
+			this.pathFigure = new PathFigure();
 			data = new GridData();
 			data.widthHint = GraphConstants.NODE_WIDTH - 10;
-			data.horizontalAlignment = SWT.CENTER;
-			data.grabExcessHorizontalSpace = true;
-			layout.setConstraint(pathFlowPageFigure, data);
-			
-			this.pathTextFlow = new TextFlow();		
-			this.pathTextFlow.setLayoutManager(new ParagraphTextLayout(this.pathTextFlow, ParagraphTextLayout.WORD_WRAP_SOFT));						
-			pathFlowPageFigure.add(this.pathTextFlow);				
-			this.add(pathFlowPageFigure);			
+			layout.setConstraint(this.pathFigure, data);
+			this.add(this.pathFigure);
 		}									
 		
 		//comment		
@@ -295,8 +285,8 @@ public class RevisionFigure extends Figure {
 		Iterator<?> iter = this.getChildren().iterator();
 		while (iter.hasNext()) {
 			IFigure child = (IFigure) iter.next();
-			//don't change color for comment as it's set for it explicitly
-			if (child != this.commentFigure) {
+			//don't change color for comment, path as it's set for them explicitly
+			if (child != this.commentFigure && child != this.pathFigure) {
 				child.setForegroundColor(this.childrenColor);	
 			}			
 		}
@@ -321,8 +311,14 @@ public class RevisionFigure extends Figure {
 				
 		this.statusFigure.setText(RevisionFigure.getRevisionNodeStatusText(this.revisionNode));
 		
-		if (this.pathTextFlow != null) {
-			this.pathTextFlow.setText(this.path);	
+		if (this.pathFigure != null) {
+			String parentPath = null;
+			RevisionNode copiedFrom = this.revisionNode.getCopiedFrom();
+			if (copiedFrom != null) {
+				parentPath = copiedFrom.getPath();
+			}						
+			this.pathFigure.setShowFullPath(!this.revisionNode.isTruncatePath());
+			this.pathFigure.setPaths(this.path, parentPath);
 		}				
 		
 		if (this.commentFigure != null) {
@@ -372,7 +368,13 @@ public class RevisionFigure extends Figure {
 	public void init() {
 		this.setPreferredSize(GraphConstants.NODE_WIDTH, this.getPreferredSize().height);
 	}
-		
+	
+	public void changeTruncatePath() {		
+		if (this.pathFigure != null) {			
+			this.pathFigure.setShowFullPath(!this.revisionNode.isTruncatePath());
+		}		
+	}
+	
 	public void setSelected(boolean isSelected) {
 		if (isSelected) {
 			this.nodeColor = SELECTED_COLOR;
@@ -380,13 +382,26 @@ public class RevisionFigure extends Figure {
 		} else {
 			this.nodeColor = this.originalNodeColor;
 			this.childrenColor = ColorConstants.black;
-		}		
-		
+		}
+		if (this.pathFigure != null) {
+			this.pathFigure.setSelected(isSelected);
+		}
+
 		this.repaint();
 	}
 	
 	public RevisionNode getRevisionNode() {
 		return this.revisionNode;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.draw2d.Figure#invalidate()
+	 */
+	@Override
+	public void invalidate() {
+		//clear preferred size as path figure can change its bounds depending on truncation mode
+		this.prefSize = null;		
+		super.invalidate();
 	}
 	
 	public static Color getRevisionNodeBorderColor(RevisionNode revisionNode) {
