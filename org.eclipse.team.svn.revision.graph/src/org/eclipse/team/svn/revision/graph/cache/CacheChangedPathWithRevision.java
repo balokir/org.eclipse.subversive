@@ -17,8 +17,8 @@ package org.eclipse.team.svn.revision.graph.cache;
  */
 public class CacheChangedPathWithRevision {
 
-	private final CacheChangedPath changedPath;
-	private long revision;
+	protected final CacheChangedPath changedPath;
+	protected final long revision;
 	
 	public CacheChangedPathWithRevision(CacheChangedPath changedPath, long revision) {
 		this.changedPath = changedPath;

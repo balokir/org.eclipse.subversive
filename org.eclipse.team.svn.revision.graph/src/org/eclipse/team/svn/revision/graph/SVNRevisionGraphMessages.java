@@ -99,6 +99,9 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String ShowRevisionGraphPanel_ShowAllRevisions;
 	public static String ShowRevisionGraphPanel_ShowMergeInfo;
 	public static String ShowRevisionGraphPanel_Title;
+	public static String ShowRevisionGraphPanel_RevisionDefault;
+	public static String ShowRevisionGraphPanel_FromRevision;
+	public static String ShowRevisionGraphPanel_ToRevision;
 	public static String SVNTeamRevisionGraphPage_SkipErrors;
 	public static String CheckRepositoryConnectionOperation_MergeNotSupported;
 	public static String RevisionFigure_Merges;

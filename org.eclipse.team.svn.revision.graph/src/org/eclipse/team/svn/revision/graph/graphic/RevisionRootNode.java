@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
@@ -49,6 +50,8 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected boolean isSimpleMode;
 	protected boolean isIncludeMergeInfo;
 	protected boolean isTruncatePaths;
+	protected SVNRevision fromRevision;
+	protected SVNRevision toRevision; 
 	
 	protected NodesFilterManager filterManager;
 		
@@ -281,6 +284,19 @@ public class RevisionRootNode extends ChangesNotifier {
 		}		
 	}
 	
+	public void setRevisionsRange(SVNRevision fromRevision, SVNRevision toRevision) {
+		this.fromRevision = fromRevision;
+		this.toRevision = toRevision;
+	}
+	
+	public SVNRevision getFromRevision() {
+		return this.fromRevision;
+	}
+	
+	public SVNRevision getToRevision() {
+		return this.toRevision;
+	}
+	
 	protected void truncatePaths() {
 		new TopRightTraverseVisitor.AllNodesVisitor() {
 			protected void visit(RevisionNode node) {			
@@ -376,7 +392,7 @@ public class RevisionRootNode extends ChangesNotifier {
 		this.changeModel(new RevisionModelOperation() {
 			public void run() {
 				//apply filter to the whole model
-				filterManager.applyFilters(initialStartNode);
+				filterManager.applyFilters(initialStartNode, currentStartNode);
 						
 				/*
 				 * if there are no nodes after filtering, just show nothing in graph.
