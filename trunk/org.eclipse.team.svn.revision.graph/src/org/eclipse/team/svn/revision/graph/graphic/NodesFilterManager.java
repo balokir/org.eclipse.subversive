@@ -29,14 +29,19 @@ public class NodesFilterManager {
 		this.filters.removeFilter(filter);
 	}
 	
-	public void applyFilters(RevisionNode startNode) {
+	public void applyFilters(RevisionNode initialStartNode, final RevisionNode currectStartNode) {
 		final AbstractRevisionNodeFilter filter = this.filters.filters.isEmpty() ? AbstractRevisionNodeFilter.ACCEPT_ALL_FILTER : this.filters;
 		new TopRightTraverseVisitor.AllNodesVisitor() {
 			protected void visit(RevisionNode node) {
-				boolean isAccepted = filter.accept(node);
-				node.setFiltered(!isAccepted);
+				//don't filter out current start node
+				if (node == currectStartNode) {
+					node.setFiltered(false);
+				} else {
+					boolean isAccepted = filter.accept(node);
+					node.setFiltered(!isAccepted);
+				}
 			}
-		}.traverse(startNode);
+		}.traverse(initialStartNode);
 	}
 
 }

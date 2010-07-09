@@ -260,7 +260,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 		doShowGraph(first);
 	}
 	
-	protected static <T extends NodeConnections<T>> void doShowGraph(T node) {				
+	public static <T extends NodeConnections<T>> void doShowGraph(T node) {				
 		List<T> nextNodes = new ArrayList<T>();
 		
 		System.out.println();
@@ -293,21 +293,21 @@ public class NodeConnections<T extends NodeConnections<T>>{
 		}
 	}
 	
-//	protected void showChain(NodeWithConnections node) {
-//		StringBuffer str = new StringBuffer();
-//		NodeWithConnections start = node;
-//		while (true) {
-//			NodeWithConnections prev = start.getPrevious();
-//			if (prev == null) {
-//				break;
-//			} else {
-//				start = prev;
-//			}
-//		}		
-//		while (start != null) {
-//			str.append(start).append("\r\n");
-//			start = start.getNext();
-//		}
-//		System.out.println(str);
-//	}
+	public static <T extends NodeConnections<T>> void showChain(T node) {
+		StringBuffer str = new StringBuffer();
+		T start = node;
+		while (true) {
+			T prev = start.getPrevious();
+			if (prev == null) {
+				break;
+			} else {
+				start = prev;
+			}
+		}		
+		while (start != null) {
+			str.append(start).append("\r\n"); //$NON-NLS-1$
+			start = start.getNext();
+		}
+		System.out.println(str);
+	}
 }

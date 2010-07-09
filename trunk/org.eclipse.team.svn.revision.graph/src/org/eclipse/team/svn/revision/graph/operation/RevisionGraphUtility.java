@@ -61,7 +61,7 @@ public class RevisionGraphUtility {
 		}
 		
 		//show dialog with options		
-		final ShowRevisionGraphPanel panel = new ShowRevisionGraphPanel();
+		final ShowRevisionGraphPanel panel = new ShowRevisionGraphPanel(resource);
 		DefaultDialog rDlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
 		if (rDlg.open() != 0) {
 			return null;
@@ -78,6 +78,7 @@ public class RevisionGraphUtility {
 				
 		//create model
 		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, createCacheOp);
+		createModelOp.setRevisionsRange(panel.getFromRevision(), panel.getToRevision());
 		op.add(createModelOp, new IActionOperation[] {createCacheOp} );
 		
 		//add merge info
@@ -99,6 +100,7 @@ public class RevisionGraphUtility {
 								//by default paths are truncated
 								boolean isTruncatePaths = true;
 								rootNode.simpleSetTruncatePaths(isTruncatePaths);
+								rootNode.setRevisionsRange(panel.getFromRevision(), panel.getToRevision());
 								modelObject = rootNode;
 							} else {
 								modelObject = SVNRevisionGraphMessages.NoData;

@@ -231,6 +231,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		
 		//create model
 		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, updateCacheOp);
+		createModelOp.setRevisionsRange(previousModel.getFromRevision(), previousModel.getToRevision());
 		op.add(createModelOp, new IActionOperation[]{updateCacheOp});	
 		
 		//add merge info
@@ -251,6 +252,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 								modelObject.simpleSetMode(previousModel.isSimpleMode());
 								modelObject.simpleSetTruncatePaths(previousModel.isTruncatePaths());
 								modelObject.setIncludeMergeInfo(previousModel.isIncludeMergeInfo());
+								modelObject.setRevisionsRange(previousModel.getFromRevision(), previousModel.getToRevision());
 								modelObject.init();			
 														
 								viewer.setContents(modelObject);	

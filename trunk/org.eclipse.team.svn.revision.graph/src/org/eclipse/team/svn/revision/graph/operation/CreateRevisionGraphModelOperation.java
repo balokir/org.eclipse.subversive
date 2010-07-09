@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.connector.SVNLogPath.ChangeType;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
@@ -44,10 +45,16 @@ import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
  * @author Igor Burilo
  */
 public class CreateRevisionGraphModelOperation extends AbstractActionOperation {	
+		
+	//flag to enable/disable debug
+	protected final static boolean DEBUG = false;
 	
 	protected IRepositoryResource resource;	
 	protected IRepositoryCacheProvider cacheProvider;
 	protected RepositoryCache repositoryCache;
+	//if revisions are null then there're no restrictions. Both revisions are inclusive
+	protected SVNRevision fromRevision;
+	protected SVNRevision toRevision;
 	
 	protected PathRevisionConnectionsValidator pathRevisionValidator;
 	
@@ -59,6 +66,20 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		this.cacheProvider = cacheProvider;
 	}
 	
+	/**
+	 * Precondition: fromRevision is less or equal to toRevision
+	 */
+	public void setRevisionsRange(SVNRevision fromRevision, SVNRevision toRevision) {
+		if (!(fromRevision == null || fromRevision.getKind() == SVNRevision.Kind.NUMBER || fromRevision.getKind() == SVNRevision.Kind.DATE)) {
+			throw new IllegalArgumentException("Unexpected revision kind for start revision: " + fromRevision.getKind()); //$NON-NLS-1$
+		}
+		if (!(toRevision == null || toRevision.getKind() == SVNRevision.Kind.NUMBER || toRevision.getKind() == SVNRevision.Kind.DATE)) {
+			throw new IllegalArgumentException("Unexpected revision kind for end revision: " + toRevision.getKind()); //$NON-NLS-1$
+		}		
+		this.fromRevision = fromRevision;
+		this.toRevision = toRevision;		
+	}
+	
 	@Override
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		this.repositoryCache = this.cacheProvider.getRepositoryCache();	
@@ -66,7 +87,11 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		this.pathRevisionValidator = new PathRevisionConnectionsValidator(this.repositoryCache);
 		
 		TimeMeasure processMeasure = new TimeMeasure("Create model"); //$NON-NLS-1$
-							
+			
+		if (DEBUG) {
+			System.out.println("Create revision graph model. From revision: " + this.fromRevision + ", to revision: " + this.toRevision); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 		String url = this.resource.getUrl();
 		String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
 	
@@ -87,11 +112,14 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		
 		CacheRevision entry = this.findStartLogEntry(revision, pathIndex);
 		if (entry != null) {
-			this.resultNode = this.createRevisionNode(entry, pathIndex, false);	
-									
-			this.createRevisionGraph(this.resultNode, monitor);
+			PathRevision node = this.createRevisionNode(entry, pathIndex, false);
+			this.createRevisionGraph(node, monitor);
 		}									
 				
+		if (DEBUG) {
+			System.out.println("Result start node: " + this.resultNode); //$NON-NLS-1$
+		}
+		
 		processMeasure.end();
 	}
 	
@@ -102,20 +130,31 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		Queue<PathRevision> nodesQueue = new LinkedList<PathRevision>();
 		nodesQueue.offer(startNode);		
 		PathRevision node;
+		//check revisions range only for called resource, i.e. for start node
+		boolean isCheckRevisionsRange = true;
 		while ((node = nodesQueue.poll()) != null) {
 			
 			if (monitor.isCanceled()) {
 				throw new ActivityCancelledException();
 			}
 						
-			this.createRevisionsChainForPath(node);									
+			PathRevision nodeFromChain = this.createRevisionsChainForPath(node, isCheckRevisionsRange);
+			if (isCheckRevisionsRange) {
+				this.resultNode = node = nodeFromChain;
+				if (this.resultNode == null) {
+					//none nodes match to revisions range
+					return;
+				}
+			}
 			
 			/*
 			 * For current revision chain build map of nodes, where key is a node from chain and
 			 * value is a list of nodes to which key is copied to
 			 */
-			Map<PathRevision, List<PathRevision>> copiedToEntries = this.findCopiedToNodesInRevisionChain(node);
-						
+			Map<PathRevision, List<PathRevision>> copiedToEntries = this.findCopiedToNodesInRevisionChain(node, isCheckRevisionsRange);
+			
+			isCheckRevisionsRange = false;
+			
 			if (!copiedToEntries.isEmpty()) {
 				for (Map.Entry<PathRevision, List<PathRevision>> mapEntries : copiedToEntries.entrySet()) {
 					PathRevision revisionNode = mapEntries.getKey();		
@@ -136,17 +175,27 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 								node.insertNodeInRevisionsChain(revisionNode);
 							}
 							
+							if (DEBUG) { 
+								System.out.println(revisionNode.toString(this.repositoryCache) + " copy to: " + copyToNode.toString(this.repositoryCache)); //$NON-NLS-1$
+							}
+							
 							revisionNode.addCopiedTo(copyToNode);
 							nodesQueue.add(copyToNode);
 						}				
 					}																														
 				}				
 			}				
-					
+				
+			//copied from
 			PathRevision startNodeInChain = node.getStartNodeInChain();
 			if (startNodeInChain.getCopiedFrom() == null) {				
 				PathRevision copyFromNode = this.findCopiedFromNode(startNodeInChain);
 				if (copyFromNode != null) {
+					
+					if (DEBUG) {
+						System.out.println(startNodeInChain.toString(this.repositoryCache) + " copied from: " + copyFromNode.toString(this.repositoryCache)); //$NON-NLS-1$
+					}
+					
 					startNodeInChain.setCopiedFrom(copyFromNode);	
 					nodesQueue.add(copyFromNode);					
 				} 	
@@ -154,64 +203,143 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		}				
 	}
 
-	/*
+	/**
 	 * Create chain of revision, starting from start revision (action is 'added' or 'copied') to
-	 * end revision (action is 'deleted', 'replaced', 'renamed' or last revision) 
+	 * end revision (action is 'deleted', 'replaced', 'renamed' or last revision).
+	 * 
+	 * @param  isCheckRevisionsRange	option whether to check revisions range
+	 * @return revision node from chain. If don't check revisions range then passed node is returned.
+	 * 		   If check revisions range then return start node in revisions chain, if there're no revision nodes
+	 * 		   which match to revisions range then return null.
 	 */
-	protected void createRevisionsChainForPath(PathRevision node) {		
-		if (!this.isDeletedNode(node)) {
-			//go forward
-			long rev = node.getRevision();
-			PathRevision processNode = node;
-			while (true) {
-				if (++ rev <= this.repositoryCache.getLastProcessedRevision()) {
-					CacheRevision entry = this.getEntry(rev);
-					if (entry != null) {
-						PathRevision nextNode = this.createRevisionNode(entry, node.getPathIndex(), true);
-						//not modified nodes are not included in chain
-						if (nextNode.action != RevisionNodeAction.NONE) {
-							//'rename' stops processing 
-							if (nextNode.action == RevisionNodeAction.RENAME) {
-								break;
-							}							
-							processNode.setNext(nextNode);							
-							if (this.isDeletedNode(nextNode)) {
-								break;
+	protected PathRevision createRevisionsChainForPath(PathRevision node, boolean isCheckRevisionsRange) {
+		if (DEBUG) {
+			System.out.println("Create revisions chain for node. Is check revisions range: " + isCheckRevisionsRange + ", " + node.toString(this.repositoryCache)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		int nodePath = node.getPathIndex();
+		long nodeRevision = node.getRevision();
+		PathRevision result = node;
+		//if node isn't in revisions range then make result as null
+		if (isCheckRevisionsRange && (this.compareRevisions(node, this.fromRevision, true) < 0 || this.compareRevisions(node, this.toRevision, false) > 0)) {
+			result = null;			
+		}
+				
+		if (!this.isDeletedNode(node) && (isCheckRevisionsRange ? this.compareRevisions(node, this.toRevision, false) < 0 : true)) {
+			//go top
+			long rev = nodeRevision;
+			PathRevision processNode = result;
+			while (++ rev <= this.repositoryCache.getLastProcessedRevision()) {
+				CacheRevision entry = this.getEntry(rev);
+				if (entry != null) {
+					PathRevision nextNode = this.createRevisionNode(entry, nodePath, true);
+					
+					//check if we're in revisions range
+					if (isCheckRevisionsRange) {
+						if (this.compareRevisions(nextNode, this.toRevision, false) > 0) {
+							if (DEBUG) { 
+								System.out.println("Limit by go to top: " + nextNode.getRevision()); //$NON-NLS-1$
 							}
-							processNode = nextNode;
-						}						
+							break;
+						}
+						if (this.compareRevisions(nextNode, this.fromRevision, true) < 0) {
+							continue;
+						}
 					}
-				} else {
-					break;
-				}								
+					
+					//not modified nodes are not included in chain
+					if (nextNode.action != RevisionNodeAction.NONE) {
+						//'rename' stops processing 
+						if (nextNode.action == RevisionNodeAction.RENAME) {
+							break;
+						}		
+						
+						if (processNode != null) {
+							processNode.setNext(nextNode);
+						} else {
+							result = nextNode;
+						}
+						
+						if (this.isDeletedNode(nextNode)) {
+							break;
+						}
+						processNode = nextNode;
+					}
+				}
 			}						
 		}
 		
-		if (!this.isCreatedNode(node)) {
-			//go back
-			long rev = node.getRevision();
-			PathRevision processNode = node;
-			while (true) {
-				if (-- rev > 0) {
-					CacheRevision entry = this.getEntry(rev);
-					if (entry != null) {
-						PathRevision prevNode = this.createRevisionNode(entry, node.getPathIndex(), false);
-						//not modified nodes are not included in chain
-						if (prevNode.action != RevisionNodeAction.NONE) {
-							processNode.setPrevious(prevNode);
-							if (this.isCreatedNode(prevNode)) {
-								break;
+		if (!this.isCreatedNode(node) && (isCheckRevisionsRange ? this.compareRevisions(node, this.fromRevision, true) > 0 : true)) {
+			//go bottom
+			long rev = nodeRevision;
+			PathRevision processNode = result;
+			while (-- rev > 0) {
+				CacheRevision entry = this.getEntry(rev);
+				if (entry != null) {
+					PathRevision prevNode = this.createRevisionNode(entry, nodePath, false);
+					
+					//check if we're in revisions range
+					if (isCheckRevisionsRange) {		
+						if (this.compareRevisions(prevNode, this.fromRevision, true) < 0) { 
+							if (DEBUG) {
+								System.out.println("Limit by go to bottom: " + prevNode.getRevision()); //$NON-NLS-1$
 							}
-							processNode = prevNode;
+							break;
+						}
+						if (this.compareRevisions(prevNode, this.toRevision, false) > 0) {
+							continue;
 						}
 					}					
-				} else {
-					break;
+					
+					//not modified nodes are not included in chain
+					if (prevNode.action != RevisionNodeAction.NONE) {
+						if (processNode != null) {
+							processNode.setPrevious(prevNode);
+						} else {
+							result = prevNode;
+						}
+						
+						if (this.isCreatedNode(prevNode)) {
+							break;
+						}
+						processNode = prevNode;
+					}
 				}
 			}
+			
+			if (isCheckRevisionsRange && result != null && this.compareRevisions(node, this.toRevision, true) > 0) {
+				result = result.getStartNodeInChain();
+			}
+		}				
+		
+		if (DEBUG) {
+			if (result != null) {
+				System.out.println("Result chain:"); //$NON-NLS-1$
+				NodeConnections.showChain(result);	
+			} else {
+				System.out.println("Chain is null"); //$NON-NLS-1$
+			}			
 		}
+		
+		return result;
 	}
 		
+	protected int compareRevisions(PathRevision node, SVNRevision revision, boolean isFromRevision) {
+		if (revision == null) {
+			return isFromRevision ? 1 : -1;
+		}
+		if (revision.getKind() == SVNRevision.Kind.NUMBER) {
+			long revNumber = ((SVNRevision.Number) revision).getNumber();
+			return node.getRevision() < revNumber ? -1 : (node.getRevision() > revNumber ? 1 : 0);							
+		}
+		if (revision.getKind() == SVNRevision.Kind.DATE) {
+			long revDate = ((SVNRevision.Date) revision).getDate();
+			return node.getDate() < revDate ? -1 : (node.getDate() > revDate ? 1 : 0);
+		}
+		//should never happen
+		return 0;		
+	}
+	
 	protected boolean isCreatedNode(PathRevision node) {
 		return 
 			node.action == RevisionNodeAction.ADD || 
@@ -299,7 +427,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		}
 	}
 	
-	protected Map<PathRevision, List<PathRevision>> findCopiedToNodesInRevisionChain(PathRevision node) {
+	protected Map<PathRevision, List<PathRevision>> findCopiedToNodesInRevisionChain(PathRevision node, boolean isCheckRevisionsRange) {
 		Map<PathRevision, List<PathRevision>> copyToMap = new HashMap<PathRevision, List<PathRevision>>();					
 		
 		//find path and revisions range for it [start - end]			
@@ -348,6 +476,14 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 						CacheRevision copyFromEntry = this.getEntry(changedPath.getCopiedFromRevision());
 						if (copyFromEntry != null) {									
 							copyFromNode = this.createRevisionNode(copyFromEntry, node.getPathIndex(), false);
+							
+							//check revisions range
+							if (isCheckRevisionsRange && this.compareRevisions(copyFromNode, this.toRevision, false) > 0) {
+								if (DEBUG) {
+									System.out.println("Filter copy from node: " + copyFromNode); //$NON-NLS-1$
+								}
+								copyFromNode = null;
+							}
 						}																
 					}
 					
