@@ -116,6 +116,13 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String MergeLogEntryCallback_Progress;
 	public static String BaseFetchOperation_SkipMessage;
 	public static String BaseFetchOperation_RetryMessage;
+	public static String FindRevisionNodeDialog_Close;
+	public static String FindRevisionNodeDialog_Find;
+	public static String FindRevisionNodeDialog_Next;
+	public static String FindRevisionNodeDialog_NotFound;
+	public static String FindRevisionNodeDialog_Path;
+	public static String FindRevisionNodeDialog_Previous;
+	public static String FindRevisionNodeDialog_Revision;
 	
 	static {
 		//load message values from bundle file
