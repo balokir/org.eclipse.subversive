@@ -248,14 +248,10 @@ public class RevisionGraphEditor extends GraphicalEditor {
 							Control control = null;
 							if (viewer != null && (control = viewer.getControl()) != null && !control.isDisposed()) {								
 								RevisionRootNode modelObject = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());							
-								((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);							
-								modelObject.simpleSetMode(previousModel.isSimpleMode());
-								modelObject.simpleSetTruncatePaths(previousModel.isTruncatePaths());
-								modelObject.setIncludeMergeInfo(previousModel.isIncludeMergeInfo());
-								modelObject.setRevisionsRange(previousModel.getFromRevision(), previousModel.getToRevision());
-								modelObject.init();			
-														
-								viewer.setContents(modelObject);	
+								((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);
+								previousModel.refresh(modelObject);
+								modelObject.init();
+								viewer.setContents(modelObject);
 							}																													
 						}			
 					});	

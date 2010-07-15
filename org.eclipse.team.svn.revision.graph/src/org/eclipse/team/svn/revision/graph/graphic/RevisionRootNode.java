@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -556,5 +557,45 @@ public class RevisionRootNode extends ChangesNotifier {
 		});					
 		
 		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);		
+	}
+		
+	public void refresh(RevisionRootNode newRootNode) {
+		newRootNode.simpleSetMode(this.isSimpleMode());
+		newRootNode.simpleSetTruncatePaths(this.isTruncatePaths());
+		newRootNode.setIncludeMergeInfo(this.isIncludeMergeInfo());
+		newRootNode.setRevisionsRange(this.getFromRevision(), this.getToRevision());
+		
+		this.firePropertyChange(ChangesNotifier.REFRESH_NODES_PROPERTY, this, newRootNode);
+	}
+	
+	/**
+	 * Search currently active, i.e. not filtered and collapsed, revision nodes.
+	 * Either revision or path must be specified. If path is specified then node
+	 * matches if its path contains any part of the search path. 
+	 */
+	public RevisionNode[] search(final SearchOptions options) {
+		if (options == null) {
+			throw new NullPointerException("Search options"); //$NON-NLS-1$
+		}
+		if (options.revision == -1 && options.path == null) {
+			throw new IllegalArgumentException("Either revision or path should be specified"); //$NON-NLS-1$
+		}
+		
+		final List<RevisionNode> result = new ArrayList<RevisionNode>();
+		//case insensitive
+		final Pattern pattern = options.path != null ? Pattern.compile(Pattern.quote(options.path), Pattern.CASE_INSENSITIVE) : null;
+		new TopRightTraverseVisitor<RevisionNode>() {
+			protected void visit(RevisionNode node) {
+				if (options.revision != -1 && node.getRevision() != options.revision) {
+					return;
+				}
+				//TODO improvement: don't check paths for nodes in the same chain								
+				if (options.path != null && !pattern.matcher(node.getPath()).find()) {
+					return;
+				}
+				result.add(node);
+			}			
+		}.traverse(this.currentStartNode);
+		return result.toArray(new RevisionNode[0]);
 	}
 }

@@ -25,6 +25,9 @@ public class ChangesNotifier {
 	//used by RevisionRootNode to notify that nodes expanded/collapsed
 	public final static String EXPAND_COLLAPSE_NODES_PROPERTY = "expandCollapseNodes"; //$NON-NLS-1$
 	
+	//used by RevisionRootNode to notify that model was refreshed
+	public final static String REFRESH_NODES_PROPERTY = "refreshNodes"; //$NON-NLS-1$
+	
 	//used by RevisionNode to notify that expanded/collapsed was called on node
 	public final static String EXPAND_COLLAPSE_ON_NODE_PROPERTY = "expandCollapseOnNode"; //$NON-NLS-1$
 	

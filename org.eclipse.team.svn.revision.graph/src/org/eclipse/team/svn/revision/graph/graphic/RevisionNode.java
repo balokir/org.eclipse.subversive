@@ -56,6 +56,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	protected LinkedHashSet<MergeConnectionNode> outgoingMergeConnections = new LinkedHashSet<MergeConnectionNode>();
 	protected LinkedHashSet<MergeConnectionNode> incomingMergeConnections = new LinkedHashSet<MergeConnectionNode>();	
+
+	protected String path;
 	
 	public RevisionNode(PathRevision pathRevision, RevisionRootNode rootNode) {
 		this.pathRevision = pathRevision;
@@ -214,7 +216,10 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	//--- Accessors
 	
 	public String getPath() {
-		return this.rootNode.getRepositoryCache().getPathStorage().getPath(this.pathRevision.getPathIndex());
+		if (this.path == null) {
+			this.path = this.rootNode.getRepositoryCache().getPathStorage().getPath(this.pathRevision.getPathIndex());
+		}
+		return this.path;
 	}
 	
 	public ReviosionNodeType getType() {
