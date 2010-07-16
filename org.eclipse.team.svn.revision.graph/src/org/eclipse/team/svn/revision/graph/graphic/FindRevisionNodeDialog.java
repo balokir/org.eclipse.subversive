@@ -13,9 +13,9 @@ package org.eclipse.team.svn.revision.graph.graphic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Viewport;
@@ -58,7 +58,7 @@ public class FindRevisionNodeDialog extends Dialog {
 	protected RevisionGraphEditor graphEditor;
 	
 	protected SearchOptions searchOptions;
-	protected NodesIterator<RevisionEditPart> searchResult;	
+	protected List<RevisionEditPart> searchResult;	
 
 	protected Label statusLabel;
 	protected Combo revisionCombo;
@@ -68,6 +68,26 @@ public class FindRevisionNodeDialog extends Dialog {
 	
 	protected UserInputHistory pathHistory;
 	protected UserInputHistory revisionHistory;	
+	
+	//sort nodes by location on graph starting from left bottom
+	protected final static Comparator<RevisionEditPart> nodesComparator = new Comparator<RevisionEditPart>() {
+		public int compare(RevisionEditPart r1, RevisionEditPart r2) {		
+			org.eclipse.draw2d.geometry.Rectangle b1 = r1.getFigure().getBounds();
+			org.eclipse.draw2d.geometry.Rectangle b2 = r2.getFigure().getBounds();										
+			
+			int y1 = b1.y + b1.height;
+			int y2 = b2.y + b2.height;
+			
+			int x1 = b1.x;
+			int x2 = b2.x;
+			
+			int result = y1 < y2 ? 1 : (y1 > y2 ? -1 : 0);										
+			if (result == 0) {
+				result = x1 < x2 ? -1 : (x1 > x2 ? 1 : 0);
+			}
+			return result;
+		}		
+	};
 	
 	public FindRevisionNodeDialog(Shell shell) {
 		super(shell);							
@@ -289,14 +309,15 @@ public class FindRevisionNodeDialog extends Dialog {
 			this.graphEditor = graphEditor;			
 			this.validate();
 			
-			//reset search data
-			this.searchOptions = null;
-			this.searchResult = null;
+			this.resetSearchData();
 		}
 	}
 	
 	public void changeGraphModel() {						
-		//reset search data
+		this.resetSearchData();
+	}
+	
+	protected void resetSearchData() {
 		this.searchOptions = null;
 		this.searchResult = null;
 	}
@@ -310,22 +331,54 @@ public class FindRevisionNodeDialog extends Dialog {
 	}
 	
 	protected void find(boolean goNext) {			
-		this.doFind();	
+		this.doFind();
 		
-		if (goNext) {
-			if (this.searchResult.hasNext()) {
-				RevisionEditPart editPart = this.searchResult.next();
-				this.showResult(editPart);
-			} else {
-				this.showNoResults();
+		//navigate: track selection and show result relative to it
+		if (!this.searchResult.isEmpty()) {
+			//find selection
+			RevisionEditPart selection = null;
+			List rawSelectedParts = this.graphEditor.getViewer().getSelectedEditParts();
+			if (!rawSelectedParts.isEmpty()) {
+				List<RevisionEditPart> selectedParts = new ArrayList<RevisionEditPart>();			
+				Iterator iter = rawSelectedParts.iterator();
+				while (iter.hasNext()) {
+					Object raw = iter.next();
+					if (raw instanceof RevisionEditPart) {
+						selectedParts.add((RevisionEditPart) raw);
+					}
+				}
+				if (!selectedParts.isEmpty()) {
+					Collections.sort(selectedParts, nodesComparator);
+					selection = goNext ? selectedParts.get(0) : selectedParts.get(selectedParts.size() - 1);	
+				}			
 			}
+			
+			//navigate
+			int resultIndex;
+			if (selection != null) {
+				int selectionIndex = Collections.binarySearch(this.searchResult, selection, nodesComparator);																
+				if (selectionIndex >= 0) {
+					//exact match
+					resultIndex = goNext ? (selectionIndex - 1) : (selectionIndex + 1);
+				} else {
+					selectionIndex = -(selectionIndex + 1);
+					resultIndex = goNext ? (selectionIndex - 1) : selectionIndex;
+				}
+				
+				//check if index in bounds
+				if (resultIndex == -1) {
+					resultIndex = this.searchResult.size() - 1;
+				} else if (resultIndex == this.searchResult.size()) {
+					resultIndex = 0;
+				} 
+			} else {
+				resultIndex = goNext ? (this.searchResult.size() - 1) : 0; 
+			}
+			
+			RevisionEditPart result = this.searchResult.get(resultIndex);
+			this.showResult(result);
 		} else {
-			if (this.searchResult.hasPrevious()) {
-				RevisionEditPart editPart = this.searchResult.previous();
-				this.showResult(editPart);
-			} else {
-				this.showNoResults();
-			}
+			this.showNoResults();
 		}			
 	}
 
@@ -342,34 +395,16 @@ public class FindRevisionNodeDialog extends Dialog {
 			RevisionNode[] nodes = rootNode.search(newOptions);
 			
 			Map editPartRegistry = this.graphEditor.getViewer().getEditPartRegistry();			
-			List<RevisionEditPart> result = new ArrayList<RevisionEditPart>();
+			this.searchResult = new ArrayList<RevisionEditPart>();
 			for (RevisionNode node : nodes) {
 				RevisionEditPart editPart = (RevisionEditPart) editPartRegistry.get(node);
 				if (editPart != null) {
-					result.add(editPart);
+					this.searchResult.add(editPart);
 				}
-			}			
+			}		
 			
-			//sort nodes by location on graph starting from left bottom
-			Collections.sort(result, new Comparator<RevisionEditPart>() {
-				public int compare(RevisionEditPart r1, RevisionEditPart r2) {
-					org.eclipse.draw2d.geometry.Rectangle b1 = r1.getFigure().getBounds();
-					org.eclipse.draw2d.geometry.Rectangle b2 = r2.getFigure().getBounds();										
-					
-					int y1 = b1.y + b1.height;
-					int y2 = b2.y + b2.height;
-					
-					int x1 = b1.x;
-					int x2 = b2.x;
-					
-					int result = y1 < y2 ? 1 : (y1 > y2 ? -1 : 0);										
-					if (result == 0) {
-						result = x1 < x2 ? -1 : (x1 > x2 ? 1 : 0);
-					}
-					return result;
-				}
-			});								
-			this.searchResult = new NodesIterator<RevisionEditPart>(result);
+			//sort			
+			Collections.sort(this.searchResult, nodesComparator);
 		}
 	}
 	
@@ -468,51 +503,4 @@ public class FindRevisionNodeDialog extends Dialog {
 		return str;
 	}
 	
-	/**
-	 * Iterate through revision nodes forward and backward.
-	 * We can't use ListIterator because calls in order to next and
-	 * previous return the same element
-	 */
-	protected static class NodesIterator<T> {
-		
-		protected List<T> list;
-		protected int position;
-		
-		public NodesIterator(List<T> list) {
-			this(list, -1);
-		}
-		
-		public NodesIterator(List<T> list, int position) {
-			if (position < -1 || position > list.size()) {
-				throw new IllegalArgumentException("Position: " + position); //$NON-NLS-1$
-			}			
-			this.list = list;
-			this.position = position;
-		}
-		
-		public boolean hasNext() {
-			return this.position + 1 < this.list.size();							
-		}
-		
-		public T next() {
-			try {
-				return this.list.get(++ this.position);
-			} catch (IndexOutOfBoundsException e) {
-				throw new NoSuchElementException();
-			}
-		}
-		
-		public boolean hasPrevious() {
-			return this.position -1 >= 0;
-		}
-		
-		public T previous() {
-			try {
-				return this.list.get(-- this.position);
-			} catch (IndexOutOfBoundsException e) {
-				throw new NoSuchElementException();
-			}
-		}
-	}
-
 }
