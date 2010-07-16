@@ -123,6 +123,8 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String FindRevisionNodeDialog_Path;
 	public static String FindRevisionNodeDialog_Previous;
 	public static String FindRevisionNodeDialog_Revision;
+	public static String FindRevisionNodeAction_Text;
+	public static String FindRevisionNodeAction_Tooltip;
 	
 	static {
 		//load message values from bundle file

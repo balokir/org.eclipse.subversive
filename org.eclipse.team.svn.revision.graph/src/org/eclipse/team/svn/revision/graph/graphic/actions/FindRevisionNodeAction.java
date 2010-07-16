@@ -16,6 +16,8 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
 import org.eclipse.team.svn.revision.graph.graphic.FindRevisionNodeDialog;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor;
@@ -184,8 +186,11 @@ public class FindRevisionNodeAction extends Action {
 	}
 	
 	protected void init() {
-		setId(ActionFactory.FIND.getId());		
 		//TODO redefine action name from 'Find/Replace' to 'Find'
+		this.setId(ActionFactory.FIND.getId());
+		this.setText(SVNRevisionGraphMessages.FindRevisionNodeAction_Text);
+		this.setToolTipText(SVNRevisionGraphMessages.FindRevisionNodeAction_Tooltip);
+		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/search.gif")); //$NON-NLS-1$				
 	}
 	
 	public void setActiveEditor(IEditorPart editor) {
