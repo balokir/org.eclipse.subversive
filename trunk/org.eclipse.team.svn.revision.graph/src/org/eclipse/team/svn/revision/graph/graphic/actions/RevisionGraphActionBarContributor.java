@@ -96,6 +96,7 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 		toolBarManager.add(this.changeModetAction);
 		toolBarManager.add(this.truncatePathsAction);
 		toolBarManager.add(this.clearMergesAction);
+		toolBarManager.add(this.findAction);
 		
 		//toolBarManager.add(new Separator());
 			
