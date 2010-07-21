@@ -70,6 +70,7 @@ public class RevisionTooltipFigure extends Figure {
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.verticalSpacing = 0;
 		parent.setLayoutManager(layout);
 		
 		this.pathText = new Label();
@@ -80,7 +81,15 @@ public class RevisionTooltipFigure extends Figure {
 		data.horizontalSpan = 2;
 		layout.setConstraint(this.pathText, data);
 		this.pathText.setFont(boldFont);
-				
+										
+		final int blankSpacing = 5;
+		Figure blankFigure = new Figure();
+		data = new GridData();
+		data.horizontalSpan = 2;
+		data.heightHint = blankSpacing;
+		layout.setConstraint(blankFigure, data);
+		parent.add(blankFigure);				
+		
 		//author
 		Label authorLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_Author);
 		parent.add(authorLabel);
@@ -118,6 +127,13 @@ public class RevisionTooltipFigure extends Figure {
 		
 		//incoming merge
 		if (this.revisionNode.hasIncomingMerges()) {
+			blankFigure = new Figure();
+			data = new GridData();
+			data.horizontalSpan = 2;
+			data.heightHint = blankSpacing;
+			layout.setConstraint(blankFigure, data);
+			parent.add(blankFigure);
+			
 			Label mergedFromLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_IncomingMerge);
 			parent.add(mergedFromLabel);
 			data = new GridData();
@@ -138,6 +154,13 @@ public class RevisionTooltipFigure extends Figure {
 		
 		//outgoing merge
 		if (this.revisionNode.hasOutgoingMerges()) {
+			blankFigure = new Figure();
+			data = new GridData();
+			data.horizontalSpan = 2;
+			data.heightHint = blankSpacing;
+			layout.setConstraint(blankFigure, data);
+			parent.add(blankFigure);
+			
 			Label mergedToLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_OutgoingMerge);
 			parent.add(mergedToLabel);
 			data = new GridData();
@@ -157,6 +180,13 @@ public class RevisionTooltipFigure extends Figure {
 		}
 		
 		//comment
+		blankFigure = new Figure();
+		data = new GridData();
+		data.horizontalSpan = 2;
+		data.heightHint = blankSpacing;
+		layout.setConstraint(blankFigure, data);
+		parent.add(blankFigure);
+		
 		Label commentLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_Comment);
 		parent.add(commentLabel);
 		data = new GridData();
