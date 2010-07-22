@@ -17,16 +17,21 @@ import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LineBorder;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.ToolbarLayout;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.graphic.NodeMergeData;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
@@ -38,6 +43,8 @@ import org.eclipse.team.svn.ui.utility.DateFormatter;
  */
 public class RevisionTooltipFigure extends Figure {
 
+	public final static Image COMMENT_IMAGE;
+	
 	protected final RevisionNode revisionNode;
 	
 	protected Label pathText;
@@ -49,6 +56,11 @@ public class RevisionTooltipFigure extends Figure {
 	protected Label outgoingMergeText;
 	
 	protected Label commentText;
+	
+	static {
+		COMMENT_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/comment.gif").createImage(); //$NON-NLS-1$
+		SVNRevisionGraphPlugin.disposeOnShutdown(COMMENT_IMAGE);
+	}
 	
 	public RevisionTooltipFigure(RevisionNode revisionNode) {
 		this.revisionNode = revisionNode;
@@ -187,16 +199,36 @@ public class RevisionTooltipFigure extends Figure {
 		layout.setConstraint(blankFigure, data);
 		parent.add(blankFigure);
 		
-		Label commentLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_Comment);
-		parent.add(commentLabel);
+		blankFigure = new Figure();
 		data = new GridData();
-		data.horizontalAlignment = SWT.LEFT;
-		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 2;
-		layout.setConstraint(commentLabel, data);
-		commentLabel.setFont(boldFont);
+		data.heightHint = blankSpacing;
+		layout.setConstraint(blankFigure, data);
+		parent.add(blankFigure);
+		
+		Figure separator = new Figure() {
+			public void paintFigure(Graphics graphics) {
+				Rectangle rect = this.getClientArea();
+				graphics.drawLine(rect.x, rect.y, rect.x + rect.width, rect.y);
+			}
+		};
+		separator.setForegroundColor(ColorConstants.gray);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = 1;
+		data.horizontalSpan = 2;
+		layout.setConstraint(separator, data);
+		parent.add(separator);
+		
+		blankFigure = new Figure();
+		data = new GridData();
+		data.horizontalSpan = 2;
+		data.heightHint = 2;
+		layout.setConstraint(blankFigure, data);
+		parent.add(blankFigure);
 		
 		this.commentText = new Label();
+		this.commentText.setIconAlignment(PositionConstants.TOP);
+		this.commentText.setIcon(COMMENT_IMAGE);
 		parent.add(this.commentText);
 		data = new GridData();
 		data.horizontalAlignment = SWT.LEFT;
