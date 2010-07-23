@@ -292,7 +292,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.authorFilter.setAuthorNameToAccept(null);
 		this.commentFilter.setCommentToAccept(null);
 		this.pending = false;
-
+		this.startRevision = this.endRevision = null;
+		
 		this.setButtonsEnablement();
 		this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	}
@@ -1021,8 +1022,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected void setButtonsEnablement() {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
 		boolean enableRepo = (IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null) && !this.pending;
-
-		this.revisionsRangeDropDownAction.setEnabled(enableRepo && this.repositoryResource != null);
+		
+		this.revisionsRangeDropDownAction.setEnabled(this.repositoryResource != null);
 		this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
 		this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
 		this.getNextPageAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & ISVNHistoryView.PAGING_ENABLED) != 0));
