@@ -26,6 +26,12 @@ public class SVNRevisionGraphPreferences {
 	public static final String CACHE_DIRECTORY_NAME = "directory"; //$NON-NLS-1$
 	public static final String GRAPH_SKIP_ERRORS = "skip.errors"; //$NON-NLS-1$
 	
+	public static final String GRAPH_SHOW_MERGE_INFO = "show.merge.info"; //$NON-NLS-1$
+	public static final boolean GRAPH_SHOW_MERGE_INFO_DEFAULT = true;
+	
+	public static final String GRAPH_SHOW_ALL_REVISIONS = "show.all.revisions"; //$NON-NLS-1$
+	public static final boolean GRAPH_SHOW_ALL_REVISIONS_DEFAULT = false;
+	
 	public static final boolean GRAPH_SKIP_ERRORS_DEFAULT = true;
 	
 	private SVNRevisionGraphPreferences() {	
@@ -33,7 +39,9 @@ public class SVNRevisionGraphPreferences {
 	
 	public static void setDefaultValues(IPreferenceStore store) {
 		store.setDefault(SVNRevisionGraphPreferences.fullCacheName(SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME), SVNRevisionGraphPlugin.instance().getStateLocation().toString());
-		store.setDefault(SVNRevisionGraphPreferences.fullGraphName(SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS), SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS_DEFAULT);
+		store.setDefault(SVNRevisionGraphPreferences.fullGraphName(SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS), SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS_DEFAULT);		
+		store.setDefault(SVNRevisionGraphPreferences.fullGraphName(SVNRevisionGraphPreferences.GRAPH_SHOW_MERGE_INFO), SVNRevisionGraphPreferences.GRAPH_SHOW_MERGE_INFO_DEFAULT);
+		store.setDefault(SVNRevisionGraphPreferences.fullGraphName(SVNRevisionGraphPreferences.GRAPH_SHOW_ALL_REVISIONS), SVNRevisionGraphPreferences.GRAPH_SHOW_ALL_REVISIONS_DEFAULT);
 	}
 
 	public static String getDefaultCacheString(IPreferenceStore store, String shortName) {
