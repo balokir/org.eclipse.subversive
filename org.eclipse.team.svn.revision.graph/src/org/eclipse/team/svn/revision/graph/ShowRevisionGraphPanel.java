@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.revision.graph.preferences.SVNRevisionGraphPreferences;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RevisionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
@@ -103,10 +104,10 @@ public class ShowRevisionGraphPanel extends AbstractDialogPanel {
 			}
 		});		
 		
+		this.isShowAllRevisions = SVNRevisionGraphPreferences.getGraphBoolean(SVNRevisionGraphPlugin.instance().getPreferenceStore(), SVNRevisionGraphPreferences.GRAPH_SHOW_ALL_REVISIONS);
         boolean isMergeSupported = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() > ISVNConnectorFactory.APICompatibility.SVNAPI_1_4_x;
 
-        this.isShowAllRevisions = false;
-        this.canIncludeMergeInfo = isMergeSupported;
+        this.canIncludeMergeInfo = isMergeSupported ? SVNRevisionGraphPreferences.getGraphBoolean(SVNRevisionGraphPlugin.instance().getPreferenceStore(), SVNRevisionGraphPreferences.GRAPH_SHOW_MERGE_INFO) : false;
         
         showAllRevisionsButton.setSelection(this.isShowAllRevisions);
         includeMergeInfoButton.setSelection(this.canIncludeMergeInfo);
@@ -124,6 +125,9 @@ public class ShowRevisionGraphPanel extends AbstractDialogPanel {
 	}
 	
 	protected void saveChangesImpl() {
+		SVNRevisionGraphPreferences.setGraphBoolean(SVNRevisionGraphPlugin.instance().getPreferenceStore(), SVNRevisionGraphPreferences.GRAPH_SHOW_MERGE_INFO, this.canIncludeMergeInfo);
+		SVNRevisionGraphPreferences.setGraphBoolean(SVNRevisionGraphPlugin.instance().getPreferenceStore(), SVNRevisionGraphPreferences.GRAPH_SHOW_ALL_REVISIONS, this.isShowAllRevisions);
+		
 		if (this.getFromRevision() == null || this.getToRevision() == null) {
 			return;
 		}
