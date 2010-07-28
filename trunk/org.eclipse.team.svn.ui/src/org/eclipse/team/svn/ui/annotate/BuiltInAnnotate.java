@@ -91,6 +91,11 @@ public class BuiltInAnnotate {
 				}
 				String noAuthor = SVNMessages.SVNInfo_NoAuthor;
 				for (int i = 0; i < data.length; i++) {
+					//if we specified revisions range for annotation then some revisions can be skipped, so don't show them 
+					if (data[i].revision == SVNRevision.INVALID_REVISION_NUMBER) {
+						continue;
+					}
+					
 					String revisionId = String.valueOf(data[i].revision);
 					BuiltInAnnotateRevision revision = revisions.get(revisionId);
 					if (revision == null) {
