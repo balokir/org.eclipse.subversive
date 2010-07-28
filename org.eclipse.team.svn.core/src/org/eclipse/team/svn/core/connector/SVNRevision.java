@@ -240,7 +240,7 @@ public class SVNRevision {
 	 */
 	public static SVNRevision.Number fromNumber(long revisionNumber) {
 		if (revisionNumber < 0) {
-			throw new IllegalArgumentException("Negative revision numbers are not allowed");
+			throw new IllegalArgumentException("Negative revision numbers are not allowed: " + revisionNumber);
 		}
 		return new SVNRevision.Number(revisionNumber);
 	}
