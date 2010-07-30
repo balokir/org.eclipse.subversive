@@ -18,6 +18,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -89,11 +90,15 @@ public class InfoOperation extends AbstractActionOperation {
             									 null, 
             									 Depth.UNKNOWN,
             									 statuses[0].treeConflictDescriptor);
-	                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(statuses[0].url, null, SVNRevision.fromNumber(statuses[0].revision)), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
-	                
-	                if (infos != null && infos.length > 0) {
-	                    this.info = infos[0];
-	                }
+            		
+            		try {
+    	                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(statuses[0].url, null, SVNRevision.fromNumber(statuses[0].revision)), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+    	                if (infos != null && infos.length > 0) {
+    	                    this.info = infos[0];
+    	                }	
+            		} catch (SVNConnectorException e) {
+            			//ignore: if there were moves then info command will fail
+            		}
             	}
             }
             finally {
