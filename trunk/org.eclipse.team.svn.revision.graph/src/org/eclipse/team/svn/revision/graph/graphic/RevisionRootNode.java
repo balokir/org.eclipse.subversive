@@ -73,7 +73,6 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	public void init() {		
 		this.createRevisionNodesModel();
-		this.setCurrentStartNode(this.initialStartNode);
 		
 		this.initNodesWithMerges();
 		
@@ -220,9 +219,15 @@ public class RevisionRootNode extends ChangesNotifier {
 	 */
 	protected final void createRevisionNodesModel() {
 		Queue<RevisionNodeItem> queue = new LinkedList<RevisionNodeItem>();
+			
+		//node for which graph is called
+		RevisionNode calledNode = null;
 		
 		PathRevision pathFirst = (PathRevision) this.pathRevision.getStartNodeInGraph();
 		RevisionNode first = this.createRevisionNode(pathFirst);
+		if (pathFirst == this.pathRevision) {
+			calledNode = first;
+		}
 		this.initialStartNode = first;		
 		queue.offer(new RevisionNodeItem(first, pathFirst));
 		
@@ -231,7 +236,10 @@ public class RevisionRootNode extends ChangesNotifier {
 			
 			PathRevision pathNext = node.pathRevision.getNext();
 			if (pathNext != null) {
-				RevisionNode next = this.createRevisionNode(pathNext);				
+				RevisionNode next = this.createRevisionNode(pathNext);
+				if (pathNext == this.pathRevision) {
+					calledNode = next;
+				}
 				node.revisionNode.setNext(next);
 				queue.offer(new RevisionNodeItem(next, pathNext));
 			}
@@ -239,10 +247,21 @@ public class RevisionRootNode extends ChangesNotifier {
 			PathRevision[] pathCopiedToNodes = node.pathRevision.getCopiedTo();
 			for (PathRevision pathCopiedToNode : pathCopiedToNodes) {
 				RevisionNode copiedTo = this.createRevisionNode(pathCopiedToNode);
+				if (pathCopiedToNode == this.pathRevision) {
+					calledNode = copiedTo;
+				}
 				node.revisionNode.addCopiedTo(copiedTo);
 				queue.offer(new RevisionNodeItem(copiedTo, pathCopiedToNode));
 			}
-		}			
+		}
+
+		RevisionNode start = calledNode.getStartNodeInChain();
+		this.setCurrentStartNode(start);
+		
+		//collapse copied from
+		if (start.getCopiedFrom() != null) {
+			start.setCopiedFromCollapsed(true);
+		}
 	}
 	
 	protected RevisionNode createRevisionNode(PathRevision pathRevision) {		
