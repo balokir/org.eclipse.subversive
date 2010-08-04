@@ -236,7 +236,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 				FileDialog dlg = new FileDialog(SelectPatchFilePage.this.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 				dlg.setText(SVNUIMessages.SelectPatchFilePage_SavePatchAs);
 				dlg.setFileName(SelectPatchFilePage.this.proposedName);
-				dlg.setFilterExtensions(new String[] {"patch", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
+				dlg.setFilterExtensions(new String[] {"*.patch", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 				String file = dlg.open();
 				if (file != null) {
 					SelectPatchFilePage.this.fileName = file;
