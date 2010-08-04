@@ -20,7 +20,7 @@ import org.eclipse.draw2d.geometry.Insets;
 public class GraphConstants {
 
 	//sets the outer margin for the entire graph
-	public final static Insets GRAPH_MARGIN = new Insets(3);
+	public final static Insets GRAPH_MARGIN = new Insets(6);
 	
 	//make a little vertical offset in order not to intersect merge connections with general ones
 	public final static int MERGE_TO_GENERAL_CONNECTION_VERTICAL_OFFSET = 3;
