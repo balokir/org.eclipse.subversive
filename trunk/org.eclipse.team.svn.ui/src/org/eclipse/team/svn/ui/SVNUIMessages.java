@@ -648,6 +648,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String MainPreferencePage_resourceSelectionExternal;
 	public static String MainPreferencePage_resourceSelectionGroupName;
 	public static String MainPreferencePage_resourceSelectionNew;
+	public static String MainPreferencePage_resourceSelectionMissing;
 	public static String MainPreferencePage_resourceSelectionPresentation;
 	public static String MainPreferencePage_resourceSelectionPrompt;
 	public static String MainPreferencePage_shareEnableAuto;

@@ -499,11 +499,13 @@ public class ResourceSelectionComposite extends Composite {
 	public void refreshSelection() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		boolean isSelectNewResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME);
-		if (this.deselectNewl && !isSelectNewResources) {
+		boolean isSelectMissingResources = !SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME);
+		if (this.deselectNewl && (!isSelectNewResources || !isSelectMissingResources)) {
 			Object[] elements = this.tableViewer.getCheckedElements();
 			for (int i = 0; i < elements.length; i++) {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource((IResource) elements[i]);
-				if (local.getStatus() == IStateFilter.ST_NEW) {
+				if (!isSelectNewResources && local.getStatus() == IStateFilter.ST_NEW || 
+					!isSelectMissingResources && local.getStatus() == IStateFilter.ST_MISSING) {
 					this.tableViewer.setChecked(elements[i], false);
 				}
 			}
