@@ -32,7 +32,7 @@ public class GraphConstants {
 	public final static int NODES_HORIZONTAL_OFFSET = 40;
 	
 	//vertical distance between neighbor nodes
-	public final static int NEIGHBOUR_NODES_VERTICAL_OFFSET = 3;
+	public final static int NEIGHBOUR_NODES_VERTICAL_OFFSET = 4;
 	
 	public final static int NODE_WIDTH = 200;
 	
