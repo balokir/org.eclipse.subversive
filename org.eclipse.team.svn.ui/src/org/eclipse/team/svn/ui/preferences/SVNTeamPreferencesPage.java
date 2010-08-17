@@ -12,9 +12,11 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.compare.internal.TabFolderLayout;
@@ -52,6 +54,10 @@ import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+import com.ibm.icu.util.ULocale;
 
 /**
  * Main SVN Team preferences page
@@ -277,7 +283,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.connectToCompareWithButton.setSelection(this.connectToCompareWith);
 		
 		this.dateFormatField.select(this.dateFormat);
-		this.dateFormatCustomField.setText(this.dateFormatCustom);
+		this.dateFormatCustomField.setEnabled(this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM);
+		this.setDateFormatValue();
 		
 		this.consultCSAlwaysButton.setSelection(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_ALWAYS.equals(this.consultChangeSets));	
 		this.consultCSNeverButton.setSelection(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_NEVER.equals(this.consultChangeSets));	
@@ -756,6 +763,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				else {
 					SVNTeamPreferencesPage.this.dateFormatCustomField.setEnabled(false);
 				}
+				SVNTeamPreferencesPage.this.setDateFormatValue();
 				SVNTeamPreferencesPage.this.validateContent();
 			}
 		});
@@ -774,11 +782,41 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		});
 		this.dateFormatCustomField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				SVNTeamPreferencesPage.this.dateFormatCustom = SVNTeamPreferencesPage.this.dateFormatCustomField.getText();
+				if (SVNTeamPreferencesPage.this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM) {
+					SVNTeamPreferencesPage.this.dateFormatCustom = SVNTeamPreferencesPage.this.dateFormatCustomField.getText();
+				}
 			}
 		});
 		
 		return composite;
+	}
+	
+	protected void setDateFormatValue() {		
+		if (this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM) {
+			this.dateFormatCustomField.setText(this.dateFormatCustom);
+			return;
+		}
+		
+		//set example date
+		DateFormat dateTimeFormat;
+		if (this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_SHORT) {
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
+		} else if (this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM) {
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, ULocale.getDefault());
+		} else if (this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_LONG) {
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, ULocale.getDefault());
+		} else {
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
+		}
+												
+		Date exampleDate;
+		try {
+			exampleDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2010-01-02 15:10:12"); //$NON-NLS-1$ //$NON-NLS-2$
+		 } catch (ParseException e) {
+			 exampleDate = new Date();
+		 }
+		String strDate = dateTimeFormat.format(exampleDate);
+		this.dateFormatCustomField.setText(strDate);
 	}
 	
 	protected void createConsultChangeSets(Group consultChangeSetsGroup) {
