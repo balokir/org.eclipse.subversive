@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.figure;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Cursors;
@@ -36,9 +38,11 @@ import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.graphic.ChangedPath;
 import org.eclipse.team.svn.revision.graph.graphic.GraphConstants;
 import org.eclipse.team.svn.revision.graph.graphic.NodeMergeData;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
+import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionTooltipFigure.Range;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -501,5 +505,110 @@ public class RevisionFigure extends Figure {
 			nodeIcon = OTHER_IMAGE;
 		}
 		return nodeIcon;
+	}
+	
+	public static String getActionAsString(RevisionNodeAction action) {
+		switch (action) {
+			case ADD:
+				return SVNRevisionGraphMessages.RevisionFigure_ActionAdd;
+			case DELETE:
+				return SVNRevisionGraphMessages.RevisionFigure_ActionDelete;
+			case MODIFY:
+				return SVNRevisionGraphMessages.RevisionFigure_ActionModify;
+			case COPY:
+				return SVNRevisionGraphMessages.RevisionFigure_ActionCopy;
+			case RENAME:
+				return SVNRevisionGraphMessages.RevisionFigure_ActionRename;
+			case NONE:
+				return SVNRevisionGraphMessages.RevisionFigure_ActionNone;
+			default:
+				return null;
+		}
+	}
+	
+	public static String getChangedPathsAsString(RevisionNode node) {
+		StringBuilder str = new StringBuilder();
+		ChangedPath[] changedPaths = node.getChangedPaths();
+		for (int i = 0; i < changedPaths.length; i ++) {
+			ChangedPath changedPath = changedPaths[i];
+			str.append(changedPath.action).append(" ").append(changedPath.path); //$NON-NLS-1$
+			if (changedPath.copiedFromPath != null) {
+				str.append(" copied from: " + changedPath.copiedFromPath + "@" + changedPath.copiedFromRevision); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (i != changedPaths.length - 1) {
+				str.append("\n"); //$NON-NLS-1$
+			}
+		}
+		return str.toString();
+	}
+	
+	public static String getIncomingMergesAsString(RevisionNode node) {
+		if (node.hasIncomingMerges()) {
+			StringBuilder str = new StringBuilder();
+			NodeMergeData[] mergedData = node.getIncomingMerges();
+						
+			/*
+			 * As there can be many revisions then we sort and
+			 * group them and limit revisions number in one row
+			 */
+			
+			//as first row contains path, then revisions count should be less
+			final int maxRevisionsInFirstRow = 5;
+			final int maxRevisionsInRow = 15;
+								
+			for (int i = 0; i < mergedData.length; i ++) {
+				str.append(mergedData[i].path).append(": "); //$NON-NLS-1$
+				
+				boolean isFirstRow = true;
+				List<Range> ranges = Range.getRanges(mergedData[i].getRevisions());
+				for (int j = 0, n = ranges.size(); j < n; j ++) {
+					str.append(ranges.get(j));
+																				
+					if (j != n - 1) {
+						str.append(","); //$NON-NLS-1$
+						
+						if (isFirstRow && ((j + 1) % maxRevisionsInFirstRow == 0)) {
+							str.append("\n"); //$NON-NLS-1$
+							isFirstRow = false;
+						} else if (!isFirstRow && ((j + 1) % maxRevisionsInRow == 0)) {
+							str.append("\n"); //$NON-NLS-1$
+						}
+					}										
+				}												
+				
+				if (i != mergedData.length - 1) {
+					str.append("\n"); //$NON-NLS-1$
+				}
+			}	
+			return str.toString();
+		} else {
+			return null;
+		}
+	}
+	
+	public static String getOutgoingMergesAsString(RevisionNode node) {
+		if (node.hasOutgoingMerges()) {
+			StringBuilder str = new StringBuilder();
+			NodeMergeData[] mergedData = node.getOutgoingMerges();
+			for (int i = 0; i < mergedData.length; i ++) {
+				str.append(mergedData[i].path).append(": "); //$NON-NLS-1$
+				
+				long[] revisions = mergedData[i].getRevisions();
+				Arrays.sort(revisions);
+				for (int j = 0, n = revisions.length; j < n; j ++) {
+					str.append(revisions[j]);
+					if (j != n - 1) {
+						str.append(","); //$NON-NLS-1$
+					}
+				}
+								
+				if (i != mergedData.length - 1) {
+					str.append("\n"); //$NON-NLS-1$
+				}
+			}												
+			return str.toString(); 
+		} else {
+			return null;
+		}			
 	}
 }

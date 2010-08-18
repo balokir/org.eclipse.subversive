@@ -19,17 +19,21 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.PathRevision.MergeData;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.cache.CacheChangedPath;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
  * @author Igor Burilo
  */
-public class RevisionNode extends NodeConnections<RevisionNode> {
+public class RevisionNode extends NodeConnections<RevisionNode> implements IAdaptable {
 
 	private final PathRevision pathRevision;
 	private final RevisionRootNode rootNode;
@@ -53,6 +57,9 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	protected int x;
 	protected int y;	
+	
+	
+	protected IPropertySource propertySource;
 	
 	protected LinkedHashSet<MergeConnectionNode> outgoingMergeConnections = new LinkedHashSet<MergeConnectionNode>();
 	protected LinkedHashSet<MergeConnectionNode> incomingMergeConnections = new LinkedHashSet<MergeConnectionNode>();	
@@ -248,6 +255,32 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	public long getDate() {
 		return this.pathRevision.getDate();
+	}
+	
+	public ChangedPath[] getChangedPaths() {
+		CacheChangedPath[] rawPaths = this.pathRevision.getChangedPaths();
+		ChangedPath[] result = new ChangedPath[rawPaths.length];
+		for (int i = 0; i < rawPaths.length; i ++) {
+			CacheChangedPath rawPath = rawPaths[i];			
+			String path = this.rootNode.getRepositoryCache().getPathStorage().getPath(rawPath.getPathIndex());
+			String copiedFromPath = this.rootNode.getRepositoryCache().getPathStorage().getPath(rawPath.getCopiedFromPathIndex());			
+			result[i] = new ChangedPath(path, rawPath.getAction(), copiedFromPath, rawPath.getCopiedFromRevision());
+		}
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		//TODO move to plugin.xml as this is UI interface
+		if (adapter == IPropertySource.class) {
+			if (this.propertySource == null) {
+				this.propertySource = new RevisionNodePropertySource(this); 
+			} 
+			return this.propertySource;
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 	
 	public boolean hasOutgoingMerges() {

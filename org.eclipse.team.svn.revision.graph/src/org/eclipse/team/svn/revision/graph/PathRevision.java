@@ -24,7 +24,6 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.operation.PathRevisionConnectionsValidator;
 
 /** 
- * TODO implement IPropertySource for Properties View ?
  * 
  * @author Igor Burilo
  */
