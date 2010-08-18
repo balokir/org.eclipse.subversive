@@ -126,6 +126,23 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String FindRevisionNodeAction_Text;
 	public static String FindRevisionNodeAction_Tooltip;
 	
+	public static String RevisionNodePropertySource_Action;
+	public static String RevisionNodePropertySource_Author;
+	public static String RevisionNodePropertySource_ChangedPaths;
+	public static String RevisionNodePropertySource_Comment;
+	public static String RevisionNodePropertySource_CopiedFrom;
+	public static String RevisionNodePropertySource_Date;
+	public static String RevisionNodePropertySource_IncomingMerges;
+	public static String RevisionNodePropertySource_OutgoingMerges;
+	public static String RevisionNodePropertySource_Path;
+	public static String RevisionNodePropertySource_Revision;
+	public static String RevisionFigure_ActionAdd;
+	public static String RevisionFigure_ActionCopy;
+	public static String RevisionFigure_ActionDelete;
+	public static String RevisionFigure_ActionModify;
+	public static String RevisionFigure_ActionNone;
+	public static String RevisionFigure_ActionRename;
+	
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNRevisionGraphMessages.class);

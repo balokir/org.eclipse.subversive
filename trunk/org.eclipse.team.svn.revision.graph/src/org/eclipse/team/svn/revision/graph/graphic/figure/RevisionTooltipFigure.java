@@ -32,7 +32,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
-import org.eclipse.team.svn.revision.graph.graphic.NodeMergeData;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 
@@ -253,69 +252,16 @@ public class RevisionTooltipFigure extends Figure {
 		}
 				
 		//incoming merge
-		if (this.revisionNode.hasIncomingMerges()) {
-			StringBuilder str = new StringBuilder();
-			NodeMergeData[] mergedData = this.revisionNode.getIncomingMerges();
-						
-			/*
-			 * As there can be many revisions then we sort and
-			 * group them and limit revisions number in one row
-			 */
-			
-			//as first row contains path, then revisions count should be less
-			final int maxRevisionsInFirstRow = 5;
-			final int maxRevisionsInRow = 15;
-								
-			for (int i = 0; i < mergedData.length; i ++) {
-				str.append(mergedData[i].path).append(": "); //$NON-NLS-1$
-				
-				boolean isFirstRow = true;
-				List<Range> ranges = Range.getRanges(mergedData[i].getRevisions());
-				for (int j = 0, n = ranges.size(); j < n; j ++) {
-					str.append(ranges.get(j));
-																				
-					if (j != n - 1) {
-						str.append(","); //$NON-NLS-1$
-						
-						if (isFirstRow && ((j + 1) % maxRevisionsInFirstRow == 0)) {
-							str.append("\n"); //$NON-NLS-1$
-							isFirstRow = false;
-						} else if (!isFirstRow && ((j + 1) % maxRevisionsInRow == 0)) {
-							str.append("\n"); //$NON-NLS-1$
-						}
-					}										
-				}												
-				
-				if (i != mergedData.length - 1) {
-					str.append("\n"); //$NON-NLS-1$
-				}
-			}
-			this.incomingMergeText.setText(str.toString());
-		}
+		String incomingMerges = RevisionFigure.getIncomingMergesAsString(this.revisionNode);
+		if (incomingMerges != null) {
+			this.incomingMergeText.setText(incomingMerges);
+ 		}		
 		
 		//outgoing merge
-		if (this.revisionNode.hasOutgoingMerges()) {
-			StringBuilder str = new StringBuilder();
-			NodeMergeData[] mergedData = this.revisionNode.getOutgoingMerges();
-			for (int i = 0; i < mergedData.length; i ++) {
-				str.append(mergedData[i].path).append(": "); //$NON-NLS-1$
-				
-				long[] revisions = mergedData[i].getRevisions();
-				Arrays.sort(revisions);
-				for (int j = 0, n = revisions.length; j < n; j ++) {
-					str.append(revisions[j]);
-					if (j != n - 1) {
-						str.append(","); //$NON-NLS-1$
-					}
-				}
-								
-				if (i != mergedData.length - 1) {
-					str.append("\n"); //$NON-NLS-1$
-				}
-			}
-												
-			this.outgoingMergeText.setText(str.toString());
-		}				
+		String outgoingMerges = RevisionFigure.getOutgoingMergesAsString(this.revisionNode);
+		if (outgoingMerges != null) {
+			this.outgoingMergeText.setText(outgoingMerges);
+ 		}				
 		
 		String comment = this.revisionNode.getMessage();
 		this.commentText.setText(comment == null || comment.length() == 0 ? SVNMessages.SVNInfo_NoComment : comment);

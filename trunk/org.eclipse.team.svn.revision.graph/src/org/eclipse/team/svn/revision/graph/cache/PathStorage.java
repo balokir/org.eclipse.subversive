@@ -56,7 +56,10 @@ public class PathStorage {
 		return resultIndex;
 	}
 	
-	public String getPath(int index) {				
+	public String getPath(int index) {
+		if (index == RepositoryCache.UNKNOWN_INDEX) {
+			return null;
+		}
 		List<Pair> pairs = this.getPathPairs(index);
 		if (!pairs.isEmpty()) {
 			StringBuffer res = new StringBuffer();
