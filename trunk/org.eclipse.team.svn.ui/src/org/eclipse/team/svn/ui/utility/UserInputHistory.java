@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -43,6 +44,15 @@ public class UserInputHistory {
         this.depth = depth;
         
         this.loadHistoryLines();
+        
+        if (this.history.size() > this.depth) {
+        	ListIterator iter = this.history.listIterator(this.depth);
+        	while (iter.hasNext()) {
+        		iter.next();
+        		iter.remove();
+        	}
+        	this.saveHistoryLines();
+        }
     }
     
     public String getName() {
