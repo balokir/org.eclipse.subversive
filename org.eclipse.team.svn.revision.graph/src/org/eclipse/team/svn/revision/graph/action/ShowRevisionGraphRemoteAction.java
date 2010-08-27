@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -29,25 +32,26 @@ public class ShowRevisionGraphRemoteAction extends AbstractRepositoryTeamAction 
 	}
 	
 	public void runImpl(IAction action) {
-		IRepositoryResource resource = this.getSelectedRepositoryResources()[0];
-		IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(resource);
+		IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(this.getResources().toArray(new IRepositoryResource[0]));
 		if (op != null) {
 			this.runScheduled(op);
 		}
 	}
 	
 	public boolean isEnabled() {
-		IRepositoryResource[] resources = this.getSelectedRepositoryResources();
-		if (resources.length == 1) {
-			IRepositoryResource resource = resources[0];
-			//don't enable for repository root
-			if (resource instanceof IRepositoryRoot) {
-				return !resource.getUrl().equals(resource.getRepositoryLocation().getRepositoryRootUrl());
-			} else {
-				return true;
-			}
-		}
-		return false;
+		return !this.getResources().isEmpty();
 	}
 
+	protected List<IRepositoryResource> getResources() {
+		List<IRepositoryResource> result = new ArrayList<IRepositoryResource>();
+		IRepositoryResource[] resources = this.getSelectedRepositoryResources();
+		for (IRepositoryResource resource : resources) {
+			//don't enable for repository root
+			if (resource instanceof IRepositoryRoot && resource.getUrl().equals(resource.getRepositoryLocation().getRepositoryRootUrl())) {
+				continue;
+			}
+			result.add(resource);	
+		}		
+		return result;
+	}
 }

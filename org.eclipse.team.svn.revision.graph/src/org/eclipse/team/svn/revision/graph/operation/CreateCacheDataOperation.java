@@ -19,6 +19,7 @@ import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCachesManager;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo.CacheResult;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo.CacheResultEnum;
 import org.eclipse.team.svn.revision.graph.operation.RepositoryConnectionInfo.IRepositoryConnectionInfoProvider;
@@ -49,7 +50,7 @@ public class CreateCacheDataOperation extends AbstractActionOperation implements
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(this.resource);
+		RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCacheOrCreate(this.resource);
 		RepositoryConnectionInfo connectionData = this.repositoryConnectionInfoProvider.getRepositoryConnectionInfo();
 		CacheResult cacheResult = this.isRefresh ? 
 				cacheInfo.refreshCacheData(this.resource, connectionData, this.isSkipFetchErrors, monitor) :
@@ -61,7 +62,7 @@ public class CreateCacheDataOperation extends AbstractActionOperation implements
 			//say that cache is calculating now by another task
 			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 				public void run() {									
-					MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog();
+					MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog(RepositoryCachesManager.getRepositoryRoot(CreateCacheDataOperation.this.resource));
 					dlg.open();
 				}
 			});	

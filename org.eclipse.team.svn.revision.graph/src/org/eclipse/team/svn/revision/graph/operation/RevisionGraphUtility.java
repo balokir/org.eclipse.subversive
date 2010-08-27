@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.operation;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -24,6 +28,7 @@ import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.ShowRevisionGraphPanel;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCachesManager;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditorInput;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.revision.graph.preferences.SVNRevisionGraphPreferences;
@@ -40,92 +45,155 @@ public class RevisionGraphUtility {
 	protected final static String EDITOR_ID = "org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor";  //$NON-NLS-1$
 	
 	//may return null
-	public static CompositeOperation getRevisionGraphOperation(final IRepositoryResource resource) {
-		CompositeOperation op = new CompositeOperation("Operation_ShowRevisionGraph", SVNRevisionGraphMessages.class); //$NON-NLS-1$
+	public static CompositeOperation getRevisionGraphOperation(IRepositoryResource[] resources) {
+		CompositeOperation mainOp = new CompositeOperation("Operation_ShowRevisionGraph", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		
-		//check if cache is calculating now
-		try {
-			RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(resource);
-			if (cacheInfo.isCacheDataCalculating()) {
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {		
-						MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog();
-						dlg.open();
-					}
-				});
-				return null;
-			}	
-		} catch (IOException e) {
-			LoggedOperation.reportError(RevisionGraphUtility.class.getName(), e);
+		Map<String, List<IRepositoryResource>> splittedResources = splitResources(resources);
+		filterResources(splittedResources);
+		if (splittedResources.isEmpty()) {
 			return null;
 		}
 		
 		//show dialog with options		
-		final ShowRevisionGraphPanel panel = new ShowRevisionGraphPanel(resource);
+		final ShowRevisionGraphPanel panel = new ShowRevisionGraphPanel(resources.length == 1 ? resources[0] : null);
 		DefaultDialog rDlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
 		if (rDlg.open() != 0) {
 			return null;
 		}
 		
-		//check repository connection
-		final CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource, panel.canIncludeMergeInfo(), true);
-		op.add(checkConnectionOp);				
-		
-		//create cache
+		//traverse resources
 		boolean isSkipFetchErrors = SVNRevisionGraphPreferences.getGraphBoolean(SVNRevisionGraphPlugin.instance().getPreferenceStore(), SVNRevisionGraphPreferences.GRAPH_SKIP_ERRORS);
-		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false, checkConnectionOp, isSkipFetchErrors);
-		op.add(createCacheOp, new IActionOperation[]{checkConnectionOp});
+		for (List<IRepositoryResource> reposResources : splittedResources.values()) {
+			CompositeOperation reposOp = new CompositeOperation(mainOp.getId(), SVNRevisionGraphMessages.class);
+			mainOp.add(reposOp);
+					
+			/*
+			 * get any resource to check connection and fetch data
+			 * 
+			 * Notes:
+			 *   resources with the same repository root may belong to different repository locations,
+			 *   as a result they may have different credentials. But in case of revision graph it's applicable
+			 *   
+			 *   if several resources belong to the same repository root, then create cache data operation
+			 *   is called only once and so when we (internally) track resources for which cache is opened
+			 *   we track it only for one resource, i.e. we don't track it for other resources, but this
+			 *   is applicable
+			 */
+			IRepositoryResource anyResource = reposResources.get(0);
+			
+			//check repository connection
+			final CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(anyResource, panel.canIncludeMergeInfo(), true);
+			reposOp.add(checkConnectionOp);
+			
+			//create cache
+			CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(anyResource, false, checkConnectionOp, isSkipFetchErrors);
+			reposOp.add(createCacheOp, new IActionOperation[]{checkConnectionOp});
+						
+			CompositeOperation resourceOp = new CompositeOperation(mainOp.getId(), SVNRevisionGraphMessages.class);
+			reposOp.add(resourceOp, new IActionOperation[] {checkConnectionOp, createCacheOp});
+			for (final IRepositoryResource resource : reposResources) {
+				//create model
+				final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, createCacheOp);
+				resourceOp.add(createModelOp, new IActionOperation[] {createCacheOp} );
 				
-		//create model
-		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, createCacheOp);
-		createModelOp.setRevisionsRange(panel.getFromRevision(), panel.getToRevision());
-		op.add(createModelOp, new IActionOperation[] {createCacheOp} );
+				//add merge info
+				AddMergeInfoOperation addMergeInfoOp = new AddMergeInfoOperation(createModelOp, checkConnectionOp);
+				resourceOp.add(addMergeInfoOp, new IActionOperation[]{createModelOp});
+				
+				//visualize
+				AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Operation_ShowRevisionGraph", SVNRevisionGraphMessages.class) { //$NON-NLS-1$
+					@Override
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+							public void run() {
+								try {					
+									Object modelObject;
+									if (createModelOp.getModel() != null) {
+										RevisionRootNode rootNode = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());
+										rootNode.simpleSetMode(!panel.isShowAllRevisions());
+										rootNode.setIncludeMergeInfo(checkConnectionOp.getRepositoryConnectionInfo().isSupportMergeInfo);
+										modelObject = rootNode;
+									} else {
+										modelObject = SVNRevisionGraphMessages.NoData;
+									}						
+									RevisionGraphEditorInput input = new RevisionGraphEditorInput(createModelOp.getResource(), modelObject);
+									UIMonitorUtility.getActivePage().openEditor(input, RevisionGraphUtility.EDITOR_ID);														
+								} catch (Exception e) {
+									LoggedOperation.reportError(this.getClass().getName(), e);
+								}						
+							}			
+						});	
+					}
+				};
+				resourceOp.add(showRevisionGraphOp, new IActionOperation[]{createModelOp, addMergeInfoOp});	
+			}			
+		}		
 		
-		//add merge info
-		AddMergeInfoOperation addMergeInfoOp = new AddMergeInfoOperation(createModelOp, checkConnectionOp);
-		op.add(addMergeInfoOp, new IActionOperation[]{createModelOp});
-		
-		//visualize
-		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Operation_ShowRevisionGraph", SVNRevisionGraphMessages.class) { //$NON-NLS-1$
-			@Override
-			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						try {					
-							Object modelObject;
-							if (createModelOp.getModel() != null) {
-								RevisionRootNode rootNode = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());
-								rootNode.simpleSetMode(!panel.isShowAllRevisions());
-								rootNode.setIncludeMergeInfo(checkConnectionOp.getRepositoryConnectionInfo().isSupportMergeInfo);
-								//by default paths are truncated
-								boolean isTruncatePaths = true;
-								rootNode.simpleSetTruncatePaths(isTruncatePaths);
-								rootNode.setRevisionsRange(panel.getFromRevision(), panel.getToRevision());
-								modelObject = rootNode;
-							} else {
-								modelObject = SVNRevisionGraphMessages.NoData;
-							}						
-							RevisionGraphEditorInput input = new RevisionGraphEditorInput(createModelOp.getResource(), modelObject);
-							UIMonitorUtility.getActivePage().openEditor(input, RevisionGraphUtility.EDITOR_ID);														
-						} catch (Exception e) {
-							LoggedOperation.reportError(this.getClass().getName(), e);
-						}						
-					}			
-				});	
-			}
-		};
-		op.add(showRevisionGraphOp, new IActionOperation[]{createModelOp, addMergeInfoOp});		
-		
-		return op;
+		return mainOp;
+	}
+	
+	protected static Map<String, List<IRepositoryResource>> splitResources(IRepositoryResource[] resources) {
+		//split resources by repository url
+		Map<String, List<IRepositoryResource>> splittedResources = new HashMap<String, List<IRepositoryResource>>();
+		for (IRepositoryResource resource : resources) {
+			String reposRoot = RepositoryCachesManager.getRepositoryRoot(resource);
+			List<IRepositoryResource> resourcesList = splittedResources.get(reposRoot);
+			if (resourcesList == null) {
+				resourcesList = new ArrayList<IRepositoryResource>();
+				splittedResources.put(reposRoot, resourcesList);
+ 			}
+
+			resourcesList.add(resource);
+		}
+		return splittedResources;
+	}
+	
+	protected static void filterResources(Map<String, List<IRepositoryResource>> resources) {		
+		//check if cache is calculating now
+		final List<String> caclulatingCaches = new ArrayList<String>();
+		Iterator<Map.Entry<String, List<IRepositoryResource>>> iter = resources.entrySet().iterator();
+		RepositoryCachesManager cachesManager = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager();
+		while (iter.hasNext()) {
+			Map.Entry<String, List<IRepositoryResource>> entry = iter.next();
+			//it's enough to check only first resource
+			IRepositoryResource resource = entry.getValue().get(0);			
+			RepositoryCacheInfo cacheInfo = cachesManager.getCache(resource);
+			if (cacheInfo != null && cacheInfo.isCacheDataCalculating()) {
+				caclulatingCaches.add(entry.getKey());
+				iter.remove();				
+			}		
+		}
+		//show calculating caches
+		if (!caclulatingCaches.isEmpty()) {
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {		
+					MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog(caclulatingCaches.toArray(new String[0]));
+					dlg.open();
+				}
+			});
+		}
+	}
+	
+	public static MessageDialog getCacheCalculatingDialog(String reposRoot) {
+		return getCacheCalculatingDialog(new String[] {reposRoot});
 	}
 	
 	//dialog which says that cache is calculating now by another task
-	public static MessageDialog getCacheCalculatingDialog() {
+	public static MessageDialog getCacheCalculatingDialog(String[] reposRoots) {
+		StringBuilder strRepos = new StringBuilder();
+		for (int i = 0, n = reposRoots.length; i < n; i ++) {
+			String reposRoot = reposRoots[i];
+			strRepos.append(reposRoot);
+			if (i != n - 1) {			
+				strRepos.append(", "); //$NON-NLS-1$
+			}
+		}
+		
 		MessageDialog dlg = new MessageDialog(
 				UIMonitorUtility.getShell(), 
 				SVNRevisionGraphMessages.Dialog_GraphTitle,
 				null, 
-				SVNRevisionGraphMessages.CreateCacheDataOperation_DialogMessage,
+				SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.CreateCacheDataOperation_DialogMessage, strRepos.toString()),
 				MessageDialog.INFORMATION, 
 				new String[] {IDialogConstants.OK_LABEL}, 
 				0);

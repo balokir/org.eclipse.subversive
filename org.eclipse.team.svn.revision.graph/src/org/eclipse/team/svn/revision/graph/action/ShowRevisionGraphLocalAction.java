@@ -21,15 +21,18 @@ public class ShowRevisionGraphLocalAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {		
-		IResource []resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);					
-		IRepositoryResource reposResource = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
-		IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(reposResource);
+		IResource[] resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);
+		IRepositoryResource[] reposResources = new IRepositoryResource[resources.length];
+		for (int i = 0; i < resources.length; i ++) {
+			reposResources[i] = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
+		}		
+		IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(reposResources);
 		if (op != null) {
 			this.runScheduled(op);
 		}
 	}
 		
 	public boolean isEnabled() {
-		return this.getSelectedResources().length == 1 && this.checkForResourcesPresence(IStateFilter.SF_ONREPOSITORY);
+		return this.checkForResourcesPresence(IStateFilter.SF_ONREPOSITORY);
 	}
 }

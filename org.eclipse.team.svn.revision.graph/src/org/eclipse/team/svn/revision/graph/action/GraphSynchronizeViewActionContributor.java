@@ -15,15 +15,11 @@ import java.util.Collection;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
@@ -31,7 +27,6 @@ import org.eclipse.team.svn.ui.extension.impl.DefaultSynchronizeViewActionContri
 import org.eclipse.team.svn.ui.extension.impl.synchronize.UpdateActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -50,26 +45,23 @@ public class GraphSynchronizeViewActionContributor extends DefaultSynchronizeVie
 		
 		@Override
 		protected boolean updateSelection(IStructuredSelection selection) {
-			if (selection.size() == 1 && super.updateSelection(selection)) {						
-				if (selection.getFirstElement() instanceof SyncInfoModelElement) {
-					AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();				
-					ILocalResource incoming = syncInfo.getRemoteChangeResource();														
-					if (incoming instanceof IResourceChange) {
-						return true; 
-					}
-				}
-				if (selection.getFirstElement() instanceof ISynchronizeModelElement) {
-					ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
-					return IStateFilter.SF_ONREPOSITORY.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()));
+			if (super.updateSelection(selection)) {
+				IResource[] resources = this.getAllSelectedResources();
+				if (FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO)) {
+					return true;
 				}
 			}
 			return false;
 		}
 		
 		protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-			IResource resource = this.getSelectedResource();
-			IRepositoryResource reposResource = SVNRemoteStorage.instance().asRepositoryResource(resource);
-			return RevisionGraphUtility.getRevisionGraphOperation(reposResource);			
+			IResource[] resources = this.getAllSelectedResources();
+			resources = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
+			IRepositoryResource[] reposResources = new IRepositoryResource[resources.length];
+			for (int i = 0; i < resources.length; i ++) {
+				reposResources[i] = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
+			}		
+			return RevisionGraphUtility.getRevisionGraphOperation(reposResources);			
 		}
 		
 	}

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.action;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
@@ -77,10 +79,14 @@ public class GraphSynchronizeViewActionProvider extends CommonActionProvider {
 			} 
 		}
 		
-		protected void doRun() { 			
-			IResource resource = this.getSelectedResource();
-			IRepositoryResource reposResource = SVNRemoteStorage.instance().asRepositoryResource(resource);
-			IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(reposResource);
+		protected void doRun() {
+			IResource[] resources = this.getSelectedResources();
+			resources = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
+			IRepositoryResource[] reposResources = new IRepositoryResource[resources.length];
+			for (int i = 0; i < resources.length; i ++) {
+				reposResources[i] = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
+			}
+			IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(reposResources);
 			if (op != null) {
 				UIMonitorUtility.doTaskScheduledDefault(this.viewPart, op);	
 			}
@@ -96,25 +102,21 @@ public class GraphSynchronizeViewActionProvider extends CommonActionProvider {
 		}
 		
 		protected boolean isEnabledForSelection() {
-			if (this.selection.size() == 1) {
-				IResource resource = this.getSelectedResource();
-				//allow if resource is remotely deleted
-				if (resource != null && FileUtility.checkForResourcesPresence(new IResource[]{ resource }, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO)) {
-					return true;
-				}				
-			}
-			return false;
+			IResource[] resources = this.getSelectedResources();
+			//allow if resource is remotely deleted
+			return FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
 		}
 		
-	    protected IResource getSelectedResource() {
+	    protected IResource[] getSelectedResources() {
+			List<IResource> resources = new ArrayList<IResource>();
 			IStructuredSelection selection = this.selection;
 	    	for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
 	    		Object adapter = Platform.getAdapterManager().getAdapter(it.next(), IResource.class);
 	    		if (adapter != null) {
-	    			return (IResource)adapter;
+	    			resources.add((IResource)adapter);
 	    		}
-	    	}
-	    	return null;
+	    	}	
+	    	return resources.toArray(new IResource[0]);
 		}		
 	}			
 	

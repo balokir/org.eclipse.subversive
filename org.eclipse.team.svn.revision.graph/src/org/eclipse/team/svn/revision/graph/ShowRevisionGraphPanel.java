@@ -50,42 +50,49 @@ public class ShowRevisionGraphPanel extends AbstractDialogPanel {
 	protected RevisionComposite fromComposite;
 	protected RevisionComposite toComposite;
 	
+	/**
+	 * If resource is null then don't allow to select revision 
+	 */
 	public ShowRevisionGraphPanel(IRepositoryResource resource) {
 		 this.dialogTitle = SVNRevisionGraphMessages.ShowRevisionGraphPanel_Title;
          this.dialogDescription = SVNRevisionGraphMessages.ShowRevisionGraphPanel_Description;
          this.defaultMessage = SVNRevisionGraphMessages.ShowRevisionGraphPanel_Message;
          
          this.resource = resource;
-         this.initFromResource = SVNUtility.copyOf(resource);         
-         this.initToResource = SVNUtility.copyOf(resource);                              
+         if (this.resource != null) {
+        	 this.initFromResource = SVNUtility.copyOf(this.resource);         
+             this.initToResource = SVNUtility.copyOf(this.resource); 
+         }                                      
 	}
 	
 	protected void createControlsImpl(Composite parent) {
-		Composite cmp = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = layout.marginWidth = 0;
-		cmp.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		cmp.setLayoutData(data);
-		
-		String defaultRevision = SVNRevisionGraphMessages.ShowRevisionGraphPanel_RevisionDefault;
-		this.fromComposite = new RevisionComposite(cmp, this, true, new String[] {SVNRevisionGraphMessages.ShowRevisionGraphPanel_FromRevision, defaultRevision}, null, false);
-		this.fromComposite.setBaseResource(this.resource);
-		this.fromComposite.setSelectedResource(this.initFromResource);
-		this.fromComposite.setRevisionValue(SVNRevision.HEAD);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.fromComposite.setLayoutData(data);
-		
-		this.toComposite = new RevisionComposite(cmp, this, true, new String[] {SVNRevisionGraphMessages.ShowRevisionGraphPanel_ToRevision, defaultRevision}, null, false);
-		this.toComposite.setBaseResource(this.resource);
-		this.toComposite.setSelectedResource(this.initToResource);
-		this.toComposite.setRevisionValue(SVNRevision.HEAD);
-		data = new GridData(GridData.FILL_HORIZONTAL);		
-		this.toComposite.setLayoutData(data);				
+		if (this.resource != null) {
+			Composite cmp = new Composite(parent, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginHeight = layout.marginWidth = 0;
+			cmp.setLayout(layout);
+			GridData data = new GridData(GridData.FILL_HORIZONTAL);
+			cmp.setLayoutData(data);
+			
+			String defaultRevision = SVNRevisionGraphMessages.ShowRevisionGraphPanel_RevisionDefault;
+			this.fromComposite = new RevisionComposite(cmp, this, true, new String[] {SVNRevisionGraphMessages.ShowRevisionGraphPanel_FromRevision, defaultRevision}, null, false);
+			this.fromComposite.setBaseResource(this.resource);
+			this.fromComposite.setSelectedResource(this.initFromResource);
+			this.fromComposite.setRevisionValue(SVNRevision.HEAD);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			this.fromComposite.setLayoutData(data);
+			
+			this.toComposite = new RevisionComposite(cmp, this, true, new String[] {SVNRevisionGraphMessages.ShowRevisionGraphPanel_ToRevision, defaultRevision}, null, false);
+			this.toComposite.setBaseResource(this.resource);
+			this.toComposite.setSelectedResource(this.initToResource);
+			this.toComposite.setRevisionValue(SVNRevision.HEAD);
+			data = new GridData(GridData.FILL_HORIZONTAL);		
+			this.toComposite.setLayoutData(data);			
+		}				
 		
 		final Button showAllRevisionsButton = new Button(parent, SWT.CHECK);
-		data = new GridData(GridData.FILL_HORIZONTAL);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		showAllRevisionsButton.setLayoutData(data);		
 		showAllRevisionsButton.setText(SVNRevisionGraphMessages.ShowRevisionGraphPanel_ShowAllRevisions);
 		showAllRevisionsButton.addSelectionListener(new SelectionAdapter() {
@@ -159,10 +166,16 @@ public class ShowRevisionGraphPanel extends AbstractDialogPanel {
 	}
 	
 	public SVNRevision getFromRevision() {
-		return (this.reversed ? this.toComposite : this.fromComposite).getSelectedRevision();
+		if (this.resource != null) {
+			return (this.reversed ? this.toComposite : this.fromComposite).getSelectedRevision();	
+		}
+		return null;
 	}
 
 	public SVNRevision getToRevision() {
-		return (this.reversed ? this.fromComposite : this.toComposite).getSelectedRevision();
+		if (this.resource != null) {
+			return (this.reversed ? this.fromComposite : this.toComposite).getSelectedRevision();	
+		}
+		return null;
 	}
 }
