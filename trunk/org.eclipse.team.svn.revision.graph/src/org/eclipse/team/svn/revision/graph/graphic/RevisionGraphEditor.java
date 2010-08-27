@@ -39,6 +39,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCachesManager;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ComparePropertiesAction;
@@ -204,19 +205,15 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		CompositeOperation op = new CompositeOperation("Operation_RefreshGraph", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		
 		//check if cache is calculating now
-		try {
-			RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(resource);
-			if (cacheInfo.isCacheDataCalculating()) {
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {		
-						MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog();
-						dlg.open();
-					}
-				});
-				return;
-			}	
-		} catch (IOException e) {
-			LoggedOperation.reportError(RevisionGraphUtility.class.getName(), e);
+		
+		RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(resource);
+		if (cacheInfo != null && cacheInfo.isCacheDataCalculating()) {
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog(RepositoryCachesManager.getRepositoryRoot(resource));
+					dlg.open();
+				}
+			});
 			return;
 		}
 		

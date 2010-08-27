@@ -138,8 +138,16 @@ public class RepositoryCachesManager implements IPropertyChangeListener {
 		return result;
 	}
 	
-	public RepositoryCacheInfo getCache(IRepositoryResource resource) throws IOException {
+	public RepositoryCacheInfo getCache(IRepositoryResource resource) {
+		synchronized (this.lock) {
+			String url = getRepositoryRoot(resource);
+			return this.caches.get(url);
+		}	
+	}
+
+	public RepositoryCacheInfo getCacheOrCreate(IRepositoryResource resource) throws IOException {
 		RepositoryCacheInfo cacheInfo;
+		boolean isCreatedNewCache = false;
 		synchronized (this.lock) {
 			String url = getRepositoryRoot(resource);
 			cacheInfo = this.caches.get(url);
@@ -148,14 +156,20 @@ public class RepositoryCachesManager implements IPropertyChangeListener {
 				cacheInfo = new RepositoryCacheInfo(url, metadataFile);				
 				
 				this.caches.put(url, cacheInfo);		
-				this.save();									
+				this.save();
+				
+				isCreatedNewCache = true;
 			}
 				
-		}		
-		this.fireEvent(new PropertyChangeEvent(this, RepositoryCachesManager.ADD_CACHES_PROPERTY, null, new RepositoryCacheInfo[] { cacheInfo }));
+		}
+		
+		if (isCreatedNewCache) {
+			this.fireEvent(new PropertyChangeEvent(this, RepositoryCachesManager.ADD_CACHES_PROPERTY, null, new RepositoryCacheInfo[] { cacheInfo }));	
+		}
+		
 		return cacheInfo;
 	}
-
+	
 	public RepositoryCacheInfo[] getCaches() {
 		synchronized (this.lock) {
 			return this.caches.values().toArray(new RepositoryCacheInfo[0]);	
@@ -341,7 +355,7 @@ public class RepositoryCachesManager implements IPropertyChangeListener {
 	/**
 	 * Return url without protocol 
 	 */
-	protected static String getRepositoryRoot(IRepositoryResource resource) {
+	public static String getRepositoryRoot(IRepositoryResource resource) {
 		String url = resource.getRepositoryLocation().getRepositoryRootUrl();		
 		final String[] knownPrefixes = new String[] {"http://", "https://", "svn://", "svn+ssh://", "file:///", "file://" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		for (int i = 0; i < knownPrefixes.length; i ++) {
