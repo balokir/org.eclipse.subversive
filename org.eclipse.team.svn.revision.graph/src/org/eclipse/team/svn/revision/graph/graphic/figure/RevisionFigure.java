@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.GridData;
@@ -80,7 +81,6 @@ public class RevisionFigure extends Figure {
 	protected Color originalNodeColor;	
 	protected Color nodeColor;
 	protected Color borderColor;
-	protected Color childrenColor;
 		
 	protected Label revisionFigure;
 	protected Label statusFigure;
@@ -89,6 +89,8 @@ public class RevisionFigure extends Figure {
 		
 	protected Label outgoingMergeLabel;
 	protected Label incomingMergeLabel;
+	
+	protected boolean isSelected;
 	
 	static {
 		//images
@@ -252,8 +254,7 @@ public class RevisionFigure extends Figure {
 			data.widthHint = GraphConstants.NODE_WIDTH - 10;
 			data.horizontalAlignment = SWT.BEGINNING;							
 			layout.setConstraint(this.commentFigure, data);
-			this.commentFigure.setLabelAlignment(PositionConstants.LEFT);
-			this.commentFigure.setForegroundColor(ColorConstants.gray);	
+			this.commentFigure.setLabelAlignment(PositionConstants.LEFT);			
 		}
 	}			
 
@@ -286,14 +287,26 @@ public class RevisionFigure extends Figure {
 		this.drawOutline(g, corner, mainBounds, lineWidth);	
 		
 		//set color for children
-		Iterator<?> iter = this.getChildren().iterator();
-		while (iter.hasNext()) {
-			IFigure child = (IFigure) iter.next();
-			//don't change color for comment, path as it's set for them explicitly
-			if (child != this.commentFigure && child != this.pathFigure) {
-				child.setForegroundColor(this.childrenColor);	
-			}			
-		}
+ 		Iterator<?> iter = this.getChildren().iterator();
+ 		while (iter.hasNext()) {
+ 			IFigure child = (IFigure) iter.next();
+ 			if (child == this.commentFigure) {
+ 				//set explicitly color for comment
+				Color color = ColorConstants.gray; 
+				if (this.isSelected) {
+					color = FigureUtilities.lighter(color);
+				}
+				child.setForegroundColor(color);
+ 			} else if (child == this.pathFigure) { 
+ 				this.pathFigure.setSelected(this.isSelected);
+ 			} else {
+ 				Color color = ColorConstants.black;
+				if (this.isSelected) {
+					color = RevisionFigure.inverseColor(color);
+				}
+				child.setForegroundColor(color);
+ 			}
+ 		}
 	}
 	
 	protected void drawOutline(Graphics graphics, Dimension corner, Rectangle bounds, int lineWidth) {
@@ -337,8 +350,7 @@ public class RevisionFigure extends Figure {
 		
 		this.originalNodeColor = RevisionFigure.getRevisionNodeColor(this.revisionNode);
 		this.nodeColor = this.originalNodeColor;
-		this.borderColor = RevisionFigure.getRevisionNodeBorderColor(this.revisionNode);
-		this.childrenColor = ColorConstants.black;
+		this.borderColor = RevisionFigure.getRevisionNodeBorderColor(this.revisionNode);		
 		
 		//merges
 		
@@ -380,18 +392,17 @@ public class RevisionFigure extends Figure {
 	}
 	
 	public void setSelected(boolean isSelected) {
-		if (isSelected) {
-			this.nodeColor = SELECTED_COLOR;
-			this.childrenColor = ColorConstants.white;
-		} else {
-			this.nodeColor = this.originalNodeColor;
-			this.childrenColor = ColorConstants.black;
-		}
-		if (this.pathFigure != null) {
-			this.pathFigure.setSelected(isSelected);
-		}
-
-		this.repaint();
+		if (this.isSelected != isSelected) {
+			this.isSelected = isSelected;
+			 
+			if (this.isSelected) {
+	 			this.nodeColor = SELECTED_COLOR;
+	 		} else {
+	 			this.nodeColor = this.originalNodeColor;
+	 		}
+			
+			this.repaint();
+ 		}
 	}
 	
 	public RevisionNode getRevisionNode() {
@@ -406,6 +417,10 @@ public class RevisionFigure extends Figure {
 		//clear preferred size as path figure can change its bounds depending on truncation mode
 		this.prefSize = null;		
 		super.invalidate();
+	}
+	
+	public static Color inverseColor(Color color) {
+		return new Color(null, 255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());		
 	}
 	
 	public static Color getRevisionNodeBorderColor(RevisionNode revisionNode) {
