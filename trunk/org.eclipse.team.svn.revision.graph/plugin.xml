@@ -173,7 +173,7 @@
     <key
 	  commandId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
 	  schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	  sequence="CTRL+ALT+Q"/>       
+	  sequence="CTRL+ALT+Y"/>       
   </extension>
   
 <!-- **************** Preferences ******************* -->
