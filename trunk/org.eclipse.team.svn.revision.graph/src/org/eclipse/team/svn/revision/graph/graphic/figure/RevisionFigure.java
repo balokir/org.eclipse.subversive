@@ -72,7 +72,9 @@ public class RevisionFigure extends Figure {
 	public final static Image RENAME_IMAGE;
 	public final static Image OTHER_IMAGE;
 	public final static Image INCOMING_MERGE_IMAGE;
+	public final static Image INCOMING_MERGE_IMAGE_PRESSED;
 	public final static Image OUTGOING_MERGE_IMAGE;
+	public final static Image OUTGOING_MERGE_IMAGE_PRESSED;
 	public final static Image MERGE_IMAGE;
 	
 	protected RevisionNode revisionNode;
@@ -88,7 +90,10 @@ public class RevisionFigure extends Figure {
 	protected Label commentFigure;
 		
 	protected Label outgoingMergeLabel;
+	protected boolean isOutgoingMergePressed;
+	
 	protected Label incomingMergeLabel;
+	protected boolean isIncomingMergePressed;
 	
 	protected boolean isSelected;
 	
@@ -118,11 +123,17 @@ public class RevisionFigure extends Figure {
 		OTHER_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/other.png").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(OTHER_IMAGE);
 		
-		INCOMING_MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/incoming.gif").createImage(); //$NON-NLS-1$
+		INCOMING_MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/incoming.png").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(INCOMING_MERGE_IMAGE);
 		
-		OUTGOING_MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/outgoing.gif").createImage(); //$NON-NLS-1$
+		INCOMING_MERGE_IMAGE_PRESSED = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/incoming_down.png").createImage(); //$NON-NLS-1$
+		SVNRevisionGraphPlugin.disposeOnShutdown(INCOMING_MERGE_IMAGE_PRESSED);
+		
+		OUTGOING_MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/outgoing.png").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(OUTGOING_MERGE_IMAGE);
+		
+		OUTGOING_MERGE_IMAGE_PRESSED = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/outgoing_down.png").createImage(); //$NON-NLS-1$
+		SVNRevisionGraphPlugin.disposeOnShutdown(OUTGOING_MERGE_IMAGE_PRESSED);
 		
 		MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/merge.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(MERGE_IMAGE);
@@ -214,7 +225,15 @@ public class RevisionFigure extends Figure {
 				this.incomingMergeLabel.setCursor(Cursors.HAND);
 				this.incomingMergeLabel.addMouseListener(new MouseListener.Stub() {
 					public void mousePressed(MouseEvent me) {
-						RevisionFigure.this.revisionNode.addAllIncomingMergeConnections();
+						if (RevisionFigure.this.isIncomingMergePressed) {
+							RevisionFigure.this.revisionNode.removeAllIncomingMergeConnections();
+							RevisionFigure.this.incomingMergeLabel.setIcon(INCOMING_MERGE_IMAGE);
+							RevisionFigure.this.isIncomingMergePressed = false;
+						} else {
+							RevisionFigure.this.revisionNode.addAllIncomingMergeConnections();
+							RevisionFigure.this.incomingMergeLabel.setIcon(INCOMING_MERGE_IMAGE_PRESSED);
+							RevisionFigure.this.isIncomingMergePressed = true;
+						}
 					}
 				});
 			}			
@@ -227,7 +246,15 @@ public class RevisionFigure extends Figure {
 				this.outgoingMergeLabel.setCursor(Cursors.HAND);
 				this.outgoingMergeLabel.addMouseListener(new MouseListener.Stub() {
 					public void mousePressed(MouseEvent me) {
-						RevisionFigure.this.revisionNode.addAllOutgoingMergeConnections();
+						if (RevisionFigure.this.isOutgoingMergePressed) {
+							RevisionFigure.this.revisionNode.removeAllOutgoingMergeConnections();
+							RevisionFigure.this.outgoingMergeLabel.setIcon(OUTGOING_MERGE_IMAGE);
+							RevisionFigure.this.isOutgoingMergePressed = false;
+						} else {
+							RevisionFigure.this.revisionNode.addAllOutgoingMergeConnections();
+							RevisionFigure.this.outgoingMergeLabel.setIcon(OUTGOING_MERGE_IMAGE_PRESSED);
+							RevisionFigure.this.isOutgoingMergePressed = true;
+						}
 					}
 				});
 			}
@@ -383,6 +410,18 @@ public class RevisionFigure extends Figure {
 	
 	public void init() {
 		this.setPreferredSize(GraphConstants.NODE_WIDTH, this.getPreferredSize().height);
+	}
+	
+	public void changeMerges() {
+		if (this.isIncomingMergePressed && !this.revisionNode.hasIncomingMergeConnections()) {
+			this.incomingMergeLabel.setIcon(INCOMING_MERGE_IMAGE);
+			this.isIncomingMergePressed = false;
+		}
+		
+		if (this.isOutgoingMergePressed && !this.revisionNode.hasOutgoingMergeConnections()) {
+			this.outgoingMergeLabel.setIcon(OUTGOING_MERGE_IMAGE);
+			this.isOutgoingMergePressed = false;
+		}
 	}
 	
 	public void changeTruncatePath() {		
