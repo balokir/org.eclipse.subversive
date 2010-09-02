@@ -256,8 +256,10 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 			this.collapseDecoration.removeDecoration();			
 		} else if (ChangesNotifier.REFRESH_NODE_MERGE_SOURCE_CONNECTIONS_PROPERTY.equals(evt.getPropertyName())) {
 			this.refreshSourceConnections();
+			this.revisionFigure.changeMerges();
 		} else if (ChangesNotifier.REFRESH_NODE_MERGE_TARGET_CONNECTIONS_PROPERTY.equals(evt.getPropertyName())) {
 			this.refreshTargetConnections();
+			this.revisionFigure.changeMerges();
 		} else if (ChangesNotifier.TRUNCATE_NODE_PATH_PROPERTY.equals(evt.getPropertyName())) {
 			this.revisionFigure.changeTruncatePath();
 		}
