@@ -26,7 +26,20 @@
 		</a> properties page.</p>	
 	<p>On this page you can manage repository caches. You can also specify a directory where repository caches are stored. By default repository caches are stored in workspace's metadata.</p>		
 	This is how <i>'Revision Graph'</i> properties page looks like:
-	<br/><br/><img border="0" src="../images/pref_graph.png" alt="Revision Graph"/>
+	<br/><br/><img border="0" src="../images/pref_graph.png" alt="Revision Graph"/>		
+	<br/><br/>
+	<table cellpadding="5" cellspacing="0" border="1" width="100%">
+		<tr>
+			<td class="header" align ="center" valign="center">Option</td>
+			<td class="header" align ="center" valign="center">Description</td>
+			<td class="header" align ="center" valign="center">Default</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">Skip errors</td>
+			<td align ="center" valign="center">During fetching revisions information from SVN repository there may happen SVN errors, this option specifies whether to continue or break processing if such errors happen. There are 2 types of errors: random and permanent. Permanent errors may happen because of some problems on server e.g. corrupted data. If random error happens on some revision then Subversive makes an attempt to retry fetching its data, in case of permanent error Subversive skips this revision.</td>
+			<td align ="center" valign="center">Enabled</td>
+		</tr>
+	</table>
 	<br/>
 	<img border="0" src="../images/rel_tops.png" alt="Related topics"/>
 	<br/>

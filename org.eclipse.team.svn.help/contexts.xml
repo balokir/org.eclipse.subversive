@@ -206,6 +206,7 @@
 	</context>
 	<context id="showRevisionGraphDialogContext">
 		<description>This dialog provides the user a probability to specify options for revision graph.</description>
+		<topic label="Revision Graph" href="teamSupport/revision_graph.html"/>
 	</context>	
 
 	<!-- Wizards Contexts -->
