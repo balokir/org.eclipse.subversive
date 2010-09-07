@@ -1036,7 +1036,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						return accept;
 					}
 				});
-				folder = children.length > 0 ? new File(folder, children[0]) : null;
+				folder = children != null && children.length > 0 ? new File(folder, children[0]) : null;
 			} while (folder != null && !(hasSVNMeta = this.canFetchStatuses(folder)));	
 		}	
 		return hasSVNMeta;
