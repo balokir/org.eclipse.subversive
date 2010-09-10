@@ -121,6 +121,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AutoPropsPreferencePage_columnHeaderProperties;
 	public static String AutoPropsPreferencePage_dialogTitleExport;
 	public static String AutoPropsPreferencePage_dialogTitleImport;
+	public static String AutoPropsPreferencePage_forceTextMIME;
 
 	public static String BranchAction_label;
 	public static String BranchCommand_tooltip;

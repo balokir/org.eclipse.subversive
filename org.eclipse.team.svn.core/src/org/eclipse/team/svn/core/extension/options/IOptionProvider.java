@@ -58,6 +58,9 @@ public interface IOptionProvider {
 		public SVNProperty[] getAutomaticProperties(String template) {
 			return new SVNProperty[0];
 		}
+		public boolean isTextMIMETypeRequired() {
+			return true;
+		}
 		public String getResource(String key) {
 			return SVNMessages.getErrorString(key);
 		}
@@ -99,6 +102,12 @@ public interface IOptionProvider {
 	 * @return set of properties
 	 */
 	public SVNProperty[] getAutomaticProperties(String template);
+	/**
+	 * Returns <code>true</code> if "text" MIME-type should be set
+	 * @param template resource name template
+	 * @return set of properties
+	 */
+	public boolean isTextMIMETypeRequired();
 	
 	/**
 	 * Tells if SVN meta-information cache is enabled

@@ -46,7 +46,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableColumn;
@@ -80,7 +82,9 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	
 	protected String autoPropsValue;
 	protected String customPropsValue;
+	protected boolean forceTextMIME;
 	
+	protected Button forceTextMIMEButton;
 	protected TableViewer custompropTableViewer;
 	protected Button custompropBtnAdd;
 	protected Button custompropBtnEdit;
@@ -142,20 +146,24 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		}
 		this.customPropsValue = FileUtility.encodeArrayToString(props);
 		SVNTeamPreferences.setCustomPropertiesList(store, SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME, this.customPropsValue);
+		SVNTeamPreferences.setPropertiesBoolean(store, SVNTeamPreferences.FORCE_TEXT_MIME_NAME, this.forceTextMIME);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
 		this.autoPropsValue = SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT;
 		this.customPropsValue = SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_DEFAULT;
+		this.forceTextMIME = SVNTeamPreferences.FORCE_TEXT_MIME_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
 		this.autoPropsValue = SVNTeamPreferences.getAutoPropertiesList(store, SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME);
 		this.customPropsValue = SVNTeamPreferences.getCustomPropertiesList(store, SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME);
+		this.forceTextMIME = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.FORCE_TEXT_MIME_NAME);
 	}
 	
 	protected void initializeControls() {
 		this.removeAllProperties();
+		this.forceTextMIMEButton.setSelection(this.forceTextMIME);
 		this.populateAutopropTable(SVNTeamPropsPreferencePage.loadAutoProperties(this.autoPropsValue));
 		this.populateCustompropTable(SVNTeamPropsPreferencePage.loadCustomProperties(this.customPropsValue));
 	}
@@ -188,6 +196,17 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		composite.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(data);
+		
+		this.forceTextMIMEButton = new Button(composite, SWT.CHECK);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		this.forceTextMIMEButton.setLayoutData(data);
+		this.forceTextMIMEButton.setText(SVNUIMessages.AutoPropsPreferencePage_forceTextMIME);
+		this.forceTextMIMEButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent (Event event) {
+				SVNTeamPropsPreferencePage.this.forceTextMIME = SVNTeamPropsPreferencePage.this.forceTextMIMEButton.getSelection();
+			}
+		});
 		
 		this.createAutopropTable(composite);
 		this.createAutopropButtons(composite);
