@@ -111,6 +111,9 @@ public class UIOptionProvider implements IOptionProvider {
 		}
 		return new SVNProperty[0];
 	}
+	public boolean isTextMIMETypeRequired() {
+		return SVNTeamPreferences.getPropertiesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.FORCE_TEXT_MIME_NAME);
+	}
 	
 	public String getResource(String key) {
 		return SVNUIMessages.getErrorString(key);

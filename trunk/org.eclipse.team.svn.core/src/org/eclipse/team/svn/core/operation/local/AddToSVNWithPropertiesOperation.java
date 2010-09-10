@@ -36,16 +36,20 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 	protected static final String BINARY_FILE = "application/octet-stream"; //$NON-NLS-1$
 	protected static final String TEXT_FILE = "text/plain"; //$NON-NLS-1$
 	
+	protected boolean doMarkTextFiles;
+	
 	public AddToSVNWithPropertiesOperation(IResource[] resources) {
 		this(resources, false);
 	}
 	
 	public AddToSVNWithPropertiesOperation(IResource[] resources, boolean isRecursive) {
 		super(resources, isRecursive);
+		this.doMarkTextFiles = CoreExtensionsManager.instance().getOptionProvider().isTextMIMETypeRequired();
 	}
 	
 	public AddToSVNWithPropertiesOperation(IResourceProvider provider, boolean isRecursive) {
 		super(provider, isRecursive);
+		this.doMarkTextFiles = CoreExtensionsManager.instance().getOptionProvider().isTextMIMETypeRequired();
 	}
 
 	protected void doAdd(IResource current, final ISVNConnector proxy, final IProgressMonitor monitor) throws Exception {
@@ -95,7 +99,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 			if (type == Team.BINARY) {
 				proxy.setProperty(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 			}
-			else if (type == Team.TEXT) {
+			else if (this.doMarkTextFiles && type == Team.TEXT) {
 				proxy.setProperty(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 			}
 		}

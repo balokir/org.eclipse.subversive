@@ -279,6 +279,8 @@ public final class SVNTeamPreferences {
 	
 	public static final String SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE = "SelectProjectNamePage.isSimpleMode"; //$NON-NLS-1$
 	
+	public static final String FORCE_TEXT_MIME_NAME = "forceTextMime"; //$NON-NLS-1$
+	public static final boolean FORCE_TEXT_MIME_DEFAULT = true; //$NON-NLS-1$
 	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties"; //$NON-NLS-1$
 	public static final String AUTO_PROPERTIES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	
@@ -399,6 +401,7 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultPropertiesValues(IPreferenceStore store) {
+		store.setDefault(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.FORCE_TEXT_MIME_NAME), SVNTeamPreferences.FORCE_TEXT_MIME_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_NAME), SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_DEFAULT);
 	}
 	
@@ -490,8 +493,12 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullAutoPropertiesName(SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
 	}
 	
-	public static void resetToDefaultCustomoPropsValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
+	public static void resetToDefaultCustomPropsValues(IPreferenceStore store) {
+		store.setValue(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_DEFAULT);
+	}
+	
+	public static void resetToDefaultPropertiesValues(IPreferenceStore store) {
+		store.setValue(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.FORCE_TEXT_MIME_NAME), SVNTeamPreferences.FORCE_TEXT_MIME_DEFAULT);
 	}
 	
 	public static void resetToDefaultCoreValues(IPreferenceStore store) {
