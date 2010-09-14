@@ -87,7 +87,11 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 		this.setDirty(true);
 		
 		try {
-			return new Differencer().findDifferences(true, monitor, null, new MergeElement(this.ancestor), this.targetElement, new MergeElement(this.right));
+			MergeElement rightRef = new MergeElement(this.right);
+			rightRef.setCharsetReference(this.targetElement);
+			MergeElement ancestorRef = new MergeElement(this.ancestor);
+			ancestorRef.setCharsetReference(this.targetElement);
+			return new Differencer().findDifferences(true, monitor, null, ancestorRef, this.targetElement, rightRef);
 		}
 		finally {
 			monitor.done();
@@ -113,7 +117,16 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 	
 	protected class MergeElement extends BufferedResourceNode {
 		protected boolean editable;
+		protected BufferedResourceNode charsetReference;
 		
+		public BufferedResourceNode getCharsetReference() {
+			return this.charsetReference;
+		}
+
+		public void setCharsetReference(BufferedResourceNode charsetReference) {
+			this.charsetReference = charsetReference;
+		}
+
 		public MergeElement(IResource resource) {
 			this(resource, null, false);
 		}
@@ -124,6 +137,10 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 			if (initialContent != null) {
 				this.setContent(initialContent);
 			}
+		}
+
+		public String getCharset() {
+			return this.charsetReference != null ? this.charsetReference.getCharset() : super.getCharset();
 		}
 		
 		public String getType() {
