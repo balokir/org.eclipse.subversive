@@ -151,6 +151,7 @@ public class EditTreeConflictsHelper {
 	}
 	
 	public IActionOperation getOperation(boolean isRemoteResolution, boolean isLocalResolution, boolean markAsMerged) {
+		// FIXME just retest SVN::resolve() function behaviour when SVN 1.7 is available, then decide on removing useless parts if there is any
 		CompositeOperation cmpOp = null;
 		String opName = ""; //$NON-NLS-1$
 		//used as parameter to operations, e.g. update, revert
@@ -158,7 +159,7 @@ public class EditTreeConflictsHelper {
 		if (isLocalResolution) {
 			//resolved
 			cmpOp = new CompositeOperation(opName, SVNUIMessages.class);			
-			IActionOperation resolvedOp = this.getResolvedOperation();			
+			IActionOperation resolvedOp = this.getResolvedOperation(isRemoteResolution, isLocalResolution, markAsMerged);			
 			cmpOp.add(resolvedOp);						
 		} else if (isRemoteResolution) {
 			if (this.treeConflict.action == Action.ADD) {
@@ -176,7 +177,7 @@ public class EditTreeConflictsHelper {
 			if (isManual) {
 				cmpOp = new CompositeOperation(opName, SVNUIMessages.class);		
 			}			
-			cmpOp.add(this.getResolvedOperation());
+			cmpOp.add(this.getResolvedOperation(isRemoteResolution, isLocalResolution, markAsMerged));
 		}
 		
 		if (cmpOp != null) {
@@ -285,8 +286,14 @@ public class EditTreeConflictsHelper {
 		return new CopyRemoteResourcesToWcOperation(new SVNEntryReference(url, SVNRevision.fromNumber(pegRev)), isFolder, this.local.getResource());
 	}
 	
-	protected IActionOperation getResolvedOperation() {
-		return new MarkResolvedOperation(new IResource[] {this.local.getResource()}, SVNConflictResolution.CHOOSE_LOCAL_FULL, ISVNConnector.Depth.INFINITY);		
+	protected IActionOperation getResolvedOperation(boolean isRemoteResolution, boolean isLocalResolution, boolean markAsMerged) {
+//		int resolution = isRemoteResolution ? SVNConflictResolution.CHOOSE_REMOTE_FULL : isLocalResolution ? SVNConflictResolution.CHOOSE_LOCAL_FULL : SVNConflictResolution.CHOOSE_MERGED;
+		// FIXME there is really the Subversion issue why the "svn: Tree conflicts can only be resolved to 'working' state" error happens
+		//  for reference please check this article: http://tortoisesvn.tigris.org/ds/viewMessage.do?dsForumId=757&viewType=browseAll&dsMessageId=2411874#messagefocus
+		//  so, for now Subversive code will just resolve conflicts and the only call SVN API resolve() function to mark it as merged
+		//  which means the only acceptable option is SVNConflictResolution.CHOOSE_MERGED
+		int resolution = SVNConflictResolution.CHOOSE_MERGED;
+		return new MarkResolvedOperation(new IResource[] {this.local.getResource()}, resolution, ISVNConnector.Depth.INFINITY);		
 	}
 	
 	public IRepositoryResource getRepositoryResourceForHistory(boolean isLeft) {
