@@ -25,15 +25,15 @@
 
    <includes
          id="org.eclipse.team.svn.nl1.sources"
-         version="0.7.9.I20100917-1700"/>
+         version="0.7.9.I20100512-1900"/>
 
    <includes
          id="org.eclipse.team.svn.resource.ignore.rules.jdt.source"
-         version="0.7.9.I20100917-1700"/>
+         version="0.7.9.I20100512-1900"/>
 
    <includes
          id="org.eclipse.team.svn.mylyn.source"
-         version="0.7.9.I20100917-1700"/>
+         version="0.7.9.I20100512-1900"/>
 
    <includes
          id="org.eclipse.team.svn.revision.graph.source"
