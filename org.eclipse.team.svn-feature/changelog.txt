@@ -8,6 +8,48 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20100917-1700 [17 September 2010]
+
+Features:
+ * Add documentation about Revision Graph options dialog (bug 317802)
+ * [Revision Graph] Allow to hide merge connections by pressing on merge icon (bug 319383)
+ * Make lighter comment color for selected node in Revision Graph (bug 317699)
+ * Allow to call revision graph for multi-selection (bug 318719)
+ * Add help about Properties View contribution in Revision Graph (bug 319109)
+ * Show nodes info in Properties View in Revision Graph (bug 319104)
+ * Show example of date in preferences (bug 299908)
+ * Save revision graph setting in options dialog (bug 317839)
+ * [Revision Graph] Allow to search revision nodes on graph (bug 319968)
+ * [Revision Graph] Allow to specify revisions range (bug 319249)
+ * Support set-depth option (bug 295217)
+
+Fixes:
+ * The conflict editor ignores custom file encoding on the right hand side, uses encoding from container instead (bug 325122)
+ * Resolving Tree Conflicts - Apply Local Changes doesn't work on 2.2.2 (bug 320843)
+ * Subversive should not set forcibly svn:mime-type to text/plain (bug 322772)
+ * NPE in SVNRemoteStorage [ID-AFBM0] (bug 324394)
+ * Default key binding in editors prevents AT from working properly (bug 316097)
+ * Commit Comments history depth doesn't have any effect, when i change it to lower value (bug 302571)
+ * [Revision Graph] Add ... to Show Revision Graph action (bug 319138)
+ * Handle missing resources in Commit dialog (bug 312874)
+ * [Revision Graph] Increase vertical offset between neighbor nodes (bug 319133)
+ * Create patch file filter not working (bug 302937)
+ * [Revision Graph] Increase graph margin (bug 319129)
+ * Error when calling SVN Info for moved resource (bug 315545)
+ * [Revision Graph] Show graph for called resource (bug 319243)
+ * Error in annotation if there are specified revisions (bug 317612)
+ * Connector discovery says it's retrieving list from eclipse.org, but connects to community.polarion.com (bug 320955)
+ * Show History failure - No such revision (bug 312464)
+ * [Revision Graph] Improve comment presentation (bug 319228)
+ * [Revision Graph] Improve tooltip presentation (bug 319148)
+ * Allow to truncate paths in Revision Graph (bug 319029)
+ * Handle if errors happen during revision info fetching at Revision Graph (bug 317801)
+ * NPE in create patch (bug 300720)
+ * Cache directory is empty for revision graph (bug 317266)
+ * All updates in a merge marked as conflicts (bug 312585)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20100617-1700 [17 June 2010]
 
 Features:
