@@ -38,7 +38,6 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
  * @author David Green
  * @author Igor Burilo
  */
-@SuppressWarnings("restriction")
 public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 
 	private String discoveryUrl;

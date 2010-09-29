@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Listener;
 /**
  * Based on {@link org.eclipse.ui.internal.forms.widgets.FormHeading}.
  */
-@SuppressWarnings("restriction")
 public class GradientCanvas extends Canvas {
 
 	private static final int SEPARATOR = 1 << 1;

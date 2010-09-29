@@ -87,7 +87,6 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		this.rootName = rootName;
 		this.managementFoldersEnabled = managementFoldersEnabled;
 		this.commitComment = commitComment;
-		this.ignoreExternals = ignoreExternals;
 	}
 	
 	public void setIngoreExternals(boolean ignoreExternals) {
