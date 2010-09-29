@@ -25,20 +25,17 @@ import org.eclipse.team.svn.core.discovery.model.ConnectorDiscovery;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.discovery.IConnectorsInstallJob;
-import org.eclipse.team.svn.ui.discovery.PrepareInstallProfileJob_3_5;
 import org.eclipse.team.svn.ui.discovery.util.DiscoveryUiUtil;
 
 /**
  * A wizard for performing discovery of connectors and selecting connectors to install. When finish is pressed, selected
  * connectors are downloaded and installed.
  * 
- * @see PrepareInstallProfileJob_3_5
  * @see ConnectorDiscoveryWizardMainPage
  * 
  * @author David Green
  * @author Igor Burilo
  */
-@SuppressWarnings("restriction")
 public class ConnectorDiscoveryWizard extends Wizard {
 
 	private ConnectorDiscoveryWizardMainPage mainPage;
