@@ -55,7 +55,6 @@ import org.eclipse.team.svn.ui.repository.browser.RepositoryBrowser;
 import org.eclipse.team.svn.ui.repository.model.RepositoriesRoot;
 import org.eclipse.team.svn.ui.repository.model.RepositoryContentProvider;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
-import org.eclipse.team.svn.ui.repository.model.RepositoryRevision;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;

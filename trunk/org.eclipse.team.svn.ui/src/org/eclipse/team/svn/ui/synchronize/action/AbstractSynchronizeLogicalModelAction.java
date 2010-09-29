@@ -47,7 +47,6 @@ import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-@SuppressWarnings("restriction")
 public abstract class AbstractSynchronizeLogicalModelAction extends ResourceModelParticipantAction {
 	
 	/**
