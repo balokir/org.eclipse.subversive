@@ -106,15 +106,16 @@ public class DiscoveryConnectorsHelper {
 		IConnectorsInstallJob runnable = null;
 		Bundle bundle = Platform.getBundle("org.eclipse.equinox.p2.engine"); //$NON-NLS-1$	
 		if (bundle != null) {
+			Class<?> clazz = null;
 			if (new VersionRange("[1.0.0,1.1.0)").isIncluded(bundle.getVersion())) { //$NON-NLS-1$
 				//for Eclipse 3.5
-				runnable = new PrepareInstallProfileJob_3_5();
+				clazz = Class.forName("org.eclipse.team.svn.ui.discovery.PrepareInstallProfileJob_3_5"); //$NON-NLS-1$
 			} else {
 				//for Eclipse 3.6						
-				Class<?> clazz = Class.forName("org.eclipse.team.svn.ui.discovery.PrepareInstallProfileJob_3_6"); //$NON-NLS-1$
-				Constructor<?> c = clazz.getConstructor();
-				runnable = (IConnectorsInstallJob) c.newInstance();			
+				clazz = Class.forName("org.eclipse.team.svn.ui.discovery.PrepareInstallProfileJob_3_6"); //$NON-NLS-1$
 			}	
+			Constructor<?> c = clazz.getConstructor();
+			runnable = (IConnectorsInstallJob) c.newInstance();			
 		}
 		return runnable;
 	}
