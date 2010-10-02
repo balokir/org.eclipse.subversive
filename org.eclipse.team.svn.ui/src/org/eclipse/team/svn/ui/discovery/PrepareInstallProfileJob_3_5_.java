@@ -69,7 +69,7 @@ import org.eclipse.ui.PlatformUI;
  * @author Igor Burilo
  */
 @SuppressWarnings("restriction")
-public class PrepareInstallProfileJob_3_5 implements IConnectorsInstallJob {
+public class PrepareInstallProfileJob_3_5_ implements IConnectorsInstallJob {
 
 	private static final String P2_FEATURE_GROUP_SUFFIX = ".feature.group"; //$NON-NLS-1$
 
@@ -83,7 +83,7 @@ public class PrepareInstallProfileJob_3_5 implements IConnectorsInstallJob {
 
 	private InstallAction installAction;
 
-	public PrepareInstallProfileJob_3_5() {
+	public PrepareInstallProfileJob_3_5_() {
 		
 	}
 
