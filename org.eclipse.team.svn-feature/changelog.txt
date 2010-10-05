@@ -8,6 +8,16 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20101001-1700 [01 October 2010]
+
+Fixes:
+ * Update javahl binaries to 1.6.12 version (bug 326829)
+ * Subversive does not start correctly under Eclipse 3.5.x with discovery feature enabled (bug 326834)
+ * Remove SVN 1.4-related connectors from the discovery feature list (bug 326831)
+ * Discovery feature do not starts under Eclipse 3.6 (bug 326564)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20100917-1700 [17 September 2010]
 
 Features:
