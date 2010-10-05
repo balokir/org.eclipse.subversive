@@ -68,7 +68,7 @@
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl16.win32,org.polarion.eclipse.team.svn.connector.javahl16"
             kind="task"
             license="Apache Software License 1.1"
-            name="Native JavaHL 1.6.6"
+            name="Native JavaHL 1.6.12"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/weekly-site/"
             platformFilter="(osgi.os=win32)">
