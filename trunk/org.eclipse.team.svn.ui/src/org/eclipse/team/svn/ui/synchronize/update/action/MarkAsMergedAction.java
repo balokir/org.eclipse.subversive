@@ -49,7 +49,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
                     UpdateSyncInfo sync = (UpdateSyncInfo)info;
                     boolean localIsFile = sync.getLocalResource().getResource() instanceof IFile;
                     boolean remoteIsFile = sync.getRemoteChangeResource() instanceof ILocalFile;
-                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()) && localIsFile && remoteIsFile;
+                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()) && localIsFile == remoteIsFile;
                 }
                 return false;
             }
