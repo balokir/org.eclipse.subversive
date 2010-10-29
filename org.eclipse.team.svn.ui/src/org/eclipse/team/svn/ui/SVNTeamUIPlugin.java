@@ -56,11 +56,11 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 
     public SVNTeamUIPlugin() {
         super();
+
+        SVNTeamUIPlugin.instance = this;
         
         this.pcListener = new ProjectCloseListener();
 //        this.problemListener = new ProblemListener();
-        
-        SVNTeamUIPlugin.instance = this;
     }
     
     public static SVNTeamUIPlugin instance() {
