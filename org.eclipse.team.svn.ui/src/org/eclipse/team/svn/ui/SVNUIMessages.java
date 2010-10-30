@@ -1422,6 +1422,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SVNHistoryPanel_Description;
 	public static String SVNHistoryPanel_Message;
 	public static String SelectRevisionPanel_Title;
+	public static String SVNHistoryPanel_GroupByDate;
 	public static String SVNHistoryPanel_Unrelated;
 	public static String Select_Branch_Label;
 	public static String Select_Branch_Title;
