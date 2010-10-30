@@ -236,6 +236,7 @@ public class SVNHistoryPanel extends AbstractDialogPanel implements ISVNHistoryV
     	this.pagingAllItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/paging_all.gif").createImage()); //$NON-NLS-1$
     	this.refreshItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif").createImage()); //$NON-NLS-1$
     	
+    	this.groupByDateItem.setToolTipText(SVNUIMessages.SVNHistoryPanel_GroupByDate);
     	this.hideUnrelatedItem.setToolTipText(SVNUIMessages.SVNHistoryPanel_Unrelated);
     	this.stopOnCopyItem.setToolTipText(SVNUIMessages.SVNHistoryPanel_StopOnCopy);
     	this.filterItem.setToolTipText(SVNUIMessages.SVNHistoryPanel_QuickFilter);
