@@ -53,7 +53,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 			SelectProjectNamePage.class.getName(), 
 			"",  //$NON-NLS-1$
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
-		this.isSimpleMode = SVNTeamUIPlugin.instance().getPreferenceStore().getBoolean(SVNTeamPreferences.SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE);				
+		this.isSimpleMode = SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_NAME);				
 	}
 	
 	protected class SelectProjectNamePageValidationManager extends AbstractValidationManagerProxy {
@@ -199,7 +199,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	
 	public IWizardPage getNextPage() {
 		this.getActivePageData().save();
-		SVNTeamUIPlugin.instance().getPreferenceStore().setValue(SVNTeamPreferences.SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE, this.isSimpleMode);		
+		SVNTeamPreferences.setRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_NAME, this.isSimpleMode);
 		return super.getNextPage();
 	}
 }
