@@ -69,6 +69,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected String branches;
 	protected String tags;
 	protected boolean showExternals;
+	protected boolean simpleShare;
 	protected boolean fastReport;
 	protected boolean enableModelSync;
 	protected boolean pagingEnable;
@@ -134,12 +135,14 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	}
 
 	protected void saveValues(IPreferenceStore store) {
+		//TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=260610
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_HEAD_NAME, this.head);
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_BRANCHES_NAME, this.branches);
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME, this.tags);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME, this.branchTagConsiderStructure);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME, this.forceExternalsFreeze);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME, this.showExternals);
+		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_NAME, this.simpleShare);
 				
 		AbstractSVNSubscriber.setSynchInfoContigous(this.fastReport);
 		SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME, this.enableModelSync);
@@ -230,6 +233,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.branches = SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_BRANCHES_NAME);
 		this.tags = SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME);
 		this.showExternals = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME);
+		this.simpleShare = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_NAME);
 				
 		this.fastReport = AbstractSVNSubscriber.getSynchInfoContigous();
 		this.enableModelSync = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME);

@@ -184,11 +184,13 @@ public final class SVNTeamPreferences {
 	public static final String REPOSITORY_BRANCHES_NAME = "branches"; //$NON-NLS-1$
 	public static final String REPOSITORY_TAGS_NAME = "tags"; //$NON-NLS-1$
 	public static final String REPOSITORY_SHOW_EXTERNALS_NAME = "showExternals"; //$NON-NLS-1$
+	public static final String REPOSITORY_SIMPLE_SHARE_NAME = "simpleShare"; //$NON-NLS-1$
 	
 	public static final String REPOSITORY_HEAD_DEFAULT = "trunk";
 	public static final String REPOSITORY_BRANCHES_DEFAULT = "branches";
 	public static final String REPOSITORY_TAGS_DEFAULT = "tags";
 	public static final boolean REPOSITORY_SHOW_EXTERNALS_DEFAULT = true;
+	public static final boolean REPOSITORY_SIMPLE_SHARE_DEFAULT = true;
 	
 	public static final String BRANCH_TAG_CONSIDER_STRUCTURE_NAME = "tagConsideringProjectStructure"; //$NON-NLS-1$
 	public static final boolean BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT = true;
@@ -278,8 +280,6 @@ public final class SVNTeamPreferences {
 	public static final String LOCK_DIALOG_WEIGHT_NAME = "LockResourcesPanel.weight"; //$NON-NLS-1$
 	public static final int LOCK_DIALOG_WEIGHT_DEFAULT = 50;
 	
-	public static final String SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE = "SelectProjectNamePage.isSimpleMode"; //$NON-NLS-1$
-	
 	public static final String FORCE_TEXT_MIME_NAME = "forceTextMime"; //$NON-NLS-1$
 	public static final boolean FORCE_TEXT_MIME_DEFAULT = true; //$NON-NLS-1$
 	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties"; //$NON-NLS-1$
@@ -340,7 +340,6 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultCustomPropertiesValues(store);
 		SVNTeamPreferences.setDefaultDiffViewerValues(store);
 		
-		store.setDefault(SVNTeamPreferences.SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE, true);
 		store.setDefault(SVNTeamPreferences.FIRST_STARTUP, true);	
 	}
 	
@@ -415,6 +414,7 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_BRANCHES_NAME), SVNTeamPreferences.REPOSITORY_BRANCHES_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_TAGS_NAME), SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_NAME), SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SHOW_BROWSER_NAME), SVNTeamPreferences.REPOSITORY_SHOW_BROWSER_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME), SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_DEFAULT);
@@ -560,7 +560,8 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_HEAD_NAME), SVNTeamPreferences.REPOSITORY_HEAD_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_BRANCHES_NAME), SVNTeamPreferences.REPOSITORY_BRANCHES_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_TAGS_NAME), SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_DEFAULT);
+		//store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_NAME), SVNTeamPreferences.REPOSITORY_SIMPLE_SHARE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SHOW_BROWSER_NAME), SVNTeamPreferences.REPOSITORY_SHOW_BROWSER_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME), SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_DEFAULT);
