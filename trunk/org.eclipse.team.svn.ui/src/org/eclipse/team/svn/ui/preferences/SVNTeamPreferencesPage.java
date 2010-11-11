@@ -135,7 +135,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	}
 
 	protected void saveValues(IPreferenceStore store) {
-		//TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=260610
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_HEAD_NAME, this.head);
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_BRANCHES_NAME, this.branches);
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME, this.tags);
