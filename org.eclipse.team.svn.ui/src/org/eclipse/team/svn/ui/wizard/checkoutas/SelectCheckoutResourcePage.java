@@ -47,7 +47,6 @@ public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
 	public void setRepositoryLocation(IRepositoryLocation location) {		
 		this.selectedResource = this.baseResource = location.getRoot();
 		this.selectComposite.setBaseResource(this.baseResource);
-		this.setPageComplete(false);
 	}
 	
 	public IRepositoryResource getSelectedResource() {
