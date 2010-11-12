@@ -60,7 +60,7 @@ public class SVNFetchFactory implements IFetchFactory {
 	public static final String PROP_PASSWORD = SVNFetchFactory.KEY_PASSWORD;
 	public static final String PROP_FORCE = KEY_FORCE;
 
-	protected static Pattern tagPattern = Pattern.compile("[a-zA-Z_0-9-]+"); //$NON-NLS-1$
+	protected static Pattern tagPattern = Pattern.compile("[\\.a-zA-Z_0-9-]+"); //$NON-NLS-1$
 	
 	public SVNFetchFactory() {
 
