@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.action.local.LockAction;
 import org.eclipse.team.svn.ui.lock.LockResource;
@@ -28,25 +29,21 @@ import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
  * @author Sergiy Logvin
  */
 public class LockProposeUtility {
-	public static boolean proposeLock(final IResource[] resources) {
-		final boolean[] success = new boolean[1];		
+	public static IStatus proposeLock(final IResource[] resources) {
 		List<LockResource> lockResources = LockAction.getLockResources(resources);
-		if (lockResources != null) {
-			Iterator<LockResource> iter = lockResources.iterator();
-			while (iter.hasNext()) {
-				LockResource lockResource = iter.next();
-				if (lockResource.getLockStatus() == LockStatusEnum.LOCALLY_LOCKED) {
-					iter.remove();
-				}
+		for (Iterator<LockResource> iter = lockResources.iterator(); iter.hasNext(); ) {
+			LockResource lockResource = iter.next();
+			if (lockResource.getLockStatus() == LockStatusEnum.LOCALLY_LOCKED) {
+				iter.remove();
 			}
-			
-			IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, UIMonitorUtility.getShell());
-			if (op != null) {
-				UIMonitorUtility.doTaskBusyDefault(op);
-				success[0] = op.getStatus().getSeverity() == IStatus.OK;
-			}				
-		}	
-		return success[0];
+		}
+		
+		IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, UIMonitorUtility.getShell());
+		if (op != null) {
+			UIMonitorUtility.doTaskBusyDefault(op);
+			return op.getStatus();
+		}				
+		return Status.CANCEL_STATUS;
 	}
 
 }
