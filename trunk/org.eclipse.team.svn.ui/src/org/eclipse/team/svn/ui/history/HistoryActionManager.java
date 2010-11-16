@@ -691,7 +691,7 @@ public class HistoryActionManager {
 		if (this.view.getResource() instanceof IFile) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.view.getResource());
 			if (!local.isLocked() && IStateFilter.SF_NEEDS_LOCK.accept(local)) {
-				canWrite = LockProposeUtility.proposeLock(new IResource[] {this.view.getResource()});
+				canWrite = LockProposeUtility.proposeLock(new IResource[] {this.view.getResource()}).getSeverity() == IStatus.OK;
 			}
 		}
 		if (canWrite) {

@@ -33,12 +33,12 @@ import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 public class SVNTeamModificationValidator extends FileModificationValidator {
 	public IStatus validateEdit(IFile[] files, final FileModificationValidationContext context) {
 		if (FileUtility.isConnected(files[0])) {
-			final IResource[] needsLockResources = this.getNeedsLockResources(files);
-			if (needsLockResources.length > 0) {
-				LockProposeUtility.proposeLock(needsLockResources);
+			IResource[] needsLockResources = this.getNeedsLockResources(files);
+			if (needsLockResources.length > 0)
+			{
+				return LockProposeUtility.proposeLock(needsLockResources);
 			}
 		}
-		
 		return Status.OK_STATUS;
 	}
 	
