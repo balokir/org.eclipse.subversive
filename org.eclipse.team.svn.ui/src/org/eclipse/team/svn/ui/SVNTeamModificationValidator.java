@@ -20,6 +20,7 @@ import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -36,7 +37,7 @@ public class SVNTeamModificationValidator extends FileModificationValidator {
 			IResource[] needsLockResources = this.getNeedsLockResources(files);
 			if (needsLockResources.length > 0)
 			{
-				return LockProposeUtility.proposeLock(needsLockResources);
+				return LockProposeUtility.proposeLock(needsLockResources, (Shell)context.getShell());
 			}
 		}
 		return Status.OK_STATUS;

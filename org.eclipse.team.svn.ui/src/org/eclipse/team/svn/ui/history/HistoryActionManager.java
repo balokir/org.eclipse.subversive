@@ -318,6 +318,7 @@ public class HistoryActionManager {
 		}
 		
 		protected void addRemotePart(final StructuredViewer viewer, IMenuManager manager, final ILogNode []selection, boolean containsMergeHistory) {
+			final Shell shell = viewer.getControl().getShell();
 			Action tAction = null;
 			SVNLogEntry []entries = HistoryActionManager.this.view.getFullRemoteHistory();
 			boolean existsInPrevious = entries[entries.length - 1] != selection[0].getEntity() || !HistoryActionManager.this.view.isAllRemoteHistoryFetched();
@@ -475,7 +476,7 @@ public class HistoryActionManager {
 					manager.add(tAction = new HistoryAction(SVNUIMessages.HistoryView_GetContents) {
 						public void run() {
 							if (HistoryActionManager.this.confirmReplacement()) {
-								HistoryActionManager.this.getRevisionContents((SVNLogEntry)selection[0].getEntity());
+								HistoryActionManager.this.getRevisionContents((SVNLogEntry)selection[0].getEntity(), shell);
 							}
 						}
 					});
@@ -682,7 +683,7 @@ public class HistoryActionManager {
 		return wrapper;
 	}
 	
-	protected void getRevisionContents(SVNLogEntry item) {
+	protected void getRevisionContents(SVNLogEntry item, Shell shell) {
 		IRepositoryResource remote = this.getResourceForSelectedRevision(item);
 		
 		// propose user to lock the file if it needs lock
@@ -691,7 +692,7 @@ public class HistoryActionManager {
 		if (this.view.getResource() instanceof IFile) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.view.getResource());
 			if (!local.isLocked() && IStateFilter.SF_NEEDS_LOCK.accept(local)) {
-				canWrite = LockProposeUtility.proposeLock(new IResource[] {this.view.getResource()}).getSeverity() == IStatus.OK;
+				canWrite = LockProposeUtility.proposeLock(new IResource[] {this.view.getResource()}, shell).getSeverity() == IStatus.OK;
 			}
 		}
 		if (canWrite) {
