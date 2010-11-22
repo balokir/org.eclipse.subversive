@@ -68,7 +68,6 @@ import org.eclipse.team.svn.core.discovery.model.ConnectorDescriptor;
  * @author David Green
  * @author Igor Burilo
  */
-@SuppressWarnings("restriction")
 public class PrepareInstallProfileJob_3_5_ implements IConnectorsInstallJob {
 
 //	private static final String P2_FEATURE_GROUP_SUFFIX = ".feature.group"; //$NON-NLS-1$
