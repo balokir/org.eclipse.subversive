@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -34,6 +33,7 @@ import org.eclipse.team.svn.core.operation.local.change.visitors.SaveContentVisi
 import org.eclipse.team.svn.core.operation.local.change.visitors.SavePropertiesVisitor;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
@@ -122,7 +122,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		this.withDifferentNodeKind = withDifferentNodeKind.toArray(new IResource[withDifferentNodeKind.size()]);
 	}
 
-	protected void markDeleted(ILocalResource local, IProgressMonitor monitor) throws TeamException {
+	protected void markDeleted(ILocalResource local, IProgressMonitor monitor) throws Exception {
 		this.doOperation(new RevertOperation(new IResource[] {local.getResource()}, true), monitor);
 		this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, this.getRevisionToUpdate(local), this.ignoreExternals), monitor);
 		//don't delete the resource which already doesn't exist on file system
@@ -182,10 +182,17 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	    return nodeKindChanged;
 	}
 
-	protected SVNRevision getRevisionToUpdate(ILocalResource local) throws TeamException {
+	protected SVNRevision getRevisionToUpdate(ILocalResource local) throws Exception {
 		AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(local.getResource());
 		ILocalResource remoteResource = syncInfo.getRemoteChangeResource();
-		return SVNRevision.fromNumber(remoteResource.getRevision());		    		
+		long revNum = remoteResource.getRevision();
+		if (revNum == SVNRevision.INVALID_REVISION_NUMBER)
+		{
+			// no resource change, acquire latest revision for the selected resource
+			IRepositoryResource tResource = SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
+			revNum = tResource.getRevision();
+		}
+		return SVNRevision.fromNumber(revNum);		    		
 	}
 	
 	protected boolean prepareToOverride(ResourceChange change, IProgressMonitor monitor) {
