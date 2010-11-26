@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -214,7 +215,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		String textStatusStr = SVNRemoteStorage.getTextStatusString(propKind, textKind, update);
 		String propStatusStr = SVNRemoteStorage.getPropStatusString(propKind);
 		if (nodeKind == SVNEntry.Kind.DIR) {
-		    if ((resource = changeState.getExact(root.findContainersForLocation(location))) == null) {
+		    if ((resource = changeState.getExact(root.findContainersForLocationURI(URIUtil.toURI(location.makeAbsolute())))) == null) {
 		    	return null;
 		    }
 		    //handle resource name for case insensitive OS's
