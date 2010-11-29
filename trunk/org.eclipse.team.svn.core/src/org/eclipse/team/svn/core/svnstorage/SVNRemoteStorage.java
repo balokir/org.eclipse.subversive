@@ -229,7 +229,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			}
 			return new SVNFolderChange(resource, revision, textStatusStr, propStatusStr, changeMask, changeState.getChangeAuthor(), changeState.getChangeDate(), treeConflictDescriptor, null, changeState.getComment());
 		}
-	    if ((resource = changeState.getExact(root.findFilesForLocation(location))) == null) {	    	
+	    if ((resource = changeState.getExact(root.findFilesForLocationURI(URIUtil.toURI(location.makeAbsolute())))) == null) {	    	
 	    	return null;
 	    }	    
 	    //handle resource name for case insensitive OS's
