@@ -8,6 +8,28 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20101203-1700 [03 December 2010]
+
+Fixes:
+ * IWorkspaceRoot.findFilesForLocation() is deprecated (bug 331373)
+ * IWorkspaceRoot.findContainersForLocation() is deprecated (bug 331188)
+ * [ID-ZT6S5] "Negative revision numbers are not allowed" error while performing "Mark As Merged" operation (bug 330737)
+ * Eclipse-LazyStart option is deprecated in Eclipse 3.3 and later versions (bug 331003)
+ * Lots of warnings in the build.properties files (bug 330843)
+ * Use Shell from the FileModificationValidationContext if possible (bug 330638)
+ * Eclipse 3.5 discovery feature connector source code produces compilation errors (bug 330637)
+ * SVNTeamModificationValidator does not take into account LockProposeUtility.proposeLock(..) returned status (bug 330290)
+ * Error in menu item title: "Comapre With" (bug 330228)
+ * Ability to reject incoming changes (make Mark as Merged active) (bug 297821)
+ * Finish button on "Select Resource" dialog not enabled until a different revision is selected (bug 329756)
+ * Correct simple share mode option name (bug 329726)
+ * Wrong French translation for a SVN error (bug 329201)
+ * Some NLS messages should be removed (bug 329187)
+ * SWTException when Subversive UI plugin starts in a worker thread (bug 326684)
+ * No tooltip for clock icon on merge dialog (bug 326074)
+ * NPE starting target workspace (bug 328149)
+ * Properties conflict on project makes Subversive totally unusable. (bug 283999)
+
 Version 0.7.9.I20101001-1700 [01 October 2010]
 
 Fixes:
