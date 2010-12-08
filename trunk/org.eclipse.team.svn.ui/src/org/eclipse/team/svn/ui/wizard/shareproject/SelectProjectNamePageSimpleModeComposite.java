@@ -116,7 +116,7 @@ public class SelectProjectNamePageSimpleModeComposite extends Composite implemen
 	}
 
 	public String getRootProjectName() {
-		return ""; //$NON-NLS-1$
+		return null;
 	}
 
 	public void save() {
