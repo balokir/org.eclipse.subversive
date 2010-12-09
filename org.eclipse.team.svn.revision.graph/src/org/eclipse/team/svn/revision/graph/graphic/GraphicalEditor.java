@@ -60,6 +60,8 @@ implements CommandStackListener, ISelectionListener
 {
 
 private static class ActionIDList extends ArrayList {
+	private static final long serialVersionUID = 7605350633457493991L;
+
 public boolean add(Object o) {
 	if (o instanceof IAction) {
 		try {
