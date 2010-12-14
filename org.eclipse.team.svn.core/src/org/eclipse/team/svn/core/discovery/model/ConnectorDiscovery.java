@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -62,13 +64,18 @@ public class ConnectorDiscovery {
 
 	private final List<AbstractDiscoveryStrategy> discoveryStrategies = new ArrayList<AbstractDiscoveryStrategy>();
 
-	private Dictionary<Object, Object> environment = System.getProperties();
+	private Dictionary<String, Object> environment = new Hashtable<String, Object>();
 
 	private boolean verifyUpdateSiteAvailability = false;
 
 	private Map<String, Version> featureToVersion = null;
 
 	public ConnectorDiscovery() {
+		Dictionary<Object, Object> props = System.getProperties();
+		for (Enumeration iterator = props.keys(); iterator.hasMoreElements();) {
+			String key = (String)iterator.nextElement();
+			environment.put(key, props.get(key));
+		}
 	}
 
 	/**
@@ -143,7 +150,7 @@ public class ConnectorDiscovery {
 	 * The environment used to resolve {@link ConnectorDescriptor#getPlatformFilter() platform filters}. Defaults to the
 	 * current environment.
 	 */
-	public Dictionary<Object, Object> getEnvironment() {
+	public Dictionary getEnvironment() {
 		return environment;
 	}
 
@@ -151,7 +158,7 @@ public class ConnectorDiscovery {
 	 * The environment used to resolve {@link ConnectorDescriptor#getPlatformFilter() platform filters}. Defaults to the
 	 * current environment.
 	 */
-	public void setEnvironment(Dictionary<Object, Object> environment) {
+	public void setEnvironment(Dictionary environment) {
 		if (environment == null) {
 			throw new IllegalArgumentException();
 		}
