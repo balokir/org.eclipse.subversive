@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -406,7 +407,10 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 			});
 			this.changeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 			this.changeViewer.expandAll();
-			this.changeViewer.setAllChecked(true);
+			TreeItem []items = this.changeViewer.getTree().getItems();
+			for (int i = 0; i < items.length; i++) {
+				this.changeViewer.setSubtreeChecked(items[i].getData(), true);
+			}
 			this.realSelection = this.initialSelection = this.changeViewer.getCheckedElements();
 		}
 
