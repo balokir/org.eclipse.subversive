@@ -162,20 +162,23 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 					final ThreeWayResourceCompareInput compare = new ThreeWayResourceCompareInput(cc, CompareResourcesInternalOperation.this.local, diffPair[0], diffPair[1], localChanges, remoteChanges);
 					compare.setForceId(CompareResourcesInternalOperation.this.forceId);
 					compare.initialize(monitor);
-					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-						public void run() {
-							if (CompareResourcesInternalOperation.this.showInDialog) {
-								if (CompareResourcesInternalOperation.this.compareResultOK(compare)) {
-									ComparePanel panel = new ComparePanel(compare, CompareResourcesInternalOperation.this.local.getResource());
-									DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-									dialog.open();
+					if (!monitor.isCanceled())
+					{
+						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+							public void run() {
+								if (CompareResourcesInternalOperation.this.showInDialog) {
+									if (CompareResourcesInternalOperation.this.compareResultOK(compare)) {
+										ComparePanel panel = new ComparePanel(compare, CompareResourcesInternalOperation.this.local.getResource());
+										DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+										dialog.open();
+									}
+								}
+								else {
+									ResourceCompareInput.openCompareEditor(compare, CompareResourcesInternalOperation.this.forceReuse);
 								}
 							}
-							else {
-								ResourceCompareInput.openCompareEditor(compare, CompareResourcesInternalOperation.this.forceReuse);
-							}
-						}
-					});
+						});
+					}
 				}
 			}, monitor, 100, 40);
 		}
