@@ -24,16 +24,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.team.svn.core.connector.SVNEntryReference;
-import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
-import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
-import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
@@ -49,25 +45,7 @@ import org.eclipse.team.svn.ui.verifier.URLVerifier;
  * @author Igor Burilo
  *
  */
-public class RepositoryResourceOnlySelectionComposite extends Composite {
-	
-	protected Label urlLabel;
-	protected Combo urlText;
-	protected Button browse;
-	protected UserInputHistory urlHistory;
-	protected IValidationManager validationManager;
-	protected IRepositoryResource baseResource;
-	
-	protected String url;
-
-	protected CompositeVerifier verifier;
-	
-	protected String selectionTitle;
-	protected String selectionDescription;
-	protected String comboId;
-	
-	protected boolean foldersOnly;
-	
+public class RepositoryResourceOnlySelectionComposite extends RepositoryResourceBaseSelectionComposite {
 	/*
 	 * Flag which determines whether to verify that selected
 	 * resource starts with base resource.
@@ -81,14 +59,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 	}
 	
 	public RepositoryResourceOnlySelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, String selectionTitle, String selectionDescription) {
-		super(parent, style);
-		this.urlHistory = new UserInputHistory(historyKey);
-		this.validationManager = validationManager;
-		this.baseResource = baseResource;
-		this.selectionTitle = selectionTitle;
-		this.selectionDescription = selectionDescription;
-		this.comboId = comboId;
-		this.foldersOnly = !(baseResource instanceof IRepositoryFile);
+		super(parent, style, validationManager, historyKey, comboId, baseResource, selectionTitle, selectionDescription);
 		
 		this.createControls();
 	}
@@ -101,51 +72,6 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 		return this.isMatchToBaseResource;
 	}
 	
-	public void setBaseResource(IRepositoryResource baseResource) {
-		this.baseResource = baseResource;
-		this.urlText.setText(this.baseResource.getUrl());
-	}
-	
-	public void setFoldersOnly(boolean foldersOnly) {
-		this.foldersOnly = foldersOnly;
-	}
-
-	public boolean isSelectionAvailable() {
-		return this.getDestination(SVNUtility.asEntryReference(this.url), true) != null;
-	}
-	
-	public IRepositoryResource getSelectedResource() {
-		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(this.url), false);
-		return resource;
-	}
-	
-	public void addVerifier(AbstractVerifier verifier) {
-		this.verifier.add(verifier);
-	}
-	
-	public void removeVerifier(AbstractVerifier verifier) {
-		this.verifier.remove(verifier);
-	}
-	
-	public void setUrl(String url) {
-		this.urlText.setText(url);
-	}
-	
-	public String getUrl() {
-		return this.urlText.getText();
-	}
-	
-	public void saveHistory() {
-		this.urlHistory.addLine(this.urlText.getText());
-	}
-	
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		this.urlLabel.setEnabled(enabled);
-		this.urlText.setEnabled(enabled);
-		this.browse.setEnabled(enabled);
-	}
-	
 	private void createControls() {
 		GridLayout layout = null;
 		GridData data = null;
@@ -155,7 +81,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 		layout.marginHeight = layout.marginWidth = 0;
 		this.setLayout(layout);
 		
-		this. urlLabel = new Label(this, SWT.NONE);
+		Label urlLabel = new Label(this, SWT.NONE);
 		urlLabel.setLayoutData(new GridData());
 		urlLabel.setText(SVNUIMessages.getString(this.comboId));
 		
@@ -241,40 +167,4 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 		});		
 	}
 	
-	protected IRepositoryResource getDestination(SVNEntryReference ref, boolean allowsNull) {
-		if (ref == null) {
-			if (this.baseResource == null) {
-				if (allowsNull) {
-					return null;
-				}
-				throw new IllegalArgumentException("SVN entry reference cannot be null.");
-			}
-			return SVNUtility.copyOf(this.baseResource);
-		}
-		String url = SVNUtility.normalizeURL(ref.path);
-		try {
-			IRepositoryResource base = this.baseResource;
-			IRepositoryResource resource = null;
-			if (base != null) {
-				resource = this.foldersOnly ? (IRepositoryResource)this.baseResource.asRepositoryContainer(url, false) : this.baseResource.asRepositoryFile(url, false);
-			}
-			else {
-				SVNUtility.getSVNUrl(url);	// validate an URL
-				resource = SVNUtility.asRepositoryResource(url, this.foldersOnly);
-			}
-			if (ref.pegRevision != null) {
-				resource.setPegRevision(ref.pegRevision);
-			}
-			return resource;
-		}
-		catch (Exception ex) {
-			if (allowsNull) {
-				return null;
-			}
-			if (this.baseResource == null) {
-				throw new IllegalArgumentException("SVN entry reference must contain a valid value.");
-			}
-			return SVNUtility.copyOf(this.baseResource);
-		}
-	}
 }
