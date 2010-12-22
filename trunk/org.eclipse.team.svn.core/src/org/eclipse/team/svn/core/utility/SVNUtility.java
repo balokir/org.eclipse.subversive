@@ -795,9 +795,10 @@ public final class SVNUtility {
 		String host = "localhost"; //$NON-NLS-1$
 		String protocol = "file"; //$NON-NLS-1$
 		try {
-			protocol = SVNUtility.getSVNUrl(location.getUrl()).getProtocol();
+			URL url = SVNUtility.getSVNUrl(location.getUrl());
+			protocol = url.getProtocol();
 			if (!protocol.equals("file")) { //$NON-NLS-1$
-				host = SVNUtility.getSVNUrl(location.getUrl()).getHost();
+				host = url.getHost();
 			}
 		}
 		catch (MalformedURLException ex) {

@@ -24,18 +24,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
-import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
-import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
-import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
@@ -46,7 +42,7 @@ import org.eclipse.team.svn.ui.verifier.URLVerifier;
  * 
  * @author Alexander Gurov
  */
-public class RepositoryResourceSelectionComposite extends Composite {
+public class RepositoryResourceSelectionComposite extends RepositoryResourceBaseSelectionComposite {
 	public static final int MODE_DEFAULT = 0;
 	public static final int MODE_TWO = 1;
 	public static final int MODE_CHECK = 2;
@@ -55,26 +51,11 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	public static final int TEXT_BASE = 1;
 	public static final int TEXT_LAST = 2;
 	
-	protected Combo urlText;
-	protected Button browse;
-	protected UserInputHistory urlHistory;
 	protected RevisionComposite revisionComposite;
 	protected RevisionComposite secondRevisionComposite;
-	protected IValidationManager validationManager;
-	protected IRepositoryResource baseResource;
 	protected boolean stopOnCopy;
 	protected boolean toFilterCurrent;
 	protected int mode;
-	
-	protected String url;
-
-	protected CompositeVerifier verifier;
-	
-	protected String selectionTitle;
-	protected String selectionDescription;
-	protected String comboId;
-	
-	protected boolean foldersOnly;
 	
 	protected int defaultTextType;
 
@@ -83,24 +64,16 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	}
 	
 	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int mode, int defaultTextType) {
-		super(parent, style);
+		super(parent, style, validationManager, historyKey, comboId, baseResource, selectionTitle, selectionDescription);
 		this.stopOnCopy = stopOnCopy;
 		this.toFilterCurrent = false;
-		this.urlHistory = new UserInputHistory(historyKey);
-		this.validationManager = validationManager;
-		this.baseResource = baseResource;
-		this.selectionTitle = selectionTitle;
-		this.selectionDescription = selectionDescription;
 		this.mode = mode;
-		this.comboId = comboId;
-		this.foldersOnly = !(baseResource instanceof IRepositoryFile);
 		this.defaultTextType = defaultTextType;
 		
 		this.createControls(defaultTextType);
 	}
 	
-	public void setBaseResource(IRepositoryResource baseResource) {
-		this.baseResource = baseResource;
+	protected void setBaseResourceImpl() {
 		if (this.revisionComposite != null) {
 			this.revisionComposite.setBaseResource(this.baseResource);
 		}
@@ -108,12 +81,8 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			this.secondRevisionComposite.setBaseResource(this.baseResource);
 		}
 		if (this.defaultTextType == RepositoryResourceSelectionComposite.TEXT_BASE && this.baseResource != null) {
-			this.urlText.setText(this.baseResource.getUrl());
+			super.setBaseResourceImpl();
 		}
-	}
-	
-	public void setFoldersOnly(boolean foldersOnly) {
-		this.foldersOnly = foldersOnly;
 	}
 	
 	public void setFilterCurrent(boolean toFilter) {
@@ -121,10 +90,6 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.revisionComposite.setFilterCurrent(this.toFilterCurrent);
 	}
 
-	public boolean isSelectionAvailable() {
-		return this.getDestination(SVNUtility.asEntryReference(this.url), true) != null;
-	}
-	
 	public boolean isReverseRevisions() {
 		return this.revisionComposite.isReverseRevisions();
 	}
@@ -134,7 +99,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	}	
 	
 	public IRepositoryResource getSelectedResource() {
-		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(this.url), false);
+		IRepositoryResource resource = super.getSelectedResource();
 		resource.setSelectedRevision(this.revisionComposite.getSelectedRevision());
 		return resource;
 	}
@@ -143,7 +108,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		if (this.secondRevisionComposite == null) {
 			return null;
 		}
-		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(this.url), false);
+		IRepositoryResource resource = super.getSelectedResource();
 		resource.setSelectedRevision(this.secondRevisionComposite.getSelectedRevision());
 		return resource;
 	}
@@ -172,30 +137,8 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.revisionComposite.setCurrentRevision(currentRevision);
 	}
 	
-	public void addVerifier(AbstractVerifier verifier) {
-		this.verifier.add(verifier);
-	}
-	
-	public void removeVerifier(AbstractVerifier verifier) {
-		this.verifier.remove(verifier);
-	}
-	
-	public void setUrl(String url) {
-		this.urlText.setText(url);
-	}
-	
-	public String getUrl() {
-		return this.urlText.getText();
-	}
-	
-	public void saveHistory() {
-		this.urlHistory.addLine(this.urlText.getText());
-	}
-	
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		this.urlText.setEnabled(enabled);
-		this.browse.setEnabled(enabled);
 		this.revisionComposite.setEnabled(enabled);
 		if (this.secondRevisionComposite != null) {
 			this.secondRevisionComposite.setEnabled(enabled);
@@ -358,43 +301,6 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			this.secondRevisionComposite.setLayoutData(data);
 			this.secondRevisionComposite.setBaseResource(this.baseResource);
 			this.secondRevisionComposite.setSelectedResource(this.getSelectedResource());
-		}
-	}
-	
-	protected IRepositoryResource getDestination(SVNEntryReference ref, boolean allowsNull) {
-		if (ref == null) {
-			if (this.baseResource == null) {
-				if (allowsNull) {
-					return null;
-				}
-				throw new IllegalArgumentException("SVN entry reference cannot be null.");
-			}
-			return SVNUtility.copyOf(this.baseResource);
-		}
-		String url = SVNUtility.normalizeURL(ref.path);
-		try {
-			IRepositoryResource base = this.baseResource;
-			IRepositoryResource resource = null;
-			if (base != null) {
-				resource = this.foldersOnly ? (IRepositoryResource)this.baseResource.asRepositoryContainer(url, false) : this.baseResource.asRepositoryFile(url, false);
-			}
-			else {
-				SVNUtility.getSVNUrl(url);	// validate an URL
-				resource = SVNUtility.asRepositoryResource(url, this.foldersOnly);
-			}
-			if (ref.pegRevision != null) {
-				resource.setPegRevision(ref.pegRevision);
-			}
-			return resource;
-		}
-		catch (Exception ex) {
-			if (allowsNull) {
-				return null;
-			}
-			if (this.baseResource == null) {
-				throw new IllegalArgumentException("SVN entry reference must contain a valid value.");
-			}
-			return SVNUtility.copyOf(this.baseResource);
 		}
 	}
 	
