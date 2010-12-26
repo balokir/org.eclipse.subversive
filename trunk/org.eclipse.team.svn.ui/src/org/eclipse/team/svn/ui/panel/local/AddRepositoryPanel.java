@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -98,7 +100,19 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 		this.bdbButton = new Button(typeGroup, SWT.RADIO);
 		data = new GridData();
 		this.bdbButton.setLayoutData(data);
-		this.bdbButton.setText(SVNUIMessages.AddRepositoryPage_BerkeleyDB_Button);		
+		this.bdbButton.setText(SVNUIMessages.AddRepositoryPage_BerkeleyDB_Button);
+		int features = CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures();
+		if ((features & ISVNConnectorFactory.OptionalFeatures.CREATE_REPOSITORY_FSFS) == 0)
+		{
+			this.fsfsButton.setSelection(false);
+			this.fsfsButton.setEnabled(false);
+			this.bdbButton.setSelection(true);
+		}
+		if ((features & ISVNConnectorFactory.OptionalFeatures.CREATE_REPOSITORY_BDB) == 0)
+		{
+			this.bdbButton.setSelection(false);
+			this.bdbButton.setEnabled(false);
+		}
 		
 		//create repository location		
 		this.createRepositoryLocaton = new Button(composite, SWT.CHECK);

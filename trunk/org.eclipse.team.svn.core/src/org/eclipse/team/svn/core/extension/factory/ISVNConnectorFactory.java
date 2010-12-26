@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  */
 public interface ISVNConnectorFactory {
 	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit15"; //$NON-NLS-1$
-	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.9.I20100617-1700"; //$NON-NLS-1$
+	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.9.I20110101-1700"; //$NON-NLS-1$
 	
 	/**
 	 * Enumeration of connector API compatibility levels
@@ -60,6 +60,10 @@ public interface ISVNConnectorFactory {
 		 * SVN 1.6 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_6_x = 6;
+		/**
+		 * SVN 1.7 compatible API is supported by the connector
+		 */
+		public static final int SVNAPI_1_7_x = 7;
 	}
 	
 	/**
@@ -75,29 +79,29 @@ public interface ISVNConnectorFactory {
 		 */
 		public static final int ALL_OPTIONAL_FEATURES = ~NO_OPTIONAL_FEATURES;
 		/**
-		 * Direct SSH settings specification is supported by connector
+		 * Direct SSH settings specification is supported by a connector
 		 */
 		public static final int SSH_SETTINGS = 0x01;
 		/**
-		 * Direct PROXY settings specification is supported by connector
+		 * Direct PROXY settings specification is supported by a connector
 		 */
 		public static final int PROXY_SETTINGS = 0x02;
 		/**
-		 * Atomic cross-working copy commit is supported by connector 
+		 * Atomic cross-working copy commit is supported by a connector 
 		 */
 		public static final int ATOMIC_X_COMMIT = 0x04;
 		/**
-		 * Creating of repository is supported by connector
+		 * Creating of an FSFS repository is supported by a connector
 		 */
-		public static final int CREATE_REPOSITORY = 0x08;	
+		public static final int CREATE_REPOSITORY_FSFS = 0x08;	
 		/**
-		 * Features supported by SVNKit connectors
+		 * Creating of an BDB repository is supported by a connector
 		 */
-		public static final int SVN_KIT_FEATURES = SSH_SETTINGS | PROXY_SETTINGS | ATOMIC_X_COMMIT;
+		public static final int CREATE_REPOSITORY_BDB = 0x10;	
 		/**
-		 * Features supported by JavaHL connectors
+		 * Creating of a repository is supported by a connector
 		 */
-		public static final int JAVAHL_FEATURES = CREATE_REPOSITORY;
+		public static final int CREATE_REPOSITORY = CREATE_REPOSITORY_FSFS | CREATE_REPOSITORY_BDB;
 	}
 	
 	public static final ISVNConnectorFactory EMPTY = new ISVNConnectorFactory() {
