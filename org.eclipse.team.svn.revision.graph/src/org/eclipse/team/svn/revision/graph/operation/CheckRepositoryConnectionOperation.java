@@ -18,6 +18,7 @@ import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -107,8 +108,7 @@ public class CheckRepositoryConnectionOperation extends AbstractActionOperation 
 		try {				
 			proxy.logEntries(
 					SVNUtility.getEntryReference(location.getRepositoryRoot()), 
-					SVNRevision.fromNumber(this.lastRepositoryRevision),
-					SVNRevision.fromNumber(this.lastRepositoryRevision),
+					new SVNRevisionRange[] {new SVNRevisionRange(this.lastRepositoryRevision, this.lastRepositoryRevision)},
 					new String[0], 
 					1,
 					ISVNConnector.Options.INCLUDE_MERGED_REVISIONS,

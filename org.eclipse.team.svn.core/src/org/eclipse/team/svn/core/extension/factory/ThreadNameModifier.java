@@ -292,10 +292,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, String[] revProps, long limit, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void logEntries(SVNEntryReference reference, SVNRevisionRange []revisionRanges, String[] revProps, long limit, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.logEntries(reference, revisionStart, revisionEnd, revProps, limit, options, cb, monitor);
+			this.connector.logEntries(reference, revisionRanges, revProps, limit, options, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -772,10 +772,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void setRevisionProperty(SVNEntryReference reference, String name, String value, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void setRevisionProperty(SVNEntryReference reference, String name, String value, String originalValue, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.setRevisionProperty(reference, name, this.processSVNLogProperty(value), options, monitor);
+			this.connector.setRevisionProperty(reference, name, this.processSVNLogProperty(value), originalValue, options, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
