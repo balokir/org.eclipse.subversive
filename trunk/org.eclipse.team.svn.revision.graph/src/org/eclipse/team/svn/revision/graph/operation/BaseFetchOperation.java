@@ -16,6 +16,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -83,8 +84,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 			try {
 				proxy.logEntries(
 						SVNUtility.getEntryReference(this.resource.getRepositoryLocation().getRepositoryRoot()),
-						SVNRevision.fromNumber(this.getEndSkippedRevision()),
-						SVNRevision.fromNumber(this.getStartSkippedRevision()),
+						new SVNRevisionRange[] {new SVNRevisionRange(this.getEndSkippedRevision(), this.getStartSkippedRevision())},
 						this.revProps,
 						0,
 						this.logOptions,

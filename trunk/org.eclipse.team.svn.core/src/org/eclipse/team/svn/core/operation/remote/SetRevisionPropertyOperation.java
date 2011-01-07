@@ -72,7 +72,7 @@ public class SetRevisionPropertyOperation extends AbstractActionOperation {
 		SVNProperty toSet = this.provider.getRevisionProperties()[0];
 		ISVNConnector proxy =  this.location.acquireSVNProxy();
 		try {
-			proxy.setRevisionProperty(new SVNEntryReference(this.location.getUrl(), this.revision) , toSet.name, toSet.value, Options.FORCE, new SVNProgressMonitor(SetRevisionPropertyOperation.this, monitor, null));
+			proxy.setRevisionProperty(new SVNEntryReference(this.location.getUrl(), this.revision) , toSet.name, toSet.value, null, Options.FORCE, new SVNProgressMonitor(SetRevisionPropertyOperation.this, monitor, null));
 		}
 		finally {
 			this.location.releaseSVNProxy(proxy);

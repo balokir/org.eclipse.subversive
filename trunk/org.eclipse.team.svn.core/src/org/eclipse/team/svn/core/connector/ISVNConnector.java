@@ -401,7 +401,7 @@ public interface ISVNConnector {
 
 	public void remove(String[] path, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, String[] revProps, long limit, long options, ISVNLogEntryCallback cb,
+	public void logEntries(SVNEntryReference reference, SVNRevisionRange []revisionRanges, String[] revProps, long limit, long options, ISVNLogEntryCallback cb,
 			ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor)
@@ -422,7 +422,7 @@ public interface ISVNConnector {
 
 	public SVNProperty getRevisionProperty(SVNEntryReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void setRevisionProperty(SVNEntryReference reference, String name, String value, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void setRevisionProperty(SVNEntryReference reference, String name, String value, String originalValue, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	
 	public void removeRevisionProperty(SVNEntryReference reference, String name, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
