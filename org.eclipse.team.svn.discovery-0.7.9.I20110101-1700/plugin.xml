@@ -25,12 +25,12 @@
       
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on SVN Kit library (SVN/1.6.12 SVNKit/1.3.4 r7371). Compatible with SVN 1.6.x. Pure Java. Supported platforms: All."
+            description="SVN connector based on SVN Kit library (SVN/1.6.15 SVNKit/1.3.5 r7406). Compatible with SVN 1.6.x. Pure Java. Supported platforms: All."
             groupId="org.eclipse.team.svn.discovery-svnkit"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit16"
             kind="task"
             license="TMate Open Source License"
-            name="SVN Kit 1.3.4"
+            name="SVN Kit 1.3.5"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/indigo-site/">
          <icon image32="images/Polarion.png">
