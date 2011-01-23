@@ -127,7 +127,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 			if (current instanceof IRepositoryContainer) {
 				String localPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1)); //$NON-NLS-1$
 				repoFolder2localFolder.put(currentURL, localPath);
-				toOperate = this.path + localPath;
+				toOperate = localPath;
 			}
 			else {
 				String localFolderPath; 
@@ -141,16 +141,14 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 				{
 					localFolderPath = repoFolder2localFolder.get(parentFolderURL); 
 				}
-				toOperate = this.path + "/" + localFolderPath + currentURL.substring(currentURL.lastIndexOf('/')); //$NON-NLS-1$ 
+				toOperate = "/" + localFolderPath + currentURL.substring(currentURL.lastIndexOf('/')); //$NON-NLS-1$ 
 			}
 			if (rootUrl != null) {
 				String projectRepoName = rootUrl.substring(rootUrl.lastIndexOf("/") + 1); //$NON-NLS-1$
-				String [] parts = toOperate.split(projectRepoName);
-				toOperate = parts[0] + rootName;
-				for (int i = 1; i < parts.length; i++) {
-					toOperate += parts[i];
-				}
+				int idx = toOperate.indexOf(projectRepoName);
+				toOperate = toOperate.substring(0, idx) + rootName + toOperate.substring(idx + projectRepoName.length());
 			}
+			toOperate = this.path + toOperate;
 			File operatingDirectory = new File(toOperate);
 			String status = this.dataProvider.getStatusesMap().get(currentURL);
 			if (status != null)
