@@ -8,6 +8,25 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110124-1700 [24 January 2011]
+
+Features:
+ * Use the latest SVN Kit version (1.3.5) (bug 334452)
+ * There is no access to the SVN 1.6-related method signatures (bug 333211)
+ * Allow repository creation with the latest SVN Kit-based connector (bug 333202)
+
+Fixes:
+ * Extract operation fails under certain conditions (bug 335079)
+ * Remove duplicated code parts (bug 333061)
+ * Pressing Cancel during compare results in invalid GUI message (no differences) (bug 328820)
+ * Calls to the deprecated function in the SelectPatchFilePage (bug 332775)
+ * There is a compilation issue in the core plug-in under Eclipse 3.7 (bug 332528)
+ * Connectors from polarion update site not detected (bug 328104)
+ * No serialVersionUID for the serializable class ActionIDList (bug 332235)
+ * Finish to create new SVN repository and share project in single operation fails (bug 330780)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20101203-1700 [03 December 2010]
 
 Fixes:
@@ -29,6 +48,8 @@ Fixes:
  * No tooltip for clock icon on merge dialog (bug 326074)
  * NPE starting target workspace (bug 328149)
  * Properties conflict on project makes Subversive totally unusable. (bug 283999)
+
+--------------------------------------------------------------------------------
 
 Version 0.7.9.I20101001-1700 [01 October 2010]
 
