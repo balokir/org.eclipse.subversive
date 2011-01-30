@@ -160,6 +160,26 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter, this.changeFilter});
 	}
 	
+	public void setStartRevision(SVNRevision startRevision)
+	{
+		this.startRevision = startRevision;
+	}
+	
+	public SVNRevision getStartRevision()
+	{
+		return this.startRevision;
+	}
+	
+	public void setEndRevision(SVNRevision endRevision)
+	{
+		this.endRevision = endRevision;
+	}
+	
+	public SVNRevision getEndRevision()
+	{
+		return this.endRevision;
+	}
+	
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME)) || 
 			event.getProperty().equals(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME))) {
