@@ -1021,6 +1021,25 @@
       <objectContribution
             objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryResource"
             id="org.eclipse.team.svn.ui.RepositoryResourceContributions">
+
+         <action
+               helpContextId="org.eclipse.team.svn.ui.tag_action_context"
+               label="%TagAction.label"
+               tooltip="%TagAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.remote.TagAction"
+               menubarPath="addMenu/managementGroup"
+               id="org.eclipse.team.svn.ui.action.remote.TagAction"
+               icon="icons/common/actions/tag.gif">				
+         </action>
+         <action
+               helpContextId="org.eclipse.team.svn.ui.branch_action_context"
+               label="%BranchAction.label"
+               tooltip="%BranchAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.remote.BranchAction"
+               menubarPath="addMenu/managementGroup"
+               id="org.eclipse.team.svn.ui.action.remote.BranchAction"
+               icon="icons/common/actions/branch.gif">
+         </action>
             
 		 <action
                label="%MoveRemoteAction.label"
@@ -1179,24 +1198,6 @@
                icon="icons/objects/root.gif"
                id="org.eclipse.team.svn.ui.action.remote.management.CreateProjectStructureAction">
          </action>
-         <action
-               helpContextId="org.eclipse.team.svn.ui.tag_action_context"
-               label="%TagAction.label"
-               tooltip="%TagAction.tooltip"
-               class="org.eclipse.team.svn.ui.action.remote.TagAction"
-               menubarPath="addMenu/managementGroup"
-               id="org.eclipse.team.svn.ui.action.remote.TagAction"
-               icon="icons/common/actions/tag.gif">				
-         </action>
-         <action
-               helpContextId="org.eclipse.team.svn.ui.branch_action_context"
-               label="%BranchAction.label"
-               tooltip="%BranchAction.tooltip"
-               class="org.eclipse.team.svn.ui.action.remote.BranchAction"
-               menubarPath="addMenu/managementGroup"
-               id="org.eclipse.team.svn.ui.action.remote.BranchAction"
-               icon="icons/common/actions/branch.gif">
-         </action>
          
          <action
                helpContextId="org.eclipse.team.svn.ui.create_remote_folder_action_context"
@@ -1270,25 +1271,6 @@
             objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryFile"
             id="org.eclipse.team.svn.ui.RepositoryFileContributions">
             
-         <action
-               helpContextId="org.eclipse.team.svn.ui.tag_action_context"
-               label="%TagAction.label"
-               tooltip="%TagAction.tooltip"
-               class="org.eclipse.team.svn.ui.action.remote.TagAction"
-               menubarPath="addMenu/managementGroup"
-               id="org.eclipse.team.svn.ui.action.remote.TagAction"
-               icon="icons/common/actions/tag.gif">
-         </action>
-         <action
-               helpContextId="org.eclipse.team.svn.ui.branch_action_context"
-               label="%BranchAction.label"
-               tooltip="%BranchAction.tooltip"
-               class="org.eclipse.team.svn.ui.action.remote.BranchAction"
-               menubarPath="addMenu/managementGroup"
-               id="org.eclipse.team.svn.ui.action.remote.BranchAction"
-               icon="icons/common/actions/branch.gif">
-         </action>
-         
          <action
               helpContextId="org.eclipse.team.svn.ui.break_remote_lock_action_context"
               label="%BreakLockAction.label"
