@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.utility.LockProposeUtility;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * SVN file modification validator 
@@ -34,10 +35,17 @@ import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 public class SVNTeamModificationValidator extends FileModificationValidator {
 	public IStatus validateEdit(IFile[] files, final FileModificationValidationContext context) {
 		if (FileUtility.isConnected(files[0])) {
-			IResource[] needsLockResources = this.getNeedsLockResources(files);
+			final IResource[] needsLockResources = this.getNeedsLockResources(files);
 			if (needsLockResources.length > 0)
 			{
-				return LockProposeUtility.proposeLock(needsLockResources, (Shell)context.getShell());
+				final IStatus []retVal = new IStatus[1];
+				final Shell shell = context.getShell() == null ? UIMonitorUtility.getShell() : (Shell)context.getShell();
+				shell.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						retVal[0] = LockProposeUtility.proposeLock(needsLockResources, shell);
+					}
+				});
+				return retVal[0];
 			}
 		}
 		return Status.OK_STATUS;
