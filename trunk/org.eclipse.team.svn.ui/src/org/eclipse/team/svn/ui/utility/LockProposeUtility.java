@@ -39,10 +39,6 @@ public class LockProposeUtility {
 			}
 		}
 		
-		if (shell == null)
-		{
-			shell = UIMonitorUtility.getShell();
-		}
 		IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, shell);
 		if (op != null) {
 			UIMonitorUtility.doTaskBusyDefault(op);
