@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.team.svn.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.team.svn.core" id="svnconnector" name="SVN Client Factory"/>
+         <meta.schema plugin="org.eclipse.team.svn.core" id="svnconnector" name="SVN Connector Factory"/>
       </appInfo>
       <documentation>
          The extension point allows us to switch flexibly between SVN connector implementations.
@@ -35,10 +35,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Must implement org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory
+                  Must implement org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -68,9 +68,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-public interface ISVNClientWrapperFactory {
-	public ISVNClientWrapper newInstance();
-}
+Check the org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory interface source code.
       </documentation>
    </annotation>
 
