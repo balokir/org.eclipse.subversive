@@ -34,5 +34,12 @@
 	<extension point="org.eclipse.team.svn.ui.reporterfactory">
 		<reporterfactory class="org.eclipse.team.svn.mylyn.MylynReporterFactory"/>
 	</extension>
+	
+	<extension point="org.eclipse.mylyn.tasks.bugs.support">
+		<product featureId="org.eclipse.team.svn" id="org.eclipse.team.svn" providerId="org.eclipse"/>
+		<mapping namespace="org.eclipse.team.svn" productId="org.eclipse.team.svn">
+			<property name="product" value="Subversive"/>
+		</mapping>
+	</extension>
 
 </plugin>
