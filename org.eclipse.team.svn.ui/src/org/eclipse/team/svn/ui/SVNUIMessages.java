@@ -765,12 +765,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_ConcatenatePropertyData;
 	public static String Operation_ConcatenatePropertyData_Error;
 	public static String Operation_ConcatenatePropertyData_Id;
-	public static String Operation_ConvertRepositoryFiles;
-	public static String Operation_ConvertRepositoryFiles_Error;
-	public static String Operation_ConvertRepositoryFiles_Id;
-	public static String Operation_ConvertSettings;
-	public static String Operation_ConvertSettings_Error;
-	public static String Operation_ConvertSettings_Id;
 	public static String Operation_CopyResources;
 	public static String Operation_CopyResources_Id;
 	public static String Operation_CopyURL;
@@ -818,8 +812,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_InitializeDocument_Id;
 	public static String Operation_MOverrideAndUpdate;
 	public static String Operation_MOverrideAndUpdate_Id;
-	public static String Operation_MigrateToEclipse;
-	public static String Operation_MigrateToEclipse_Id;
 	public static String Operation_MoveToWorkingSet;
 	public static String Operation_MoveToWorkingSet_Id;
 	public static String Operation_NotifyConflicts;
@@ -866,9 +858,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_RefreshRemote_Id;
 	public static String Operation_RefreshView;
 	public static String Operation_RefreshView_Id;
-	public static String Operation_RemapProjects;
-	public static String Operation_RemapProjects_Error;
-	public static String Operation_RemapProjects_Id;
 	public static String Operation_RemoveRevisionLinks;
 	public static String Operation_RemoveRevisionLinks_Id;
 	public static String Operation_ReplaceWithLatest;
@@ -1428,12 +1417,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Select_Branch_Title;
 	public static String Select_Tag_Label;
 	public static String Select_Tag_Title;
-	public static String SendBugReportAction_Panel_Description;
-	public static String SendBugReportAction_Panel_Message;
-	public static String SendBugReportAction_Panel_Title;
-	public static String SendTipForImprovementAction_Panel_Description;
-	public static String SendTipForImprovementAction_Panel_Message;
-	public static String SendTipForImprovementAction_Panel_Title;
 	public static String SetKeywordsCommand_tooltip;
 	public static String SetPropertyAction_label;
 	public static String SetPropertyCommand_tooltip;

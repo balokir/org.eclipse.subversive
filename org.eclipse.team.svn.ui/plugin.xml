@@ -1710,35 +1710,6 @@
 <!-- **************** Main Menu ******************* -->
 	<extension
 		point="org.eclipse.ui.actionSets">
-		<actionSet
-			id="org.eclipse.team.svn.ui.menu.help"
-			label="%HelpActionSet.label"
-			visible="true">
-			<menu 
-				id="subversive.help"
-				label="%HelpActionSet.menu"
-				path="help/subversive">
-				<separator name="feedback"/>
-			</menu>
-			<action 
-				id="org.eclipse.team.svn.ui.debugmail.SendBugReportAction"
-				class="org.eclipse.team.svn.ui.debugmail.SendBugReportAction"
-				menubarPath="help/subversive.help/feedback"
-				label="%BugReportAction.label"
-				tooltip="%BugReportAction.tooltip"/>
-			<action 
-				id="org.eclipse.team.svn.ui.debugmail.SendTipForImprovementAction"
-				class="org.eclipse.team.svn.ui.debugmail.SendTipForImprovementAction"
-				menubarPath="help/subversive.help/feedback"
-				label="%TipForImprovementAction.label"
-				tooltip="%TipForImprovementAction.tooltip"/>
-			<action 
-				id="org.eclipse.team.svn.ui.debugmail.MigrateToEclipse"
-				class="org.eclipse.team.svn.ui.debugmail.MigrateToEclipse"
-				menubarPath="help/subversive.help/migrate"
-				label="%MigrateToEclipse.label"
-				tooltip="%MigrateToEclipse.tooltip"/>
-		</actionSet>
   <actionSet
         id="org.eclipse.team.svn.ui.action.shortcuts"
         label="SVN"
