@@ -8,6 +8,19 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110207-1700 [07 February 2011]
+
+Features:
+ * Allow to branch/tag files and folders in single transaction in the SVN Repositories view (bug 335922)
+ * Provide API to open the History view on a specific revision range (bug 335421)
+
+Fixes:
+ * Remove Subversive menu in Help (bug 229495)
+ * The "svnconnector" extension point is broken (bug 336207)
+ * SWTException in SVNTeamModificationValidator when lock is required (bug 336064)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110124-1700 [24 January 2011]
 
 Features:
