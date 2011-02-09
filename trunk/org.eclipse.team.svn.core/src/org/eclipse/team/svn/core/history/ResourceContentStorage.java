@@ -91,6 +91,18 @@ public class ResourceContentStorage implements IEncodedStorage {
 	    return this.charSet;
 	}
 	
+	public IRepositoryResource getRepositoryResource() {
+		return this.remote;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof ResourceContentStorage)) {
+			return false;
+		}
+		IRepositoryResource other = ((ResourceContentStorage)obj).getRepositoryResource();
+		return this.remote.equals(other);
+	}
+	
 	protected AbstractGetFileContentOperation getLoadContentOperation() {
 	    return new GetFileContentOperation(this.remote);
 	}
