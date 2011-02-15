@@ -36,10 +36,11 @@
 	</extension>
 	
 	<extension point="org.eclipse.mylyn.tasks.bugs.support">
-		<product featureId="org.eclipse.team.svn" id="org.eclipse.team.svn" providerId="org.eclipse"/>
-		<mapping namespace="org.eclipse.team.svn" productId="org.eclipse.team.svn">
+		<product featureId="org.eclipse.team.svn" id="org.eclipse.team.svn.core.svnnature" providerId="org.eclipse"/>
+		<mapping namespace="org.eclipse.team.svn" productId="org.eclipse.team.svn.core.svnnature">
 			<property name="product" value="Subversive"/>
 		</mapping>
+		<handler id="org.eclipse.team.svn.environment" class="org.eclipse.team.svn.mylyn.SVNTeamSupportHandler"/>
 	</extension>
 
 </plugin>
