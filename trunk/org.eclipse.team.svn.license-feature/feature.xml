@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.team.svn.license"
+      version="0.7.9.I20110207-1700">
+
+   <license url="license.html">
+      %license
+   </license>
+
+</feature>
+<!--
+Usage:
+	- remove license.html and epl-v10.html from all the features
+	- remove these files from the build.properties
+	- remove 'license' property from a feature.properties files
+	- add attributes license-feature="org.eclipse.team.svn.license" and license-feature-version="0.7.9.I20110207-1700" into the <feature> tag like this:
+			<feature
+			      id="org.eclipse.team.svn.core"
+			      label="%featureName"
+			      version="0.7.9.I20110207-1700"
+			      provider-name="%providerName"
+			      plugin="org.eclipse.team.svn.core"
+			      license-feature="org.eclipse.team.svn.license"
+			      license-feature-version="0.7.9.I20110207-1700">
+Benefits? We have 10 features and 20 copies of license files, so if we were to reduce their amount just to 1 copy, then it will greatly reduce our chances of mistakes while updating these files.			      
+Why introduction of the license feature is delayed? It could only be built with 3.7 which still is not released yet and is not ready for development.
+-->
