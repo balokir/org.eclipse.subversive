@@ -175,6 +175,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		this.browse.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				DirectoryDialog fileDialog = new DirectoryDialog(getShell());
+				fileDialog.setFilterPath(ProjectLocationSelectionPage.this.locationField.getText());
 				String res = fileDialog.open();
 				if (res != null) {
 					ProjectLocationSelectionPage.this.locationField.setText(res);
