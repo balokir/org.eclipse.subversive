@@ -11,11 +11,11 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
@@ -106,7 +106,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 				if (lastErrorRevision == this.getEndSkippedRevision()) {
 					//permanent error: skip revision
 					String msg = SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.BaseFetchOperation_SkipMessage, new Object[]{this.getEndSkippedRevision()});										
-					this.reportError(new UnreportableException(msg, e));
+					this.reportStatus(IStatus.ERROR, null, new UnreportableException(msg, e));
 					ProgressMonitorUtility.setTaskInfo(monitor, this, msg);	
 					
 					if (!this.logEntryCallback.skipRevision()) {
@@ -118,7 +118,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 				} else {
 					//random error: retry					
 					String msg = SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.BaseFetchOperation_RetryMessage, new Object[]{this.getEndSkippedRevision()});
-					this.reportWarning(msg, e);
+					this.reportStatus(IStatus.WARNING, msg, e);
 									
 					this.logEntryCallback.retryRevision();
 					
@@ -136,7 +136,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 			if (!(t instanceof RuntimeException)) {
 				t = new UnreportableException(t);
 			}
-			this.reportError(t);
+			this.reportStatus(IStatus.ERROR, null, t);
 		}
 		
 		//save not yet saved revisions

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -70,7 +71,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 						AddToSVNWithPropertiesOperation.this.processResource(resource, proxy, monitor);
 					}
 					catch (SVNConnectorException cwe) {
-						AddToSVNWithPropertiesOperation.this.reportError(cwe);
+						AddToSVNWithPropertiesOperation.this.reportStatus(IStatus.ERROR, null, cwe);
 						return false;
 					}
 					return true;

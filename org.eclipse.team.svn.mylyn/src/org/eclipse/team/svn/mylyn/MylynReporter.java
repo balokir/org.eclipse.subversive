@@ -99,7 +99,7 @@ public class MylynReporter extends AbstractActionOperation implements IReporter 
 					TasksUiInternal.createAndOpenNewTask(taskData);
 				}
 				catch (CoreException e) {
-					MylynReporter.this.reportError(e);
+					MylynReporter.this.reportStatus(IStatus.ERROR, null, e);
 				}
 			}
 		});

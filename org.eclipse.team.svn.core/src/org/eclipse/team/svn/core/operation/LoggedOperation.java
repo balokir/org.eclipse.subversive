@@ -79,6 +79,10 @@ public class LoggedOperation implements IActionOperation {
 		return this.op.getExecutionState();
 	}
 	
+	public void reportStatus(int severity, String message, Throwable t) {
+		this.op.reportStatus(severity, message, t);
+	}
+
 	public static void reportError(String where, Throwable t) {
 		String errMessage = SVNMessages.format(SVNMessages.Operation_Error_LogHeader, new String[] {where});
 	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, errMessage, null);

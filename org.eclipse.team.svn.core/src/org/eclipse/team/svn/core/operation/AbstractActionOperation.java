@@ -97,7 +97,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 			}
 		}
 		catch (Throwable t) {
-			this.reportError(t);
+			this.reportStatus(IStatus.ERROR, null, t);
 		}
 		finally {
 			if (this.consoleStream != null) {
@@ -154,32 +154,39 @@ public abstract class AbstractActionOperation implements IActionOperation {
 			ProgressMonitorUtility.doSubTask(this, step, monitor, totalWeight, currentWeight);
 		}
 		catch (Throwable t) {
-			this.reportError(t);
+			this.reportStatus(IStatus.ERROR, null, t);
 		}
 	}
 	
 	protected void reportWarning(String message, Throwable t) { //$NON-NLS-1$
-		this.writeToConsole(IConsoleStream.LEVEL_WARNING, message + "\n");			
-		this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, message, t));
+		this.reportStatus(IStatus.WARNING, message, t);
 	}
 	
 	protected void reportError(Throwable t) {
-		if (t instanceof SVNConnectorCancelException ||
-			t instanceof ActivityCancelledException) {
-			this.writeCancelledToConsole();
+		this.reportStatus(IStatus.ERROR, null, t);
+	}
+	
+	public void reportStatus(int severity, String message, Throwable t) {
+		String msg = message != null ? message : this.getShortErrorMessage(t);
+		if (severity == IStatus.ERROR) {
+			if (t instanceof SVNConnectorCancelException || t instanceof ActivityCancelledException) {
+				this.writeCancelledToConsole();
+			}
+			else {
+				this.writeToConsole(IConsoleStream.LEVEL_ERROR, msg + "\n"); //$NON-NLS-1$
+			}
 		}
-		else {
-			this.writeToConsole(IConsoleStream.LEVEL_ERROR, (t.getMessage() != null ? t.getMessage() : this.getShortErrorMessage(t)) + "\n"); //$NON-NLS-1$
+		else if (severity == IStatus.WARNING) {
+			this.writeToConsole(IConsoleStream.LEVEL_WARNING, message + "\n");			
 		}
-		
-		this.reportStatus(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(t), t));
+		this.reportStatus(new Status(severity, SVNTeamPlugin.NATURE_ID, IStatus.OK, msg, t));
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
 		String key = this.nameId + "_Error"; //$NON-NLS-1$
 		String retVal = this.getNationalizedString(key);
 		if (retVal.equals(key)) {
-			return this.status.getMessage() + ": " + t.getMessage(); //$NON-NLS-1$
+			return this.status.getMessage() + ": " + (t == null ? "<null>" : t.getMessage()); //$NON-NLS-1$ $NON-NLS-2$
 		}
 		return retVal;
 	}
@@ -225,6 +232,13 @@ public abstract class AbstractActionOperation implements IActionOperation {
 		
 		public void setMessage(String message) {
 			super.setMessage(message);
+		}
+		
+		public void merge(IStatus status) {
+			super.merge(status);
+			if (status.getSeverity() != IStatus.OK) {
+				this.setSeverity(this.getSeverity() | status.getSeverity());
+			}
 		}
 	}
 	

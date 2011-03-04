@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
@@ -94,7 +95,7 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 						}
 					}
 					catch (PartInitException ex) {
-						ShowHistoryViewOperation.this.reportError(ex);
+						ShowHistoryViewOperation.this.reportStatus(IStatus.ERROR, null, ex);
 					}
 				}
 			}
