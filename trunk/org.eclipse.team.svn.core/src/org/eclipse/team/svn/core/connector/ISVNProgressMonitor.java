@@ -37,8 +37,10 @@ public interface ISVNProgressMonitor {
 		public final int propState;
 
 		public final long revision;
+		
+		public final String error;
 
-		public ItemState(String path, int action, int kind, String mimeType, int contentState, int propState, long revision) {
+		public ItemState(String path, int action, int kind, String mimeType, int contentState, int propState, long revision, String error) {
 			this.path = path;
 			this.action = action;
 			this.kind = kind;
@@ -46,12 +48,11 @@ public interface ISVNProgressMonitor {
 			this.contentState = contentState;
 			this.propState = propState;
 			this.revision = revision;
+			this.error = error;
 		}
 	}
 
 	public void progress(int current, int total, ItemState state);
 
 	public boolean isActivityCancelled();
-	
-	public void reportError(String errorMessage);
 }

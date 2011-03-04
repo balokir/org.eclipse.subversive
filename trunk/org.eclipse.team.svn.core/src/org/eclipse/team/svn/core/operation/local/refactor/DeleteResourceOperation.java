@@ -88,10 +88,8 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation((IResource)entry.getKey());
 			IResource[] resources = ((List<?>)entry.getValue()).toArray(new IResource[((List<?>)entry.getValue()).size()]);
 			String[] wcPaths = new String[resources.length];
-			String printedPath = ""; //$NON-NLS-1$
 			for (int i = 0; i < resources.length; i++) {
 				wcPaths[i] = FileUtility.getWorkingCopyPath(resources[i]);
-				printedPath += "\"" + FileUtility.normalizePath(wcPaths[i]) + ((i < resources.length - 1) ? " " : "") + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {

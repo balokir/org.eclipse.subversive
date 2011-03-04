@@ -119,9 +119,7 @@ public class ConnectorDiscoveryWizard extends Wizard {
 	 * before the UI is presented.
 	 */
 	public boolean isShowConnectorDescriptorKindFilter() {
-		//TODO uncomment to add filters
-		//return showConnectorDescriptorKindFilter;		
-		return false;
+		return this.showConnectorDescriptorKindFilter & false;	//TODO always disabled
 	}
 
 	/**

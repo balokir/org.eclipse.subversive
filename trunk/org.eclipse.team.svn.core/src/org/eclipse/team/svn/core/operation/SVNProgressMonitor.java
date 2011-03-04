@@ -12,8 +12,11 @@
 package org.eclipse.team.svn.core.operation;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNConnectorUnresolvedConflictException;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
@@ -43,31 +46,11 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 		this.enableConsoleOutput = enableConsoleOutput;
 	}
 
-	public void reportError(String errorMessage) {
-		/*
-		 * Some messages will be duplicated in Error Log and Console views
-		 * because SVN for some serious errors throws exception and also 
-		 * calls this notification method. As a result at first such problem
-		 * will be reported by this method, and then by exception handling method.
-		 * But this is acceptable, because we can't differ whether problem is an error
-		 * (got by Exception) or warning (got by notification).
-		 * 
-		 * As we don't want to break IActionOperation interface by adding reportWarning method
-		 * (because reportWarning method is its internal behavior),
-		 * we cast operation to its basic class; we can do it from assumption that
-		 * almost all operation classes extend it. SVNProgressMonitor can call AbstractActionOperation#reportWarning method
-		 * (which is protected), because they are from the same package which means that
-		 *  SVNProgressMonitor can know internals of action operation implementation.
-		 * 
-		 * TODO Note that if 'errorMessage' contains new line characters, they will be shown as 
-		 * squares ([][]) in Error Log view, but I don't know how to fix it.
-		 */
-		if (this.parent instanceof AbstractActionOperation) {
-			((AbstractActionOperation) this.parent).reportWarning(errorMessage, null);	
-		}				
-	}
-	
 	public void progress(int current, int total, ItemState state) {
+		if (state.error != null) {
+			SVNConnectorException ex = state.path != null && state.path.length() > 0 ? new SVNConnectorUnresolvedConflictException(state.error) : new SVNConnectorException(state.error);
+			this.parent.reportStatus(IStatus.ERROR, null, ex);
+		}
 		if (state != null && state.path != null) {
 //			TODO rework display path...
 //			String info = root.toString();

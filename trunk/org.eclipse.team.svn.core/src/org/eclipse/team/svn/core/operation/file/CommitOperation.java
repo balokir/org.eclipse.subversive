@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorUnresolvedConflictException;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -118,7 +119,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 					null,
 					Depth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
 					null, new SVNProgressMonitor(CommitOperation.this, monitor, null));
-				if (revisionNumbers.length > 0) {
+				if (revisionNumbers.length > 0 && revisionNumbers[0] != SVNRevision.INVALID_REVISION_NUMBER) {
 					CommitOperation.this.revisionsPairs.add(new RevisionPair(revisionNumbers[0], CommitOperation.this.paths, location));	
 					String message = SVNMessages.format(SVNMessages.Console_CommittedRevision, new String[] {String.valueOf(revisionNumbers[0])});
 					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
@@ -128,7 +129,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 		location.releaseSVNProxy(proxy);
 	}
 
-    protected void reportError(Throwable t) {
+	public void reportStatus(int severity, String message, Throwable t) {
     	if (t instanceof SVNConnectorUnresolvedConflictException) {
           	this.hasUnresolvedConflict = true;
           	this.conflictMessage = t.getMessage();
@@ -144,7 +145,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
             }
     	}
     	else {
-    		super.reportError(t);
+    		super.reportStatus(severity, message, t);
     	}
     }	
 	

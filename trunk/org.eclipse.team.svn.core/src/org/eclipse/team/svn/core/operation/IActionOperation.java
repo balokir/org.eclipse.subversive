@@ -32,6 +32,8 @@ public interface IActionOperation {
 	
 	public IStatus getStatus();
 	
+	public void reportStatus(int severity, String message, Throwable t);
+	
 	public int getExecutionState();
 	
 	public String getOperationName();

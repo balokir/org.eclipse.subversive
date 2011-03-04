@@ -141,20 +141,20 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 		return this.revisionsPairs == null ? null : (RevisionPair [])this.revisionsPairs.toArray(new RevisionPair[this.revisionsPairs.size()]);
 	}
 	
-    protected void reportError(Throwable t) {
+	public void reportStatus(int severity, String message, Throwable t) {
     	if (t instanceof SVNConnectorUnresolvedConflictException) {
           	this.setUnresolvedConflict(true);
           	          
-          	StringBuffer message = new StringBuffer();
+          	StringBuffer messageBuf = new StringBuffer();
           	if (t.getMessage() != null && t.getMessage().length() > 0) {
-          		message.append(t.getMessage());
+          		messageBuf.append(t.getMessage());
           	}          	
           	SVNConnectorUnresolvedConflictException ex = (SVNConnectorUnresolvedConflictException) t; 
           	if (ex.getErrorId() == SVNErrorCodes.fsConflict) {
-          		message.append(message.toString().endsWith("\n") ? "\n" : "\n\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-          		message.append(SVNMessages.CommitOperation_3);
+          		messageBuf.append(messageBuf.toString().endsWith("\n") ? "\n" : "\n\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          		messageBuf.append(SVNMessages.CommitOperation_3);
           	}           	
-          	this.setConflictMessage(message.toString());
+          	this.setConflictMessage(messageBuf.toString());
         	for (int i = 0; i < this.paths.length; i++) {
                 for (IResource res : this.getProcessed()) {                    
     		        if (FileUtility.getResourcePath(res).equals(new Path(this.paths[i]))) {
@@ -166,7 +166,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
             }
     	}
     	else {
-    		super.reportError(t);
+    		super.reportStatus(severity, message, t);
     	}
     }	
 	

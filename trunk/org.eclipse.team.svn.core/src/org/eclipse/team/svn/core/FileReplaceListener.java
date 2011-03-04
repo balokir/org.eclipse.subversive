@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -121,7 +122,7 @@ public class FileReplaceListener implements IResourceChangeListener {
 								throw new Exception("Failed to rename file: " + originalFile.getAbsolutePath()); //$NON-NLS-1$
 							}
 						} catch (Throwable t) {
-							this.reportError(t);
+							this.reportStatus(IStatus.ERROR, null, t);
 						} finally {
 							/*
 							 * Restore

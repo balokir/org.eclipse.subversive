@@ -37,6 +37,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.jface.action.Action;
@@ -555,7 +556,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 						}
 					});
 					if (t[0] != null ){
-						this.reportError(t[0]);
+						this.reportStatus(IStatus.ERROR, null, t[0]);
 					}
 				}
 			});
