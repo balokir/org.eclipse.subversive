@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.cache;
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -47,7 +48,11 @@ public class RepositoryCacheReadHelper {
 			if (this.repositoryCache.getCacheVersion() >= 2) {
 				this.loadMergeInfo(bytesReader, decoder);
 			}
-		} finally {
+		}
+		catch (EOFException e) {
+			// do nothing, it's just the end of stream...
+		}
+		finally {
 			try { bytesReader.close(); } catch (IOException ie) { /*ignore*/ }
 			decoder.end();
 		}		
