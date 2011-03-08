@@ -168,7 +168,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	protected CompareNode makeNode(SVNDiffStatus st, Map path2node, IProgressMonitor monitor) throws Exception {
 		String urlNext = SVNUtility.decodeURL(st.pathNext);
 		String urlPrev = SVNUtility.decodeURL(st.pathPrev);
-		int nodeKind = this.getNodeKind(st);
+		int nodeKind = this.getNodeKind(st, false);
 		
 		IRepositoryResource next = this.createResourceFor(this.rootLeft.getRepositoryLocation(), nodeKind, urlNext);
 		next.setSelectedRevision(this.rootLeft.getSelectedRevision());
