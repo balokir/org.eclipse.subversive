@@ -369,8 +369,8 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return Differencer.NO_CHANGE;
 	}
 	
-	protected int getNodeKind(SVNDiffStatus st) {
-		return SVNUtility.getNodeKind(st.pathPrev, st.nodeKind, false);
+	protected int getNodeKind(SVNDiffStatus st, boolean ignoreNone) {
+		return SVNUtility.getNodeKind(st.pathPrev, st.nodeKind, ignoreNone);
 	}
 	
 	protected IRepositoryResource createResourceFor(IRepositoryLocation location, int kind, String url) {

@@ -235,7 +235,8 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	
 	protected void makeBranch(String localPath, SVNDiffStatus stLocal, SVNDiffStatus stRemote, final Map path2node, final IProgressMonitor monitor) throws Exception {
 		// 1) take local statuses
-		int nodeKind = stLocal == null ? this.getNodeKind(stRemote) : this.getNodeKind(stLocal);
+		int localKind = stLocal == null ? SVNEntry.Kind.NONE : this.getNodeKind(stLocal, true);
+		int nodeKind = localKind == SVNEntry.Kind.NONE ? this.getNodeKind(stRemote, false) : localKind;
 		ILocalResource local = this.getLocalResource(localPath, nodeKind == SVNEntry.Kind.FILE);
 		// 2) skip all ignored resources that does not have real remote variants
 		if ((stRemote != null || !IStateFilter.SF_IGNORED.accept(local)) && !path2node.containsKey(SVNUtility.createPathForSVNUrl(SVNRemoteStorage.instance().asRepositoryResource(local.getResource()).getUrl()))) {
@@ -286,7 +287,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	
 	protected CompareNode makeNode(ILocalResource local, SVNDiffStatus stLocal, SVNDiffStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
 		int localNodeKind = local instanceof ILocalFile ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
-		int remoteNodeKind = stRemote == null ? localNodeKind : this.getNodeKind(stRemote);
+		int remoteNodeKind = stRemote == null ? localNodeKind : this.getNodeKind(stRemote, false);
 		
 		boolean useOriginator = this.local.isCopied() && (stLocal != null && stLocal.textStatus != SVNEntryStatus.Kind.ADDED || local.getResource().equals(this.local.getResource()));
 		IRepositoryResource []entries = this.getRepositoryEntries(local, remoteNodeKind, stLocal, stRemote);
