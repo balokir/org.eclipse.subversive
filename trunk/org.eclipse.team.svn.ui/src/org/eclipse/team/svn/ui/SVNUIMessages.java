@@ -1123,6 +1123,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Property_SVN_Keywords;
 	public static String Property_SVN_Log;
 	public static String Property_SVN_Mimetype;
+	public static String Property_SVN_Mergeinfo;
 	public static String Property_SVN_NeedsLock;
 	public static String Property_TSVN_LockMsgMinSize;
 	public static String Property_TSVN_LogFileListEnglish;
