@@ -37,8 +37,9 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		properties.add(new PredefinedProperty("svn:externals", this.getDescription("SVN_Externals"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		properties.add(new PredefinedProperty("svn:ignore", this.getDescription("SVN_Ignore"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		properties.add(new PredefinedProperty("svn:keywords", this.getDescription("SVN_Keywords"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:needs-lock", this.getDescription("SVN_NeedsLock"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		properties.add(new PredefinedProperty("svn:mime-type", this.getDescription("SVN_Mimetype"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("svn:mergeinfo", this.getDescription("SVN_Mergeinfo"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("svn:needs-lock", this.getDescription("SVN_NeedsLock"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		this.getBugtrackProperties(properties);
 		properties.add(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_tsvn_description, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.add(new PredefinedProperty("tsvn:logtemplate", this.getDescription("TSVN_LogTemplate"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -60,8 +61,9 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		regexpmap.put("svn:externals", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		regexpmap.put("svn:ignore", "([^\\\\/\\:])+"); //$NON-NLS-1$ //$NON-NLS-2$
 		regexpmap.put("svn:keywords", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedRevision)|(LastChangedBy)|(URL)|(\\s))+"); //$NON-NLS-1$ //$NON-NLS-2$
-		regexpmap.put("svn:needs-lock", null); //$NON-NLS-1$
 		regexpmap.put("svn:mime-type", null); //$NON-NLS-1$
+		regexpmap.put("svn:mergeinfo", null); //$NON-NLS-1$
+		regexpmap.put("svn:needs-lock", null); //$NON-NLS-1$
 		this.getBugtrackRegExps(regexpmap);
 		regexpmap.put("tsvn:logtemplate", null); //$NON-NLS-1$
 		regexpmap.put("tsvn:logwidthmarker", "(\\d+)"); //$NON-NLS-1$ //$NON-NLS-2$
