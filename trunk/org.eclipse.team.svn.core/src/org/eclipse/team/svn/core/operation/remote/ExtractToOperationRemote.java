@@ -118,14 +118,16 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 			String toOperate = ""; //$NON-NLS-1$
 			String rootUrl = null;
 			String rootName = null;
+			int lastSepPos = -1;
 			for (String url : this.exportRoots2Names.keySet()) {
 				if (SVNUtility.createPathForSVNUrl(url).isPrefixOf(currentPath)) {
 					rootUrl = url;
+					lastSepPos = rootUrl.lastIndexOf('/');
 					rootName = this.exportRoots2Names.get(url);
 				}
 			}
 			if (current instanceof IRepositoryContainer) {
-				String localPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1)); //$NON-NLS-1$
+				String localPath = "/" + (lastSepPos == -1 && (lastSepPos + 1) < current.getUrl().length() ? current.getName() : current.getUrl().substring(lastSepPos + 1)); //$NON-NLS-1$
 				repoFolder2localFolder.put(currentURL, localPath);
 				toOperate = localPath;
 			}
@@ -134,7 +136,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 				String parentFolderURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
 				if (!repoFolder2localFolder.containsKey(parentFolderURL))
 				{
-					localFolderPath = "/" + (rootUrl == null ? "" : parentFolderURL.substring(rootUrl.lastIndexOf('/') + 1)); //$NON-NLS-1$
+					localFolderPath = "/" + (lastSepPos == -1 && (lastSepPos + 1) < parentFolderURL.length() ? "" : parentFolderURL.substring(lastSepPos + 1)); //$NON-NLS-1$
 					repoFolder2localFolder.put(parentFolderURL, localFolderPath);
 				}
 				else
@@ -144,7 +146,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 				toOperate = "/" + localFolderPath + currentURL.substring(currentURL.lastIndexOf('/')); //$NON-NLS-1$ 
 			}
 			if (rootUrl != null) {
-				String projectRepoName = rootUrl.substring(rootUrl.lastIndexOf("/") + 1); //$NON-NLS-1$
+				String projectRepoName = rootUrl.substring(lastSepPos + 1); //$NON-NLS-1$
 				int idx = toOperate.indexOf(projectRepoName);
 				toOperate = toOperate.substring(0, idx) + rootName + toOperate.substring(idx + projectRepoName.length());
 			}
