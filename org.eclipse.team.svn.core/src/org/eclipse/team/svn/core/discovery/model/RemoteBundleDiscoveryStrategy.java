@@ -86,25 +86,28 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 			//TODO correctly call DownloadBundleJob, through our framework operations
 			DownloadBundleJob downloadBundleJob = new DownloadBundleJob(this.discoveryUrl, monitor);
 			downloadBundleJob.exec();
-			File bundleFile = downloadBundleJob.getFile();			
-			try {
-				registryStrategy = new DiscoveryRegistryStrategy(new File[] { registryCacheFolder },
-						new boolean[] { false }, this);
-				registryStrategy.setDiscoveryInfo(bundleFile, this.discoveryUrl);
-				IExtensionRegistry extensionRegistry = new ExtensionRegistry(registryStrategy, this, this);
+			File bundleFile = downloadBundleJob.getFile();
+			if (bundleFile != null) // is there any network issues or the job was cancelled?
+			{
 				try {
-					IExtensionPoint extensionPoint = extensionRegistry.getExtensionPoint(ConnectorDiscoveryExtensionReader.EXTENSION_POINT_ID);
-					if (extensionPoint != null) {
-						IExtension[] extensions = extensionPoint.getExtensions();
-						if (extensions.length > 0) {
-							processExtensions(new SubProgressMonitor(monitor, ticksTenPercent * 3), extensions);
+					registryStrategy = new DiscoveryRegistryStrategy(new File[] { registryCacheFolder },
+							new boolean[] { false }, this);
+					registryStrategy.setDiscoveryInfo(bundleFile, this.discoveryUrl);
+					IExtensionRegistry extensionRegistry = new ExtensionRegistry(registryStrategy, this, this);
+					try {
+						IExtensionPoint extensionPoint = extensionRegistry.getExtensionPoint(ConnectorDiscoveryExtensionReader.EXTENSION_POINT_ID);
+						if (extensionPoint != null) {
+							IExtension[] extensions = extensionPoint.getExtensions();
+							if (extensions.length > 0) {
+								processExtensions(new SubProgressMonitor(monitor, ticksTenPercent * 3), extensions);
+							}
 						}
+					} finally {
+						extensionRegistry.stop(this);
 					}
 				} finally {
-					extensionRegistry.stop(this);
+					registryStrategy = null;
 				}
-			} finally {
-				registryStrategy = null;
 			}
 		} finally {
 			monitor.done();
