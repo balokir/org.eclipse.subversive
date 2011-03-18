@@ -8,6 +8,25 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110318-1700 [18 March 2011]
+
+Features:
+ * Add the svn:mergeinfo property into the SVN Property editor list (bug 339832)
+ * Improve bug report facilities (bug 337250)
+
+Fixes:
+ * Correct Mylyn integration feature dependencies (bug 340376)
+ * IllegalStateException in discovery feature when network problem or cancellation occurs [ID-FEJWD] (bug 334408)
+ * Extract operation fails with exception [ID-BOAKP] (bug 339469)
+ * "Unrecognized node kind" error while comparing resources [ID-RTYVU] (bug 338876)
+ * Unhandled EOF exception in Revision Graph [EID-NVOHU] (bug 338485)
+ * No error dialog appears if commit fails (bug 338641)
+ * "Find/Check out as": destination folder browser should open location of actual workspace [ID-P1ILO] (bug 334252)
+ * ResourceContentStorage does not implement equals() (bug 305866)
+ * Update Subversive help regarding installation and updating workflow (bug 338289)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110207-1700 [07 February 2011]
 
 Features:
