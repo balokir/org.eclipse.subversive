@@ -784,7 +784,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			this.parent2Children.put(target.getFullPath(), new HashSet());
 		}
 		
-		if (retVal != null && hasSVNMeta && statuses.length > 1 && recurse) {
+		if (retVal != null && hasSVNMeta && statuses.length > 1 && recurse && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
 			this.scheduleStatusesFetch(statuses, target);
 		}
 		
@@ -801,11 +801,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					}
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-						while (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() && !monitor.isCanceled()) {
+						while (true) {
 							SVNChangeStatus [] st;
 							IResource target;
 							synchronized (SVNRemoteStorage.this.fetchQueue) {
-								if (SVNRemoteStorage.this.fetchQueue.size() == 0) {
+								if (monitor.isCanceled() || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() || SVNRemoteStorage.this.fetchQueue.size() == 0) {
+									SVNRemoteStorage.this.fetchQueue.clear(); // if cache is disabled and queue is not empty
 									break;
 								}
 								Object []entry = (Object [])SVNRemoteStorage.this.fetchQueue.get(0);
@@ -815,11 +816,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							this.processEntry(monitor, st, target);
 							synchronized (SVNRemoteStorage.this.fetchQueue) {
 								SVNRemoteStorage.this.fetchQueue.remove(0);
-							}
-						}
-						if (!CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
-							synchronized (SVNRemoteStorage.this.fetchQueue) {
-								SVNRemoteStorage.this.fetchQueue.clear();
+								if (SVNRemoteStorage.this.fetchQueue.size() == 0) {
+									break;
+								}
 							}
 						}
 					}
