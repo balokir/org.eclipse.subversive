@@ -21,8 +21,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -42,17 +44,37 @@ public final class UIMonitorUtility {
 	
 	public static Display getDisplay() {
 		Display retVal = Display.getCurrent();
-		return retVal == null ? PlatformUI.getWorkbench().getDisplay() : retVal;
+		if (retVal == null || retVal.isDisposed()) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			if (workbench != null) {
+				retVal = workbench.getDisplay();
+			}
+			if (retVal == null || retVal.isDisposed()) {
+				retVal = Display.getDefault();
+			}
+		}
+		return retVal;
 	}
 	
 	public static Shell getShell() {
-		Display display = UIMonitorUtility.getDisplay();
-		// NEVER ! use the active shell because it could be disposed asynchronously by external thread
-		for (Shell shell : display.getShells()) {
-			if (shell.getParent() == null) {
+		return UIMonitorUtility.getShell(null);
+	}
+	
+	public static Shell getShell(IWorkbenchSite site) {
+		if (site != null) {
+			Shell shell = site.getShell();
+			if (!shell.isDisposed()) {
 				return shell;
 			}
 		}
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench != null) {
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			if (window != null) {
+				return window.getShell();
+			}
+		}
+		Display display = UIMonitorUtility.getDisplay();
 		return new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 	}
 	

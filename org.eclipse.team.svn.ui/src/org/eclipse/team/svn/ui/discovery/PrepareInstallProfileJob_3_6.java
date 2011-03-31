@@ -220,7 +220,7 @@ public class PrepareInstallProfileJob_3_6 implements IConnectorsInstallJob {
 			// instead of aborting here we ask the user if they wish to proceed anyways
 			final boolean[] okayToProceed = new boolean[1];
 			final String finalMessage = message;
-			Display.getDefault().syncExec(new Runnable() {
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					okayToProceed[0] = MessageDialog.openQuestion(UIMonitorUtility.getShell(),
 							SVNUIMessages.InstallConnectorsJob_questionProceed, NLS.bind(
