@@ -39,9 +39,6 @@ public abstract class DiscoveryUiUtil {
 		SVNTeamUIPlugin.instance().getLog().log(status);
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null && !workbench.getDisplay().isDisposed()) {
-			if (shell == null) {
-				shell = UIMonitorUtility.getShell();
-			}
 			displayStatus(shell, title, status, true);
 		}
 	}
@@ -49,7 +46,7 @@ public abstract class DiscoveryUiUtil {
 	public static void displayStatus(final String title, final IStatus status) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null && !workbench.getDisplay().isDisposed()) {
-			displayStatus(UIMonitorUtility.getShell(), title, status, false);
+			displayStatus(null, title, status, false);
 		} else {
 			//TODO is it correct ?
 			SVNTeamUIPlugin.instance().getLog().log(status);
@@ -57,6 +54,9 @@ public abstract class DiscoveryUiUtil {
 	}
 
 	public static void displayStatus(Shell shell, final String title, final IStatus status, boolean showLinkToErrorLog) {
+		if (shell == null) {
+			shell = UIMonitorUtility.getShell();
+		}
 		String message = status.getMessage();
 		if (showLinkToErrorLog) {
 			message += SVNUIMessages.DiscoveryUi_seeErrorLog;
