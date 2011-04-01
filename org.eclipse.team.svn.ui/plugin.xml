@@ -2297,7 +2297,7 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.UpdateToRevisionCommand"
-          name="%UpdateToRevision.label"/>          
+          name="%UpdateToRevisionCommand.label"/>          
  </extension>
  <extension
        point="org.eclipse.ui.bindings">
