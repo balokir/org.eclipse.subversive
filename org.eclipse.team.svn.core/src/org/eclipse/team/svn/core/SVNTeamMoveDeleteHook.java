@@ -50,19 +50,19 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	}
 
 	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor) {
-		return this.doDelete(tree, file, monitor);
+		return this.doDelete(tree, file, updateFlags, monitor);
 	}
 
 	public boolean deleteFolder(IResourceTree tree, final IFolder folder, int updateFlags, IProgressMonitor monitor) {
-		return this.doDelete(tree, folder, monitor);
+		return this.doDelete(tree, folder, updateFlags, monitor);
 	}
 	
 	public boolean moveFile(final IResourceTree tree, final IFile source, final IFile destination, int updateFlags, IProgressMonitor monitor) {
-		return this.doMove(tree, source, destination, monitor);
+		return this.doMove(tree, source, destination, updateFlags, monitor);
 	}
 
 	public boolean moveFolder(final IResourceTree tree, final IFolder source, final IFolder destination, int updateFlags, IProgressMonitor monitor) {
-		return this.doMove(tree, source, destination, monitor);
+		return this.doMove(tree, source, destination, updateFlags, monitor);
 	}
 
 	public boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor) {
@@ -74,7 +74,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		return false;
 	}
 
-	protected boolean doMove(IResourceTree tree, IResource source, IResource destination, IProgressMonitor monitor) {
+	protected boolean doMove(IResourceTree tree, IResource source, IResource destination, int updateFlags, IProgressMonitor monitor) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(source);
 		if (!IStateFilter.SF_VERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(source);
@@ -88,6 +88,9 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		CompositeOperation op = new CompositeOperation(moveOp.getId(), moveOp.getMessagesClass());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {source, destination});
 		op.add(saveOp);
+		if ((updateFlags & IResource.KEEP_HISTORY) != 0) {
+			op.add(new SaveToLocalHistoryOperation(tree, source));
+		}
 		if (!moveOp.isAllowed()) {
 			//target was placed on different repository -- do <copy + delete>
 			AbstractActionOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination);
@@ -134,7 +137,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		});
 	}
 	
-	protected boolean doDelete(final IResourceTree tree, final IResource resource, IProgressMonitor monitor) {
+	protected boolean doDelete(final IResourceTree tree, final IResource resource, int updateFlags, IProgressMonitor monitor) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(resource);
@@ -144,6 +147,11 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {resource});
 		op.add(saveOp);
+		
+		if ((updateFlags & IResource.KEEP_HISTORY) != 0) {
+			op.add(new SaveToLocalHistoryOperation(tree, resource));
+		}
+	    	    
 	    op.add(mainOp);
 	    	  
 	    op.add(new AbstractActionOperation("Operation_TrackDeleteResult", SVNMessages.class) {			 //$NON-NLS-1$
@@ -172,7 +180,25 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		
 		return true;
 	}
+	
+	protected static class SaveToLocalHistoryOperation extends AbstractActionOperation {
+		protected IResourceTree tree;
+		protected IResource resource;
 		
+		public SaveToLocalHistoryOperation(IResourceTree tree, IResource resource) {			
+			super("Operation_TrackDeleteResult", SVNMessages.class); //$NON-NLS-1$
+			this.tree = tree;
+			this.resource = resource;
+		}
+	
+		@Override
+		protected void runImpl(IProgressMonitor monitor) throws Exception {
+			if (this.resource.getType() == IResource.FILE) {
+				this.tree.addToLocalHistory((IFile)this.resource);
+			}
+		}
+	}
+	
 	protected static class TrackMoveResultOperation extends AbstractActionOperation {
 		
 		protected IResourceTree tree;
