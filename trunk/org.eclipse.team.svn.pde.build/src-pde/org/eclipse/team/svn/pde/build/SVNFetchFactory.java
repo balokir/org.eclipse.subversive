@@ -30,6 +30,7 @@ import org.eclipse.team.svn.pde.build.IMapFileParser.FetchData;
  * It understands our and SourceForge svn pde builders map file formats
  * 
  * @author Alexander Gurov
+ * @author Stephan Herrmann
  */
 public class SVNFetchFactory implements IFetchFactory {
 	public static final String TARGET_FETCH_FROM_SVN = "FetchFromSVN"; //$NON-NLS-1$
@@ -193,18 +194,23 @@ public class SVNFetchFactory implements IFetchFactory {
 		//fill entryInfo
 		entryInfos.put(SVNFetchFactory.KEY_URL, data.url);
 		entryInfos.put(SVNFetchFactory.KEY_PATH, data.path);
-		if (data.tag != null && data.tag.length() > 0) {
+		if (data.tag == null || data.tag.length() == 0 || "trunk".equals(data.tag)) {
+			// don't set KEY_ELEMENT_TAG property
+			entryInfos.put(SVNFetchFactory.KEY_TAG_PATH, "trunk");
+		} else {
 			int ind = data.tag.lastIndexOf("/"); //$NON-NLS-1$
 			String tagValue = ind > 0 ? data.tag.substring(ind + 1) : data.tag;
 			String tagPath = data.tag;
-									
-			//validate tag
-			if (tagValue != null && !SVNFetchFactory.tagPattern.matcher(tagValue).matches()) {
-				throw new RuntimeException("Tag doesn't match to pattern. Tag: " + tagValue + ", pattern: " + SVNFetchFactory.tagPattern.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			}	
-			if (tagValue != null) {
-				entryInfos.put(SVNFetchFactory.KEY_ELEMENT_TAG, tagValue);	
-			}				
+			
+			if (!tagPath.contains("branches/")) { // branches are not used for qualifier replacement
+				//validate tag
+				if (tagValue != null && !SVNFetchFactory.tagPattern.matcher(tagValue).matches()) {
+					throw new RuntimeException("Tag doesn't match to pattern. Tag: " + tagValue + ", pattern: " + SVNFetchFactory.tagPattern.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				}	
+				if (tagValue != null) {
+					entryInfos.put(SVNFetchFactory.KEY_ELEMENT_TAG, tagValue);	
+				}
+			}
 			entryInfos.put(SVNFetchFactory.KEY_TAG_PATH, tagPath);
 		}		
 		
