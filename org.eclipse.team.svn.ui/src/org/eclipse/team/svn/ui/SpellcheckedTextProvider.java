@@ -22,6 +22,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -54,7 +56,7 @@ public class SpellcheckedTextProvider {
 		offset.setLayout(layout);
 		offset.setLayoutData(layoutData);
 
-		SourceViewer sourceViewer = new SourceViewer(offset, null, null, true, style & ~SWT.BORDER);
+		final SourceViewer sourceViewer = new SourceViewer(offset, null, null, true, style & ~SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		sourceViewer.getTextWidget().setLayoutData(data);
 		offset.setBackground(sourceViewer.getTextWidget().getBackground());
@@ -81,6 +83,22 @@ public class SpellcheckedTextProvider {
 			sourceViewer.addPainter(painter);
 		}
 		sourceViewer.getTextWidget().setIndent(0);
+		
+		sourceViewer.getTextWidget().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == 'z' && e.stateMask == SWT.CONTROL) {
+					if (sourceViewer.canDoOperation(SourceViewer.UNDO)) {
+						sourceViewer.doOperation(SourceViewer.UNDO);
+					}
+				}
+				else if (e.keyCode == 'y' && e.stateMask == SWT.CONTROL) {
+					if (sourceViewer.canDoOperation(SourceViewer.REDO)) {
+						sourceViewer.doOperation(SourceViewer.REDO);
+					}
+				}
+			}
+		});
+		
 		return sourceViewer.getTextWidget();
 	}
 
