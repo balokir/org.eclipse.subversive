@@ -40,7 +40,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 	}
 	
 	public void runImpl(IAction action) {
-		SetKeywordsAction.doSetKeywords(this.getSelectedResources());
+		SetKeywordsAction.doSetKeywords(this.getSelectedResources(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES));
 	}
 	
 	public static void doSetKeywords(final IResource []resources) {
@@ -79,7 +79,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 	}
 
 	public boolean isEnabled() {
-		return this.checkForResourcesPresenceRecursive(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES);
+		return this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES);
 	}
 
 }
