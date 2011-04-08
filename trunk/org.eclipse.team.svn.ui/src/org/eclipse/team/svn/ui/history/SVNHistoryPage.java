@@ -252,19 +252,20 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 	
 	public void resourcesStateChanged(ResourceStatesChangedEvent event) {
-		if (this.wcResource == null) {
+		IResource resource = this.wcResource;
+		if (resource == null) {
 			return;
 		}
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 			if (IStateFilter.SF_ONREPOSITORY.accept(local) && this.logMessages == null){
 				this.refreshChanges(ISVNHistoryView.REFRESH_ALL);
 			}
-			else if (this.wcResource instanceof IFile) {
+			else if (resource instanceof IFile) {
 				this.refreshChanges(ISVNHistoryView.REFRESH_LOCAL);
 			}
-			if ((event.contains(this.wcResource) || event.contains(this.wcResource.getProject())) &&
-				(!this.wcResource.exists() || !FileUtility.isConnected(this.wcResource))) {
+			if ((event.contains(resource) || event.contains(resource.getProject())) &&
+				(!resource.exists() || !FileUtility.isConnected(resource))) {
 				this.disconnectView();
 			}
 		}
@@ -286,7 +287,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			this.clear();
 
 			this.wcResource = resource;
-			this.currentlyInvolvedLocation = SVNRemoteStorage.instance().asRepositoryResource(this.wcResource).getRepositoryLocation();
+			this.currentlyInvolvedLocation = SVNRemoteStorage.instance().asRepositoryResource(resource).getRepositoryLocation();
 
 			this.refresh(ISVNHistoryView.REFRESH_ALL);
 		}
@@ -303,7 +304,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		}
 	}
 
-	public synchronized void clear() {
+	public void clear() {
 		this.currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		this.repositoryResource = null;
 		this.wcResource = null;
@@ -397,17 +398,18 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	public void refresh(int refreshType) {
-		if (this.wcResource != null) {
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
+		IResource resource = this.wcResource;
+		if (resource != null) {
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 			if (IStateFilter.SF_ONREPOSITORY.accept(local)) {
 				this.currentRevision = local.getRevision();
-				this.repositoryResource = local.isCopied() ? SVNUtility.getCopiedFrom(this.wcResource) : SVNRemoteStorage.instance().asRepositoryResource(this.wcResource);
+				this.repositoryResource = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 			}
 			else {
 				this.repositoryResource = null;
 			}
 
-			if (this.wcResource instanceof IFile && refreshType != ISVNHistoryView.REFRESH_REMOTE && refreshType != ISVNHistoryView.REFRESH_VIEW) {
+			if (resource instanceof IFile && refreshType != ISVNHistoryView.REFRESH_REMOTE && refreshType != ISVNHistoryView.REFRESH_VIEW) {
 				try {
 					this.fetchLocalHistory(local, new NullProgressMonitor());
 				}
