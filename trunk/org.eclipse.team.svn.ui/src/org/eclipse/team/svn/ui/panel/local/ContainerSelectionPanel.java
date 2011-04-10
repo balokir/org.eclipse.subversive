@@ -142,15 +142,20 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 			}
 		});
         
-        this.copyWithHistoryButton = new Button(parent, SWT.CHECK);
+        this.copyWithHistoryButton = new Button(parent, SWT.RADIO);
         this.copyWithHistoryButton.setLayoutData(new GridData());
-        this.copyWithHistoryButton.setText(SVNUIMessages.ContainerSelectionPanel_KeepHistory);
+        this.copyWithHistoryButton.setText(SVNUIMessages.ContainerSelectionPanel_PerformSVNCopy);
         this.copyWithHistoryButton.setSelection(true);
         this.copyWithHistoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ContainerSelectionPanel.this.validateContent();
 			}
 		});
+        
+        Button noSVNCopyButton = new Button(parent, SWT.RADIO);
+        noSVNCopyButton.setLayoutData(new GridData());
+        noSVNCopyButton.setText(SVNUIMessages.ContainerSelectionPanel_CopyResourcesWithoutSVNHistory);
+        noSVNCopyButton.setSelection(false);
     }
     
     public void postInit() {

@@ -293,7 +293,8 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ConsultChangeSets_toggleDialog_toggleMessage;
 	public static String ContainerSelectionPanel_ConflictMessage;
 	public static String ContainerSelectionPanel_Description;
-	public static String ContainerSelectionPanel_KeepHistory;
+	public static String ContainerSelectionPanel_PerformSVNCopy;
+	public static String ContainerSelectionPanel_CopyResourcesWithoutSVNHistory;
 	public static String ContainerSelectionPanel_Message;
 	public static String ContainerSelectionPanel_NewName;
 	public static String ContainerSelectionPanel_NewName_Verifier;
