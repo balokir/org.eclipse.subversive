@@ -84,6 +84,9 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 		boolean isStructureEnabled = remoteResources[0].getRepositoryLocation().isStructureEnabled()&& SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		if (isStructureEnabled) {
 			nodeNames = org.eclipse.team.svn.ui.action.remote.BranchTagAction.getExistingNodeNames(actionType == BranchTagAction.BRANCH_ACTION ? SVNUtility.getBranchesLocation(remoteResources[0]) : SVNUtility.getTagsLocation(remoteResources[0]));
+			if (nodeNames == null) {
+				return null;
+			}
 		}
 		
 		AbstractBranchTagPanel panel = 

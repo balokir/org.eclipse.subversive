@@ -37,7 +37,6 @@ import org.eclipse.team.svn.ui.panel.common.AbstractBranchTagPanel;
 import org.eclipse.team.svn.ui.panel.common.BranchPanel;
 import org.eclipse.team.svn.ui.panel.common.TagPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
-import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -104,6 +103,9 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 				}
 			}
 			nodeNames = BranchTagAction.getExistingNodeNames(nodeType == BranchTagAction.BRANCH_ACTION ? SVNUtility.getBranchesLocation(resources[0]) : SVNUtility.getTagsLocation(resources[0]));
+			if (nodeNames == null) {
+				return null;
+			}
 			forceCreate = 
 				resources.length == 1 && 
 				!(resources[0] instanceof IRepositoryRoot && ((IRepositoryRoot)resources[0]).getKind() == IRepositoryRoot.KIND_TRUNK) &&  
@@ -127,9 +129,10 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 	}
 	
 	public static Set<String> getExistingNodeNames(IRepositoryContainer parent) {
-		HashSet<String> nodeNames = new HashSet<String>();
+		HashSet<String> nodeNames = null;
 		IRepositoryResource []existentNodes = BranchTagAction.getRemoteChildren(parent);
 		if (existentNodes != null) {
+			nodeNames = new HashSet<String>();
 			for (int i = 0; i < existentNodes.length; i++) {
 				nodeNames.add(existentNodes[i].getName());
 			}
@@ -154,12 +157,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 
 	protected static IRepositoryResource []getRemoteChildren(final IRepositoryContainer parent) {
 		GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(parent, false);
-		UIMonitorUtility.doTaskBusy(op, new DefaultOperationWrapperFactory() {
-			public IActionOperation getLogged(IActionOperation operation) {
-				return operation;
-			}
-		});
-		return op.getChildren();
+		return UIMonitorUtility.doTaskNowDefault(op, true).isCancelled() ? null : op.getChildren();
 	}
 	
 	public static boolean isSingleProjectLayout(IRepositoryResource resource) {
