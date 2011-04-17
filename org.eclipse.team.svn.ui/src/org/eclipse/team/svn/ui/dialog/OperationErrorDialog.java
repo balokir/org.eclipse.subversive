@@ -37,13 +37,11 @@ public class OperationErrorDialog extends MessageDialog {
 	};
 	
 	public OperationErrorDialog(Shell parentShell, String title, int errorCode) {
-		super(parentShell, 
-			title, 
-			null, 
-			SVNUIMessages.getString(OperationErrorDialog.errorMessages[errorCode]),
-			MessageDialog.WARNING, 
-			new String[] {IDialogConstants.OK_LABEL}, 
-			0);
+		this(parentShell, title, SVNUIMessages.getString(OperationErrorDialog.errorMessages[errorCode]));
+	}
+	
+	public OperationErrorDialog(Shell parentShell, String title, String errorMessage) {
+		super(parentShell, title, null, errorMessage, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL}, 0);
 	}
 	
 	public static boolean isAcceptableAtOnce(IResource []resources, String name, Shell shell) {

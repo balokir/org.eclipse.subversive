@@ -18,6 +18,10 @@ public class SVNUIMessages extends BaseMessages {
 
 	protected static final String BUNDLE_NAME = "org.eclipse.team.svn.ui.messages";	 //$NON-NLS-1$
 	
+	public static String AbstractBranchTagPanel_CreationMode_AsIs;
+	public static String AbstractBranchTagPanel_CreationMode_CheckRevision;
+	public static String AbstractBranchTagPanel_CreationMode_DoUpdate;
+	public static String AbstractBranchTagPanel_CreationMode_Repository;
 	public static String AbstractGetResourceNamePanel_Comment;
 	public static String AbstractGetResourceNamePanel_Message_MultiPart;
 	public static String AbstractGetResourceNamePanel_Message_Simple;
@@ -144,7 +148,8 @@ public class SVNUIMessages extends BaseMessages {
 	public static String BranchPanel_Title;
 	public static String BranchPanel_Warning;
 	public static String BranchTagAction_Error_Branch;
-	public static String BranchTagAction_Error_Tag;	
+	public static String BranchTagAction_Error_Tag;
+	public static String BranchTagAction_Error_NotInSync;
 	public static String BuiltInAnnotateRevision_Author;
 	public static String BuiltInAnnotateRevision_Date;
 	public static String BuiltInAnnotateRevision_MergedWith;
@@ -732,6 +737,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_CallMenuAction_Id;
 	public static String Operation_ChangeRepositoryLocation;
 	public static String Operation_ChangeRepositoryLocation_Id;
+	public static String Operation_CheckIfWCInSync;
 	public static String Operation_CheckLayout;
 	public static String Operation_CheckLayout_Id;
 	public static String Operation_CheckRelocationState;

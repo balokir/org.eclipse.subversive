@@ -117,7 +117,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		DefaultDialog dialog = new DefaultDialog(shell, panel);
 		if (dialog.open() == 0) {
 			IRepositoryResource[] resourcesWithSpecifiedRevision = new IRepositoryResource[resources.length];
-			for (int i = 0; i < resources.length; i ++) {
+			for (int i = 0; i < resources.length; i++) {
 				resourcesWithSpecifiedRevision[i] = SVNUtility.copyOf(resources[i]);				
 				resourcesWithSpecifiedRevision[i].setSelectedRevision(panel.getRevisionForRemoteResources());
 				resourcesWithSpecifiedRevision[i].setPegRevision(resources[i].getPegRevision());

@@ -43,6 +43,11 @@ public class TagPanel extends AbstractBranchTagPanel {
     	} 	
     }
     
+	protected void creationModeChanged(int creationMode) {
+		this.freezeExternalsCheck.setSelection(creationMode != SVNTeamPreferences.CREATION_MODE_REPOSITORY);
+		this.revisionComposite.setEnabled(creationMode == SVNTeamPreferences.CREATION_MODE_REPOSITORY);
+	}
+
     public String getHelpId() {
     	return "org.eclipse.team.svn.help.tagDialogContext"; //$NON-NLS-1$
     }

@@ -192,6 +192,12 @@ public final class SVNTeamPreferences {
 	public static final boolean REPOSITORY_SHOW_EXTERNALS_DEFAULT = true;
 	public static final boolean REPOSITORY_SIMPLE_SHARE_DEFAULT = true;
 	
+	public static final String BRANCH_TAG_CREATION_MODE = "branchTagCreationMode"; //$NON-NLS-1$
+	public static final int CREATION_MODE_ASIS = 0;
+	public static final int CREATION_MODE_CHECKREVISION = 1;
+	public static final int CREATION_MODE_DOUPDATE = 2;
+	public static final int CREATION_MODE_REPOSITORY = 3;
+	
 	public static final String BRANCH_TAG_CONSIDER_STRUCTURE_NAME = "tagConsideringProjectStructure"; //$NON-NLS-1$
 	public static final boolean BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT = true;
 	
@@ -340,7 +346,8 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultCustomPropertiesValues(store);
 		SVNTeamPreferences.setDefaultDiffViewerValues(store);
 		
-		store.setDefault(SVNTeamPreferences.FIRST_STARTUP, true);	
+		store.setDefault(SVNTeamPreferences.FIRST_STARTUP, true);
+		store.setDefault(SVNTeamPreferences.BRANCH_TAG_CREATION_MODE, SVNTeamPreferences.CREATION_MODE_ASIS);
 	}
 	
 	public static void setDefaultAutoPropertiesValues(IPreferenceStore store) {
