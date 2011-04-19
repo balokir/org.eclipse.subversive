@@ -8,6 +8,26 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110419-1700 [19 April 2011]
+
+Features:
+ * Provide several modes for a branch/tag creation based on the working copy (bug 343073)
+ * Undo and Redo doesn't work in Commit Dialog (bug 298556)
+
+Fixes:
+ * Malformed network data during synchronization (bug 337151) [allow usage of the older SVN Kit version without the issue]
+ * Branch/Tag action from the "Team" menu blocks UI thread (bug 342743)
+ * "Keep resource history" option name in the "Team->Copy To" dialog causes misunderstanding (bug 341723)
+ * Set Keywords action is enabled for new resources (bug 311665)
+ * NPE in SVNHistoryPage resource state listener [ID-Q5KRR] (bug 341896)
+ * Undo Delete does not restore the latest file state but the version before (bug 340318)
+ * Missing NLS string in plugins.properties (bug 341364)
+ * UIMonitorUtility is not equipped to handle applications with more than one shell (bug 341271)
+ * IndexOutOfBoundsException during cache update (bug 315544)
+ * Correct connectors compatibility ID [ID-D1U3Y] (bug 340527)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110318-1700 [18 March 2011]
 
 Features:
