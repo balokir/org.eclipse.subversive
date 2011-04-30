@@ -95,10 +95,9 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 			//target was placed on different repository -- do <copy + delete>
 			AbstractActionOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination);
 			op.add(copyLocalResourceOp);
-			op.add(new TrackMoveResultOperation(tree, source, destination, copyLocalResourceOp, false));
 			DeleteResourceOperation deleteOp = new DeleteResourceOperation(source);
 			op.add(deleteOp, new IActionOperation[] {copyLocalResourceOp});
-			op.add(new TrackMoveResultOperation(tree, source, destination, deleteOp, true));
+			op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {copyLocalResourceOp, deleteOp}));
 			op.add(new RestoreProjectMetaOperation(saveOp));
 		    op.add(new RefreshResourcesOperation(new IResource[] {source, destination}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 		}
@@ -107,7 +106,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	        AbstractActionOperation addToSVNOp = new AddToSVNWithPropertiesOperation(scheduledForAddition, false); 
 	        op.add(addToSVNOp);
 	       	op.add(moveOp, new IActionOperation[] {addToSVNOp});
-	       	op.add(new TrackMoveResultOperation(tree, source, destination, moveOp, true));
+	       	op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {moveOp}));
 			op.add(new RestoreProjectMetaOperation(saveOp));
 	       	ArrayList<IResource> fullSet = new ArrayList<IResource>(Arrays.asList(scheduledForAddition));
 	       	fullSet.addAll(Arrays.asList(new IResource[] {source, destination}));
@@ -115,7 +114,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	    }
 	    else {
 	    	op.add(moveOp);
-	    	op.add(new TrackMoveResultOperation(tree, source, destination, moveOp, true));	    		    	
+	    	op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {moveOp}));	    		    	
 			op.add(new RestoreProjectMetaOperation(saveOp));
 		    op.add(new RefreshResourcesOperation(new IResource[] {source, destination}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 		}
@@ -123,7 +122,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 							    	  	    
 		return true;
 	}
-
+	
 	protected void runOperation(IActionOperation op, IProgressMonitor monitor) {
 		// already in WorkspaceModifyOperation context
 		//don't log errors from operations, because errors are logged by caller code (IMoveDeleteHook infrastructure)		    
@@ -200,33 +199,37 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	}
 	
 	protected static class TrackMoveResultOperation extends AbstractActionOperation {
-		
 		protected IResourceTree tree;
 		protected IResource source;
 		protected IResource destination;
-		protected IActionOperation operationToTrack;
-		protected boolean canDeclareMove;
+		protected IActionOperation []operationsToTrack;
 		
-		public TrackMoveResultOperation(IResourceTree tree, IResource source, IResource destination, IActionOperation operationToTrack, boolean canDeclareMove) {			
+		public TrackMoveResultOperation(IResourceTree tree, IResource source, IResource destination, IActionOperation []operationsToTrack) {			
 			super("Operation_TrackMoveResult", SVNMessages.class); //$NON-NLS-1$
 			this.tree = tree;
 			this.source = source;
 			this.destination = destination;
-			this.operationToTrack = operationToTrack;
-			this.canDeclareMove = canDeclareMove;
+			this.operationsToTrack = operationsToTrack;
 		}
 	
 		@Override
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			if (this.canDeclareMove && this.operationToTrack.getExecutionState() == IActionOperation.OK) {
+			boolean failed = false;
+			if (this.operationsToTrack != null) {
+				for (int i = 0; i < this.operationsToTrack.length; i++) {
+					if (this.operationsToTrack[i].getExecutionState() == IActionOperation.ERROR) {
+						this.tree.failed(this.operationsToTrack[i].getStatus());
+						failed = true;
+					}
+				}
+			}
+			if (!failed) {
 				if (this.source.getType() == IResource.FILE) {
 					this.tree.movedFile((IFile) this.source, (IFile) this.destination);
 				} else if (this.source.getType() == IResource.FOLDER) {
 					this.tree.movedFolderSubtree((IFolder) this.source, (IFolder) this.destination);
 				} 				
-			} else if (this.operationToTrack.getExecutionState() == IActionOperation.ERROR) {
-				this.tree.failed(this.operationToTrack.getStatus());
-			}								
+			}
 		}		
 	}   
 }
