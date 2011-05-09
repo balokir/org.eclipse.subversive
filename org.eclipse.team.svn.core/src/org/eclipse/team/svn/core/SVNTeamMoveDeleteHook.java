@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -29,7 +30,9 @@ import org.eclipse.team.svn.core.operation.local.AddToSVNWithPropertiesOperation
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceFromHookOperation;
+import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceWithHistoryOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.MoveResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -93,7 +96,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		}
 		if (!moveOp.isAllowed()) {
 			//target was placed on different repository -- do <copy + delete>
-			AbstractActionOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination);
+			AbstractActionOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination, FileUtility.COPY_NO_OPTIONS);
 			op.add(copyLocalResourceOp);
 			DeleteResourceOperation deleteOp = new DeleteResourceOperation(source);
 			op.add(deleteOp, new IActionOperation[] {copyLocalResourceOp});
@@ -105,16 +108,42 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	        IResource []scheduledForAddition = FileUtility.getOperableParents(new IResource[] {destination}, IStateFilter.SF_UNVERSIONED, true);
 	        AbstractActionOperation addToSVNOp = new AddToSVNWithPropertiesOperation(scheduledForAddition, false); 
 	        op.add(addToSVNOp);
-	       	op.add(moveOp, new IActionOperation[] {addToSVNOp});
-	       	op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {moveOp}));
+	        if (this.checkBug281557(source, monitor)) {
+				CopyResourceWithHistoryOperation copyOp = new CopyResourceWithHistoryOperation(source, destination);
+				op.add(copyOp);
+				// do overwrite file content in order to restore original keywords values
+				CopyResourceFromHookOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination, FileUtility.COPY_OVERRIDE_EXISTING_FILES);
+				op.add(copyLocalResourceOp);
+				// end overwrite
+				DeleteResourceOperation deleteOp = new DeleteResourceOperation(source);
+				op.add(deleteOp, new IActionOperation[] {copyOp, copyLocalResourceOp});
+				op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {copyOp, copyLocalResourceOp, deleteOp}));
+			}
+			else {
+		       	op.add(moveOp, new IActionOperation[] {addToSVNOp});
+		       	op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {moveOp}));
+			}
 			op.add(new RestoreProjectMetaOperation(saveOp));
 	       	ArrayList<IResource> fullSet = new ArrayList<IResource>(Arrays.asList(scheduledForAddition));
 	       	fullSet.addAll(Arrays.asList(new IResource[] {source, destination}));
 		    op.add(new RefreshResourcesOperation(fullSet.toArray(new IResource[fullSet.size()]), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 	    }
 	    else {
-	    	op.add(moveOp);
-	    	op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {moveOp}));	    		    	
+	        if (this.checkBug281557(source, monitor)) {
+				CopyResourceWithHistoryOperation copyOp = new CopyResourceWithHistoryOperation(source, destination);
+				op.add(copyOp);
+				// do overwrite file content in order to restore original keywords values
+				CopyResourceFromHookOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination, FileUtility.COPY_OVERRIDE_EXISTING_FILES);
+				op.add(copyLocalResourceOp);
+				// end overwrite
+				DeleteResourceOperation deleteOp = new DeleteResourceOperation(source);
+				op.add(deleteOp, new IActionOperation[] {copyOp, copyLocalResourceOp});
+				op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {copyOp, copyLocalResourceOp, deleteOp}));
+			}
+			else {
+		    	op.add(moveOp);
+		    	op.add(new TrackMoveResultOperation(tree, source, destination, new IActionOperation[] {moveOp}));	    		    	
+			}
 			op.add(new RestoreProjectMetaOperation(saveOp));
 		    op.add(new RefreshResourcesOperation(new IResource[] {source, destination}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 		}
@@ -123,6 +152,21 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		return true;
 	}
 	
+	protected boolean checkBug281557(IResource source, IProgressMonitor monitor) {
+		//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=281557
+		if (source.getType() == IResource.FILE && SVNTeamPlugin.instance().getOptionProvider().getSVNConnectorId().startsWith("org.eclipse.team.svn.connector.javahl")) {
+			GetPropertiesOperation op = new GetPropertiesOperation(source);
+			this.runOperation(op, monitor);
+			SVNProperty []props = op.getProperties();
+			for (int i = 0; i < props.length; i++) {
+				if (SVNProperty.BuiltIn.KEYWORDS.equals(props[i].name)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	protected void runOperation(IActionOperation op, IProgressMonitor monitor) {
 		// already in WorkspaceModifyOperation context
 		//don't log errors from operations, because errors are logged by caller code (IMoveDeleteHook infrastructure)		    
