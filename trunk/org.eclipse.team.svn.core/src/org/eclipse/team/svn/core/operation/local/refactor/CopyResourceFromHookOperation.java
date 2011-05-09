@@ -37,11 +37,13 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class CopyResourceFromHookOperation extends AbstractActionOperation {
 	protected IResource source;
 	protected IResource destination;
+	protected int options;
 	
-	public CopyResourceFromHookOperation(IResource source, IResource destination) {
+	public CopyResourceFromHookOperation(IResource source, IResource destination, int options) {
 		super("Operation_CopyResourceFromHook", SVNMessages.class); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
+		this.options = options;
 	}
 
 	public ISchedulingRule getSchedulingRule() {
@@ -63,7 +65,7 @@ public class CopyResourceFromHookOperation extends AbstractActionOperation {
 				throw new UnreportableException(errMessage);
 			}
 		}			
-		FileUtility.copyAll(new File(FileUtility.getWorkingCopyPath(toResource)), new File(FileUtility.getWorkingCopyPath(this.source)), FileUtility.COPY_NO_OPTIONS, new FileFilter() {
+		FileUtility.copyAll(new File(FileUtility.getWorkingCopyPath(toResource)), new File(FileUtility.getWorkingCopyPath(this.source)), this.options, new FileFilter() {
 			public boolean accept(File pathname) {
 				return !pathname.getName().equals(SVNUtility.getSVNFolderName());
 			}
