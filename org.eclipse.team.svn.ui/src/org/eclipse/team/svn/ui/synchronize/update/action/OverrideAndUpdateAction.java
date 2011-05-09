@@ -27,11 +27,12 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.ResourcesTraversalOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.operation.local.change.visitors.RemoveNonVersionedVisitor;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -110,7 +111,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		 * Probably there are case where we need to call RemoveNonVersionedResourcesOperation once again after revert operation,
 		 * but I didn't find them
 		 */
-		RemoveNonVersionedResourcesOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(resources[0], true);
+		IActionOperation removeNonVersionedResourcesOp = new ResourcesTraversalOperation(resources[0], new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE);
 		op.add(removeNonVersionedResourcesOp);
 		RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
 		op.add(revertOp);

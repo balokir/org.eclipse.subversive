@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.ResourcesTraversalOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
@@ -33,6 +33,7 @@ import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.IResourceChangeVisitor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
+import org.eclipse.team.svn.core.operation.local.change.visitors.RemoveNonVersionedVisitor;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -78,7 +79,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 			
 			IActionOperation revertOp = new RevertOperation(resources, true);
 			op.add(revertOp);
-			IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
+			IActionOperation removeOp = new ResourcesTraversalOperation(resources, new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE);
 			op.add(removeOp, new IActionOperation[] {revertOp});
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			op.add(new UpdateOperation(resources, ignoreExternals), new IActionOperation[] {revertOp, removeOp});
