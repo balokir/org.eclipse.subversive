@@ -96,7 +96,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		this.committables = new IResource[0];
 		this.withDifferentNodeKind = new IResource[0];
 
-		for (int i = 0; i < resources.length; i++) {
+		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final IResource current = resources[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
