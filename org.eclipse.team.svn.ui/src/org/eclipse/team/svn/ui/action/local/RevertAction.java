@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -74,7 +75,7 @@ public class RevertAction extends AbstractRecursiveTeamAction {
 			op.add(mainOp);
 			if (panel.getRemoveNonVersioned()) {
 				op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CACHE), new IActionOperation[] {mainOp});
-				op.add(new ResourcesTraversalOperation(changedResources, new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE), new IActionOperation[] {mainOp});
+				op.add(new ResourcesTraversalOperation("Operation_RemoveNonSVN", SVNMessages.class, changedResources, new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE), new IActionOperation[] {mainOp});
 			}
 			op.add(restoreOp);
 			op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));

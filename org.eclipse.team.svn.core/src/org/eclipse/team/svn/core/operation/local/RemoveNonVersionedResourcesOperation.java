@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.local.change.visitors.RemoveNonVersionedVisitor;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 
@@ -23,11 +24,11 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
  */
 public class RemoveNonVersionedResourcesOperation extends ResourcesTraversalOperation {
     public RemoveNonVersionedResourcesOperation(IResource[] resources, boolean addedAlso) {
-        super(resources, new RemoveNonVersionedVisitor(addedAlso), IResource.DEPTH_INFINITE);
+        super("Operation_RemoveNonSVN", SVNMessages.class, resources, new RemoveNonVersionedVisitor(addedAlso), IResource.DEPTH_INFINITE);
     }
 
     public RemoveNonVersionedResourcesOperation(IResourceProvider provider, boolean addedAlso) {
-        super(provider, new RemoveNonVersionedVisitor(addedAlso), IResource.DEPTH_INFINITE);
+        super("Operation_RemoveNonSVN", SVNMessages.class, provider, new RemoveNonVersionedVisitor(addedAlso), IResource.DEPTH_INFINITE);
     }
 
 }

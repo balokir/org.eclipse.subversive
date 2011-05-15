@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -111,7 +112,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		 * Probably there are case where we need to call RemoveNonVersionedResourcesOperation once again after revert operation,
 		 * but I didn't find them
 		 */
-		IActionOperation removeNonVersionedResourcesOp = new ResourcesTraversalOperation(resources[0], new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE);
+		IActionOperation removeNonVersionedResourcesOp = new ResourcesTraversalOperation("Operation_RemoveNonSVN", SVNMessages.class, resources[0], new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE);
 		op.add(removeNonVersionedResourcesOp);
 		RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
 		op.add(revertOp);

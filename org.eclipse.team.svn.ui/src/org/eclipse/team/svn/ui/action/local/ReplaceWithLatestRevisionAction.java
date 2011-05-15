@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -79,7 +80,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 			
 			IActionOperation revertOp = new RevertOperation(resources, true);
 			op.add(revertOp);
-			IActionOperation removeOp = new ResourcesTraversalOperation(resources, new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE);
+			IActionOperation removeOp = new ResourcesTraversalOperation("Operation_RemoveNonSVN", SVNMessages.class, resources, new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE);
 			op.add(removeOp, new IActionOperation[] {revertOp});
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			op.add(new UpdateOperation(resources, ignoreExternals), new IActionOperation[] {revertOp, removeOp});

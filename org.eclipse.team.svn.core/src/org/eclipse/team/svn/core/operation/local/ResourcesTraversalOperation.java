@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
@@ -33,15 +33,14 @@ public class ResourcesTraversalOperation extends AbstractWorkingCopyOperation im
 	protected IResourceChangeVisitor visitor;
 	protected int depth;
 	
-	//FIXME externalize operation name, to do so first NLS support should be reworked: SVNMessages.class should be passed transparently.
-    public ResourcesTraversalOperation(IResource[] resources, IResourceChangeVisitor visitor, int depth) {
-        super("Operation_RemoveNonSVN", SVNMessages.class, resources); //$NON-NLS-1$
+    public ResourcesTraversalOperation(String operationName, Class<? extends NLS> messagesClass, IResource[] resources, IResourceChangeVisitor visitor, int depth) {
+        super(operationName, messagesClass, resources); //$NON-NLS-1$
 		this.visitor = visitor;
 		this.depth = depth;
     }
 
-    public ResourcesTraversalOperation(IResourceProvider provider, IResourceChangeVisitor visitor, int depth) {
-        super("Operation_RemoveNonSVN", SVNMessages.class, provider); //$NON-NLS-1$
+    public ResourcesTraversalOperation(String operationName, Class<? extends NLS> messagesClass, IResourceProvider provider, IResourceChangeVisitor visitor, int depth) {
+        super(operationName, messagesClass, provider); //$NON-NLS-1$
 		this.visitor = visitor;
 		this.depth = depth;
     }
