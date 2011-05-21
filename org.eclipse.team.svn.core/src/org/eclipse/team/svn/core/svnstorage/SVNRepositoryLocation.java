@@ -524,6 +524,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 
 	public ISVNConnector acquireSVNProxy() {
+		ISVNConnector retVal = null;
+		boolean isNew = false;
 		synchronized (this.proxyManagerLock) {
 			try {
 				// initialize proxy cache, usedProxies list and thread2Proxy map
@@ -547,10 +549,16 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 					this.proxyConfigurationState = 1;
 				}
 			    
-				ISVNConnector retVal = cache.size() == 0 ? this.newProxyInstance() : cache.remove(0);
+				if (cache.size() == 0) {
+					retVal = this.newProxyInstance();
+					isNew = true;
+				}
+				else {
+					retVal = cache.remove(0);
+				}
+				
 			    this.usedProxies.add(retVal);
 			    this.thread2Proxy.put(current, new ProxyHolder(retVal));
-			    return retVal;
 			}
 			catch (RuntimeException e) {
 			    this.proxyConfigurationState = 0;
@@ -563,6 +571,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			    throw new RuntimeException(e);
 			}
 		}
+		if (isNew) { // configure a new proxy later in order to avoid recursive deadlocks when there is a misconfiguration of some sort
+			SVNUtility.configureProxy(retVal, this);
+		}
+	    return retVal;
 	}
 	
 	public void releaseSVNProxy(ISVNConnector proxy) {
@@ -776,8 +788,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		proxy.setTouchUnresolved(false);
 		proxy.setCommitMissingFiles(true);
 		
-		SVNUtility.configureProxy(proxy, this);
-	    
 	    ISVNCredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
 	    if (externalPrompt != null) {
 			proxy.setPrompt(new CredentialsPromptWrapper(externalPrompt));
