@@ -53,19 +53,19 @@ public class SelectRevisionPanel extends SVNHistoryPanel {
 		for (int i = 0; i < this.logMessages.length ; i ++ ) {
 			SVNLogEntry entry = this.logMessages[i];
 			if (selected.indexOf(entry) != -1) {
-				lastRev = entry.revision;
-				if (startRev == SVNRevision.INVALID_REVISION_NUMBER) {
-					startRev = entry.revision;
+				startRev = entry.revision;
+				if (lastRev == SVNRevision.INVALID_REVISION_NUMBER) {
+					lastRev = entry.revision;
 				}				
 				//add the last element to result list
 				if (i == this.logMessages.length - 1) {
-					revisions.add(new SVNRevisionRange(startRev, lastRev));	
+					revisions.add(new SVNRevisionRange(startRev == lastRev || startRev == 0 ? startRev : startRev - 1, lastRev));	
 				}
 			}
 			else {
-				if (startRev != SVNRevision.INVALID_REVISION_NUMBER) {
-					revisions.add(new SVNRevisionRange(startRev, lastRev));
-					startRev = SVNRevision.INVALID_REVISION_NUMBER;
+				if (lastRev != SVNRevision.INVALID_REVISION_NUMBER) {
+					revisions.add(new SVNRevisionRange(startRev == lastRev || startRev == 0 ? startRev : startRev - 1, lastRev));
+					lastRev = SVNRevision.INVALID_REVISION_NUMBER;
 				}
 			}
 		}
