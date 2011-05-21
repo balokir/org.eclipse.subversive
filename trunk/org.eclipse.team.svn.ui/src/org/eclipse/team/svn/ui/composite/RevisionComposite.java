@@ -155,15 +155,20 @@ public class RevisionComposite extends Composite {
 			}
 		}
 		//reorder revisions
+		this.reorderRevisions(this.reverseRevisions);
+		return this.revisions;
+	}
+	
+	protected void reorderRevisions(final boolean reverseRevisions)
+	{
 		Arrays.sort(this.revisions, new Comparator<SVNRevisionRange>() {
 			public int compare(SVNRevisionRange o1, SVNRevisionRange o2) {
 				long rev1 = ((SVNRevision.Number)o1.from).getNumber();
 				long rev2 = ((SVNRevision.Number)o2.from).getNumber();
 				int retVal = rev1 == rev2 ? 0 : (rev1 < rev2 ? -1 : 1);
-				return RevisionComposite.this.reverseRevisions ? (retVal * -1) : retVal;
+				return reverseRevisions ? (retVal * -1) : retVal;
 			}
 		});
-		return this.revisions;
 	}
 	
 	public IRepositoryResource getSelectedResource() {
@@ -438,6 +443,7 @@ public class RevisionComposite extends Composite {
 					if (dialog.open() == 0) {
 						if (RevisionComposite.this.checkStyled) {
 							RevisionComposite.this.revisions = panel.getSelectedRevisions();
+							RevisionComposite.this.reorderRevisions(false);
 							String text = ""; //$NON-NLS-1$
 							for (SVNRevisionRange range : RevisionComposite.this.revisions) {
 								text += text.length() == 0 ? range.toString() : (", " + range.toString()); //$NON-NLS-1$

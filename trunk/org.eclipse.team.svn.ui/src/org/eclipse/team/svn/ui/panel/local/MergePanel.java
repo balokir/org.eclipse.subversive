@@ -404,10 +404,6 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 				buf.append(state.path);
 				buf.append("\n"); //$NON-NLS-1$
 			}
-			
-			public void reportError(String errorMessage) {
-				
-			}
 		});
 		
 		if (this.mode != MergePanel.MODE_1URL) {
