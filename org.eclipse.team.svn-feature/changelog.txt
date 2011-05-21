@@ -8,6 +8,23 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110523-1700 [23 May 2011]
+
+Features:
+ * Provide a flexible way to traverse resources tree in operation execution context (bug 345170)
+
+Fixes:
+ * Deadlock when starting Eclipse with Synch View open [ID-V0QM2] (bug 313866)
+ * Indigo requires license update (bug 346698)
+ * Make revision selection dialog more intuitive (automatically include lesser revision changes into the selected range) (bug 319962)
+ * No way to specify correctly a name for the resources traversal operation (bug 345855)
+ * Rename Class/Interface causes code garbage with Subversive and keyword substitution (bug 315279)
+ * MarkAsMergedOperation ignores cancellation event (bug 345169)
+ * SVNMoveDeleteHook does not report any errors happened while moving resources (bug 344361)
+ * Unused NLS message (bug 343439)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110419-1700 [19 April 2011]
 
 Features:
