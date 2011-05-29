@@ -81,12 +81,12 @@
 
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.6.12 r955767). Compatible with SVN 1.6.x. Supported platforms: Win32 only."
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.6.15 r1038135). Compatible with SVN 1.6.x. Supported platforms: Win32 only."
             groupId="org.eclipse.team.svn.discovery-javahl"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl16.win32,org.polarion.eclipse.team.svn.connector.javahl16"
             kind="task"
             license="Apache Software License 1.1"
-            name="Native JavaHL 1.6.12"
+            name="Native JavaHL 1.6.15"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/indigo-site/"
             platformFilter="(osgi.os=win32)">
