@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn.license"
-      version="0.7.9.I20110207-1700">
+      version="0.7.9.I20110602-1700">
 
    <license url="license.html">
       %license

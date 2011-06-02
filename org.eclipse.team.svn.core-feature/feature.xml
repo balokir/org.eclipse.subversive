@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.core"
       label="%featureName"
-      version="0.7.9.I20110523-1700"
+      version="0.7.9.I20110602-1700"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn.core">
    <install-handler/>
