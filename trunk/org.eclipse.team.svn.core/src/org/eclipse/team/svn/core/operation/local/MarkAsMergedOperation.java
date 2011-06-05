@@ -33,7 +33,6 @@ import org.eclipse.team.svn.core.operation.local.change.visitors.SaveContentVisi
 import org.eclipse.team.svn.core.operation.local.change.visitors.SavePropertiesVisitor;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
@@ -186,13 +185,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(local.getResource());
 		ILocalResource remoteResource = syncInfo.getRemoteChangeResource();
 		long revNum = remoteResource.getRevision();
-		if (revNum == SVNRevision.INVALID_REVISION_NUMBER)
-		{
-			// no resource change, acquire latest revision for the selected resource
-			IRepositoryResource tResource = SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
-			revNum = tResource.getRevision();
-		}
-		return SVNRevision.fromNumber(revNum);		    		
+		return revNum == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(revNum);
 	}
 	
 	protected boolean prepareToOverride(ResourceChange change, IProgressMonitor monitor) {
