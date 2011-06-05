@@ -8,6 +8,16 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110602-1700 [2 June 2011]
+
+Fixes:
+ * Correct help section regarding latest changes in Merge Dialog behaviour (bug 347143)
+ * Bug fix: update version number to the actual 1.6.15 (bug 347568)
+ * Indigo requires license update (bug 346698)
+ * Sometimes SVN Kit does not throw an exception when repository is inaccessible [ID-VIT54] (bug 347737)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110523-1700 [23 May 2011]
 
 Features:
