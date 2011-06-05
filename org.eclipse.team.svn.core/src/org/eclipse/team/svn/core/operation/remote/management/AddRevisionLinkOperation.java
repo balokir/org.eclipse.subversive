@@ -73,12 +73,20 @@ public class AddRevisionLinkOperation extends AbstractActionOperation {
 					
 					SVNRevision selectedRevision = AddRevisionLinkOperation.this.revision == null ? sourceResource.getSelectedRevision() : AddRevisionLinkOperation.this.revision;
 					if (selectedRevision.equals(SVNRevision.HEAD)) {
-						selectedRevision = SVNRevision.fromNumber(sourceResource.getRevision());
+						long revision = sourceResource.getRevision();
+						if (revision == SVNRevision.INVALID_REVISION_NUMBER) { // failed: no network connection
+							return;
+						}
+						selectedRevision = SVNRevision.fromNumber(revision);
 					}
 					
 					SVNRevision pegRevision = sourceResource.getPegRevision();
 					if (pegRevision.equals(SVNRevision.HEAD)) {
-						pegRevision = SVNRevision.fromNumber(location.getRepositoryRoot().getRevision());
+						long revision = location.getRepositoryRoot().getRevision();
+						if (revision == SVNRevision.INVALID_REVISION_NUMBER) { // failed: no network connection
+							return;
+						}
+						pegRevision = SVNRevision.fromNumber(revision);
 					}
 					
 					targetResource.setSelectedRevision(selectedRevision);
