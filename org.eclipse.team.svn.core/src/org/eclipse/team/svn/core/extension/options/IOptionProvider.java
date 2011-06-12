@@ -64,6 +64,9 @@ public interface IOptionProvider {
 		public String getResource(String key) {
 			return SVNMessages.getErrorString(key);
 		}
+		public boolean isPersistentSSHEnabled() {
+			return true;
+		}
 	};
 	
 	/**
@@ -136,4 +139,10 @@ public interface IOptionProvider {
 	 * @return nationalized value
 	 */
 	public String getResource(String key);
+	
+	/**
+	 * Tells if persistent SSH connections enabled or not. Disabling this allows to reduce the server workload (less svnserve instances running).
+	 * @return <code>true</code> if enabled, <code>false</code> otherwise
+	 */
+	public boolean isPersistentSSHEnabled();
 }

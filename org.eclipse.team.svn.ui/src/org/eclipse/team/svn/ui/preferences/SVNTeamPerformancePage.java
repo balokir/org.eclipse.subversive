@@ -34,10 +34,12 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 	protected Button computeDeepButton;
 	protected Button preciseEnablementsButton;
 	protected Button enableCacheButton;
+	protected Button enablePersistentSSHConnectionButton;
 	
 	protected boolean computeDeep;
 	protected boolean preciseEnablements;
 	protected boolean enableCache;
+	protected boolean enablePersistentSSHConnection;
 
 	public SVNTeamPerformancePage() {
 		super();
@@ -51,24 +53,28 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME, this.computeDeep);
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME, this.preciseEnablements);
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME, this.computeDeep | this.enableCache);
+		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME, this.enablePersistentSSHConnection);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
 		this.computeDeep = SVNTeamPreferences.DECORATION_COMPUTE_DEEP_DEFAULT;
 		this.preciseEnablements = SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_DEFAULT;
 		this.enableCache = SVNTeamPreferences.DECORATION_ENABLE_CACHE_DEFAULT;
+		this.enablePersistentSSHConnection = SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
 		this.computeDeep = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME);
 		this.preciseEnablements = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME);
 		this.enableCache = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME);
+		this.enablePersistentSSHConnection = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME);
 	}
 	
 	protected void initializeControls() {
 		this.computeDeepButton.setSelection(this.computeDeep);
 		this.preciseEnablementsButton.setSelection(this.preciseEnablements);
 		this.enableCacheButton.setSelection(this.enableCache);
+		this.enablePersistentSSHConnectionButton.setSelection(this.enablePersistentSSHConnection);
 		if (this.computeDeep || this.preciseEnablements) {
 			this.enableCacheButton.setEnabled(false);
 		}
@@ -125,6 +131,15 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 				SVNTeamPerformancePage.this.enableCache = SVNTeamPerformancePage.this.enableCacheButton.getSelection();
 				SVNTeamPerformancePage.this.computeDeepButton.setEnabled(SVNTeamPerformancePage.this.enableCache);
 				SVNTeamPerformancePage.this.preciseEnablementsButton.setEnabled(SVNTeamPerformancePage.this.enableCache);
+			}
+		});
+		
+		this.enablePersistentSSHConnectionButton = new Button(composite, SWT.CHECK);
+		this.enablePersistentSSHConnectionButton.setLayoutData(new GridData());
+		this.enablePersistentSSHConnectionButton.setText(SVNUIMessages.PerformancePreferencePage_enablePersistentSSHConnection);
+		this.enablePersistentSSHConnectionButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent (Event event) {
+				SVNTeamPerformancePage.this.enablePersistentSSHConnection = SVNTeamPerformancePage.this.enablePersistentSSHConnectionButton.getSelection();
 			}
 		});
 		
