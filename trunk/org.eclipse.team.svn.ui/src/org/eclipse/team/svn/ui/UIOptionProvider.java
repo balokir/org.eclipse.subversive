@@ -118,5 +118,9 @@ public class UIOptionProvider implements IOptionProvider {
 	public String getResource(String key) {
 		return SVNUIMessages.getErrorString(key);
 	}
+
+	public boolean isPersistentSSHEnabled() {
+		return SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME);
+	}
 	
 }
