@@ -51,63 +51,63 @@ import org.osgi.util.tracker.ServiceTracker;
 public class SVNTeamPlugin extends Plugin {
 	// all projects shared with subversion will have this nature
 	public static final String NATURE_ID = "org.eclipse.team.svn.core.svnnature"; //$NON-NLS-1$
-	
+
 	public static final String CORE_SVNCLIENT_NAME = "svnconnector"; //$NON-NLS-1$
-	
+
 	private volatile static SVNTeamPlugin instance = null;
-	
+
 	private ProjectCloseListener pcListener;
 	private ResourceChangeListener rcListener;
 	private SVNFolderListener svnListener;
 	private ServiceTracker tracker;
-	private FileReplaceListener fileReplaceListener;
-	
+	//FIXME see bug #276018 private FileReplaceListener fileReplaceListener;
+
 	private IErrorHandlingFacility errorHandlingFacility;
-	
+
 	/**
 	 * Allows to save changes in repository root URL and UUID
 	 */
 	private boolean isLocationsDirty;
-	
+
 	public SVNTeamPlugin() {
 		super();
-		
-        SVNTeamPlugin.instance = this;
-        
-        this.pcListener = new ProjectCloseListener();
-        this.rcListener = new ResourceChangeListener();
-        this.svnListener = new SVNFolderListener();
-        this.fileReplaceListener = new FileReplaceListener();
-        
+
+		SVNTeamPlugin.instance = this;
+
+		this.pcListener = new ProjectCloseListener();
+		this.rcListener = new ResourceChangeListener();
+		this.svnListener = new SVNFolderListener();
+		//FIXME see bug #276018 this.fileReplaceListener = new FileReplaceListener();
+
 		this.errorHandlingFacility = new DefaultErrorHandlingFacility();
 	}
 
 	public void setLocationsDirty(boolean isLocationsDirty) {
 		this.isLocationsDirty = isLocationsDirty;
 	}
-	
+
 	public boolean isLocationsDirty() {
 		return this.isLocationsDirty;
 	}
-	
-    public static SVNTeamPlugin instance() {
-    	return SVNTeamPlugin.instance;
-    }
-    
+
+	public static SVNTeamPlugin instance() {
+		return SVNTeamPlugin.instance;
+	}
+
 	public IOptionProvider getOptionProvider() {
 		return CoreExtensionsManager.instance().getOptionProvider();
 	}
-	
+
 	public IErrorHandlingFacility getErrorHandlingFacility() {
 		return this.errorHandlingFacility;
 	}
-	
-	//FIXME remove later after Integration API is changed
-    public void setOptionProvider(IOptionProvider optionProvider) {
-    	CoreExtensionsManager.instance().setOptionProvider(optionProvider == null ? IOptionProvider.DEFAULT : optionProvider);
-    	
-    	SVNRemoteStorage.instance().reconfigureLocations();
-		
+
+	// FIXME remove later after Integration API is changed
+	public void setOptionProvider(IOptionProvider optionProvider) {
+		CoreExtensionsManager.instance().setOptionProvider(optionProvider == null ? IOptionProvider.DEFAULT : optionProvider);
+
+		SVNRemoteStorage.instance().reconfigureLocations();
+
 		// remove temporary files if IDE is crached time ago...
 		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Remove Temporary Files", SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -122,45 +122,44 @@ public class SVNTeamPlugin extends Plugin {
 				});
 			}
 		});
-    }
-    
-    
-    /**
+	}
+
+	/**
 	 * Return the Subversive Core preferences node in the instance scope
 	 */
-    public IEclipsePreferences getSVNCorePreferences() {
-    	return new InstanceScope().getNode(this.getBundle().getSymbolicName());
-    }
-    
+	public IEclipsePreferences getSVNCorePreferences() {
+		return new InstanceScope().getNode(this.getBundle().getSymbolicName());
+	}
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		this.tracker = new ServiceTracker(context, IProxyService.class.getName(), null);
 		this.tracker.open();
-		
+
 		IPath stateLocation = this.getStateLocation();
 		SVNFileStorage.instance().initialize(stateLocation);
-		
+
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		storage.initialize(stateLocation);
-		
+
 		WorkspaceJob job = new WorkspaceJob("") { //$NON-NLS-1$
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				
+
 				workspace.addResourceChangeListener(SVNTeamPlugin.this.rcListener, IResourceChangeEvent.POST_CHANGE);
 				workspace.addResourceChangeListener(SVNTeamPlugin.this.svnListener, IResourceChangeEvent.PRE_BUILD);
 				workspace.addResourceChangeListener(SVNTeamPlugin.this.pcListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
-				workspace.addResourceChangeListener(SVNTeamPlugin.this.fileReplaceListener, IResourceChangeEvent.PRE_BUILD);
+				//FIXME see bug #276018 workspace.addResourceChangeListener(SVNTeamPlugin.this.fileReplaceListener, IResourceChangeEvent.PRE_BUILD);
 
-				// shouldn't prevent plugin start 
+				// shouldn't prevent plugin start
 				try {
 					SVNTeamPlugin.this.rcListener.handleInitialWorkspaceDelta();
 				}
 				catch (Throwable ex) {
 					LoggedOperation.reportError("Handle Initial Workspace Delta", ex);
 				}
-				
+
 				// if some team provider is missing the code below "enables" team menu "Share Project" action...
 				IProject []projects = workspace.getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
@@ -173,28 +172,28 @@ public class SVNTeamPlugin extends Plugin {
 		job.setUser(false);
 		job.schedule();
 	}
-	
+
 	public IProxyService getProxyService() {
 		return (IProxyService)this.tracker.getService();
 	}
-	
+
 	public void stop(BundleContext context) throws Exception {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		
+
 		workspace.removeResourceChangeListener(this.svnListener);
 		workspace.removeResourceChangeListener(this.rcListener);
 		workspace.removeResourceChangeListener(this.pcListener);
-		workspace.removeResourceChangeListener(this.fileReplaceListener);
-		
+		//FIXME see bug #276018 workspace.removeResourceChangeListener(this.fileReplaceListener);
+
 		if (this.isLocationsDirty) {
 			SVNRemoteStorage.instance().saveConfiguration();
 			SVNFileStorage.instance().saveConfiguration();
 		}
 		SVNRemoteStorage.instance().dispose();
 		SVNFileStorage.instance().dispose();
-		
+
 		this.tracker.close();
-		
+
 		// cleanup temporary files if any
 		File temporaryFilesStorage = SVNTeamPlugin.instance().getStateLocation().toFile();
 		File []files = temporaryFilesStorage.listFiles(new FileFilter() {
@@ -207,8 +206,8 @@ public class SVNTeamPlugin extends Plugin {
 				FileUtility.deleteRecursive(files[i]);
 			}
 		}
-		
+
 		super.stop(context);
 	}
-	
+
 }
