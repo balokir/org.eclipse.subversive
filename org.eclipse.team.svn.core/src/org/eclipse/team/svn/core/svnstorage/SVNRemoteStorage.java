@@ -599,8 +599,6 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected void refreshLocalResourceImpl(IResource resource, int depth) {	   
-	    ArrayList<IResource> removed = new ArrayList<IResource>();
-	    removed.add(resource);
 	    if (resource.getType() == IResource.PROJECT) {
 	    	IConnectedProjectInformation info = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
 	    	if (info != null) {
@@ -612,25 +610,28 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				}
 	    	}
 	    }
-		for (Iterator it = this.localResources.values().iterator(); it.hasNext(); ) {
-			ILocalResource local = (ILocalResource)it.next();
-		    IResource current = local.getResource();
-		    IPath currentPath = current.getFullPath();
-	        if (resource.getFullPath().isPrefixOf(currentPath) || IStateFilter.SF_NOTEXISTS.accept(local)) {
-	            int cachedSegmentsCount = currentPath.segmentCount();
-	            int matchingSegmentsCount = resource.getFullPath().matchingFirstSegments(currentPath);
-	            int difference = cachedSegmentsCount - matchingSegmentsCount;
-	            if (difference >= 0 && depth == IResource.DEPTH_INFINITE ? true : depth >= difference) {
-	                removed.add(current);
-	            }
-	        }
-		}
+	    ArrayList<IResource> removed = new ArrayList<IResource>();
+	    this.collectResourcesToRemove(resource, depth, removed);
 		for (Iterator it = removed.iterator(); it.hasNext(); ) {
 			IResource forRemove = (IResource)it.next();
-			this.localResources.remove(forRemove.getFullPath());
-			this.switchedToUrls.remove(forRemove.getFullPath());
-            this.parent2Children.remove(forRemove.getFullPath());
+			IPath path = forRemove.getFullPath();
+			this.localResources.remove(path);
+			this.switchedToUrls.remove(path);
+            this.parent2Children.remove(path);
         	this.parent2Children.remove(forRemove.getParent().getFullPath());
+		}
+	}
+	
+	protected void collectResourcesToRemove(IResource resource, int depth, ArrayList<IResource> removed) {
+		removed.add(resource);
+		if (depth != IResource.DEPTH_ZERO) {
+			Set children = (Set)this.parent2Children.get(resource.getFullPath());
+			if (children != null) {
+				for (Iterator it = children.iterator(); it.hasNext(); ) {
+					IResource child = (IResource)it.next();
+					this.collectResourcesToRemove(child, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE, removed);
+				}
+			}
 		}
 	}
 	
@@ -1123,14 +1124,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected void writeChild(IResource current, String status, int mask) {
-	    if (!SVNRemoteStorage.SF_NONSVN.accept(current, status, mask)) {
-			IResource parent = current.getParent();
-			Set children = (Set)this.parent2Children.get(parent.getFullPath());
-			if (children == null) {
-				this.parent2Children.put(parent.getFullPath(), children = new HashSet());
-			}
-			children.add(current);
-	    }
+		IResource parent = current.getParent();
+		Set children = (Set)this.parent2Children.get(parent.getFullPath());
+		if (children == null) {
+			this.parent2Children.put(parent.getFullPath(), children = new HashSet());
+		}
+		children.add(current);
 	}
 	
 	protected ILocalResource getFirstExistingParentLocal(IResource node) {
@@ -1275,9 +1274,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	
 	private SVNRemoteStorage() {
 		super();
-		this.localResources = Collections.synchronizedMap(new HashMap());
+		this.localResources = Collections.synchronizedMap(new HashMap(500));
 		this.switchedToUrls = Collections.synchronizedMap(new LinkedHashMap());
-		this.parent2Children = new HashMap();
+		this.parent2Children = new HashMap(500);
 		this.externalsLocations = new HashMap();
 		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
 		this.fetchQueue = new LinkedList();
