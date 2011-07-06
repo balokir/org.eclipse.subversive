@@ -84,8 +84,6 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 			}
 		}
 		
-		this.setDirty(true);
-		
 		try {
 			MergeElement rightRef = new MergeElement(this.right);
 			rightRef.setCharsetReference(this.targetElement);
