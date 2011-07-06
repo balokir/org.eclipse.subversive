@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -47,13 +48,13 @@ import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
-import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.svnstorage.events.IRepositoriesStateChangedListener;
 import org.eclipse.team.svn.core.svnstorage.events.IRevisionPropertyChangeListener;
 import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent;
@@ -73,6 +74,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	 */
 	private static final String SVN_SECURE_NAME_SEGMENT = "/SVN/"; //$NON-NLS-1$
 	
+	protected static final String IPREF_STATE_INFO_FILE = "internal.stateInfoFile";
+	protected static final String IPREF_REPO_NODE_NAME = "internal.repoNodeName";
+	protected static final String IPREF_AUTH_NODE_NAME = "internal.authNodeName";
+	
 	protected File stateInfoFile;
 	protected String repositoriesPreferencesNode;
 	protected IPreferenceChangeListener repoPrefChangeListener;
@@ -84,6 +89,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 	protected String migrateFromAuthDBPreferenceNode;
 	protected boolean isMigratedFromAuthorizationDatabase;
+	protected boolean noStoredAuthentication;
 	
 	protected class RepositoryPreferenceChangeListener implements IPreferenceChangeListener {
 		public void preferenceChange(PreferenceChangeEvent event) {
@@ -455,7 +461,22 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		return null;
 	}
     
-	protected void initializeImpl(String repositoriesPreferencesNode, String migrateFromAuthDBPreferenceNode) throws Exception {
+	public void initialize(IPath stateInfoLocation) throws Exception {
+		HashMap preferences = new HashMap();
+		preferences.put(ISVNStorage.PREF_STATE_INFO_LOCATION, stateInfoLocation);
+		this.initialize(preferences);
+	}
+	
+	public void initialize(Map<String, Object> preferences) throws Exception {
+		Boolean noStoredAuthObj = (Boolean)preferences.get(ISVNStorage.PREF_NO_STORED_AUTHENTICATION);
+		this.noStoredAuthentication = noStoredAuthObj != null ? noStoredAuthObj.booleanValue() : false;
+		
+		IPath stateInfoLocation = (IPath)preferences.get(ISVNStorage.PREF_STATE_INFO_LOCATION);
+		String infoFileName = (String)preferences.get(AbstractSVNStorage.IPREF_STATE_INFO_FILE);
+		String repositoriesPreferencesNode = (String)preferences.get(AbstractSVNStorage.IPREF_REPO_NODE_NAME);
+		String migrateFromAuthDBPreferenceNode = (String)preferences.get(AbstractSVNStorage.IPREF_AUTH_NODE_NAME);
+		
+		this.stateInfoFile = stateInfoLocation.append(infoFileName).toFile();
 		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
 		this.proxyCredentialsManager = new SVNCachedProxyCredentialsManager(proxyService);
 		
@@ -546,38 +567,40 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	}
 		
 	protected void saveAuthInfo(IRepositoryLocation location, String realm) throws Exception {						
-		ISecurePreferences node = this.getSVNNodeForSecurePreferences(location, realm);
-		if (node != null) {
-			try {
-				IRepositoryLocation tmp = realm.equals("") ? location : location.getLocationForRealm(realm); //$NON-NLS-1$
-				boolean toStorePass = tmp.isPasswordSaved();
-
-				//store normal password settings
-				node.put("username", toStorePass ? tmp.getUsername() : "", false); //$NON-NLS-1$
-				node.put("password", toStorePass ? tmp.getPassword() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
-				node.putBoolean("password_saved", toStorePass, false); //$NON-NLS-1$
-				
-				//store SSH settings
-				SSHSettings sshSettings = tmp.getSSHSettings();
-				boolean useKeyFile = sshSettings.isUseKeyFile();
-				node.putBoolean("ssh_use_key", useKeyFile, false); //$NON-NLS-1$
-				boolean savePassphrase = sshSettings.isPassPhraseSaved();
-				node.putBoolean("ssh_passphrase_saved", useKeyFile ? savePassphrase : false, false); //$NON-NLS-1$ //$NON-NLS-2$
-				node.put("ssh_key", useKeyFile ? sshSettings.getPrivateKeyPath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$				
-				node.put("ssh_passprase", (useKeyFile && savePassphrase) ? sshSettings.getPassPhrase() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
-				node.putInt("ssh_port", sshSettings.getPort(), false);
-				
-				//store SSL settings
-				SSLSettings sslSettings = tmp.getSSLSettings();
-				boolean clientAuthEnabled = sslSettings.isAuthenticationEnabled();
-				savePassphrase = sslSettings.isPassPhraseSaved();
-				node.putBoolean("ssl_enabled", clientAuthEnabled, false); //$NON-NLS-1$
-				node.put("ssl_certificate", clientAuthEnabled ? sslSettings.getCertificatePath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$
-				node.putBoolean("ssl_passphrase_saved", clientAuthEnabled ? savePassphrase : false, false); //$NON-NLS-1$ //$NON-NLS-2$
-				node.put("ssl_passphrase", (clientAuthEnabled && savePassphrase) ? sslSettings.getPassPhrase() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (StorageException e) {				
-				LoggedOperation.reportError(SVNMessages.getErrorString("Error_SaveAutherizationInfo"), e); //$NON-NLS-1$
-			}			
+		if (!this.noStoredAuthentication) {
+			ISecurePreferences node = this.getSVNNodeForSecurePreferences(location, realm);
+			if (node != null) {
+				try {
+					IRepositoryLocation tmp = realm.equals("") ? location : location.getLocationForRealm(realm); //$NON-NLS-1$
+					boolean toStorePass = tmp.isPasswordSaved();
+	
+					//store normal password settings
+					node.put("username", toStorePass ? tmp.getUsername() : "", false); //$NON-NLS-1$
+					node.put("password", toStorePass ? tmp.getPassword() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
+					node.putBoolean("password_saved", toStorePass, false); //$NON-NLS-1$
+					
+					//store SSH settings
+					SSHSettings sshSettings = tmp.getSSHSettings();
+					boolean useKeyFile = sshSettings.isUseKeyFile();
+					node.putBoolean("ssh_use_key", useKeyFile, false); //$NON-NLS-1$
+					boolean savePassphrase = sshSettings.isPassPhraseSaved();
+					node.putBoolean("ssh_passphrase_saved", useKeyFile ? savePassphrase : false, false); //$NON-NLS-1$ //$NON-NLS-2$
+					node.put("ssh_key", useKeyFile ? sshSettings.getPrivateKeyPath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$				
+					node.put("ssh_passprase", (useKeyFile && savePassphrase) ? sshSettings.getPassPhrase() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
+					node.putInt("ssh_port", sshSettings.getPort(), false);
+					
+					//store SSL settings
+					SSLSettings sslSettings = tmp.getSSLSettings();
+					boolean clientAuthEnabled = sslSettings.isAuthenticationEnabled();
+					savePassphrase = sslSettings.isPassPhraseSaved();
+					node.putBoolean("ssl_enabled", clientAuthEnabled, false); //$NON-NLS-1$
+					node.put("ssl_certificate", clientAuthEnabled ? sslSettings.getCertificatePath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$
+					node.putBoolean("ssl_passphrase_saved", clientAuthEnabled ? savePassphrase : false, false); //$NON-NLS-1$ //$NON-NLS-2$
+					node.put("ssl_passphrase", (clientAuthEnabled && savePassphrase) ? sslSettings.getPassPhrase() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (StorageException e) {				
+					LoggedOperation.reportError(SVNMessages.getErrorString("Error_SaveAutherizationInfo"), e); //$NON-NLS-1$
+				}
+			}
 		}
 	}
 	
@@ -590,49 +613,51 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	}
 	
 	protected void loadAuthInfoFromSecureStorage(IRepositoryLocation location, String realm) throws Exception {				
-		try {
-			ISecurePreferences node = this.getSVNNodeForSecurePreferences(location, realm);
-			if (node != null) {
-				IRepositoryLocation tmp;
-				boolean toAddRealm = !realm.equals("");  //$NON-NLS-1$
-				if (toAddRealm) {
-					tmp = this.newRepositoryLocation();
-				}
-				else {
-					tmp = location;
-				}
-				
-				//recover normal password settings
-				boolean isPasswordSaved = node.getBoolean("password_saved", false); //$NON-NLS-1$ 
-				tmp.setPasswordSaved(isPasswordSaved);
-				tmp.setUsername(isPasswordSaved ? node.get("username", "") : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$				
-				tmp.setPassword(isPasswordSaved ? node.get("password", "") : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				
-				//recover SSH settings
-				SSHSettings sshSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSHSettings(false) : tmp.getSSHSettings();
-				sshSettings.setUseKeyFile(node.getBoolean("ssh_use_key", false)); //$NON-NLS-1$
-				sshSettings.setPrivateKeyPath(node.get("ssh_key", "")); //$NON-NLS-1$ //$NON-NLS-2$
-				sshSettings.setPassPhraseSaved(node.getBoolean("ssh_passphrase_saved", false)); //$NON-NLS-1$
-				sshSettings.setPassPhrase(node.get("ssh_passprase", "")); //$NON-NLS-1$ //$NON-NLS-2$
-				int defaultPort = sshSettings.getPort();
-				defaultPort = defaultPort != 0 ? defaultPort : SSHSettings.SSH_PORT_DEFAULT;
-				sshSettings.setPort(node.getInt("ssh_port", defaultPort));
-				
-				//recover SSL settings
-				SSLSettings sslSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSLSettings(false) : tmp.getSSLSettings();
-				sslSettings.setAuthenticationEnabled(node.getBoolean("ssl_enabled", false)); //$NON-NLS-1$
-				sslSettings.setCertificatePath(node.get("ssl_certificate", "")); //$NON-NLS-1$ //$NON-NLS-2$
-				sslSettings.setPassPhraseSaved(node.getBoolean("ssl_passphrase_saved", false)); //$NON-NLS-1$
-				sslSettings.setPassPhrase(node.get("ssl_passphrase", "")); //$NON-NLS-1$ //$NON-NLS-2$
-				
-				//if realm, add it to realms
-				if (toAddRealm) {
-					location.addRealm(realm, tmp);
-				}
-			}		
-		} catch (StorageException e) {				
-			LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadAuthorizationInfo"), e); //$NON-NLS-1$
-		}														
+		if (!this.noStoredAuthentication) {
+			try {
+				ISecurePreferences node = this.getSVNNodeForSecurePreferences(location, realm);
+				if (node != null) {
+					IRepositoryLocation tmp;
+					boolean toAddRealm = !realm.equals("");  //$NON-NLS-1$
+					if (toAddRealm) {
+						tmp = this.newRepositoryLocation();
+					}
+					else {
+						tmp = location;
+					}
+					
+					//recover normal password settings
+					boolean isPasswordSaved = node.getBoolean("password_saved", false); //$NON-NLS-1$ 
+					tmp.setPasswordSaved(isPasswordSaved);
+					tmp.setUsername(isPasswordSaved ? node.get("username", "") : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$				
+					tmp.setPassword(isPasswordSaved ? node.get("password", "") : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					
+					//recover SSH settings
+					SSHSettings sshSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSHSettings(false) : tmp.getSSHSettings();
+					sshSettings.setUseKeyFile(node.getBoolean("ssh_use_key", false)); //$NON-NLS-1$
+					sshSettings.setPrivateKeyPath(node.get("ssh_key", "")); //$NON-NLS-1$ //$NON-NLS-2$
+					sshSettings.setPassPhraseSaved(node.getBoolean("ssh_passphrase_saved", false)); //$NON-NLS-1$
+					sshSettings.setPassPhrase(node.get("ssh_passprase", "")); //$NON-NLS-1$ //$NON-NLS-2$
+					int defaultPort = sshSettings.getPort();
+					defaultPort = defaultPort != 0 ? defaultPort : SSHSettings.SSH_PORT_DEFAULT;
+					sshSettings.setPort(node.getInt("ssh_port", defaultPort));
+					
+					//recover SSL settings
+					SSLSettings sslSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSLSettings(false) : tmp.getSSLSettings();
+					sslSettings.setAuthenticationEnabled(node.getBoolean("ssl_enabled", false)); //$NON-NLS-1$
+					sslSettings.setCertificatePath(node.get("ssl_certificate", "")); //$NON-NLS-1$ //$NON-NLS-2$
+					sslSettings.setPassPhraseSaved(node.getBoolean("ssl_passphrase_saved", false)); //$NON-NLS-1$
+					sslSettings.setPassPhrase(node.get("ssl_passphrase", "")); //$NON-NLS-1$ //$NON-NLS-2$
+					
+					//if realm, add it to realms
+					if (toAddRealm) {
+						location.addRealm(realm, tmp);
+					}
+				}		
+			} catch (StorageException e) {				
+				LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadAuthorizationInfo"), e); //$NON-NLS-1$
+			}														
+		}
 	}
 	
 	/*
@@ -678,16 +703,18 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	}
 	
 	public void removeAuthInfoForLocation(IRepositoryLocation location, String realm) {
-		ISecurePreferences node = this.getSVNNodeForSecurePreferences(location, realm);
-		if (node == null)
-			return;
-		try {
-			node.clear();
-			node.flush(); // save immediately
-		} catch (IllegalStateException e) {
-			LoggedOperation.reportError(SVNMessages.getErrorString("Error_RemoveAuthorizationInfo"), e); //$NON-NLS-1$
-		} catch (IOException e) {
-			LoggedOperation.reportError(SVNMessages.getErrorString("Error_RemoveAuthorizationInfo"), e); //$NON-NLS-1$
+		if (!this.noStoredAuthentication) {
+			ISecurePreferences node = this.getSVNNodeForSecurePreferences(location, realm);
+			if (node == null)
+				return;
+			try {
+				node.clear();
+				node.flush(); // save immediately
+			} catch (IllegalStateException e) {
+				LoggedOperation.reportError(SVNMessages.getErrorString("Error_RemoveAuthorizationInfo"), e); //$NON-NLS-1$
+			} catch (IOException e) {
+				LoggedOperation.reportError(SVNMessages.getErrorString("Error_RemoveAuthorizationInfo"), e); //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -700,15 +727,6 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			readLocations.add(location);
 		}
 		this.repositories = readLocations.toArray(new IRepositoryLocation[readLocations.size()]);
-	}
-	
-	/**
-	 * Sets the file, containing locations info preferences.
-	 * Used for compatibility with the versions of Subversive,
-	 * where the locations info was stored in files. 
-	 */
-	protected void setStateInfoFile(IPath stateInfoLocation, String fileName){
-		this.stateInfoFile = stateInfoLocation.append(fileName).toFile();
 	}
 	
 	/**

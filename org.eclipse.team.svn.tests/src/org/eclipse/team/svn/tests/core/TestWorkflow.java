@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.core;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import junit.framework.TestCase;
@@ -28,6 +29,7 @@ import org.eclipse.team.svn.core.operation.remote.DeleteResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -47,7 +49,9 @@ public abstract class TestWorkflow extends TestCase {
 		ResourceBundle bundle = TestPlugin.instance().getResourceBundle();
 		
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		storage.initialize(TestPlugin.instance().getStateLocation());
+		HashMap preferences = new HashMap();
+		preferences.put(ISVNStorage.PREF_STATE_INFO_LOCATION, TestPlugin.instance().getStateLocation());
+		storage.initialize(preferences);
 		
 		this.location = storage.newRepositoryLocation();
 		this.location.setUrl(bundle.getString("Repository.URL"));
