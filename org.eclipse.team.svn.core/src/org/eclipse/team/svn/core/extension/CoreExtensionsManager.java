@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.svn.core.SVNMessages;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.factory.ThreadNameModifierFactory;
@@ -84,15 +83,17 @@ public class CoreExtensionsManager {
 	}
 	
 	public Collection<String> getAccessibleClientIds() {
+		this.initializeConnectors();
 		return this.connectors.keySet();
 	}
 	
 	public Collection<ISVNConnectorFactory> getAccessibleClients() {
+		this.initializeConnectors();
 		return this.connectors.values();
 	}
 	
 	public ISVNConnectorFactory getSVNConnectorFactory() {
-		String id = SVNTeamPlugin.instance().getOptionProvider().getSVNConnectorId();
+		String id = this.getOptionProvider().getSVNConnectorId();
 		return this.getSVNConnectorFactory(id);
 	}
 	
@@ -105,6 +106,8 @@ public class CoreExtensionsManager {
 	}
 	
 	private ISVNConnectorFactory getFirstValidConnector(String id) {
+		this.initializeConnectors();
+		
 		if (this.validConnectors.contains(id)) {
 			return this.connectors.get(id);
 		}
@@ -122,34 +125,35 @@ public class CoreExtensionsManager {
 	
 	private CoreExtensionsManager() {
 		this.disableHelpers = false;
-		this.connectors = new HashMap<String, ISVNConnectorFactory>();
-		this.validConnectors = new HashSet<String>();
-		Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.SVN_CONNECTOR);
-		for (int i = 0; i < extensions.length; i++) {
-			ISVNConnectorFactory factory = new ThreadNameModifierFactory((ISVNConnectorFactory)extensions[i]);
-			try {
-				// extension point API changed and old connectors will be declined due to version changes or AbstractMethodError.
-				if (factory.getCompatibilityVersion().compareTo(ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
-					continue;
-				}
-			}
-			catch (Throwable ex) {
-				continue;
-			}
-			this.connectors.put(factory.getId(), factory);
-			this.validateClient(factory);
-		}
-		extensions = this.loadCoreExtensions(CoreExtensionsManager.CORE_OPTIONS);
-		if (extensions.length != 0) {
-			this.optionProvider = (IOptionProvider)extensions[0];
-		}
-		else {
-			this.optionProvider = IOptionProvider.DEFAULT;
-		}
+		
+		Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.CORE_OPTIONS);
+		this.optionProvider = extensions.length != 0 ? (IOptionProvider)extensions[0] : IOptionProvider.DEFAULT;
 		extensions = this.loadCoreExtensions(CoreExtensionsManager.CRASH_RECOVERY);
 		this.helpers = Arrays.asList(extensions).toArray(new IResolutionHelper[extensions.length]);
 		extensions = this.loadCoreExtensions(CoreExtensionsManager.IGNORE_RECOMMENDATIONS);
 		this.ignoreRecommendations = Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
+	}
+	
+	private synchronized void initializeConnectors() {
+		if (this.connectors == null) {
+			this.connectors = new HashMap<String, ISVNConnectorFactory>();
+			this.validConnectors = new HashSet<String>();
+			Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.SVN_CONNECTOR);
+			for (int i = 0; i < extensions.length; i++) {
+				ISVNConnectorFactory factory = new ThreadNameModifierFactory((ISVNConnectorFactory)extensions[i]);
+				try {
+					// extension point API changed and old connectors will be declined due to version changes or AbstractMethodError.
+					if (factory.getCompatibilityVersion().compareTo(ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
+						continue;
+					}
+				}
+				catch (Throwable ex) {
+					continue;
+				}
+				this.connectors.put(factory.getId(), factory);
+				this.validateClient(factory);
+			}
+		}
 	}
 	
 	private void validateClient(ISVNConnectorFactory connector) {
