@@ -167,6 +167,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 				else {
 					CompareUI.openCompareEditor(compare);
 				}
+				compare.setDirty(true);
 			}
 		});
 	}
