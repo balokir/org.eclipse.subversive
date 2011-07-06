@@ -234,12 +234,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 			super.setMessage(message);
 		}
 		
-		public void merge(IStatus status) {
-			super.merge(status);
-			if (status.getSeverity() != IStatus.OK) {
-				this.setSeverity(this.getSeverity() | status.getSeverity());
-			}
-		}
+		// The severity is set automatically by org.eclipse.core.runtime.MultiStatus.add() method which is called every time child status is added. So we don't need to override the severity field manually.
 	}
 	
 }
