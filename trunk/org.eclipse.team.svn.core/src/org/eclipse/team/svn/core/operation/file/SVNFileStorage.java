@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.file;
 
 import java.io.File;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -55,9 +56,11 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 		return SVNFileStorage.instance;
 	}
     
-	public void initialize(IPath stateInfoLocation) throws Exception {
-		this.setStateInfoFile(stateInfoLocation, SVNFileStorage.STATE_INFO_FILE_NAME);
-		this.initializeImpl(SVNFileStorage.PREF_REPOSITORIES_NODE, SVNFileStorage.PREF_MIGRATE_FROM_AUTH_DB_NODE);
+	public void initialize(Map<String, Object> preferences) throws Exception {
+		preferences.put(AbstractSVNStorage.IPREF_STATE_INFO_FILE, SVNFileStorage.STATE_INFO_FILE_NAME);
+		preferences.put(AbstractSVNStorage.IPREF_REPO_NODE_NAME, SVNFileStorage.PREF_REPOSITORIES_NODE);
+		preferences.put(AbstractSVNStorage.IPREF_AUTH_NODE_NAME, SVNFileStorage.PREF_MIGRATE_FROM_AUTH_DB_NODE);
+		super.initialize(preferences);
 	}
 	
 	public IRepositoryResource asRepositoryResource(File file, boolean allowsNull) {

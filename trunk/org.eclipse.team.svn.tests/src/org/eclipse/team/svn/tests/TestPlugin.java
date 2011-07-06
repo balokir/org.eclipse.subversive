@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -20,6 +21,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
 /**
@@ -53,7 +55,9 @@ public class TestPlugin extends AbstractUIPlugin {
 		    this.location = this.location.substring(1);
 		}
 		this.remoteStorage = SVNRemoteStorage.instance();
-		this.remoteStorage.initialize(this.getStateLocation());
+		HashMap preferences = new HashMap();
+		preferences.put(ISVNStorage.PREF_STATE_INFO_LOCATION, this.getStateLocation());
+		this.remoteStorage.initialize(preferences);
 		
 		SVNTeamPlugin.instance().setOptionProvider(null);
 		CoreExtensionsManager.instance().setResolutionHelpersDisabled(true);

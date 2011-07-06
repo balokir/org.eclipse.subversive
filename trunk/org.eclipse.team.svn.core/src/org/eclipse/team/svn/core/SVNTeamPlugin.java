@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.HashMap;
 
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
@@ -22,7 +23,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -37,6 +37,7 @@ import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
+import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -137,11 +138,10 @@ public class SVNTeamPlugin extends Plugin {
 		this.tracker = new ServiceTracker(context, IProxyService.class.getName(), null);
 		this.tracker.open();
 
-		IPath stateLocation = this.getStateLocation();
-		SVNFileStorage.instance().initialize(stateLocation);
-
-		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		storage.initialize(stateLocation);
+		HashMap preferences = new HashMap();
+		preferences.put(ISVNStorage.PREF_STATE_INFO_LOCATION, this.getStateLocation());
+		SVNFileStorage.instance().initialize(preferences);
+		SVNRemoteStorage.instance().initialize(preferences);
 
 		WorkspaceJob job = new WorkspaceJob("") { //$NON-NLS-1$
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {

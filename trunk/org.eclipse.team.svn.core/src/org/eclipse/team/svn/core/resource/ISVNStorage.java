@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.core.resource;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -23,7 +25,11 @@ public interface ISVNStorage extends IRepositoryLocationFactory {
 	public static final int IGNORE_EXTENSION = 1;
 	public static final int IGNORE_PATTERN = 2;
 	
+	public static final String PREF_STATE_INFO_LOCATION = "stateInfoLocation";
+	public static final String PREF_NO_STORED_AUTHENTICATION = "noStoredAuthentication";
+	
 	public void initialize(IPath stateInfoLocation) throws Exception;
+	public void initialize(Map<String, Object> preferences) throws Exception;
 	public void dispose();
 	
 	public IRepositoryLocation []getRepositoryLocations();

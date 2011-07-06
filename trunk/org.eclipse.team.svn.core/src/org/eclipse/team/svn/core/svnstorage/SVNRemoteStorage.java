@@ -47,18 +47,18 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -192,9 +192,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
     }
     
-	public void initialize(IPath stateInfoLocation) throws Exception {
-		this.setStateInfoFile(stateInfoLocation, SVNRemoteStorage.STATE_INFO_FILE_NAME);
-		this.initializeImpl(SVNRemoteStorage.PREF_REPOSITORIES_NODE, SVNRemoteStorage.PREF_MIGRATE_FROM_AUTH_DB_NODE);
+	public void initialize(Map<String, Object> preferences) throws Exception {
+		preferences.put(AbstractSVNStorage.IPREF_STATE_INFO_FILE, SVNRemoteStorage.STATE_INFO_FILE_NAME);
+		preferences.put(AbstractSVNStorage.IPREF_REPO_NODE_NAME, SVNRemoteStorage.PREF_REPOSITORIES_NODE);
+		preferences.put(AbstractSVNStorage.IPREF_AUTH_NODE_NAME, SVNRemoteStorage.PREF_MIGRATE_FROM_AUTH_DB_NODE);
+		super.initialize(preferences);
 	}
 	
 	public IResourceChange asResourceChange(IChangeStateProvider changeState, boolean update) {
