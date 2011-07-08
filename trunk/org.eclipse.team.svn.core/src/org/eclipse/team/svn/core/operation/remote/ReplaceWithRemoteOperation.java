@@ -52,8 +52,9 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 		//perform export into temp folder
 		IRepositoryLocation location = this.remoteRoot.getRepositoryLocation();
 		String toReplacePath = FileUtility.getWorkingCopyPath(this.toReplace);
-		File f = File.createTempFile("svn", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		f.delete(); 
+		File f = File.createTempFile("svn", "", FileUtility.getResourcePath(this.toReplace.getParent()).toFile()); //$NON-NLS-1$ //$NON-NLS-2$
+		f.delete();
+		f.mkdir();
 		String tempPath = toReplacePath.substring(0, toReplacePath.lastIndexOf("/") + 1) + f.getName() + "/";  //$NON-NLS-1$ //$NON-NLS-2$
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		final String path = tempPath + this.remoteRoot.getName();
