@@ -75,7 +75,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		super("Operation_CompareLocal", SVNUIMessages.class); //$NON-NLS-1$
 		this.local = local;
 		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local.getResource()) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
-		this.ancestor.setSelectedRevision(SVNRevision.fromNumber(local.getBaseRevision()));
+		this.ancestor.setSelectedRevision(local.getBaseRevision() != SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.fromNumber(local.getBaseRevision()) : SVNRevision.INVALID_REVISION);
 		this.remote = remote;
 		this.showInDialog = showInDialog;
 		this.forceReuse = forceReuse;
@@ -119,7 +119,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 			}
 		}, monitor, 100, fetchRemote ? 5 : 60);
 		
-		if (!monitor.isCanceled() && fetchRemote) {
+		if (!monitor.isCanceled() && fetchRemote && !SVNRevision.INVALID_REVISION.equals(this.ancestor.getSelectedRevision()) && !SVNRevision.INVALID_REVISION.equals(this.remote.getSelectedRevision())) {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(diffPair);
