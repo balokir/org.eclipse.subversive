@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -34,8 +33,8 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
+import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
@@ -49,18 +48,18 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 	protected IRepositoryContainer parent;
 	protected boolean handleExternals;
 	protected IRepositoryResource []children;
-	protected boolean sortChildren;
+	protected boolean caseInsensitive;
 	protected Map<IRepositoryResource, String> externalsNames;
 
 	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean handleExternals) {
-		this(parent, handleExternals, true);
+		this(parent, handleExternals, false);
 	}
 
-	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean handleExternals, boolean sortChildren) {
+	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean handleExternals, boolean caseInsensitive) {
 		super("Operation_GetRemoteChildren", SVNMessages.class); //$NON-NLS-1$
 		this.parent = parent;
 		this.handleExternals = handleExternals;
-		this.sortChildren = sortChildren;
+		this.caseInsensitive = caseInsensitive;
 		this.externalsNames = new HashMap<IRepositoryResource, String>();
 	}
 
@@ -86,10 +85,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 					//Map externals;
 					try {
 						Map<String, SVNEntryRevisionReference> externals = SVNUtility.parseSVNExternalsProperty(data.value, this.parent);
-						List<IRepositoryResource> newTmp = new ArrayList<IRepositoryResource>();
-						for (IRepositoryResource tmpResource : tmp) {
-							newTmp.add(tmpResource);
-						}						
+						List<IRepositoryResource> newTmp = Arrays.asList(tmp);
 
 						for (Iterator<Map.Entry<String, SVNEntryRevisionReference>> it = externals.entrySet().iterator(); it.hasNext();) {
 							try {
@@ -107,7 +103,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 								this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(e), e));
 							}
 						}
-						tmp = newTmp.toArray(new IRepositoryResource[0]);
+						tmp = newTmp.toArray(new IRepositoryResource[newTmp.size()]);
 					}
 					catch (UnreportableException ex) {
 						this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(ex), ex));
@@ -118,24 +114,28 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 			}
 		}
 		
-		if (this.sortChildren) {
-			Arrays.sort(tmp, new Comparator<IRepositoryResource>() {
-				public int compare(IRepositoryResource first, IRepositoryResource second) {
-					boolean firstContainer = first instanceof IRepositoryContainer;
-					boolean secondContainer = second instanceof IRepositoryContainer;
-					if (firstContainer && secondContainer) {
-						boolean firstRoot = first instanceof IRepositoryRoot;
-						boolean secondRoot = second instanceof IRepositoryRoot;
-						return firstRoot == secondRoot ? (firstRoot ? this.compareRoots(((IRepositoryRoot)first).getKind(), ((IRepositoryRoot)second).getKind()) : first.getUrl().compareTo(second.getUrl())) : (firstRoot ? -1 : 1);
-					}
-					return firstContainer == secondContainer ? first.getUrl().compareTo(second.getUrl()) : (firstContainer ? -1 : 1);
+		Arrays.sort(tmp, new Comparator<IRepositoryResource>() {
+			public int compare(IRepositoryResource first, IRepositoryResource second) {
+				boolean firstContainer = first instanceof IRepositoryContainer;
+				boolean secondContainer = second instanceof IRepositoryContainer;
+				if (firstContainer && secondContainer) {
+					boolean firstRoot = first instanceof IRepositoryRoot;
+					boolean secondRoot = second instanceof IRepositoryRoot;
+					return firstRoot == secondRoot ? (firstRoot ? this.compareRoots(((IRepositoryRoot)first).getKind(), ((IRepositoryRoot)second).getKind()) : this.compareNames(first, second)) : (firstRoot ? -1 : 1);
 				}
-				
-				public int compareRoots(int firstKind, int secondKind) {
-					return firstKind < secondKind ? -1 : 1;
-				}
-			});
-		}
+				return firstContainer == secondContainer ? this.compareNames(first, second) : (firstContainer ? -1 : 1);
+			}
+			
+			private int compareNames(IRepositoryResource first, IRepositoryResource second) {
+				String firstName = GetRemoteFolderChildrenOperation.this.externalsNames.containsKey(first) ? GetRemoteFolderChildrenOperation.this.externalsNames.get(first) : first.getName();
+				String secondName = GetRemoteFolderChildrenOperation.this.externalsNames.containsKey(second) ? GetRemoteFolderChildrenOperation.this.externalsNames.get(second) : second.getName();
+				return GetRemoteFolderChildrenOperation.this.caseInsensitive ? firstName.compareToIgnoreCase(secondName) : firstName.compareTo(secondName);
+			}
+			
+			private int compareRoots(int firstKind, int secondKind) {
+				return firstKind < secondKind ? -1 : 1;
+			}
+		});
 		this.children = tmp;
 	}
 

@@ -11,9 +11,6 @@
 
 package org.eclipse.team.svn.ui.repository.model;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -74,7 +71,8 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 			}
 			return retVal;
 		}
-		this.childrenOp = new GetRemoteFolderChildrenOperation(container, SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME));
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		this.childrenOp = new GetRemoteFolderChildrenOperation(container, SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME), SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME));
 		
 		CompositeOperation op = new CompositeOperation(this.childrenOp.getId(), this.childrenOp.getMessagesClass());
 		op.add(this.childrenOp);
@@ -112,34 +110,6 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 				}
 			}
 		}
-		Arrays.sort(wrappers, new Comparator<RepositoryResource>() {
-			public int compare(RepositoryResource first, RepositoryResource second) {
-				boolean isFirstStructureNode = (first instanceof RepositoryTrunk)
-				|| (first instanceof RepositoryBranches) || (first instanceof RepositoryTags);
-				boolean isSecondStructureNode = (second instanceof RepositoryTrunk)
-				|| (second instanceof RepositoryBranches) || (second instanceof RepositoryTags);
-				if (isFirstStructureNode && !isSecondStructureNode) {
-					return -1;
-				}
-				if (isSecondStructureNode && !isFirstStructureNode) {
-					return 1;
-				}
-				if (isFirstStructureNode && isSecondStructureNode) {
-					return 0;
-				}
-				if (first instanceof RepositoryFolder && !(second instanceof RepositoryFolder)) {
-					return -1;
-				}
-				if (second instanceof RepositoryFolder && !(first instanceof RepositoryFolder)) {
-					return 1;
-				}
-				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-				if (SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME)) {
-					return first.getLabel().compareToIgnoreCase(second.getLabel());
-				}
-				return first.getLabel().compareTo(second.getLabel());
-			}
-		});
 		return wrappers;
 	}
 	
