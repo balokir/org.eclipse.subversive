@@ -38,14 +38,16 @@ import org.eclipse.ui.PlatformUI;
  */
 public class RepositoryFolder extends RepositoryResource implements IParentTreeNode {
 	protected GetRemoteFolderChildrenOperation childrenOp;
+	protected Object []wrappedChildren;
 	
 	public RepositoryFolder(RepositoryResource parent, IRepositoryResource resource) {
 		super(parent, resource);
 	}
 
 	public void refresh() {
-		super.refresh();
 		this.childrenOp = null;
+		this.wrappedChildren = null;
+		super.refresh();
 	}
 	
 	public boolean hasChildren() {
@@ -55,29 +57,36 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 	public Object []getChildren(Object o) {
 		final IRepositoryContainer container = (IRepositoryContainer)this.resource;
 		
+		if (this.wrappedChildren != null) {
+			return this.wrappedChildren;
+		}
+		
 		if (this.childrenOp != null) {
 			Object []retVal = RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
-			return retVal == null ? new Object[] {this.childrenOp.getExecutionState() != IActionOperation.ERROR ? (Object)new RepositoryPending(this) : new RepositoryError(this.childrenOp.getStatus())} : retVal;
+			if (retVal != null) {
+				this.wrappedChildren = retVal;
+			}
+			else if (this.childrenOp.getExecutionState() != IActionOperation.ERROR) {
+				retVal = new Object[] {new RepositoryPending(this)};
+			}
+			else {
+				retVal = this.wrappedChildren = new Object[] {new RepositoryError(this.childrenOp.getStatus())};
+			}
+			return retVal;
 		}
 		this.childrenOp = new GetRemoteFolderChildrenOperation(container, SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME));
 		
-		if (!((IRepositoryContainer)this.resource).isChildrenCached()) {
-			CompositeOperation op = new CompositeOperation(this.childrenOp.getId(), this.childrenOp.getMessagesClass());
-			op.add(this.childrenOp);
-			op.add(this.getRefreshOperation(this.getViewer()));
+		CompositeOperation op = new CompositeOperation(this.childrenOp.getId(), this.childrenOp.getMessagesClass());
+		op.add(this.childrenOp);
+		op.add(this.getRefreshOperation(this.getViewer()));
 
-			UIMonitorUtility.doTaskScheduled(op, new DefaultOperationWrapperFactory() {
-                public IActionOperation getLogged(IActionOperation operation) {
-            		return new LoggedOperation(operation);
-                }
-            });
-			
-			return new Object[] {new RepositoryPending(this)};
-		}
+		UIMonitorUtility.doTaskScheduled(op, new DefaultOperationWrapperFactory() {
+            public IActionOperation getLogged(IActionOperation operation) {
+        		return new LoggedOperation(operation);
+            }
+        });
 		
-		UIMonitorUtility.doTaskBusyDefault(this.childrenOp);
-		
-		return RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
+		return new Object[] {new RepositoryPending(this)};
 	}
 	
 	public Object []peekChildren(Object o) {
