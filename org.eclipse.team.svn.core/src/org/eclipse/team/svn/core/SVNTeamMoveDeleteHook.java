@@ -82,11 +82,8 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		if (!IStateFilter.SF_VERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(source);
 		}
-		local = SVNRemoteStorage.instance().asLocalResource(destination.getParent());
-		if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_LINKED.accept(local) || IStateFilter.SF_OBSTRUCTED.accept(local)) {
-		    return false;
-		}
 		
+		// if source is versioned we MUST perform source-control related tasks
 		MoveResourceOperation moveOp = new MoveResourceOperation(source, destination);
 		CompositeOperation op = new CompositeOperation(moveOp.getId(), moveOp.getMessagesClass());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {source, destination});
@@ -94,8 +91,10 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		if ((updateFlags & IResource.KEEP_HISTORY) != 0) {
 			op.add(new SaveToLocalHistoryOperation(tree, source));
 		}
-		if (!moveOp.isAllowed()) {
-			//target was placed on different repository -- do <copy + delete>
+		
+		local = SVNRemoteStorage.instance().asLocalResource(destination.getParent());
+		if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_LINKED.accept(local) || IStateFilter.SF_OBSTRUCTED.accept(local) || !moveOp.isAllowed()) {
+			//target was placed on different repository or resource is moved into non-managed project/folder -- do <copy + delete>
 			AbstractActionOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination, FileUtility.COPY_NO_OPTIONS);
 			op.add(copyLocalResourceOp);
 			DeleteResourceOperation deleteOp = new DeleteResourceOperation(source);
