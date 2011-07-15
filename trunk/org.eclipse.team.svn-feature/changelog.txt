@@ -8,6 +8,28 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110715-1700 [15 July 2011]
+
+Features:
+ * Make SVN: 'Save Authorization Info' operation optional (bug 349111)
+ * Update Subversive help regarding persistent SVN+SSH connection option (bug 349139)
+ 
+Fixes:
+ * Negative revision numbers are not allowed [ID-VBVYH] (bug 296094)
+ * 'Replace with revision' fails when using javahl16 connector (bug 351370)
+ * SVN repositories view blocks UI thread (bug 295110)
+ * Useless reordering in the SVN Repositories View (bug 351649)
+ * Team Hook does not work while moving versioned files or folders into unmanaged project (bug 254846)
+ * NPE in CompareEditorInput.setDirty in Eclipse 3.7 [ID-MAMS9] (bug 348787)
+ * SVNKitconnector may access uninitialized CoreExtensionsManager (bug 351357)
+ * IllegalArgumentException in AbstractActionOperation [ID-CUA4N] (bug 350077)
+ * extremely poor refreshLocalResourceImpl performance (bug 259287)
+ * FileReplaceListener performs time consuming actions at inappropriate time (bug 321542)
+ * svn perspective launches svnserve which never close (bug 305658)
+ * Correct french translation for PerformancePreferencePage_enableCache (bug 349138)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110602-1700 [2 June 2011]
 
 Fixes:
