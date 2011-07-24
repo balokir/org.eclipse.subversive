@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -85,7 +86,9 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 					//Map externals;
 					try {
 						Map<String, SVNEntryRevisionReference> externals = SVNUtility.parseSVNExternalsProperty(data.value, this.parent);
-						List<IRepositoryResource> newTmp = Arrays.asList(tmp);
+						
+						List<IRepositoryResource> newTmp = new ArrayList<IRepositoryResource>(tmp.length);
+						newTmp.addAll(Arrays.asList(tmp));
 
 						for (Iterator<Map.Entry<String, SVNEntryRevisionReference>> it = externals.entrySet().iterator(); it.hasNext();) {
 							try {
@@ -96,8 +99,8 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 								if (repositoryResourtce != null) {
 									repositoryResourtce.setSelectedRevision(ref.revision);
 									repositoryResourtce.setPegRevision(ref.pegRevision);
-									newTmp.add(repositoryResourtce);							
-									this.externalsNames.put(repositoryResourtce, name);	
+									newTmp.add(repositoryResourtce);
+									this.externalsNames.put(repositoryResourtce, name);
 								}
 							} catch (Exception e) {
 								this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(e), e));
