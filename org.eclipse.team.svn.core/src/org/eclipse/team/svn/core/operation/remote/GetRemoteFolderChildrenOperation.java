@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Julien HENRY - fix for the issue #350143 (svn:externals should not be treated as IRepositoryRoot entries)
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.remote;
@@ -122,8 +123,11 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 				boolean firstContainer = first instanceof IRepositoryContainer;
 				boolean secondContainer = second instanceof IRepositoryContainer;
 				if (firstContainer && secondContainer) {
-					boolean firstRoot = first instanceof IRepositoryRoot;
-					boolean secondRoot = second instanceof IRepositoryRoot;
+					boolean firstExternal = GetRemoteFolderChildrenOperation.this.externalsNames.containsKey(first);
+					boolean secondExternal = GetRemoteFolderChildrenOperation.this.externalsNames.containsKey(second);
+					//Externals should not be considered as IRepositoryRoot (see Bug 350143) and be sorted by name
+					boolean firstRoot = !firstExternal && first instanceof IRepositoryRoot;
+					boolean secondRoot = !secondExternal && second instanceof IRepositoryRoot;
 					return firstRoot == secondRoot ? (firstRoot ? this.compareRoots(((IRepositoryRoot)first).getKind(), ((IRepositoryRoot)second).getKind()) : this.compareNames(first, second)) : (firstRoot ? -1 : 1);
 				}
 				return firstContainer == secondContainer ? this.compareNames(first, second) : (firstContainer ? -1 : 1);

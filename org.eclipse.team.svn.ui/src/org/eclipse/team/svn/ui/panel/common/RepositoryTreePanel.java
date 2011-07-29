@@ -166,8 +166,8 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 				projectRoot = projectRoot.getParent();
 			}	
 			this.children = new Object[showRevisionLinks ? 3 : 2];
-			this.children[0] = RepositoryFolder.wrapChild(null, projectRoot);
-			this.children[1] = RepositoryFolder.wrapChild(null, resource.getRepositoryLocation().getRepositoryRoot());
+			this.children[0] = RepositoryFolder.wrapChild(null, projectRoot, null);
+			this.children[1] = RepositoryFolder.wrapChild(null, resource.getRepositoryLocation().getRepositoryRoot(), null);
 			if (showRevisionLinks) {
 				this.children[2] = new RepositoryRevisions(resource.getRepositoryLocation());
 			}

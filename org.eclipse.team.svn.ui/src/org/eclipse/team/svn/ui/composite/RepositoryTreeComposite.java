@@ -71,7 +71,7 @@ public class RepositoryTreeComposite extends Composite {
 		if (root instanceof IRepositoryLocation) {
 			this.repositoryTree.setInput(new RepositoryLocation((IRepositoryLocation)root));
 		} else if (root instanceof IRepositoryBase) {		
-			RepositoryResource resource = RepositoryFolder.wrapChild(null, (IRepositoryResource)root);
+			RepositoryResource resource = RepositoryFolder.wrapChild(null, (IRepositoryResource)root, null);
 			resource.setViewer(this.repositoryTree);
 			this.repositoryTree.setInput(resource);
 		} else {

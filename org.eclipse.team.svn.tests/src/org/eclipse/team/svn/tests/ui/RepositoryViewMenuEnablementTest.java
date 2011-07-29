@@ -236,7 +236,7 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
         List<RepositoryResource> remoteResources = new ArrayList<RepositoryResource>();
         IResource[] resources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_ONREPOSITORY);
         for (int i = 0; i < resources.length; i++) {
-            remoteResources.add(RepositoryFolder.wrapChild(null, storage.asRepositoryResource(resources[i])));
+            remoteResources.add(RepositoryFolder.wrapChild(null, storage.asRepositoryResource(resources[i]), null));
         }
         return remoteResources.toArray(new RepositoryResource[remoteResources.size()]);
     }
