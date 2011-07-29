@@ -101,37 +101,43 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 		}
 		RepositoryResource []wrappers = new RepositoryResource[resources.length];
 		for (int i = 0; i < resources.length; i++) {
-			wrappers[i] = RepositoryFolder.wrapChild(parent, resources[i]);
-			if (childrenOp != null) {
-				String externalsName = childrenOp.getExternalsName(resources[i]);
-				if (externalsName != null) {
-					wrappers[i].setLabel(externalsName);
-					wrappers[i].setExternals(true);
-				}
-			}
+			String externalsName = childrenOp != null ? childrenOp.getExternalsName(resources[i]) : null;
+			wrappers[i] = RepositoryFolder.wrapChild(parent, resources[i], externalsName);
 		}
 		return wrappers;
 	}
 	
-	public static RepositoryResource wrapChild(RepositoryResource parent, IRepositoryResource resource) {
-		if (resource instanceof IRepositoryRoot) {
+	public static RepositoryResource wrapChild(RepositoryResource parent, IRepositoryResource resource, String externalsName) {
+		RepositoryResource retVal = null;
+		if (resource instanceof IRepositoryRoot && externalsName == null) {
 			IRepositoryRoot tmp = (IRepositoryRoot)resource;
 			switch (tmp.getKind()) {
 				case IRepositoryRoot.KIND_TRUNK: {
-					return new RepositoryTrunk(parent, tmp);
+					retVal = new RepositoryTrunk(parent, tmp);
+					break;
 				}
 				case IRepositoryRoot.KIND_BRANCHES: {
-					return new RepositoryBranches(parent, tmp);
+					retVal = new RepositoryBranches(parent, tmp);
+					break;
 				}
 				case IRepositoryRoot.KIND_TAGS: {
-					return new RepositoryTags(parent, tmp);
+					retVal = new RepositoryTags(parent, tmp);
+					break;
 				}
 				default: {
-					return new RepositoryRoot(parent, tmp);
+					retVal = new RepositoryRoot(parent, tmp);
+					break;
 				}
 			}
 		}
-		return resource instanceof IRepositoryFile ? (RepositoryResource)new RepositoryFile(parent, resource) : new RepositoryFolder(parent, resource);
+		else {
+			retVal = resource instanceof IRepositoryFile ? (RepositoryResource)new RepositoryFile(parent, resource) : new RepositoryFolder(parent, resource);
+			if (externalsName != null) {
+				retVal.setLabel(externalsName);
+				retVal.setExternals(true);
+			}
+		}
+		return retVal;
 	}
 	
 	protected ImageDescriptor getImageDescriptorImpl() {

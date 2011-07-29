@@ -271,7 +271,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 
 	protected Image getAncestorImage() throws Exception {
-		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getAncestorResourceElement().getRepositoryResource()));
+		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getAncestorResourceElement().getRepositoryResource(), null));
 	}
 
 	protected String getLeftLabel() throws Exception {
@@ -279,7 +279,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected Image getLeftImage() throws Exception {
-		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getLeftResourceElement().getRepositoryResource()));
+		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getLeftResourceElement().getRepositoryResource(), null));
 	}
 	
 	protected String getRightLabel() throws Exception {
@@ -287,7 +287,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected Image getRightImage() throws Exception {
-		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getRightResourceElement().getRepositoryResource()));
+		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getRightResourceElement().getRepositoryResource(), null));
 	}
 	
 	protected String getLabel(ResourceElement element) throws Exception {
@@ -486,7 +486,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 	
 		public Image getImage() {
-			return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.resource));
+			return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.resource, null));
 		}
 	
 		public String getType() {
