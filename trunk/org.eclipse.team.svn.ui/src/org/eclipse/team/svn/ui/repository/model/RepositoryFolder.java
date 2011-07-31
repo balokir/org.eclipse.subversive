@@ -101,7 +101,7 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 		}
 		RepositoryResource []wrappers = new RepositoryResource[resources.length];
 		for (int i = 0; i < resources.length; i++) {
-			String externalsName = childrenOp != null ? childrenOp.getExternalsName(resources[i]) : null;
+			String externalsName = childrenOp != null ? childrenOp.getExternalsName(i) : null;
 			wrappers[i] = RepositoryFolder.wrapChild(parent, resources[i], externalsName);
 		}
 		return wrappers;
