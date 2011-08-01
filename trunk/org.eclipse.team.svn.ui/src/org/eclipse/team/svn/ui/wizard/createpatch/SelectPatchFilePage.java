@@ -341,18 +341,22 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 					return result != null ? result : new Object[0];
 				}
 			}); 
-			this.changeViewer.setLabelProvider(new WorkbenchLabelProvider()); 
+			this.changeViewer.setLabelProvider(new WorkbenchLabelProvider());
 			this.changeViewer.addCheckStateListener(new ICheckStateListener() {
 				public void checkStateChanged(CheckStateChangedEvent event) {
+					SelectPatchFilePage.this.changeViewer.getControl().setRedraw(false);
+					
+					IResource resource = (IResource)event.getElement();
+					HashSet grayed = new HashSet();
+					grayed.addAll(Arrays.asList(SelectPatchFilePage.this.changeViewer.getGrayedElements()));
 					if (event.getChecked()) {
-						IResource resource = (IResource)event.getElement();
 						if (resource.getType() != IResource.FILE) {
+							SelectPatchFilePage.this.changeViewer.setSubtreeChecked(resource, true);
 							IPath path = resource.getFullPath();
 							for (int i = 0; i < SelectPatchFilePage.this.initialSelection.length; i++) {
 								IResource current = (IResource)SelectPatchFilePage.this.initialSelection[i];
 								if (path.isPrefixOf(current.getFullPath())) {
-									SelectPatchFilePage.this.changeViewer.setChecked(current, true);
-									SelectPatchFilePage.this.changeViewer.setGrayed(current, false);
+									grayed.remove(current);
 								}
 							}
 						}
@@ -361,32 +365,26 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 							IPath path = resource.getFullPath();
 							for (int i = 0; i < SelectPatchFilePage.this.initialSelection.length; i++) {
 								IResource current = (IResource)SelectPatchFilePage.this.initialSelection[i];
-								if (path.isPrefixOf(current.getFullPath()) && current != resource) {
+								if (path.isPrefixOf(current.getFullPath()) && !current.equals(resource)) {
 									hasUnchecked |= !SelectPatchFilePage.this.changeViewer.getChecked(current);
 								}
 							}
 							if (!hasUnchecked) {
-								SelectPatchFilePage.this.changeViewer.setGrayed(resource, false);
+								grayed.remove(resource);
 								SelectPatchFilePage.this.changeViewer.setChecked(resource, true);
 							}
 						}
 					}
 					else {
-						IResource resource = (IResource)event.getElement();
 						if (resource.getType() != IResource.FILE) {
-							IPath path = resource.getFullPath();
-							for (int i = 0; i < SelectPatchFilePage.this.initialSelection.length; i++) {
-								IResource current = (IResource)SelectPatchFilePage.this.initialSelection[i];
-								if (path.isPrefixOf(current.getFullPath())) {
-									SelectPatchFilePage.this.changeViewer.setChecked(current, false);
-								}
-							}
+							SelectPatchFilePage.this.changeViewer.setSubtreeChecked(resource, false);
 						}
-						while ((resource = resource.getParent()).getType() != IResource.ROOT) {
-							SelectPatchFilePage.this.changeViewer.setGrayed(resource, true);
-						}
+						grayed.addAll(Arrays.asList(FileUtility.getPathNodes(resource)));
 					}
+					SelectPatchFilePage.this.changeViewer.setGrayedElements(grayed.toArray());
 					SelectPatchFilePage.this.realSelection = SelectPatchFilePage.this.changeViewer.getCheckedElements();
+					
+					SelectPatchFilePage.this.changeViewer.getControl().setRedraw(true);
 				}
 			});
 			this.changeViewer.addFilter(new ViewerFilter() {
