@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.lock;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +26,6 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.AbstractSVNView;
@@ -67,9 +64,9 @@ public class LocksView extends AbstractSVNView {
 		
 	    this.isLinkWithEditorEnabled = SVNTeamPreferences.getPropertiesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.LOCKS_LINK_WITH_EDITOR_NAME);	    		 
 			
-		this.locksComposite = new LocksComposite(parent, this); 
+		this.locksComposite = new LocksComposite(parent); 
 		this.locksComposite.setLayoutData(new GridData(GridData.FILL_BOTH));		
-		this.refreshView();
+		this.refresh();
 		
 		this.createActionBars();
 
@@ -96,7 +93,7 @@ public class LocksView extends AbstractSVNView {
         tbm.removeAll();
         Action action = new Action(SVNUIMessages.SVNView_Refresh_Label) {
         	public void run() {
-        		LocksView.this.refreshView();
+        		LocksView.this.refresh();
 	    	}
         };
         action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif")); //$NON-NLS-1$
@@ -150,7 +147,7 @@ public class LocksView extends AbstractSVNView {
 	
 	public void setResource(IResource resource) {
 		this.setResourceWithoutActionExecution(resource);
-		this.refreshView();
+		this.refresh();
 	}
 	
 	public IActionOperation getUpdateViewOperation() {
@@ -199,7 +196,7 @@ public class LocksView extends AbstractSVNView {
 		return op;
 	}
 	
-	protected void refreshView() {
+	public void refresh() {
 		IActionOperation op = this.getUpdateViewOperation();
 		if (op != null) {
 			ProgressMonitorUtility.doTaskScheduled(op, false);	
@@ -211,32 +208,6 @@ public class LocksView extends AbstractSVNView {
 		this.wcResource = null;
 	}
 	
-	public static IResource[] convertToResources(LockResource[] lockResources) {
-		List<IResource> res = new ArrayList<IResource>();
-		if (lockResources != null) {
-			for (int i = 0; i < lockResources.length; i ++) {
-				Object ob = lockResources[i].getAdapter(IResource.class);
-				if (ob != null) {
-					res.add((IResource)ob);
-				}
-			}
-		}
-		return res.toArray(new IResource[0]);
-	}
-	
-	public static IRepositoryResource[] convertToRepositoryResources(LockResource[] lockResources) {
-		List<IRepositoryResource> res = new ArrayList<IRepositoryResource>();
-		if (lockResources != null) {
-			for (int i = 0; i < lockResources.length; i ++) {
-				Object ob = lockResources[i].getAdapter(IRepositoryResource.class);
-				if (ob != null) {
-					res.add((IRepositoryResource)ob);
-				}
-			}
-		}
-		return res.toArray(new IRepositoryResource[0]);
-	}
-
 	protected boolean needsLinkWithEditorAndSelection() {
 		return true;
 	}

@@ -11,19 +11,14 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.ui.lock.LockResource;
-import org.eclipse.team.svn.ui.lock.LocksComposite;
-import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractActionHelper;
+import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -46,18 +41,7 @@ public class UnlockActionHelper extends AbstractActionHelper {
 	}
 	
 	public IActionOperation getOperation() {		
-		List<LockResource> lockResources = org.eclipse.team.svn.ui.action.local.LockAction.getLockResources(this.getSyncInfoSelector().getSelectedResources());
-		if (lockResources != null) {
-			Iterator<LockResource> iter = lockResources.iterator();
-			while (iter.hasNext()) {
-				LockResource lockResource = iter.next();
-				if (lockResource.getLockStatus() != LockStatusEnum.LOCALLY_LOCKED) {
-					iter.remove();
-				}
-			}
-			return LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), this.configuration.getSite().getShell());			
-		}
-		return null;
+		return LockProposeUtility.performUnlockAction(this.getSyncInfoSelector().getSelectedResources(), this.configuration.getSite().getShell());			
 	}
 
 }

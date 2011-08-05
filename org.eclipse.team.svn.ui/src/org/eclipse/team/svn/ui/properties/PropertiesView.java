@@ -75,10 +75,10 @@ public class PropertiesView extends AbstractSVNView {
 		this.backgroundExecution = backgroundExecution;
 		
 		this.propertiesComposite.setResource(resource, propertyProvider);
-		this.refreshView();
+		this.refresh();
 	}
 	
-	public void refreshView() {
+	public void refresh() {
 		boolean operationToFollow = this.propertyProvider != null && this.propertyProvider.getExecutionState() != IStatus.OK;
 		this.propertiesComposite.setPending(operationToFollow);
 		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
@@ -111,7 +111,7 @@ public class PropertiesView extends AbstractSVNView {
 		this.propertiesComposite = new PropertiesComposite(parent); 
 		this.propertiesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		this.propertiesComposite.setPropertiesView(this);
-		this.refreshView();
+		this.refresh();
 		
 		//drop-down menu
         IActionBars actionBars = this.getViewSite().getActionBars();	    
@@ -156,7 +156,7 @@ public class PropertiesView extends AbstractSVNView {
 			PropertiesView.this.propertyProvider = new GetRemotePropertiesOperation(PropertiesView.this.repositoryResource);
 			PropertiesView.this.propertiesComposite.setResource(PropertiesView.this.adaptable, PropertiesView.this.propertyProvider);
 		}
-		PropertiesView.this.refreshView();
+		PropertiesView.this.refresh();
 	}
 	
 	protected Action getLinkWithEditorAction() {

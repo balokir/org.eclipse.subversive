@@ -160,7 +160,7 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 					this.disconnectView();
 				}
 			}
-		    this.refreshView();
+		    this.refresh();
 		}
 	}
 	
@@ -196,6 +196,8 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 		super.dispose();
 	}
 	
+	public abstract void refresh();
+	
 	protected void editorActivated(IEditorPart editor) {
 		if (editor != null && !this.isPageVisible()) {
 			this.lastSelectedElement = editor;
@@ -226,5 +228,4 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 	
 	protected abstract boolean needsLinkWithEditorAndSelection();
 	protected abstract void disconnectView();
-	protected abstract void refreshView();
 }
