@@ -35,29 +35,19 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
-import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.LockOperation;
-import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.UnlockOperation;
-import org.eclipse.team.svn.core.operation.remote.BreakLockOperation;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.ILockResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.LockResourceSelectionChangedEvent;
-import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
-import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
-import org.eclipse.team.svn.ui.utility.ICancellableOperationWrapper;
+import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
@@ -69,7 +59,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 public class LocksComposite extends Composite {
 			
 	protected boolean isProcessing;
-	protected LocksView locksView;
 
 	protected IResource resource;
 	protected LockResource rootLockResource;
@@ -80,15 +69,8 @@ public class LocksComposite extends Composite {
 	
 	protected LockResourcesTreeLabelProvider labelProvider;
 	
-	private static final String PENDING_NAME = "pending";  //$NON-NLS-1$
-	private static LockResource FAKE_PENDING = LockResource.createDirectory(LocksComposite.PENDING_NAME);
-	
-	private static final String NO_LOCKS_NAME = "nolocks";  //$NON-NLS-1$
-	private static LockResource FAKE_NO_LOCKS = LockResource.createDirectory(LocksComposite.NO_LOCKS_NAME);
-	
-	public LocksComposite(Composite parent, LocksView locksView) {
+	public LocksComposite(Composite parent) {
 		super(parent, SWT.NONE);
-		this.locksView = locksView;
 		this.isProcessing = false;
 		
 		this.createControls(parent);
@@ -127,7 +109,7 @@ public class LocksComposite extends Composite {
 			public void resourcesSelectionChanged(LockResourceSelectionChangedEvent event) {
 				if (event.selection != null && !event.selection.isEmpty()) {
 					LockResource lockResource = (LockResource) event.selection.getFirstElement();
-					if (!LocksComposite.isFakeLockResource(lockResource)) {
+					if (!LockResourcesTableLabelProvider.isFakeLockResource(lockResource)) {
 						LocksComposite.this.commentText.setText(lockResource.getComment() == null || lockResource.getComment().length() == 0 ? SVNMessages.SVNInfo_NoComment : lockResource.getComment());	
 					} else {
 						LocksComposite.this.commentText.setText(""); //$NON-NLS-1$
@@ -147,7 +129,7 @@ public class LocksComposite extends Composite {
 				IStructuredSelection tSelection = (IStructuredSelection) LocksComposite.this.treeViewer.getSelection();
 				if (tSelection.size() == 1) {
 					LockResource lockResource = (LockResource) tSelection.getFirstElement();
-					if (LocksComposite.isFakeLockResource(lockResource)) {
+					if (LockResourcesTableLabelProvider.isFakeLockResource(lockResource)) {
 						return;
 					}
 				}
@@ -183,7 +165,7 @@ public class LocksComposite extends Composite {
 				IStructuredSelection tSelection = (IStructuredSelection) LocksComposite.this.tableViewer.getTableViewer().getSelection();
 				if (tSelection.size() == 1) {
 					LockResource lockResource = (LockResource) tSelection.getFirstElement();
-					if (LocksComposite.isFakeLockResource(lockResource)) {
+					if (LockResourcesTableLabelProvider.isFakeLockResource(lockResource)) {
 						return;
 					}
 				}
@@ -211,10 +193,6 @@ public class LocksComposite extends Composite {
 		return menuMgr;
 	}
 	
-	protected ICancellableOperationWrapper runScheduled(IActionOperation operation) {
-		return UIMonitorUtility.doTaskScheduled(LocksComposite.this.locksView, operation, new DefaultOperationWrapperFactory());
-	}
-	
 	protected Action createLockAction(final Map<LockStatusEnum, List<LockResource>> resourcesMap) {		
 		final List<LockResource> lockResources = new ArrayList<LockResource>();
 		if (resourcesMap.containsKey(LockStatusEnum.BROKEN)) {
@@ -240,72 +218,15 @@ public class LocksComposite extends Composite {
 		
 		Action action = new Action(SVNUIMessages.LockAction_label) {
 			public void run() {
-				IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), true, LocksComposite.this.getShell());
+				CompositeOperation op = LockProposeUtility.performLockAction(lockResources.toArray(new LockResource[0]), true, LocksComposite.this.getShell());
 				if (op != null) {
-					LocksComposite.this.runScheduled(op);
+					UIMonitorUtility.doTaskScheduledDefault(LocksView.instance(), op);
 				}
 			}
 		};
 		action.setEnabled(!lockResources.isEmpty());
 		action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif")); //$NON-NLS-1$
 		return action;			
-	}
-	
-	public static IActionOperation performBreakLockAction(LockResource[] lockResources, Shell shell, final LocksView locksView) {
-		LockResourcesPanel panel = new LockResourcesPanel(lockResources, SVNUIMessages.LocksComposite_BreakLockTitle, SVNUIMessages.LocksComposite_BreakLockDescription, SVNUIMessages.LocksComposite_BreakLockDefaultMessage);
-		DefaultDialog dlg = new DefaultDialog(shell, panel);
-		if (dlg.open() == 0) {			
-			LockResource[] selectedResources = panel.getSelectedResources();
-			IRepositoryResource[] reposResources = LocksView.convertToRepositoryResources(selectedResources);
-			BreakLockOperation mainOp = new BreakLockOperation(reposResources);
-			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-			op.add(mainOp);
-			op.add(new RefreshRemoteResourcesOperation(reposResources));
-			op.add(new AbstractActionOperation("", SVNUIMessages.class) { //$NON-NLS-1$
-				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					LocksView lv = locksView;
-					if (lv == null) {
-						lv = LocksView.instance();
-					}
-					if (lv != null) {
-						lv.refreshView();
-					}
-				}
-			});		
-			return op;			
-		}
-		return null;
-	}
-	
-	public static IActionOperation performUnlockAction(LockResource[] lockResources, Shell shell) {
-		LockResourcesPanel unlockPanel = new LockResourcesPanel(lockResources, SVNUIMessages.LocksComposite_UnlockTitle, SVNUIMessages.LocksComposite_UnlockDescription, SVNUIMessages.LocksComposite_UnlockDefaultMessage);
-		DefaultDialog dlg = new DefaultDialog(shell, unlockPanel);
-		if (dlg.open() == 0) {								
-			LockResource[] selectedResources = unlockPanel.getSelectedResources();
-			IResource[] resources = LocksView.convertToResources(selectedResources);
-			UnlockOperation mainOp = new UnlockOperation(resources);							    
-			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-			op.add(mainOp);
-			op.add(new RefreshResourcesOperation(resources));
-			return op;							
-		}		
-		return null;
-	}
-	
-	public static IActionOperation performLockAction(LockResource[] lockResources, boolean forceLock, Shell shell) {
-		LockResourcesPanel panel = new LockResourcesPanel(lockResources, true, forceLock, SVNUIMessages.LocksComposite_LockTitle, SVNUIMessages.LocksComposite_LockDescription, SVNUIMessages.LocksComposite_LockDefaultMessage);
-		DefaultDialog dlg = new DefaultDialog(shell, panel);
-		if (dlg.open() == 0) {			
-			LockResource[] selectedResources = panel.getSelectedResources();
-			IResource[] resources = LocksView.convertToResources(selectedResources);
-							
-			LockOperation mainOp = new LockOperation(resources, panel.getMessage(), panel.getForce());			    
-			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-			op.add(mainOp);
-			op.add(new RefreshResourcesOperation(resources));
-			return op;
-		}
-		return null;
 	}
 	
 	protected Action createBreakLockAction(final Map<LockStatusEnum, List<LockResource>> resourcesMap) {
@@ -319,9 +240,14 @@ public class LocksComposite extends Composite {
 					lockResources.addAll(resourcesMap.get(LockStatusEnum.STOLEN));
 				}							
 				if (lockResources != null && !lockResources.isEmpty()) {
-					IActionOperation op = LocksComposite.performBreakLockAction(lockResources.toArray(new LockResource[0]), LocksComposite.this.getShell(), LocksComposite.this.locksView);
+					CompositeOperation op = LockProposeUtility.performBreakLockAction(lockResources.toArray(new LockResource[0]), LocksComposite.this.getShell());
 					if (op != null) {
-						LocksComposite.this.runScheduled(op);
+						op.add(new AbstractActionOperation("", SVNUIMessages.class) { //$NON-NLS-1$
+							protected void runImpl(IProgressMonitor monitor) throws Exception {
+								LocksView.instance().refresh();
+							}
+						});
+						UIMonitorUtility.doTaskScheduledDefault(LocksView.instance(), op);
 					}
 				}
 			}
@@ -335,9 +261,9 @@ public class LocksComposite extends Composite {
 			public void run() {
 				List<LockResource> lockResources = resourcesMap.get(LockStatusEnum.LOCALLY_LOCKED);		
 				if (lockResources != null && !lockResources.isEmpty()) {
-					IActionOperation op = LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), LocksComposite.this.getShell());
+					CompositeOperation op = LockProposeUtility.performUnlockAction(lockResources.toArray(new LockResource[0]), LocksComposite.this.getShell());
 					if (op != null) {
-						LocksComposite.this.runScheduled(op);
+						UIMonitorUtility.doTaskScheduledDefault(LocksView.instance(), op);
 					}																	
 				}
 			}
@@ -377,7 +303,7 @@ public class LocksComposite extends Composite {
 	public void initializeComposite() {
 		if (this.isProcessing) {
 			this.treeViewer.setInput(null);
-			this.tableViewer.setInput(new LockResource[]{LocksComposite.FAKE_PENDING});
+			this.tableViewer.setInput(new LockResource[]{LockResourcesTableLabelProvider.FAKE_PENDING});
 			this.tableViewer.getTableViewer().getTable().setLinesVisible(false);
 			this.commentText.setText(""); //$NON-NLS-1$
 		} else {
@@ -390,7 +316,7 @@ public class LocksComposite extends Composite {
 				this.tableViewer.getTableViewer().getTable().setLinesVisible(true);
 			} else {
 				this.treeViewer.setInput(null);
-				this.tableViewer.setInput(new LockResource[]{LocksComposite.FAKE_NO_LOCKS});
+				this.tableViewer.setInput(new LockResource[]{LockResourcesTableLabelProvider.FAKE_NO_LOCKS});
 				this.tableViewer.getTableViewer().getTable().setLinesVisible(false);
 				this.commentText.setText(""); //$NON-NLS-1$
 			}	
@@ -416,18 +342,6 @@ public class LocksComposite extends Composite {
 	public synchronized void disconnectComposite() {
 		this.resource = null;
 		this.rootLockResource = null;
-	}
-	
-	public static boolean isFakeLockResource(LockResource lockResource) {
-		return LocksComposite.isFakePending(lockResource) || LocksComposite.isFakeNoLocks(lockResource);
-	}
-	
-	public static boolean isFakeNoLocks(LockResource lockResource) {
-		return lockResource.getName().equals(LocksComposite.NO_LOCKS_NAME);
-	}
-	
-	public static boolean isFakePending(LockResource lockResource) {
-		return lockResource.getName().equals(LocksComposite.PENDING_NAME);
 	}
 	
 }

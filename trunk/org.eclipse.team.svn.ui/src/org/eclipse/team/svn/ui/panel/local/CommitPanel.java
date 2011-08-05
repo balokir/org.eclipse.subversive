@@ -15,7 +15,6 @@ package org.eclipse.team.svn.ui.panel.local;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -85,7 +84,6 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
-import org.eclipse.team.svn.ui.action.local.LockAction;
 import org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction;
 import org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction;
 import org.eclipse.team.svn.ui.action.local.RevertAction;
@@ -96,9 +94,6 @@ import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
-import org.eclipse.team.svn.ui.lock.LockResource;
-import org.eclipse.team.svn.ui.lock.LocksComposite;
-import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
@@ -115,6 +110,7 @@ import org.eclipse.team.svn.ui.propfind.LogTemplatesPropFindVisitor;
 import org.eclipse.team.svn.ui.propfind.MaxLogWidthPropFindVisitor;
 import org.eclipse.team.svn.ui.propfind.MinLockSizePropFindVisitor;
 import org.eclipse.team.svn.ui.propfind.MinLogSizePropFindVisitor;
+import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.ui.synchronize.ResourceScope;
@@ -562,19 +558,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(tAction = new Action(SVNUIMessages.LockAction_label) {
 					public void run() {
 						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK, IResource.DEPTH_INFINITE);						
-						List<LockResource> lockResources = LockAction.getLockResources(filteredResources);
-						if (lockResources != null) {
-							Iterator<LockResource> iter = lockResources.iterator();
-							while (iter.hasNext()) {
-								LockResource lockResource = iter.next();
-								if (lockResource.getLockStatus() == LockStatusEnum.LOCALLY_LOCKED) {
-									iter.remove();
-								}
-							}
-							IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, UIMonitorUtility.getShell());
-							if (op != null) {
-								UIMonitorUtility.doTaskNowDefault(op, false);
-							}
+						IActionOperation op = LockProposeUtility.performLockAction(filteredResources, false, UIMonitorUtility.getShell());
+						if (op != null) {
+							UIMonitorUtility.doTaskNowDefault(op, false);
 						}
 					}
 				});
@@ -585,19 +571,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(tAction = new Action(SVNUIMessages.UnlockAction_label) {
 					public void run() {
 						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_LOCKED, IResource.DEPTH_INFINITE);						
-						List<LockResource> lockResources = LockAction.getLockResources(filteredResources);
-						if (lockResources != null) {
-							Iterator<LockResource> iter = lockResources.iterator();
-							while (iter.hasNext()) {
-								LockResource lockResource = iter.next();
-								if (lockResource.getLockStatus() != LockStatusEnum.LOCALLY_LOCKED) {
-									iter.remove();
-								}
-							}
-							IActionOperation op = LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), UIMonitorUtility.getShell());
-							if (op != null) {
-								UIMonitorUtility.doTaskNowDefault(op, false);
-							}
+						IActionOperation op = LockProposeUtility.performUnlockAction(filteredResources, UIMonitorUtility.getShell());
+						if (op != null) {
+							UIMonitorUtility.doTaskNowDefault(op, false);
 						}
 					}
 				});

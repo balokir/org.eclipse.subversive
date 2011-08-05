@@ -438,7 +438,7 @@ public class RepositoryBrowser extends AbstractSVNView implements ISelectionChan
 	protected void disconnectView() {
 	}
 
-	protected void refreshView() {
+	public void refresh() {
 	}
 
 	protected boolean needsLinkWithEditorAndSelection() {

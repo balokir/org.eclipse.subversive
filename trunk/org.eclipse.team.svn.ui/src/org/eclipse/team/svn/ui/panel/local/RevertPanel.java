@@ -13,8 +13,6 @@ package org.eclipse.team.svn.ui.panel.local;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
@@ -61,19 +59,16 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
-import org.eclipse.team.svn.ui.action.local.LockAction;
 import org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction;
 import org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
-import org.eclipse.team.svn.ui.lock.LockResource;
-import org.eclipse.team.svn.ui.lock.LocksComposite;
-import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.RevertPaneParticipant;
 import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -209,19 +204,9 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(tAction = new Action(SVNUIMessages.LockAction_label) {
 					public void run() {
 						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK, IResource.DEPTH_INFINITE);						
-						List<LockResource> lockResources = LockAction.getLockResources(filteredResources);
-						if (lockResources != null) {
-							Iterator<LockResource> iter = lockResources.iterator();
-							while (iter.hasNext()) {
-								LockResource lockResource = iter.next();
-								if (lockResource.getLockStatus() == LockStatusEnum.LOCALLY_LOCKED) {
-									iter.remove();
-								}
-							}
-							IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, UIMonitorUtility.getShell());
-							if (op != null) {
-								UIMonitorUtility.doTaskNowDefault(op, false);
-							}
+						IActionOperation op = LockProposeUtility.performLockAction(filteredResources, false, UIMonitorUtility.getShell());
+						if (op != null) {
+							UIMonitorUtility.doTaskNowDefault(op, false);
 						}
 					}
 				});
@@ -232,19 +217,9 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(tAction = new Action(SVNUIMessages.UnlockAction_label) {
 					public void run() {
 						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_LOCKED, IResource.DEPTH_INFINITE);						
-						List<LockResource> lockResources = LockAction.getLockResources(filteredResources);
-						if (lockResources != null) {
-							Iterator<LockResource> iter = lockResources.iterator();
-							while (iter.hasNext()) {
-								LockResource lockResource = iter.next();
-								if (lockResource.getLockStatus() != LockStatusEnum.LOCALLY_LOCKED) {
-									iter.remove();
-								}
-							}
-							IActionOperation op = LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), UIMonitorUtility.getShell());
-							if (op != null) {
-								UIMonitorUtility.doTaskNowDefault(op, false);
-							}
+						IActionOperation op = LockProposeUtility.performUnlockAction(filteredResources, UIMonitorUtility.getShell());
+						if (op != null) {
+							UIMonitorUtility.doTaskNowDefault(op, false);
 						}
 					}
 				});

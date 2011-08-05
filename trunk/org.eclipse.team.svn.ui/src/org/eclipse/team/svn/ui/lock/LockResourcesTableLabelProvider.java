@@ -43,6 +43,13 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	protected final static ImageDescriptor PENDING_IMAGE_DESCRIPTOR = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser_pending.gif"); //$NON-NLS-1$
 	
 	protected Font boldFont;
+
+	static final String NO_LOCKS_NAME = "nolocks";  //$NON-NLS-1$
+	static final String PENDING_NAME = "pending";  //$NON-NLS-1$
+	
+	public static LockResource FAKE_NO_LOCKS = LockResource.createDirectory(NO_LOCKS_NAME);
+	public static LockResource FAKE_PENDING = LockResource.createDirectory(PENDING_NAME);
+
 	
 	public LockResourcesTableLabelProvider(boolean hasCheckBoxes) {		
 		this.hasCheckBoxes = hasCheckBoxes;
@@ -58,7 +65,7 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	
 	public Image getColumnImage(Object element, int columnIndex) {
 		LockResource node = (LockResource) element;
-		if (LocksComposite.isFakePending(node)) {
+		if (LockResourcesTableLabelProvider.isFakePending(node)) {
 			if (columnIndex == LockResourceSelectionComposite.COLUMN_NAME) {
 				Image img = this.images.get(PENDING_IMAGE_DESCRIPTOR);
 				if (img == null) {
@@ -68,7 +75,7 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 				return img;
 			}
 			return null;
-		} else if (LocksComposite.isFakeNoLocks(node)) {
+		} else if (LockResourcesTableLabelProvider.isFakeNoLocks(node)) {
 			return null;
 		}
 		
@@ -87,12 +94,12 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 
 	public String getColumnText(Object element, int columnIndex) {
 		LockResource node = (LockResource) element;
-		if (LocksComposite.isFakePending(node)) {
+		if (LockResourcesTableLabelProvider.isFakePending(node)) {
 			if (columnIndex == LockResourceSelectionComposite.COLUMN_NAME) {
 				return SVNUIMessages.RepositoriesView_Model_Pending;
 			}
 			return null;
-		} else if (LocksComposite.isFakeNoLocks(node)) {
+		} else if (LockResourcesTableLabelProvider.isFakeNoLocks(node)) {
 			if (columnIndex == LockResourceSelectionComposite.COLUMN_NAME) {
 				return SVNUIMessages.LockResourcesTableLabelProvider_NoLocks;
 			}
@@ -153,7 +160,19 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	}
 	
 	protected boolean isRequireBoldFont(Object element) {
-		return LocksComposite.isFakeLockResource((LockResource) element);
+		return LockResourcesTableLabelProvider.isFakeLockResource((LockResource) element);
+	}
+
+	public static boolean isFakeLockResource(LockResource lockResource) {
+		return isFakePending(lockResource) || isFakeNoLocks(lockResource);
+	}
+
+	public static boolean isFakeNoLocks(LockResource lockResource) {
+		return lockResource.getName().equals(LockResourcesTableLabelProvider.NO_LOCKS_NAME);
+	}
+
+	public static boolean isFakePending(LockResource lockResource) {
+		return lockResource.getName().equals(LockResourcesTableLabelProvider.PENDING_NAME);
 	}
 
 }

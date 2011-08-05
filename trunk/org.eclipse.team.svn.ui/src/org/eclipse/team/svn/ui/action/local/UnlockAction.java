@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.action.local;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -20,9 +19,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
-import org.eclipse.team.svn.ui.lock.LockResource;
-import org.eclipse.team.svn.ui.lock.LocksComposite;
-import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
+import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 
 /**
  * Unlock action implementation
@@ -45,21 +42,10 @@ public class UnlockAction extends AbstractRecursiveTeamAction {
 			}
 		}
 		
-		List<LockResource> lockResources = LockAction.getLockResources(filteredResourcesList.toArray(new IResource[0]));
-		if (lockResources != null) {
-			Iterator<LockResource> iter = lockResources.iterator();
-			while (iter.hasNext()) {
-				LockResource lockResource = iter.next();
-				if (lockResource.getLockStatus() != LockStatusEnum.LOCALLY_LOCKED) {
-					iter.remove();
-				}
-			}
-			
-			IActionOperation op = LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), this.getShell());
-			if (op != null) {
-				this.runScheduled(op);
-			}
-		}	
+		IActionOperation op = LockProposeUtility.performUnlockAction(filteredResourcesList.toArray(new IResource[0]), this.getShell());
+		if (op != null) {
+			this.runScheduled(op);
+		}
 	}
 	
     public boolean isEnabled() {
