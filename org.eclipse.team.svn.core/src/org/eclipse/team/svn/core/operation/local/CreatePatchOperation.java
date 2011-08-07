@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -98,8 +99,8 @@ public class CreatePatchOperation extends AbstractActionOperation {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			if (workingCopies.size() > 1 || this.rootPoint == CreatePatchOperation.WORKSPACE) {
 				this.rootPoint = CreatePatchOperation.WORKSPACE;
-				stream.write("### Eclipse Workspace Patch 1.0".getBytes()); //$NON-NLS-1$
-				stream.write(this.lineFeed.getBytes());
+				stream.write("### Eclipse Workspace Patch 1.0".getBytes("UTF-8")); //$NON-NLS-1$
+				stream.write(this.lineFeed.getBytes("UTF-8"));
 			}
 			else if (this.rootPoint == CreatePatchOperation.SELECTION) {
 				this.selection = FileUtility.shrinkChildNodes(this.resources);
@@ -108,9 +109,9 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				Map.Entry entry = (Map.Entry)it.next();
 				IProject project = (IProject)entry.getKey();
 				if (this.rootPoint == CreatePatchOperation.WORKSPACE) {
-					stream.write("#P ".getBytes()); //$NON-NLS-1$
-					stream.write(project.getName().getBytes());
-					stream.write(this.lineFeed.getBytes());
+					stream.write("#P ".getBytes("UTF-8")); //$NON-NLS-1$
+					stream.write(project.getName().getBytes("UTF-8"));
+					stream.write(this.lineFeed.getBytes("UTF-8"));
 				}
 				IResource []resources = ((List<?>)entry.getValue()).toArray(new IResource[0]);
 				for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
@@ -137,6 +138,10 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	
 	protected void addFileDiff(OutputStream stream, IFile resource, IProgressMonitor monitor) {
 		try {
+			String charset = null;
+			if (resource instanceof IEncodedStorage) {
+				charset = ((IEncodedStorage)resource).getCharset();
+			}
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			String projectPath = FileUtility.getWorkingCopyPath(resource.getProject());
 			String fileName = wcPath.substring(projectPath.length() + 1);
@@ -176,7 +181,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 						finally {
 							try {input.close();} catch (Exception ex) {}
 						}
-						String diff = new String(data);
+						String diff = new String(data, charset);
 						int idx = diff.indexOf(this.contentSeparator);
 						if (idx != -1) {
 							String diffTail = diff.substring(idx);
@@ -192,7 +197,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 							}
 							diff = this.indexEntry + fileName + diffTail;
 						}
-						stream.write(diff.getBytes());
+						stream.write(diff.getBytes("UTF-8"));
 					}
 				}
 				finally {
@@ -203,7 +208,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			else if (this.processUnversioned && !IStateFilter.SF_IGNORED.accept(local)) {
 				int type = FileUtility.getMIMEType(resource);
 				if (this.processBinary || type != Team.BINARY) {
-					stream.write(this.getNewFileDiff(wcPath, fileName).getBytes());
+					stream.write(this.getNewFileDiff(wcPath, fileName, charset).getBytes("UTF-8"));
 				}
 			}
 		}
@@ -212,16 +217,19 @@ public class CreatePatchOperation extends AbstractActionOperation {
 		}
 		catch (SVNConnectorException ex) {
 			throw new UnreportableException(ex);
+		} 
+		catch (CoreException ex) {
+			throw new UnreportableException(ex);
 		}
 	}
 	
-	protected String getNewFileDiff(String path, String fileName) throws IOException {
+	protected String getNewFileDiff(String path, String fileName, String charset) throws IOException {
 		File file = new File(path);
 		byte []data = new byte[(int)file.length()];
 		InputStream stream = new FileInputStream(file);
 		try {
 			stream.read(data);
-			return this.getNewContentDiff(fileName, new String(data));
+			return this.getNewContentDiff(fileName, new String(data, charset));
 		}
 		finally {
 			try {stream.close();} catch (Exception ex) {}
