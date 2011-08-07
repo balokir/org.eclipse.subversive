@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.local;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -33,11 +34,13 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -118,18 +121,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 						FileUtility.visitNodes(resources[i], new IResourceVisitor() {
 							public boolean visit(IResource resource) throws CoreException {
 								if (resource instanceof IFile) {
-									try {
-										CreatePatchOperation.this.addFileDiff(stream, (IFile)resource, monitor);
-									}
-									catch (RuntimeException ex) {
-										throw ex;
-									}
-									catch (CoreException ex) {
-										throw ex;
-									}
-									catch (Exception ex) {
-										throw new RuntimeException(ex);
-									}
+									CreatePatchOperation.this.addFileDiff(stream, (IFile)resource, monitor);
 								}
 								return true;
 							}
@@ -143,79 +135,87 @@ public class CreatePatchOperation extends AbstractActionOperation {
 		}
 	}
 	
-	protected void addFileDiff(OutputStream stream, IFile resource, IProgressMonitor monitor) throws Exception {
-		String wcPath = FileUtility.getWorkingCopyPath(resource);
-		String projectPath = FileUtility.getWorkingCopyPath(resource.getProject());
-		String fileName = wcPath.substring(projectPath.length() + 1);
-		if (this.rootPoint == CreatePatchOperation.SELECTION) {
-			IPath resourcePath = resource.getFullPath();
-			for (int i = 0; i < this.selection.length; i++) {
-				IPath selectionPath = this.selection[i].getFullPath();
-				if (selectionPath.isPrefixOf(resourcePath)) {
-					fileName = this.selection[i].getType() == IResource.FILE ? fileName = resource.getName() : (resourcePath.toString().substring(selectionPath.toString().length() + 1));
-					break;
+	protected void addFileDiff(OutputStream stream, IFile resource, IProgressMonitor monitor) {
+		try {
+			String wcPath = FileUtility.getWorkingCopyPath(resource);
+			String projectPath = FileUtility.getWorkingCopyPath(resource.getProject());
+			String fileName = wcPath.substring(projectPath.length() + 1);
+			if (this.rootPoint == CreatePatchOperation.SELECTION) {
+				IPath resourcePath = resource.getFullPath();
+				for (int i = 0; i < this.selection.length; i++) {
+					IPath selectionPath = this.selection[i].getFullPath();
+					if (selectionPath.isPrefixOf(resourcePath)) {
+						fileName = this.selection[i].getType() == IResource.FILE ? fileName = resource.getName() : (resourcePath.toString().substring(selectionPath.toString().length() + 1));
+						break;
+					}
 				}
 			}
-		}
-		
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
-		if (IStateFilter.SF_VERSIONED.accept(local)) {
-			File tmp = File.createTempFile("patch", ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
-			tmp.deleteOnExit();
 			
-			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
-			ISVNConnector proxy = location.acquireSVNProxy();
-			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
-			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
-			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
-			
-			try {
-				proxy.diff(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, 
-						tmp.getAbsolutePath(), Depth.EMPTY, options, null, new SVNProgressMonitor(this, monitor, null));
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
+			if (IStateFilter.SF_VERSIONED.accept(local)) {
+				File tmp = File.createTempFile("patch", ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
+				tmp.deleteOnExit();
 				
-				int len = (int)tmp.length();
-				if (len > 0) {
-					byte []data = new byte[len];
-					InputStream input = new FileInputStream(tmp);
-					try {
-						input.read(data);
-					}
-					finally {
-						try {input.close();} catch (Exception ex) {}
-					}
-					String diff = new String(data);
-					int idx = diff.indexOf(this.contentSeparator);
-					if (idx != -1) {
-						String diffTail = diff.substring(idx);
-						idx = diffTail.indexOf(this.removeSign);
-						int idx1 = diffTail.indexOf('\t', idx);
-						if (idx != -1 && idx1 != -1) {
-							diffTail = diffTail.substring(0, idx + this.removeSign.length()) + fileName + diffTail.substring(idx1);
+				IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
+				ISVNConnector proxy = location.acquireSVNProxy();
+				long options = ISVNConnector.Options.IGNORE_ANCESTRY;
+				options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
+				options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
+				
+				try {
+					proxy.diff(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, 
+							tmp.getAbsolutePath(), Depth.EMPTY, options, null, new SVNProgressMonitor(this, monitor, null));
+					
+					int len = (int)tmp.length();
+					if (len > 0) {
+						byte []data = new byte[len];
+						InputStream input = new FileInputStream(tmp);
+						try {
+							input.read(data);
 						}
-						idx = diffTail.indexOf(this.addSign);
-						idx1 = diffTail.indexOf('\t', idx);
-						if (idx != -1 && idx1 != -1) {
-							diffTail = diffTail.substring(0, idx + this.addSign.length()) + fileName + diffTail.substring(idx1);
+						finally {
+							try {input.close();} catch (Exception ex) {}
 						}
-						diff = this.indexEntry + fileName + diffTail;
+						String diff = new String(data);
+						int idx = diff.indexOf(this.contentSeparator);
+						if (idx != -1) {
+							String diffTail = diff.substring(idx);
+							idx = diffTail.indexOf(this.removeSign);
+							int idx1 = diffTail.indexOf('\t', idx);
+							if (idx != -1 && idx1 != -1) {
+								diffTail = diffTail.substring(0, idx + this.removeSign.length()) + fileName + diffTail.substring(idx1);
+							}
+							idx = diffTail.indexOf(this.addSign);
+							idx1 = diffTail.indexOf('\t', idx);
+							if (idx != -1 && idx1 != -1) {
+								diffTail = diffTail.substring(0, idx + this.addSign.length()) + fileName + diffTail.substring(idx1);
+							}
+							diff = this.indexEntry + fileName + diffTail;
+						}
+						stream.write(diff.getBytes());
 					}
-					stream.write(diff.getBytes());
+				}
+				finally {
+					location.releaseSVNProxy(proxy);
+					tmp.delete();
 				}
 			}
-			finally {
-				location.releaseSVNProxy(proxy);
-				tmp.delete();
+			else if (this.processUnversioned && !IStateFilter.SF_IGNORED.accept(local)) {
+				int type = FileUtility.getMIMEType(resource);
+				if (this.processBinary || type != Team.BINARY) {
+					stream.write(this.getNewFileDiff(wcPath, fileName).getBytes());
+				}
 			}
 		}
-		else if (this.processUnversioned && !IStateFilter.SF_IGNORED.accept(local)) {
-			int type = FileUtility.getMIMEType(resource);
-			if (this.processBinary || type != Team.BINARY) {
-				stream.write(this.getNewFileDiff(wcPath, fileName).getBytes());
-			}
+		catch (IOException ex) {
+			throw new UnreportableException(ex);
+		}
+		catch (SVNConnectorException ex) {
+			throw new UnreportableException(ex);
 		}
 	}
 	
-	protected String getNewFileDiff(String path, String fileName) throws Exception {
+	protected String getNewFileDiff(String path, String fileName) throws IOException {
 		File file = new File(path);
 		byte []data = new byte[(int)file.length()];
 		InputStream stream = new FileInputStream(file);
