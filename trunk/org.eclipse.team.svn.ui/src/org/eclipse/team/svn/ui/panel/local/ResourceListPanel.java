@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -79,7 +81,7 @@ public class ResourceListPanel extends AbstractDialogPanel {
     }
     
     public void createControlsImpl(Composite parent) {
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE | SWT.BORDER);
+		Table table = new Table(parent, SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE | SWT.BORDER);
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
 		
@@ -87,10 +89,17 @@ public class ResourceListPanel extends AbstractDialogPanel {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 120;
 		this.tableViewer.getTable().setLayoutData(data);
-
-		TableColumn col = new TableColumn(table, SWT.NONE);
+		
+		final TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		layout.addColumnData(new ColumnWeightData(90, true));
+		layout.addColumnData(new ColumnWeightData(100, true));
+		
+		this.tableViewer.getTable().addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				col.setWidth(ResourceListPanel.this.tableViewer.getTable().getClientArea().width);
+			}
+		});
+		
 		this.tableViewer.setLabelProvider(new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) {
 				IWorkbenchAdapter adapter = (IWorkbenchAdapter)((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
