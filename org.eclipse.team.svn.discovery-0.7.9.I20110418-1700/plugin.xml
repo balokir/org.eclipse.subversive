@@ -81,7 +81,7 @@
 
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.6.15 r1038135). Compatible with SVN 1.6.x. Supported platforms: Win32 only."
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.6.15 r1038135). Compatible with SVN 1.6.x. Included binaries: for Win32 platform only."
             groupId="org.eclipse.team.svn.discovery-javahl"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl16.win32,org.polarion.eclipse.team.svn.connector.javahl16"
             kind="task"
@@ -121,7 +121,7 @@
       
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.5.4 r33841). Compatible with SVN 1.5.x. Supported platforms: Win32 only."
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.5.4 r33841). Compatible with SVN 1.5.x. Included binaries: for Win32 platform only."
             groupId="org.eclipse.team.svn.discovery-javahl"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl15.win32,org.polarion.eclipse.team.svn.connector.javahl15"
             kind="task"
