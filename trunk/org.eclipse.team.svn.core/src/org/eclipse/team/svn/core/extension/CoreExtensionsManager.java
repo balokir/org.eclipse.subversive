@@ -52,8 +52,22 @@ public class CoreExtensionsManager {
 	private static CoreExtensionsManager instance = new CoreExtensionsManager();
 	
 	private boolean disableHelpers;
+	private boolean initialized;
 	
 	public static CoreExtensionsManager instance() {
+		if (CoreExtensionsManager.instance != null && !CoreExtensionsManager.instance.initialized) {
+			synchronized (CoreExtensionsManager.class) {
+				if (!CoreExtensionsManager.instance.initialized) {
+					Object []extensions = CoreExtensionsManager.loadCoreExtensions(CoreExtensionsManager.CORE_OPTIONS);
+					CoreExtensionsManager.instance.optionProvider = extensions.length != 0 ? (IOptionProvider)extensions[0] : IOptionProvider.DEFAULT;
+					extensions = CoreExtensionsManager.loadCoreExtensions(CoreExtensionsManager.CRASH_RECOVERY);
+					CoreExtensionsManager.instance.helpers = Arrays.asList(extensions).toArray(new IResolutionHelper[extensions.length]);
+					extensions = CoreExtensionsManager.loadCoreExtensions(CoreExtensionsManager.IGNORE_RECOMMENDATIONS);
+					CoreExtensionsManager.instance.ignoreRecommendations = Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
+					CoreExtensionsManager.instance.initialized = true;
+				}
+			}
+		}
 		return CoreExtensionsManager.instance;
 	}
 	
@@ -124,34 +138,30 @@ public class CoreExtensionsManager {
 	}
 	
 	private CoreExtensionsManager() {
-		this.disableHelpers = false;
-		
-		Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.CORE_OPTIONS);
-		this.optionProvider = extensions.length != 0 ? (IOptionProvider)extensions[0] : IOptionProvider.DEFAULT;
-		extensions = this.loadCoreExtensions(CoreExtensionsManager.CRASH_RECOVERY);
-		this.helpers = Arrays.asList(extensions).toArray(new IResolutionHelper[extensions.length]);
-		extensions = this.loadCoreExtensions(CoreExtensionsManager.IGNORE_RECOMMENDATIONS);
-		this.ignoreRecommendations = Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
 	}
 	
 	private synchronized void initializeConnectors() {
 		if (this.connectors == null) {
-			this.connectors = new HashMap<String, ISVNConnectorFactory>();
-			this.validConnectors = new HashSet<String>();
-			Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.SVN_CONNECTOR);
-			for (int i = 0; i < extensions.length; i++) {
-				ISVNConnectorFactory factory = new ThreadNameModifierFactory((ISVNConnectorFactory)extensions[i]);
-				try {
-					// extension point API changed and old connectors will be declined due to version changes or AbstractMethodError.
-					if (factory.getCompatibilityVersion().compareTo(ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
-						continue;
+			synchronized (this) {
+				if (this.connectors == null) {
+					this.connectors = new HashMap<String, ISVNConnectorFactory>();
+					this.validConnectors = new HashSet<String>();
+					Object []extensions = CoreExtensionsManager.loadCoreExtensions(CoreExtensionsManager.SVN_CONNECTOR);
+					for (int i = 0; i < extensions.length; i++) {
+						ISVNConnectorFactory factory = new ThreadNameModifierFactory((ISVNConnectorFactory)extensions[i]);
+						try {
+							// extension point API changed and old connectors will be declined due to version changes or AbstractMethodError.
+							if (factory.getCompatibilityVersion().compareTo(ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
+								continue;
+							}
+						}
+						catch (Throwable ex) {
+							continue;
+						}
+						this.connectors.put(factory.getId(), factory);
+						this.validateClient(factory);
 					}
-				}
-				catch (Throwable ex) {
-					continue;
-				}
-				this.connectors.put(factory.getId(), factory);
-				this.validateClient(factory);
+				}				
 			}
 		}
 	}
@@ -166,11 +176,11 @@ public class CoreExtensionsManager {
 		}
 	}
 	
-	private Object []loadCoreExtensions(String extensionPoint) {
-		return this.loadExtensions(CoreExtensionsManager.EXTENSION_NAMESPACE, extensionPoint);
+	private static Object []loadCoreExtensions(String extensionPoint) {
+		return CoreExtensionsManager.loadExtensions(CoreExtensionsManager.EXTENSION_NAMESPACE, extensionPoint);
 	}
 	
-	private Object []loadExtensions(String namespace, String extensionPoint) {
+	private static Object []loadExtensions(String namespace, String extensionPoint) {
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(namespace, extensionPoint);
 		if (extension == null) {
 			String errMessage = SVNMessages.formatErrorString("Error_InvalidExtensionPoint", new String[] {namespace, extensionPoint});				 //$NON-NLS-1$
