@@ -18,6 +18,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.DeleteResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -72,7 +73,7 @@ public class DeleteAction extends AbstractRepositoryTeamAction {
 					return null;
 				}
 			});
-			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
+			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE), new IActionOperation[] {mainOp});
 			
 			this.runScheduled(op);
 		}		

@@ -21,6 +21,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.CopyResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.MoveResourcesOperation;
@@ -77,7 +78,7 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 						return fullSet.toArray(new IRepositoryResource[fullSet.size()]);
 					}
 				}));
-			op.add(new SetRevisionAuthorNameOperation(pasteOp, Options.FORCE));
+			op.add(new SetRevisionAuthorNameOperation(pasteOp, Options.FORCE), new IActionOperation[] {pasteOp});
 			
 			this.runScheduled(op);
 		}

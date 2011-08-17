@@ -53,8 +53,8 @@ public class SetRevisionAuthorNameOperation extends AbstractActionOperation {
 		if (revisions == null) {
 			return;
 		}
-		for (int i = 0; i < revisions.length; i++) {
-			if (revisions[i] == null) {
+		for (int i = 0; i < revisions.length && !monitor.isCanceled(); i++) {
+			if (revisions[i] == null || revisions[i].revision == SVNRevision.INVALID_REVISION_NUMBER) {
 				continue;
 			}
 			final IRepositoryLocation location = revisions[i].location;

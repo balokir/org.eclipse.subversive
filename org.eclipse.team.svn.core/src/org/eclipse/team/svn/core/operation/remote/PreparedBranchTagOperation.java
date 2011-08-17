@@ -80,7 +80,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 				if (this.resources.length != 1 || !cutPath.isEmpty() || this.forceCreate) {
 					String folderName = this.resources.length == 1 && !cutPath.isEmpty() && !this.forceCreate ? cutPath.toString() : newFolderPath.toString();
 					this.add(op = new CreateFolderOperation(parent, folderName, this.message));
-					this.add(new SetRevisionAuthorNameOperation(op, Options.FORCE));
+					this.add(new SetRevisionAuthorNameOperation(op, Options.FORCE), new IActionOperation[] {op});
 				}
 			}
 			for (int i = 0; i < this.targets.length; i++) {

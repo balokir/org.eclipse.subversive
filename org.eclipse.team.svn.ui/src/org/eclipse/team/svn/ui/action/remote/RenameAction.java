@@ -15,6 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.RenameResourceOperation;
 import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -49,7 +50,7 @@ public class RenameAction extends AbstractRepositoryTeamAction {
 			
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(SVNUtility.getCommonParents(resources)));
-			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
+			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE), new IActionOperation[] {mainOp});
 			
 			this.runScheduled(op);
 		}

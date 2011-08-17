@@ -15,6 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.CreateFileOperation;
 import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -43,7 +44,7 @@ public class CreateFileAction extends AbstractRepositoryTeamAction {
 			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(this.getSelectedRepositoryResources()));
-			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
+			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE), new IActionOperation[] {mainOp});
 			this.runScheduled(op);
 	    }
 	}
