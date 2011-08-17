@@ -683,6 +683,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String MergePanel_1URL;
 	public static String MergePanel_2URL;
 	public static String MergePanel_Button_IgnoreAncestry;
+	public static String MergePanel_Button_RecordOnly;
 	public static String MergePanel_Description;
 	public static String MergePanel_Message;
 	public static String MergePanel_Preview;

@@ -85,6 +85,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	protected int mode;
 	
 	protected boolean ignoreAncestry;
+	protected boolean recordOnly;
 
 	protected RepositoryResourceSelectionComposite simpleSelectionComposite;
 	
@@ -95,6 +96,8 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	
 	protected Button ignoreAncestryButton;
 	protected Button ignoreAncestrySimpleButton;
+	protected Button recordOnlyButton;
+	protected Button recordOnlySimpleButton;
 	
 	public MergePanel(IResource []to, IRepositoryResource baseResource, long currentRevision) {
 		super(new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, new String[] {SVNUIMessages.MergePanel_Preview});
@@ -140,6 +143,10 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	
 	public boolean getIgnoreAncestry() {
 		return this.ignoreAncestry;
+	}
+	
+	public boolean getRecordOnly() {
+		return this.recordOnly;
 	}
 	
 	public SVNRevisionRange []getSelectedRevisions() {
@@ -237,6 +244,12 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         this.ignoreAncestrySimpleButton.setText(SVNUIMessages.MergePanel_Button_IgnoreAncestry);
         this.ignoreAncestrySimpleButton.setSelection(this.ignoreAncestry);
 		
+		data = new GridData();
+		this.recordOnlySimpleButton = new Button(parent, SWT.CHECK);
+        this.recordOnlySimpleButton.setLayoutData(data);
+		this.recordOnlySimpleButton.setText(SVNUIMessages.MergePanel_Button_RecordOnly);
+		this.recordOnlySimpleButton.setSelection(this.recordOnly);
+        
 		this.depthSelectorSimple = new DepthSelectionComposite(parent, SWT.NONE, true);
 		this.depthSelectorSimple.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -308,6 +321,12 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         this.ignoreAncestryButton.setText(SVNUIMessages.MergePanel_Button_IgnoreAncestry);
         this.ignoreAncestryButton.setSelection(this.ignoreAncestry);
 		
+		data = new GridData();
+		this.recordOnlyButton = new Button(parent, SWT.CHECK);
+        this.recordOnlyButton.setLayoutData(data);
+		this.recordOnlyButton.setText(SVNUIMessages.MergePanel_Button_RecordOnly);
+		this.recordOnlyButton.setSelection(this.recordOnly);
+		
 		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE, true);
 		this.depthSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
@@ -362,9 +381,11 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		JavaHLMergeOperation mergeOp = null;
 		if (this.mode == MergePanel.MODE_2URL) {
 			mergeOp = new JavaHLMergeOperation(this.to, firstSet, secondSet, true, this.getIgnoreAncestry(), this.getDepth()); 
+			mergeOp.setRecordOnly(this.getRecordOnly());
 		}
 		else if (this.mode == MergePanel.MODE_1URL) {
 			mergeOp = new JavaHLMergeOperation(this.to, firstSet, this.getSelectedRevisions(), true, this.getIgnoreAncestry(), this.getDepth());
+			mergeOp.setRecordOnly(this.getRecordOnly());
 		}
 		else {
 			mergeOp = new JavaHLMergeOperation(this.to, firstSet, true);
@@ -434,6 +455,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         	this.simpleSelectionComposite.saveHistory();
         	
         	this.ignoreAncestry = this.ignoreAncestrySimpleButton.getSelection();
+			this.recordOnly = this.recordOnlySimpleButton.getSelection();
     	}
     	else if (this.mode == MergePanel.MODE_2URL) {
         	this.firstSelectedResource = this.firstSelectionComposite.getSelectedResource();
@@ -443,6 +465,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         	this.secondSelectionComposite.saveHistory();
         	
         	this.ignoreAncestry = this.ignoreAncestryButton.getSelection();
+			this.recordOnly = this.recordOnlyButton.getSelection();
     	}
     	else {
         	this.firstSelectedResource = this.secondSelectedResource = this.reintegrateSelectionComposite.getSelectedResource();

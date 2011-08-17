@@ -23,8 +23,8 @@ public class MergeSet2URL extends AbstractMergeSetURL {
     public final IRepositoryResource []fromStart;
     public final IRepositoryResource []fromEnd;
 
-	public MergeSet2URL(IResource[] to, IRepositoryResource[] fromStart, IRepositoryResource[] fromEnd, boolean ignoreAncestry, int depth) {
-		super(to, ignoreAncestry, depth);
+	public MergeSet2URL(IResource[] to, IRepositoryResource[] fromStart, IRepositoryResource[] fromEnd, boolean ignoreAncestry, boolean recordOnly, int depth) {
+		super(to, ignoreAncestry, recordOnly, depth);
     	this.fromStart = fromStart;
     	this.fromEnd = fromEnd;
 	}

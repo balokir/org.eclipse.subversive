@@ -24,8 +24,8 @@ public class MergeSet1URL extends AbstractMergeSetURL {
     public final IRepositoryResource []from;
     public final SVNRevisionRange []revisions;
 
-	public MergeSet1URL(IResource[] to, IRepositoryResource []from, SVNRevisionRange []revisions, boolean ignoreAncestry, int depth) {
-		super(to, ignoreAncestry, depth);
+	public MergeSet1URL(IResource[] to, IRepositoryResource []from, SVNRevisionRange []revisions, boolean ignoreAncestry, boolean recordOnly, int depth) {
+		super(to, ignoreAncestry, recordOnly, depth);
 		this.from = from;
 		this.revisions = revisions;
 	}

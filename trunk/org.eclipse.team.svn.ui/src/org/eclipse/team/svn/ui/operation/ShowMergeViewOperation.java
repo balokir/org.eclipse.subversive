@@ -40,6 +40,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     protected IRepositoryResourceProvider fromEnd;
     protected SVNRevisionRange []revisions;
     protected boolean ignoreAncestry;
+    protected boolean recordOnly;
     protected int depth;
 
     public ShowMergeViewOperation(IResource []locals, IRepositoryResource []from, SVNRevisionRange []revisions, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
@@ -81,6 +82,10 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
         this.from = from;
     }
     
+	public void setRecordOnly(boolean recordOnly) {
+		this.recordOnly = recordOnly;
+	}
+	
     public int getOperationWeight() {
 		return 0;
 	}
@@ -88,10 +93,10 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     protected void runImpl(IProgressMonitor monitor) throws Exception {
     	AbstractMergeSet mergeSet = null;
     	if (this.fromEnd != null) {
-        	mergeSet = new MergeSet2URL(this.locals, this.from.getRepositoryResources(), this.fromEnd.getRepositoryResources(), this.ignoreAncestry, this.depth);
+        	mergeSet = new MergeSet2URL(this.locals, this.from.getRepositoryResources(), this.fromEnd.getRepositoryResources(), this.ignoreAncestry, this.recordOnly, this.depth);
     	}
     	else if (this.revisions != null) {
-        	mergeSet = new MergeSet1URL(this.locals, this.from.getRepositoryResources(), this.revisions, this.ignoreAncestry, this.depth);
+        	mergeSet = new MergeSet1URL(this.locals, this.from.getRepositoryResources(), this.revisions, this.ignoreAncestry, this.recordOnly, this.depth);
     	}
     	else {
         	mergeSet = new MergeSetReintegrate(this.locals, this.from.getRepositoryResources());
