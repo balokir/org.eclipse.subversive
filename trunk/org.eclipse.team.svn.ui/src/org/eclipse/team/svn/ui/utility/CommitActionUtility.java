@@ -151,7 +151,7 @@ public class CommitActionUtility {
 		}
 		
 		this.addCommonPart(selectedResources, op, mainOp, shell, part);
-		op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
+		op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE), new IActionOperation[] {mainOp});
 		
 		return op;
 	}
@@ -168,7 +168,7 @@ public class CommitActionUtility {
 		}
 		
 		this.addCommonPart(selectedResources, op, mainOp, shell, part);
-		op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
+		op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE), new IActionOperation[] {mainOp});
 		
 		return op;
 	}

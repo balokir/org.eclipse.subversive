@@ -15,6 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -46,7 +47,7 @@ public abstract class AbstractCopyMoveAction extends AbstractRepositoryTeamActio
 			AbstractCopyMoveResourcesOperation moveOp = this.makeCopyOperation(destination, selected, message, copyMoveWizard.getNewName());
 			CompositeOperation op = new CompositeOperation(moveOp.getId(), moveOp.getMessagesClass());
 			op.add(moveOp);
-			op.add(new SetRevisionAuthorNameOperation(moveOp, Options.FORCE));
+			op.add(new SetRevisionAuthorNameOperation(moveOp, Options.FORCE), new IActionOperation[] {moveOp});
 			op.add(this.makeRefreshOperation(destination, selected));
 			
 			this.runScheduled(op);
