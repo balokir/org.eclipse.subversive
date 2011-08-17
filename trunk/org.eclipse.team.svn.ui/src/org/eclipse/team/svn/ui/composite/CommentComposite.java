@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -46,6 +48,7 @@ import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.CommentVerifier;
+import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 
 /**
@@ -168,7 +171,8 @@ public class CommentComposite extends Composite {
 		layout.marginWidth = 0;
 		this.setLayout(layout);
 
-		if (this.bugtraqModel != null && this.bugtraqModel.getMessage() != null) {
+		final Text []tBugIdTextA = new Text[1];
+		if (this.bugtraqModel != null && (this.bugtraqModel.getMessage() != null || this.bugtraqModel.getLogregex() != null)) {
 			Composite bugtraqComposite = new Composite(this, SWT.NONE);
 			layout = new GridLayout();
 			layout.numColumns = 2;
@@ -181,34 +185,34 @@ public class CommentComposite extends Composite {
 			label.setLayoutData(new GridData(GridData.BEGINNING));
 			label.setText(this.bugtraqModel.getLabel());
 
-			this.bugIdText = new Text(bugtraqComposite, SWT.FILL | SWT.BORDER);
-			this.bugIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-			this.validationManager.attachTo(this.bugIdText, new AbstractVerifier() {
-				protected String getErrorMessage(Control input) {
-					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*" //$NON-NLS-1$
-							: ((CommentComposite.this.bugtraqModel.getLogregex() != null) ? CommentComposite.this.bugtraqModel.getLogregex()[0] : null);
-					if (logregex != null) {
+			if (this.bugtraqModel.getLogregex() == null) {
+				this.bugIdText = new Text(bugtraqComposite, SWT.FILL | SWT.BORDER);
+				this.bugIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				this.bugIdText.setFocus();
+	
+				this.validationManager.attachTo(this.bugIdText, new AbstractVerifier() {
+					protected String getErrorMessage(Control input) {
 						String bugId = this.getText(input);
-						if (bugId.length() > 0 && !bugId.matches(logregex)) {
-							if (CommentComposite.this.bugtraqModel.isNumber()) {
-								return SVNUIMessages.format(SVNUIMessages.CommentComposite_BugID_Verifier_Error_Number,
-										new String[] { CommentComposite.this.bugtraqModel.getLabel() });
-							}
-							return SVNUIMessages.format(SVNUIMessages.CommentComposite_BugID_Verifier_Error_Text,
-									new String[] { CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0] });
+						if (bugId.length() > 0 && CommentComposite.this.bugtraqModel.isNumber() && !bugId.matches("[0-9]+(\\s*,\\s*?[0-9]+)*")) {
+							return SVNUIMessages.format(SVNUIMessages.CommentComposite_BugID_Verifier_Error_Number,
+									new String[] { CommentComposite.this.bugtraqModel.getLabel() });
 						}
+						return null;
 					}
-					return null;
-				}
-
-				protected String getWarningMessage(Control input) {
-					if (CommentComposite.this.bugtraqModel.isWarnIfNoIssue() && this.getText(input).length() == 0) {
-						return SVNUIMessages.CommentComposite_BugID_Verifier_Warning;
+	
+					protected String getWarningMessage(Control input) {
+						if (CommentComposite.this.bugtraqModel.isWarnIfNoIssue() && this.getText(input).length() == 0) {
+							return SVNUIMessages.CommentComposite_BugID_Verifier_Warning;
+						}
+						return null;
 					}
-					return null;
-				}
-			});
+				});
+			}
+			else {
+				final Text tBugIdText = new Text(bugtraqComposite, SWT.FILL | SWT.BORDER | SWT.READ_ONLY);
+				tBugIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				tBugIdTextA[0] = tBugIdText;
+			}
 		}
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 80;
@@ -221,7 +225,49 @@ public class CommentComposite extends Composite {
 				}
 			}
 		});
-		this.validationManager.attachTo(this.text, new CommentVerifier(SVNUIMessages.CommentComposite_Comment_Verifier, this.minLogSize));
+		CompositeVerifier verifier = new CompositeVerifier();
+		verifier.add(new CommentVerifier(SVNUIMessages.CommentComposite_Comment_Verifier, this.minLogSize));
+		if (this.bugtraqModel != null && this.bugtraqModel.getLogregex() != null) {
+			this.text.setFocus();
+			String []logregex = this.bugtraqModel.getLogregex();
+			final Pattern mainRegex = Pattern.compile(logregex[0]);
+			final Pattern numberRegex = logregex.length > 1 ? Pattern.compile(logregex[1]) : (this.bugtraqModel.isNumber() ? Pattern.compile("[0-9]+(\\s*,\\s*?[0-9]+)*") : null);
+			verifier.add(new AbstractVerifier() {
+				protected String getErrorMessage(Control input) {
+					return null;
+				}
+
+				protected String getWarningMessage(Control input) {
+					if (CommentComposite.this.bugtraqModel.isWarnIfNoIssue()) {
+						String text = this.getText(input);
+						Matcher matcher = mainRegex.matcher(text);
+						if (matcher.find()) {
+							String bugIdEntry = matcher.group();
+							if (numberRegex != null) {
+								matcher = numberRegex.matcher(bugIdEntry);
+								String entryList = null;
+								while (matcher.find()) {
+									entryList = entryList == null ? matcher.group() : (entryList + ", " + matcher.group());
+								}
+								if (entryList != null) {
+									tBugIdTextA[0].setText(entryList);
+									return null;
+								}
+								tBugIdTextA[0].setText("");
+								return SVNUIMessages.format(SVNUIMessages.CommentComposite_BugID_Verifier_Error_Text,
+										new String[] { CommentComposite.this.bugtraqModel.getLabel(), numberRegex.pattern() });
+							}
+							tBugIdTextA[0].setText(bugIdEntry);
+							return null;
+						}
+						tBugIdTextA[0].setText("");
+						return SVNUIMessages.CommentComposite_BugID_Verifier_Warning;
+					}
+					return null;
+				}
+			});
+		}
+		this.validationManager.attachTo(this.text, verifier);
 
 		Label label = new Label(this, SWT.NULL);
 		label.setLayoutData(new GridData());
