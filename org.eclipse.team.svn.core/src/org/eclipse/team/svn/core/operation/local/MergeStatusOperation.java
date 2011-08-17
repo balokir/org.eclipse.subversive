@@ -94,6 +94,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 		SVNEntryRevisionReference mergeRef = SVNUtility.getEntryRevisionReference(info.from[idx]);
 		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
 		long options = info.ignoreAncestry ? (ISVNConnector.Options.IGNORE_ANCESTRY/* | ISVNConnector.Options.FORCE*/) : ISVNConnector.Options.NONE/*ISVNConnector.Options.FORCE*/; 		
+		options |= info.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 		ISVNConnector proxy = info.from[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
 			proxy.mergeStatus(mergeRef, info.revisions, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));
@@ -109,6 +110,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 		SVNEntryRevisionReference endRef = SVNUtility.getEntryRevisionReference(info.fromEnd[idx]);
 		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
 		long options = info.ignoreAncestry ? (ISVNConnector.Options.IGNORE_ANCESTRY | ISVNConnector.Options.FORCE) : ISVNConnector.Options.FORCE;
+		options |= info.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 		ISVNConnector proxy = info.fromEnd[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
 			proxy.mergeStatus(startRef, endRef, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));

@@ -21,11 +21,13 @@ import org.eclipse.core.resources.IResource;
 public abstract class AbstractMergeSetURL extends AbstractMergeSet {
     public final boolean ignoreAncestry;
     public final int depth;
+    public final boolean recordOnly;
 
-	public AbstractMergeSetURL(IResource[] to, boolean ignoreAncestry, int depth) {
+	public AbstractMergeSetURL(IResource[] to, boolean ignoreAncestry, boolean recordOnly, int depth) {
 		super(to);
 		
     	this.ignoreAncestry = ignoreAncestry;
+    	this.recordOnly = recordOnly;
     	this.depth = depth;
 	}
 

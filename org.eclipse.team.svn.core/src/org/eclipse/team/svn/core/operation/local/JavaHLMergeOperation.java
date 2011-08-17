@@ -42,6 +42,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	protected boolean dryRun;
 	protected boolean ignoreAncestry;
 	protected int depth;
+	protected boolean recordOnly;
 	
 	protected ISVNProgressMonitor externalMonitor;
 	
@@ -79,6 +80,10 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 		super("Operation_JavaHLMerge", SVNMessages.class, localTo); //$NON-NLS-1$
 		this.from = from;
 		this.dryRun = dryRun;
+	}
+	
+	public void setRecordOnly(boolean recordOnly) {
+		this.recordOnly = recordOnly;
 	}
 	
 	public int getOperationWeight() {
@@ -124,6 +129,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			SVNEntryReference ref1 = SVNUtility.getEntryReference(from);
 			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 			options |= this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE;
+			options |= this.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 			String changes = ""; //$NON-NLS-1$
 			String ranges = ""; //$NON-NLS-1$
 			for (SVNRevisionRange range : this.revisions) {
@@ -157,6 +163,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
 			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 			options |= this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE;
+			options |= this.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth, false) + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$
 			proxy.merge(ref1, ref2, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 		}

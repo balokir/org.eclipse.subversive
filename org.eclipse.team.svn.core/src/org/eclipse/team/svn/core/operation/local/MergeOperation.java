@@ -94,6 +94,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
 		long options = this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 		options |= info.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
+		options |= info.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 		ISVNConnector proxy = info.from[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
 			proxy.merge(mergeRef, info.revisions, wcPath, statuses, options, new ConflictDetectionProgressMonitor(this, monitor, null));
@@ -110,6 +111,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
 		long options = this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 		options |= info.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
+		options |= info.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 		ISVNConnector proxy = info.fromEnd[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
 			proxy.merge(startRef, endRef, wcPath, statuses, options, new ConflictDetectionProgressMonitor(this, monitor, null));
