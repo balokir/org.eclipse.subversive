@@ -8,6 +8,29 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20110819-1700 [19 August 2011]
+
+Features:
+ * Add "record-only" option to the merge dialog (bug 354996)
+
+Fixes:
+ * GetRemoteFolderChildrenOperation implementation depends on the JDK specific (bug 352947)
+ * Do not mess svn:externals order (bug 350143)
+   + special thanks to Julien HENRY
+ * Duplicate folder name for svn:externals if same destination (bug 353009)
+   + special thanks to Julien HENRY
+ * Performance problem with Create Patch (bug 333785)
+ * Refactor SVN locks support code (bug 354058)
+ * Data processing error is mistakenly recognized as a bug in the CreatePatchOperation code [ID-W32HV] (bug 354062)
+ * When i "create patch". The patch file don't encode in utf-8. (bug 284081)
+ * Missing Resources dialog does not resize correctly (bug 304486)
+ * JavaHL is independent of Windows, please properly document this (bug 307397)
+ * Exceptions when eclipse start (bug 302569)
+ * Validation of the issue number using bugtraq:logregex is broken (bug 300402)
+ * SetRevisionAuthorNameOperation shouldn't be performed if original (commit, copy etc.) operation failed [ID-WP0UC] (bug 354812)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110715-1700 [15 July 2011]
 
 Features:
