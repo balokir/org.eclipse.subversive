@@ -107,7 +107,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		String oldId = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
 		if (!oldId.equals(this.svnConnector)) {
 			SVNTeamPreferences.setCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, this.svnConnector);
-			SVNTeamUIPlugin.instance().savePluginPreferences();
+			SVNTeamUIPlugin.instance().savePreferences();
 			// destroy all cached proxies
 			SVNRemoteStorage.instance().dispose();
 		}

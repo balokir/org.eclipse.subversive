@@ -85,12 +85,12 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
     public static boolean getSynchInfoContigous() {
-    	return Boolean.parseBoolean(SVNTeamPlugin.instance().getSVNCorePreferences().node("synch_info").get(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, AbstractSVNSubscriber.CONTIGOUS_REPORT_DEFAULT)); //$NON-NLS-1$
+    	return Boolean.parseBoolean(SVNTeamPlugin.instance().getPreferences().node("synch_info").get(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, AbstractSVNSubscriber.CONTIGOUS_REPORT_DEFAULT)); //$NON-NLS-1$
     }
     
     public static void setSynchInfoContigous(boolean isContigous) {
-    	SVNTeamPlugin.instance().getSVNCorePreferences().node("synch_info").put(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, String.valueOf(isContigous)); //$NON-NLS-1$
-		SVNTeamPlugin.instance().savePluginPreferences();
+    	SVNTeamPlugin.instance().getPreferences().node("synch_info").put(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, String.valueOf(isContigous)); //$NON-NLS-1$
+		SVNTeamPlugin.instance().savePreferences();
     }
     
     public boolean isSynchronizedWithRepository() throws TeamException {

@@ -180,7 +180,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	 * @return preferences node
 	 */
 	public static IEclipsePreferences getRepositoriesPreferences(String prefNode) {
-		return (IEclipsePreferences)SVNTeamPlugin.instance().getSVNCorePreferences().node(prefNode);
+		return (IEclipsePreferences)SVNTeamPlugin.instance().getPreferences().node(prefNode);
 	}
 	
 	public IRepositoryLocation []getRepositoryLocations() {
@@ -304,7 +304,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		this.saveLocations();
 		
 		if (!this.isMigratedFromAuthorizationDatabase) {
-			IEclipsePreferences migratePref = (IEclipsePreferences) SVNTeamPlugin.instance().getSVNCorePreferences().node(this.migrateFromAuthDBPreferenceNode);
+			IEclipsePreferences migratePref = (IEclipsePreferences) SVNTeamPlugin.instance().getPreferences().node(this.migrateFromAuthDBPreferenceNode);
 			migratePref.putBoolean("isMigrated", true); //$NON-NLS-1$
 			try {
 				migratePref.flush();
@@ -497,7 +497,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		
 		//set flag whether we migrated from Authorization Database
 		this.migrateFromAuthDBPreferenceNode = migrateFromAuthDBPreferenceNode;		
-		IEclipsePreferences migratePref = (IEclipsePreferences) SVNTeamPlugin.instance().getSVNCorePreferences().node(this.migrateFromAuthDBPreferenceNode);					
+		IEclipsePreferences migratePref = (IEclipsePreferences) SVNTeamPlugin.instance().getPreferences().node(this.migrateFromAuthDBPreferenceNode);					
 		this.isMigratedFromAuthorizationDatabase = migratePref.getBoolean("isMigrated", false); //$NON-NLS-1$		
 		if (!this.isMigratedFromAuthorizationDatabase) {
 			SVNTeamPlugin.instance().setLocationsDirty(true);
@@ -541,7 +541,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		}
 		
 		repositoryPreferences.flush();
-		SVNTeamPlugin.instance().savePluginPreferences();
+		SVNTeamPlugin.instance().savePreferences();
 		repositoryPreferences.addPreferenceChangeListener(this.repoPrefChangeListener);
 	}
 	

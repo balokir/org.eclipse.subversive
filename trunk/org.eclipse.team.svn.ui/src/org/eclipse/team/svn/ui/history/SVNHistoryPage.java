@@ -1070,12 +1070,12 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	
 	protected static void saveBoolean(String name, boolean value) {
 		SVNTeamPreferences.setHistoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), name, value);
-		SVNTeamUIPlugin.instance().savePluginPreferences();
+		SVNTeamUIPlugin.instance().savePreferences();
 	}
 	
 	protected static void saveInt(String name, int value) {
 		SVNTeamPreferences.setHistoryInt(SVNTeamUIPlugin.instance().getPreferenceStore(), name, value);
-		SVNTeamUIPlugin.instance().savePluginPreferences();
+		SVNTeamUIPlugin.instance().savePreferences();
 	}
 	
     protected void disconnectView() {

@@ -20,13 +20,13 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -34,10 +34,12 @@ import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
 import org.eclipse.team.svn.ui.discovery.DiscoveryConnectorsHelper;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Plugin entry point. Implements "system facade" pattern
@@ -89,6 +91,19 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
         return (String)this.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
     }
     
+	public IEclipsePreferences getPreferences() {
+		return InstanceScope.INSTANCE.getNode(this.getBundle().getSymbolicName());
+	}
+	
+	public void savePreferences() {
+		try {
+			SVNTeamUIPlugin.instance().getPreferences().flush();
+		} 
+		catch (BackingStoreException ex) {
+			UILoggedOperation.reportError(SVNUIMessages.getErrorString("Error_SavePreferences"), ex); //$NON-NLS-1$
+		}
+	}
+	
     /*
      * Important: Don't call any CoreExtensionsManager's methods here,
      * because CoreExtensionsManager instantiates some UI classes through extension
@@ -103,18 +118,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 		this.getModelCangeSetManager();
 		
-		Preferences corePreferences = SVNTeamPlugin.instance().getPluginPreferences();
-		
-		// Earlier Subversive releases save connector id in SVNTeamPlugin store
-		// To be compatible with earlier releases copy saved preferences to
-		// SVNTeamUIPlugin store and clear SVNTeamPlugin store
-		String connector = corePreferences.getString(SVNTeamPlugin.CORE_SVNCLIENT_NAME).trim();
-		if (connector.length() != 0) {
-			SVNTeamPreferences.setCoreString(this.getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, connector);
-			corePreferences.setValue(SVNTeamPlugin.CORE_SVNCLIENT_NAME, ""); //$NON-NLS-1$
-			SVNTeamPlugin.instance().savePluginPreferences();
-		}
-
         this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

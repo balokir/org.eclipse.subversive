@@ -40,7 +40,7 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 			public void run() {
 				boolean fastReportMode = AbstractSVNSubscriber.getSynchInfoContigous();
 				AbstractSVNSubscriber.setSynchInfoContigous(!fastReportMode);
-				SVNTeamPlugin.instance().savePluginPreferences();
+				SVNTeamPlugin.instance().savePreferences();
 			}
 		};
 		this.refreshOptionButtons();
