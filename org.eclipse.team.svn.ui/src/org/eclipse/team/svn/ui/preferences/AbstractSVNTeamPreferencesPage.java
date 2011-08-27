@@ -43,7 +43,7 @@ public abstract class AbstractSVNTeamPreferencesPage extends PreferencePage impl
 	public boolean performOk() {
 		this.saveValues(this.getPreferenceStore());
 		
-		SVNTeamUIPlugin.instance().savePluginPreferences();
+		SVNTeamUIPlugin.instance().savePreferences();
 		
 		return true;
 	}

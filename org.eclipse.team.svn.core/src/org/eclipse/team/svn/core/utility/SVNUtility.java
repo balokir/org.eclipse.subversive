@@ -16,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -791,6 +793,21 @@ public final class SVNUtility {
 		return null;
 	}
 	
+	public static IProxyData getProxyData(String host, String type) {
+		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
+		if (proxyService.isProxiesEnabled()) {
+			try {
+				URI uri = new URI(type, "//" + host, null); //$NON-NLS-1$
+				IProxyData[] proxyDatas = proxyService.select(uri);
+				return proxyDatas != null && proxyDatas.length > 0 ? proxyDatas[0] : null;
+			} 
+			catch (URISyntaxException e) {
+				// return null;
+			}
+		}
+		return null;
+	}
+	
 	public static void configureProxy(ISVNConnector proxy, IRepositoryLocation location) {
 		proxy.setUsername(location.getUsername());
 		proxy.setPassword(location.getPassword());
@@ -808,11 +825,10 @@ public final class SVNUtility {
 		catch (MalformedURLException ex) {
 			//skip
 		}
-		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
 		String proxyType = protocol.equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE; //$NON-NLS-1$
     	SVNCachedProxyCredentialsManager proxyCredetialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
-		IProxyData proxyData = proxyService.getProxyDataForHost(host, proxyType);
-	    if (proxyService.isProxiesEnabled() && proxyData != null) {
+		IProxyData proxyData = SVNUtility.getProxyData(host, proxyType);
+	    if (proxyData != null) {
 	    	proxy.setProxy(proxyData.getHost(), proxyData.getPort(), proxyCredetialsManager.getUsername(), proxyCredetialsManager.getPassword());
 	    }
 	    else {

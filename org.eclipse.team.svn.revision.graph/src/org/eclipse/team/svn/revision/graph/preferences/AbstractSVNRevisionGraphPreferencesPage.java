@@ -30,7 +30,7 @@ public abstract class AbstractSVNRevisionGraphPreferencesPage extends AbstractSV
 	public boolean performOk() {
 		this.saveValues(this.getPreferenceStore());
 		
-		SVNRevisionGraphPlugin.instance().savePluginPreferences();
+		SVNRevisionGraphPlugin.instance().savePreferences();
 		
 		return true;
 	}

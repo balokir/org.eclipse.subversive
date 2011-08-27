@@ -17,14 +17,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCachesManager;
 import org.eclipse.team.svn.revision.graph.preferences.SVNRevisionGraphPreferences;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * SVN Revision Graph plug-in implementation
@@ -49,6 +53,19 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
     	return SVNRevisionGraphPlugin.instance;
     }
     
+	public IEclipsePreferences getPreferences() {
+		return InstanceScope.INSTANCE.getNode(this.getBundle().getSymbolicName());
+	}
+
+	public void savePreferences() {
+		try {
+			SVNRevisionGraphPlugin.instance().getPreferences().flush();
+		} 
+		catch (BackingStoreException ex) {
+			UILoggedOperation.reportError(SVNUIMessages.getErrorString("Error_SavePreferences"), ex); //$NON-NLS-1$
+		}
+	}
+	
     public void start(BundleContext context) throws Exception {
 		super.start(context);
 		

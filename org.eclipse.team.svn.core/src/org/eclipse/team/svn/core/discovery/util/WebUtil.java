@@ -23,10 +23,9 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.eclipse.core.net.proxy.IProxyData;
-import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * @author i.burilo
@@ -148,9 +147,8 @@ public class WebUtil {
 	
 	protected static void initProxyData(String host) {
 		if (!WebUtil.isProxyInitialized) {
-			IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();				
-			final IProxyData proxyData = proxyService.getProxyDataForHost(host, IProxyData.HTTP_PROXY_TYPE);		
-			if (proxyService.isProxiesEnabled() && proxyData != null) {
+			IProxyData proxyData = SVNUtility.getProxyData(host, IProxyData.HTTP_PROXY_TYPE);		
+			if (proxyData != null) {
 				String proxyHost = proxyData.getHost();
 				int proxyPort = proxyData.getPort();
 				// change the IProxyData default port to the Java default port

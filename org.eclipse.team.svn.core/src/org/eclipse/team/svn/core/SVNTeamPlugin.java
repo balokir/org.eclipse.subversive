@@ -42,6 +42,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -125,13 +126,19 @@ public class SVNTeamPlugin extends Plugin {
 		});
 	}
 
-	/**
-	 * Return the Subversive Core preferences node in the instance scope
-	 */
-	public IEclipsePreferences getSVNCorePreferences() {
-		return new InstanceScope().getNode(this.getBundle().getSymbolicName());
+	public IEclipsePreferences getPreferences() {
+		return InstanceScope.INSTANCE.getNode(this.getBundle().getSymbolicName());
 	}
 
+	public void savePreferences() {
+		try {
+			SVNTeamPlugin.instance().getPreferences().flush();
+		} 
+		catch (BackingStoreException ex) {
+			LoggedOperation.reportError(SVNMessages.getErrorString("Error_SavePreferences"), ex); //$NON-NLS-1$
+		}
+	}
+	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
