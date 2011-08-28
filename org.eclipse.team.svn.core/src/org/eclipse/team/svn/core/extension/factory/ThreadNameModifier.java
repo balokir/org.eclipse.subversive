@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
+import org.eclipse.team.svn.core.connector.ISVNCallListener;
 import org.eclipse.team.svn.core.connector.ISVNChangeListCallback;
 import org.eclipse.team.svn.core.connector.ISVNConflictResolutionCallback;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -52,6 +53,14 @@ public class ThreadNameModifier implements ISVNConnector {
 		this.connector = connector;
 	}
 
+	public void addCallListener(ISVNCallListener listener) {
+		this.connector.addCallListener(listener);
+	}
+	
+	public void removeCallListener(ISVNCallListener listener) {
+		this.connector.removeCallListener(listener);
+	}
+	
 	public void add(String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {

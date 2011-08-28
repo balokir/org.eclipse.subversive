@@ -265,6 +265,10 @@ public interface ISVNConnector {
 	 * constant identifying the "fsfs"  repository type 
 	 */
     public final static String REPOSITORY_FSTYPE_FSFS = "fsfs";
+    
+	public void addCallListener(ISVNCallListener listener);
+	
+	public void removeCallListener(ISVNCallListener listener);
 	
 	public String getConfigDirectory() throws SVNConnectorException;
 
