@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.resource;
 import java.util.Collection;
 
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-
+import org.eclipse.team.svn.core.resource.events.IRepositoryLocationStateListener;
 
 /**
  * Repository location
@@ -43,6 +43,9 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 		WITHOUT_REVISION_COMMENTS,
 		ONLY_REQUIRED_DATA		
 	}
+	
+    public void addStateListener(IRepositoryLocationStateListener listener);
+    public void removeStateListener(IRepositoryLocationStateListener listener);
 	
 	public String getId();
 	

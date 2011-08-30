@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
+import org.eclipse.team.svn.core.resource.events.IRepositoryLocationStateListener;
 
 /**
  * Allows to redefine the original location URL
@@ -39,6 +40,13 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.url = mappedUrl;
 	}
 	
+	public void addStateListener(IRepositoryLocationStateListener listener) {
+		this.location.addStateListener(listener);
+	}
+
+	public void removeStateListener(IRepositoryLocationStateListener listener) {
+		this.location.removeStateListener(listener);
+	}
 	public String asReference(LocationReferenceTypeEnum locationReferenceType) {
 		return this.location.asReference(locationReferenceType);
 	}

@@ -51,6 +51,9 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
+import org.eclipse.team.svn.core.resource.events.IRepositoryLocationStateListener;
+import org.eclipse.team.svn.core.resource.events.ISSHSettingsStateListener;
+import org.eclipse.team.svn.core.resource.events.ISSLSettingsStateListener;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNURLStreamHandler;
@@ -61,7 +64,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public class SVNRepositoryLocation extends SVNRepositoryBase implements IRepositoryLocation, Serializable {
+public class SVNRepositoryLocation extends SVNRepositoryBase implements IRepositoryLocation, ISSHSettingsStateListener, ISSLSettingsStateListener, Serializable {
     private static final int PROXY_CACHE_SIZE = 5;
 	private static final long serialVersionUID = -5820937379741639580L;
 	
@@ -101,6 +104,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     private Map<String, IRepositoryLocation> additionalRealms;
     //used for differed in time realms initialization
     private transient List<String> rawRealms = new ArrayList<String>();
+    private transient List<IRepositoryLocationStateListener> changeListeners = new ArrayList<IRepositoryLocationStateListener>();
     
     private transient Integer lazyInitLock = new Integer(0);
     private transient Integer proxyManagerLock = new Integer(0);
@@ -123,6 +127,18 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		this.id = id;
 	}
 	
+	public void addStateListener(IRepositoryLocationStateListener listener) {
+		synchronized (this.changeListeners) {
+			this.changeListeners.add(listener);
+		}
+	}
+
+	public void removeStateListener(IRepositoryLocationStateListener listener) {
+		synchronized (this.changeListeners) {
+			this.changeListeners.remove(listener);
+		}
+	}
+
 	public String asReference(LocationReferenceTypeEnum locationReferenceType) {
 		String reference = this.id;
 		reference += ";" + this.getUrlAsIs(); //$NON-NLS-1$
@@ -226,9 +242,11 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	public void addRealm(String realm, IRepositoryLocation location) {
 		this.getAdditionalRealms(false).put(realm, location);
+		this.fireRealmAdded(realm, location);
 	}
 	
 	public void removeRealm(String realm) {
+		this.fireRealmRemoved(realm);
 		this.getAdditionalRealms().remove(realm);
 	}
 	
@@ -283,7 +301,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 
 	public void setStructureEnabled(boolean structureEnabled) {
+		boolean oldValue = this.trunkEnabled;
 		this.trunkEnabled = structureEnabled;
+		this.fireChanged(IRepositoryLocationStateListener.STRUCTURE_ENABLED, Boolean.valueOf(oldValue), Boolean.valueOf(this.trunkEnabled));
 	}
 
 	public String getUserInputTrunk() {
@@ -411,9 +431,11 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				this.revisionLinks = null;
 			}
 		}
+		this.fireRevisionLinkAdded(link);
 	}
 	
 	public void removeRevisionLink(IRevisionLink link) {
+		this.fireRevisionLinkRemoved(link);
 		synchronized (this.lazyInitLock) {
 			IRevisionLink []links = this.getRevisionLinks();
 			int idx = -1;
@@ -432,10 +454,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	public void setLabel(String label) {
+		String oldValue = this.label;
 		this.label = label;
+		this.fireChanged(IRepositoryLocationStateListener.LABEL, oldValue, this.label);
 	}
 
 	public void setUrl(String url) {
+		String oldValue = this.url;
+		
 		String oldRootUrl = this.getRepositoryRootUrl();
 		IRevisionLink[] oldLinks = this.getRevisionLinks();
 		List<byte[]> serialized = this.getSerializedRevisionLinks();
@@ -474,45 +500,62 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				}
 			}
 		}
+		this.fireChanged(IRepositoryLocationStateListener.URL, oldValue, this.url);
 	}
 	
 	public void setTrunkLocation(String location) {
+		String oldValue = this.trunk;
 		this.trunk = location;
+		this.fireChanged(IRepositoryLocationStateListener.TRUNK_LOCATION, oldValue, this.trunk);
 	}
 
 	public void setBranchesLocation(String location) {
+		String oldValue = this.branches;
 		this.branches = location;
+		this.fireChanged(IRepositoryLocationStateListener.BRANCHES_LOCATION, oldValue, this.branches);
 	}
 
 	public void setTagsLocation(String location) {
+		String oldValue = this.tags;
 		this.tags = location;
+		this.fireChanged(IRepositoryLocationStateListener.TAGS_LOCATION, oldValue, this.tags);
 	}
 
 	public void setUsername(String username) {
+		String oldValue = this.username;
 		this.username = username;
+		this.fireChanged(IRepositoryLocationStateListener.USERNAME, oldValue, this.username);
 	}
 	
 	public void setAuthorNameEnabled(boolean isEnabled) {
+		boolean oldValue = this.authorNameEnabled;
 		this.authorNameEnabled = isEnabled;
+		this.fireChanged(IRepositoryLocationStateListener.AUTHOR_NAME_ENABLED, Boolean.valueOf(oldValue), Boolean.valueOf(this.authorNameEnabled));
 	}
 
 	public void setAuthorName(String name) {
+		String oldValue = this.authorName;
 		this.authorName = name;
+		this.fireChanged(IRepositoryLocationStateListener.AUTHOR_NAME, oldValue, this.authorName);
 	}
 	
 	public void setPassword(String password) {
+		String oldValue = !this.passwordSaved ? this.passwordTemporary : this.password;
+		oldValue = oldValue != null ? SVNUtility.base64Decode(oldValue) : oldValue;
 		if (!this.passwordSaved) {
 			this.passwordTemporary = SVNUtility.base64Encode(password);
 		}
 		else {
 			this.password = SVNUtility.base64Encode(password);
 		}
+		this.fireChanged(IRepositoryLocationStateListener.PASSWORD, oldValue, password);
 	}
 
 	public void setPasswordSaved(boolean saved) {
 		if (this.passwordSaved == saved) {
 			return;
 		}
+		boolean oldValue = this.passwordSaved;
 		this.passwordSaved = saved;
 		if (!saved) {
 			this.passwordTemporary = this.password;
@@ -521,6 +564,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		else {
 			this.password = this.passwordTemporary;
 		}
+		this.fireChanged(IRepositoryLocationStateListener.PASSWORD_SAVED, Boolean.valueOf(oldValue), Boolean.valueOf(this.passwordSaved));
 	}
 
 	public ISVNConnector acquireSVNProxy() {
@@ -574,10 +618,12 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		if (isNew) { // configure a new proxy later in order to avoid recursive deadlocks when there is a misconfiguration of some sort
 			SVNUtility.configureProxy(retVal, this);
 		}
+		this.fireProxyAcquired(retVal);
 	    return retVal;
 	}
 	
 	public void releaseSVNProxy(ISVNConnector proxy) {
+		this.fireProxyDisposed(proxy);
 		synchronized (this.proxyManagerLock) {
 		    List<ISVNConnector> proxies = this.getProxyCache();
 		    
@@ -646,7 +692,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}				
 		synchronized (this.lazyInitLock) {
 			if (this.sshSettings == null) {
-				this.sshSettings = new SSHSettings();
+				this.sshSettings = new SSHSettings(this);
 			}
 			return this.sshSettings;
 		}
@@ -832,6 +878,66 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		return this.additionalRealms;
 	}
 	
+	protected void fireChanged(String field, Object oldValue, Object newValue) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.changed(this, field, oldValue, newValue);
+		}
+	}
+	
+	public void sslChanged(IRepositoryLocation where, String field, Object oldValue, Object newValue) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.sslChanged(this, field, oldValue, newValue);
+		}
+	}
+
+	public void sshChanged(IRepositoryLocation where, String field, Object oldValue, Object newValue) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.sshChanged(this, field, oldValue, newValue);
+		}
+	}
+
+	protected void fireRealmAdded(String realm, IRepositoryLocation location) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.realmAdded(this, realm, location);
+		}
+	}
+	
+	protected void fireRealmRemoved(String realm) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.realmRemoved(this, realm);
+		}
+	}
+	
+	protected void fireRevisionLinkAdded(IRevisionLink link) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.revisionLinkAdded(this, link);
+		}
+	}
+	
+	protected void fireRevisionLinkRemoved(IRevisionLink link) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.revisionLinkRemoved(this, link);
+		}
+	}
+	
+	protected void fireProxyAcquired(ISVNConnector proxy) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.proxyAcquired(this, proxy);
+		}
+	}
+	
+	protected void fireProxyDisposed(ISVNConnector proxy) {
+		for (IRepositoryLocationStateListener listener : this.getStateListeners()) {
+			listener.proxyDisposed(this, proxy);
+		}
+	}
+	
+	protected IRepositoryLocationStateListener []getStateListeners() {
+		synchronized (this.changeListeners) {
+			return this.changeListeners.toArray(new IRepositoryLocationStateListener[this.changeListeners.size()]);
+		}
+	}
+
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
     }
     
