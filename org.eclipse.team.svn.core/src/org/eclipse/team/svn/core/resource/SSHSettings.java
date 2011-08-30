@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.resource;
 
 import java.io.Serializable;
 
+import org.eclipse.team.svn.core.resource.events.ISSHSettingsStateListener;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -33,13 +34,19 @@ public class SSHSettings implements Serializable {
 	protected boolean passPhraseSaved;
 	
 	private transient String passPhraseTemporary;
+	private transient ISSHSettingsStateListener parentLocation;
 
 	public SSHSettings() {
+		this(null);
+	}
+
+	public SSHSettings(ISSHSettingsStateListener parentLocation) {
 		this.port = SSHSettings.SSH_PORT_DEFAULT;
 		this.useKeyFile = false;
 		this.privateKeyPath = ""; //$NON-NLS-1$
 		this.passPhrase = ""; //$NON-NLS-1$
 		this.passPhraseSaved = false;
+		this.parentLocation = parentLocation;
 	}
 
 	public String getPassPhrase() {
@@ -47,12 +54,15 @@ public class SSHSettings implements Serializable {
 	}
 
 	public void setPassPhrase(String passPhrase) {
+		String oldValue = this.passPhraseSaved ? this.passPhrase : this.passPhraseTemporary;
+		oldValue = oldValue != null ? SVNUtility.base64Decode(oldValue) : oldValue;
 		if (this.passPhraseSaved) {
 			this.passPhrase = SVNUtility.base64Encode(passPhrase);
 		}
 		else {
 			this.passPhraseTemporary = SVNUtility.base64Encode(passPhrase);
 		}
+		this.fireSSHChanged(ISSHSettingsStateListener.SSH_PASS_PHRASE, oldValue, passPhrase);
 	}
 
 	public int getPort() {
@@ -60,7 +70,9 @@ public class SSHSettings implements Serializable {
 	}
 
 	public void setPort(int port) {
+		int oldValue = this.port;
 		this.port = port;
+		this.fireSSHChanged(ISSHSettingsStateListener.SSH_PORT, Integer.valueOf(oldValue), Integer.valueOf(port));
 	}
 
 	public String getPrivateKeyPath() {
@@ -68,7 +80,9 @@ public class SSHSettings implements Serializable {
 	}
 
 	public void setPrivateKeyPath(String privateKeyPath) {
+		String oldValue = this.privateKeyPath;
 		this.privateKeyPath = privateKeyPath;
+		this.fireSSHChanged(ISSHSettingsStateListener.SSH_PRIVATE_KEY_PATH, oldValue, privateKeyPath);
 	}
 
 	public boolean isUseKeyFile() {
@@ -76,7 +90,9 @@ public class SSHSettings implements Serializable {
 	}
 
 	public void setUseKeyFile(boolean useKeyFile) {
+		boolean oldValue = this.useKeyFile;
 		this.useKeyFile = useKeyFile;
+		this.fireSSHChanged(ISSHSettingsStateListener.SSH_USE_KEY_FILE, Boolean.valueOf(oldValue), Boolean.valueOf(useKeyFile));
 	}
 
 	public boolean isPassPhraseSaved() {
@@ -87,6 +103,7 @@ public class SSHSettings implements Serializable {
 		if (this.passPhraseSaved == passPhraseSaved) {
 			return;
 		}
+		boolean oldValue = this.passPhraseSaved;
 		this.passPhraseSaved = passPhraseSaved;
 		if (!passPhraseSaved) {
 			this.passPhraseTemporary = this.passPhrase;
@@ -94,6 +111,13 @@ public class SSHSettings implements Serializable {
 		}
 		else {
 			this.passPhrase = this.passPhraseTemporary;
+		}
+		this.fireSSHChanged(ISSHSettingsStateListener.SSH_PASS_PHRASE_SAVED, Boolean.valueOf(oldValue), Boolean.valueOf(passPhraseSaved));
+	}
+	
+	protected void fireSSHChanged(String field, Object oldValue, Object newValue) {
+		if (this.parentLocation != null) {
+			this.parentLocation.sshChanged(null, field, oldValue, newValue);
 		}
 	}
 	
