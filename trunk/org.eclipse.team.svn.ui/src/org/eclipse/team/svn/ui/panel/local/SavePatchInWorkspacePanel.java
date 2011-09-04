@@ -13,10 +13,12 @@ package org.eclipse.team.svn.ui.panel.local;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.panel.IDialogManager;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
@@ -46,13 +49,15 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 	protected String proposedName;
 	
 	protected IFile file;
+	protected IProject proposedDestination;
 
-	public SavePatchInWorkspacePanel(String proposedName) {
+	public SavePatchInWorkspacePanel(String proposedName, IProject proposedDestination) {
 		super();
 		this.dialogTitle = SVNUIMessages.SavePatchInWorkspace_Title;
 		this.dialogDescription = SVNUIMessages.SavePatchInWorkspace_Description;
 		this.defaultMessage = SVNUIMessages.SavePatchInWorkspace_Message;
 		this.proposedName = proposedName;
+		this.proposedDestination = proposedDestination;
 	}
 	
 	public IFile getFile() {
@@ -61,6 +66,13 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 	
     public String getHelpId() {
     	return "org.eclipse.team.svn.help.savePatchInWorkspaceContext"; //$NON-NLS-1$
+    }
+    
+    public void initPanel(IDialogManager manager) {
+    	super.initPanel(manager);
+		
+		this.treeViewer.setSelection(new StructuredSelection(this.proposedDestination));
+		this.workspaceFilenameField.setText(this.proposedName);
     }
     
 	protected Point getPrefferedSizeImpl() {
@@ -79,6 +91,8 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 		this.treeViewer.setContentProvider(cp);
 		this.treeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		this.treeViewer.setInput(ResourcesPlugin.getWorkspace());
+		//new TreeItem(parent, style)
+		//this.treeViewer.getTree().select()
 		this.treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				SavePatchInWorkspacePanel.this.validateContent();
@@ -129,8 +143,6 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 		    }
 		});
 		this.attachTo(this.workspaceFilenameField, cVerifier);
-		
-		this.workspaceFilenameField.setText(this.proposedName);
 	}
 
 	protected void cancelChangesImpl() {
