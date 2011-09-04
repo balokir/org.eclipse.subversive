@@ -304,7 +304,8 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		this.browseWSButton.setLayoutData(data);
 		this.browseWSButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				SavePatchInWorkspacePanel panel = new SavePatchInWorkspacePanel(SelectPatchFilePage.this.proposedName);
+				IProject proposedDestination = SelectPatchFilePage.this.roots.length > 0 ? SelectPatchFilePage.this.roots[0].getProject() : null;
+				SavePatchInWorkspacePanel panel = new SavePatchInWorkspacePanel(SelectPatchFilePage.this.proposedName, proposedDestination);
 				DefaultDialog dlg = new DefaultDialog(SelectPatchFilePage.this.getShell(), panel);
 				if (dlg.open() == 0) {
 					SelectPatchFilePage.this.file = panel.getFile();
