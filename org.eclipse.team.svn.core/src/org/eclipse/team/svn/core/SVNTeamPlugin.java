@@ -83,6 +83,12 @@ public class SVNTeamPlugin extends Plugin {
 
 		this.errorHandlingFacility = new DefaultErrorHandlingFacility();
 	}
+	
+	public File getTemporaryFile(File parent, String fileName) {
+		File retVal = parent == null ? this.getStateLocation().append(".tmp" + System.currentTimeMillis()).append(fileName + ".tmp").toFile() : new File(parent, fileName + ".tmp"); //$NON-NLS-1$
+		retVal.deleteOnExit();
+		return retVal;
+	}
 
 	public void setLocationsDirty(boolean isLocationsDirty) {
 		this.isLocationsDirty = isLocationsDirty;

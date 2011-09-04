@@ -13,7 +13,6 @@ package org.eclipse.team.svn.core.operation.local.change;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 
@@ -25,21 +24,15 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 public class FolderChange extends ResourceChange {
     protected ResourceChange []children;
 
-    public FolderChange(ResourceChange parent, ILocalFolder local, boolean needsTemporary) throws Exception {
+    public FolderChange(ResourceChange parent, ILocalFolder local, boolean needsTemporary) {
         super(parent, local, needsTemporary);
         if (needsTemporary) {
             this.tmp.mkdir();
         }
         ILocalResource []tmpChildren = local.getChildren();
         this.children = new ResourceChange[tmpChildren.length];
-        try {
-            for (int i = 0; i < tmpChildren.length; i++) {
-                this.children[i] = ResourceChange.wrapLocalResource(this, tmpChildren[i], needsTemporary);
-            }
-        }
-        catch (Exception ex) {
-    		this.disposeChangeModel(new NullProgressMonitor());
-    		throw ex;
+        for (int i = 0; i < tmpChildren.length; i++) {
+            this.children[i] = ResourceChange.wrapLocalResource(this, tmpChildren[i], needsTemporary);
         }
     }
 
