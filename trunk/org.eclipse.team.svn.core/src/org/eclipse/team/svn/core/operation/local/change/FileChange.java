@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.resource.ILocalFile;
  * @author Alexander Gurov
  */
 public class FileChange extends ResourceChange {
-    public FileChange(ResourceChange parent, ILocalFile local, boolean needsTemporary) throws Exception {
+    public FileChange(ResourceChange parent, ILocalFile local, boolean needsTemporary) {
         super(parent, local, needsTemporary);
     }
 

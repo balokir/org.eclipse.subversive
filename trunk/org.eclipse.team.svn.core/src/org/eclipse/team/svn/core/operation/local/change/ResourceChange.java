@@ -32,11 +32,10 @@ public abstract class ResourceChange {
     protected File tmp;
     protected SVNProperty []properties;
     
-    public ResourceChange(ResourceChange parent, ILocalResource local, boolean needsTemporary) throws Exception {
+    public ResourceChange(ResourceChange parent, ILocalResource local, boolean needsTemporary) {
         this.local = local;
         if (needsTemporary) {
-        	this.tmp = File.createTempFile("merge", ".tmp", parent == null ? SVNTeamPlugin.instance().getStateLocation().toFile() : parent.getTemporary()); //$NON-NLS-1$ //$NON-NLS-2$
-        	this.tmp.delete();
+        	this.tmp = SVNTeamPlugin.instance().getTemporaryFile(parent == null ? null : parent.getTemporary(), local.getName());
         }
 		this.properties = null;
     }
@@ -71,7 +70,7 @@ public abstract class ResourceChange {
     protected abstract void preTraverse(IResourceChangeVisitor visitor, int depth, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception;
     protected abstract void postTraverse(IResourceChangeVisitor visitor, int depth, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception;
     
-    public static ResourceChange wrapLocalResource(ResourceChange parent, ILocalResource local, boolean needsTemporary) throws Exception {
+    public static ResourceChange wrapLocalResource(ResourceChange parent, ILocalResource local, boolean needsTemporary) {
     	if (local == null) {
     		return null;
     	}
