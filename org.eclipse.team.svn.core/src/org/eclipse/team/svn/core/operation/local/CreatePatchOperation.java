@@ -158,8 +158,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 			if (IStateFilter.SF_VERSIONED.accept(local)) {
-				File tmp = File.createTempFile("patch", ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
-				tmp.deleteOnExit();
+				File tmp = SVNTeamPlugin.instance().getTemporaryFile(null, "patch.tmp"); //$NON-NLS-1$
 				
 				IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 				ISVNConnector proxy = location.acquireSVNProxy();

@@ -116,7 +116,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 			String sourceLocation = PatternProvider.replaceAll(FileUtility.getWorkingCopyPath(resource), "\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			File source = new File(sourceLocation);
 			if (source.exists()) {
-				File target = File.createTempFile("save_" + resource.getName(), ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
+				File target = SVNTeamPlugin.instance().getTemporaryFile(null, resource.getName());
 				target.deleteOnExit();
 				if (source.isDirectory()) {
 					target.delete();
