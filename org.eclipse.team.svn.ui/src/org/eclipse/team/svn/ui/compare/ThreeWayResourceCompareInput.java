@@ -236,7 +236,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	protected void makeBranch(String localPath, SVNDiffStatus stLocal, SVNDiffStatus stRemote, final Map path2node, final IProgressMonitor monitor) throws Exception {
 		// 1) take local statuses
 		int localKind = stLocal == null ? SVNEntry.Kind.NONE : this.getNodeKind(stLocal, true);
-		int nodeKind = localKind == SVNEntry.Kind.NONE ? this.getNodeKind(stRemote, false) : localKind;
+		int nodeKind = localKind == SVNEntry.Kind.NONE && stRemote != null ? this.getNodeKind(stRemote, false) : localKind;
 		ILocalResource local = this.getLocalResource(localPath, nodeKind == SVNEntry.Kind.FILE);
 		// 2) skip all ignored resources that does not have real remote variants
 		if ((stRemote != null || !IStateFilter.SF_IGNORED.accept(local)) && !path2node.containsKey(SVNUtility.createPathForSVNUrl(SVNRemoteStorage.instance().asRepositoryResource(local.getResource()).getUrl()))) {
