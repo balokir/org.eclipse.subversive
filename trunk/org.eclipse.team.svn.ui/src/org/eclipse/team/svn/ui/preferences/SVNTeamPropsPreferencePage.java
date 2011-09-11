@@ -404,8 +404,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		BufferedReader srcReader = null;
 		PrintWriter tmpWriter = null;
 		try {
-			tmpCfg = File.createTempFile("cfg_", srcCfg.getName() + "tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
-			tmpCfg.deleteOnExit();
+			tmpCfg = SVNTeamPlugin.instance().getTemporaryFile(null, srcCfg.getName());
 			if (!srcCfg.exists()) {
 				srcCfg.createNewFile();
 			}

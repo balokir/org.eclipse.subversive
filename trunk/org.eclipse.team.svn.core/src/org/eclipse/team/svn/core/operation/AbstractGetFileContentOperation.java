@@ -72,9 +72,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	
 	protected File createTempFile() throws IOException {
 		String extension = this.getExtension();
-		File retVal = File.createTempFile("getfilecontent", ".tmp" + (extension != null && extension.length() > 0 ? "." + extension : ""), SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		retVal.deleteOnExit();
-		return retVal;
+		return SVNTeamPlugin.instance().getTemporaryFile(null, "getfilecontent" + (extension != null && extension.length() > 0 ? "." + extension : ".tmp"));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	protected String getExtension() {
