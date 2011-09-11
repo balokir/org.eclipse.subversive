@@ -88,6 +88,9 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				try {
 					IResource current = this.getDiffTree().getResource(diff);
 					AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(current);
+					if (info == null) {
+						continue;
+					}
 					ILocalResource local = info.getLocalResource();
 			        ILocalResource remote = info.getRemoteChangeResource();
 			        if (remote instanceof IResourceChange && ISyncStateFilter.SF_OVERRIDE.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || ISyncStateFilter.SF_OVERRIDE.accept(local)) {
@@ -263,6 +266,9 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 			IResource current = this.getDiffTree().getResource(node);
 			try {
 				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(current);
+				if (info == null) {
+					continue;
+				}
 				boolean localIsFile = info.getLocalResource().getResource() instanceof IFile;
                 boolean remoteIsFile = info.getRemoteChangeResource() instanceof ILocalFile;
                 if (!IStateFilter.SF_OBSTRUCTED.accept(info.getLocalResource()) && localIsFile && remoteIsFile) {

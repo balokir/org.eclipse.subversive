@@ -86,18 +86,17 @@ public class CompareResourcesOperation extends CompositeOperation {
 	 * @return
 	 */
 	public static SVNRevision getRemoteResourceRevisionForCompare(IResource resource) {
-		SVNRevision revision = null;									
+		SVNRevision revision = SVNRevision.HEAD;
 		try {									
 			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(resource);
-			int kind = SyncInfo.getDirection(syncInfo.getKind());
-			if (SyncInfo.INCOMING == kind || SyncInfo.CONFLICTING == kind) {
-				revision = SVNRevision.HEAD;
-			} else {
-				revision = SVNRevision.BASE;
-			}									
+			if (syncInfo != null) {
+				int kind = SyncInfo.getDirection(syncInfo.getKind());
+				if (kind != SyncInfo.INCOMING && kind != SyncInfo.CONFLICTING) {
+					revision = SVNRevision.BASE;
+				}									
+			}
 		} catch (TeamException te) {
 			LoggedOperation.reportError(CompareResourcesOperation.class.toString(), te);
-			revision = SVNRevision.HEAD;
 		}	
 		return revision;
 	}

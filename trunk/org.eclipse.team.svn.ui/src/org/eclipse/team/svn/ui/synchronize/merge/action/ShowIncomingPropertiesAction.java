@@ -26,7 +26,6 @@ import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.IMergeSyncInfo;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.action.ShowIncomingPropertiesActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
@@ -38,22 +37,17 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ShowIncomingPropertiesAction extends AbstractSynchronizeModelAction {
 
-	protected ShowIncomingPropertiesActionHelper actionHelper;
-	
 	public ShowIncomingPropertiesAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
-		this.actionHelper = new ShowIncomingPropertiesActionHelper(this, configuration);
 	}
 
 	public ShowIncomingPropertiesAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
 		super(text, configuration, selectionProvider);
-		this.actionHelper = new ShowIncomingPropertiesActionHelper(this, configuration);
 	}
 	
 	protected boolean needsToSaveDirtyEditors() {
 		return false;
 	}
-	
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);

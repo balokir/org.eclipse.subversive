@@ -77,7 +77,7 @@ public class SVNIncomingChangeSetCollector extends ChangeSetManager {
 		try {
 			for (IDiff diff : diffs) {
 				SyncInfo info = this.subscriber.getSyncInfo(ResourceDiffTree.getResourceFor(diff));
-				if ((info.getKind() & SyncInfo.INCOMING) == 0) {
+				if (info == null || (info.getKind() & SyncInfo.INCOMING) == 0) {
 					continue;
 				}
 				ILocalResource resource = ((AbstractSVNSyncInfo) info).getRemoteChangeResource();

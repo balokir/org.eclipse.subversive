@@ -29,6 +29,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelParticipantAction;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -93,6 +94,9 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 					IResource [] filtered = AbstractSynchronizeLogicalModelAction.this.getFilteredResources();
 				    for (int i = 0; i < filtered.length; i++) {
 				    	AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(filtered[i]);
+				    	if (info == null) {
+				    		continue;
+				    	}
 				        ILocalResource local = info.getLocalResource();
 				        ILocalResource remote = info.getRemoteChangeResource();
 				        if (remote instanceof IResourceChange && filter.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || filter.accept(local)) {
@@ -217,7 +221,9 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
     	try {
     		for (IResource resource : this.getFilteredResources()) {
     			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(resource);
-    			filtered.add(syncInfo);
+    			if (syncInfo != null) {
+    				filtered.add(syncInfo);
+    			}
     		}    		
     	} catch (TeamException te) {
     		LoggedOperation.reportError(this.getClass().getName(), te);
@@ -233,7 +239,8 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 			IDiff [] affectedDiffs = diffTree.getDiffs(this.getResourceTraversals(this.getStructuredSelection(), new NullProgressMonitor()));
 			for (IDiff currentDiff : affectedDiffs) {
 				IResource resource = ResourceDiffTree.getResourceFor(currentDiff);
-				if (AbstractSynchronizeLogicalModelAction.this.getSyncInfoFilter().select(UpdateSubscriber.instance().getSyncInfo(resource))) {
+				SyncInfo info = UpdateSubscriber.instance().getSyncInfo(resource);
+				if (info != null && AbstractSynchronizeLogicalModelAction.this.getSyncInfoFilter().select(info)) {
 					filtered.add(resource);
 				}
 			}
