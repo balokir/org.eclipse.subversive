@@ -183,8 +183,11 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 
 	protected SVNRevision getRevisionToUpdate(ILocalResource local) throws Exception {
 		AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(local.getResource());
-		ILocalResource remoteResource = syncInfo.getRemoteChangeResource();
-		long revNum = remoteResource.getRevision();
+		long revNum = SVNRevision.INVALID_REVISION_NUMBER;
+		if (syncInfo != null) {
+			ILocalResource remoteResource = syncInfo.getRemoteChangeResource();
+			revNum = remoteResource.getRevision();
+		}
 		return revNum == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(revNum);
 	}
 	

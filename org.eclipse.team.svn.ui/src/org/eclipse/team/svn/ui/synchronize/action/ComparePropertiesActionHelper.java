@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.compare.PropertyCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayPropertyCompareInput;
@@ -44,18 +45,21 @@ public class ComparePropertiesActionHelper extends AbstractActionHelper {
 		IRepositoryResource remote =  SVNRemoteStorage.instance().asRepositoryResource(resource);
 	    SVNEntryRevisionReference baseReference = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE);
 	    SVNEntryRevisionReference remoteReference = baseReference;
-	    ILocalResource change = this.getSelectedSVNSyncInfo().getRemoteChangeResource();
-	    if (change instanceof IResourceChange) {
-	    	remote = ((IResourceChange)change).getOriginator();
-	    	remoteReference = new SVNEntryRevisionReference(remote.getUrl(), remote.getPegRevision(), SVNRevision.fromNumber(((IResourceChange)change).getRevision()));
+	    AbstractSVNSyncInfo info = this.getSelectedSVNSyncInfo();
+	    if (info != null) {
+		    ILocalResource change = this.getSelectedSVNSyncInfo().getRemoteChangeResource();
+		    if (change instanceof IResourceChange) {
+		    	remote = ((IResourceChange)change).getOriginator();
+		    	remoteReference = new SVNEntryRevisionReference(remote.getUrl(), remote.getPegRevision(), SVNRevision.fromNumber(((IResourceChange)change).getRevision()));
+		    }
+			PropertyCompareInput input = new ThreeWayPropertyCompareInput(new CompareConfiguration(),
+					resource,
+					remoteReference,
+					baseReference,
+					remote.getRepositoryLocation(),
+					baseResource.getRevision());
+			CompareUI.openCompareEditor(input);
 	    }
-		PropertyCompareInput input = new ThreeWayPropertyCompareInput(new CompareConfiguration(),
-				resource,
-				remoteReference,
-				baseReference,
-				remote.getRepositoryLocation(),
-				baseResource.getRevision());
-		CompareUI.openCompareEditor(input);
 		return null;
 	}
 

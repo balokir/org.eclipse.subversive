@@ -44,7 +44,7 @@ public class ShowHistoryActionHelper extends AbstractActionHelper {
 			return new ShowHistoryViewOperation(resource, 0, 0);
 		} else {
 			AbstractSVNSyncInfo info = this.getSelectedSVNSyncInfo();
-			if (info != null ) {
+			if (info != null) {
 				ILocalResource incoming = info.getRemoteChangeResource();
 				if (incoming instanceof IResourceChange) {
 					return new ShowHistoryViewOperation(((IResourceChange)incoming).getOriginator(), 0, 0);

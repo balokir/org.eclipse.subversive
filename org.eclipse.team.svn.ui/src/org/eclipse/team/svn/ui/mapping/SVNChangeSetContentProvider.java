@@ -748,7 +748,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			//TODO correctly get subscriber									 			
 			Subscriber subscriber = UpdateSubscriber.instance();									
 			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) subscriber.getSyncInfo(ResourceDiffTree.getResourceFor(diff));
-			if ((SyncInfo.getDirection(syncInfo.getKind()) & SyncInfo.OUTGOING) != 0) {
+			if (syncInfo != null && (SyncInfo.getDirection(syncInfo.getKind()) & SyncInfo.OUTGOING) != 0) {
 				return true;
 			}
 		} catch (Exception e) {
