@@ -65,36 +65,41 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || this.wcResources != null) {
-			IRepositoryResource parent = PreparedBranchTagOperation.getExistentParent(this.destination);
-			if (parent == null) {
-				throw new UnreportableException(SVNMessages.getErrorString("Error_RepositoryInaccessible")); //$NON-NLS-1$
+		IRepositoryResource parent = PreparedBranchTagOperation.getExistentParent(this.destination);
+		if (parent == null) {
+			throw new UnreportableException(SVNMessages.getErrorString("Error_RepositoryInaccessible")); //$NON-NLS-1$
+		}
+		boolean createLastSegment = false;
+		IPath newFolderPath = null;
+		if (parent != this.destination) {
+			newFolderPath = new Path(this.destination.getUrl().substring(parent.getUrl().length() + 1));
+			createLastSegment = this.resources.length == 1 && !newFolderPath.isEmpty() && !this.forceCreate;
+		}
+		this.targets = new IRepositoryResource[this.resources.length];
+		for (int i = 0; i < this.targets.length; i++) {
+			String targetUrl = this.destination.getUrl();
+			if (!createLastSegment) {
+				targetUrl += "/" + this.resources[i].getName(); //$NON-NLS-1$
 			}
-			this.targets = new IRepositoryResource[this.resources.length];
+			this.targets[i] = this.resources[i] instanceof IRepositoryFile ? (IRepositoryResource)this.destination.asRepositoryFile(targetUrl, false) : this.destination.asRepositoryContainer(targetUrl, false);
+		}
+		
+		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || this.wcResources != null) {
 			CreateFolderOperation op = null;
-			boolean createLastSegment = false;
-			if (parent != this.destination) {
-				IPath newFolderPath = new Path(this.destination.getUrl().substring(parent.getUrl().length() + 1));
+			if (newFolderPath != null) {
 				IPath cutPath = newFolderPath.removeLastSegments(1);
-				createLastSegment = this.resources.length == 1 && !newFolderPath.isEmpty() && !this.forceCreate;
 				if (this.resources.length != 1 || !cutPath.isEmpty() || this.forceCreate) {
 					String folderName = this.resources.length == 1 && !cutPath.isEmpty() && !this.forceCreate ? cutPath.toString() : newFolderPath.toString();
 					this.add(op = new CreateFolderOperation(parent, folderName, this.message));
 					this.add(new SetRevisionAuthorNameOperation(op, Options.FORCE), new IActionOperation[] {op});
 				}
 			}
-			for (int i = 0; i < this.targets.length; i++) {
-				String targetUrl = this.destination.getUrl();
-				if (!createLastSegment) {
-					targetUrl += "/" + this.resources[i].getName(); //$NON-NLS-1$
-				}
-				this.targets[i] = this.resources[i] instanceof IRepositoryFile ? (IRepositoryResource)this.destination.asRepositoryFile(targetUrl, false) : this.destination.asRepositoryContainer(targetUrl, false);
-				if (this.wcResources != null) {
+			if (this.wcResources != null) {
+				for (int i = 0; i < this.targets.length; i++) {
 					this.add(new org.eclipse.team.svn.core.operation.local.BranchTagOperation(this.operationName, new IResource[] {this.wcResources[i]}, this.targets[i], this.message), op == null ? null : new IActionOperation[] {op});
 				}
 			}
-			
-			if (this.wcResources == null) {
+			else {
 				BranchTagOperation branchtagOp = new BranchTagOperation(this.operationName, SVNMessages.class, this.resources, this.destination, this.message);
 				this.add(branchtagOp, op == null ? null : new IActionOperation[] {op});
 				this.add(new SetRevisionAuthorNameOperation(branchtagOp, Options.FORCE));
