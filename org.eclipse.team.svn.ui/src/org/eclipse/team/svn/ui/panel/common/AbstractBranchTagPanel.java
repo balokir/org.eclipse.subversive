@@ -251,13 +251,13 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		}
 
 		//revision selection
-		IRepositoryResource selectedRemoteResource;
+		IRepositoryResource selectedRemoteResource = this.root;
 		if (this.selectedRemoteResources.length == 1) {
 			selectedRemoteResource = this.selectedRemoteResources[0];
 		} else if (this.selectedRemoteResources.length > 1) {			
 			selectedRemoteResource = this.selectedRemoteResources[0].getRoot();			
-		} else {
-			selectedRemoteResource = this.root.getRepositoryLocation().getRoot();
+		} else if (this.root.getKind() != IRepositoryRoot.KIND_LOCATION_ROOT && this.root.getKind() != IRepositoryRoot.KIND_ROOT) {
+			selectedRemoteResource = this.root.getParent();
 			selectedRemoteResource.setPegRevision(this.root.getPegRevision());
 			selectedRemoteResource.setSelectedRevision(this.root.getSelectedRevision());
 		}
