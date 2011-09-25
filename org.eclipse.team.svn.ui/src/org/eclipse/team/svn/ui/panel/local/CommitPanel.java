@@ -93,7 +93,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
-import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
+import org.eclipse.team.svn.ui.extension.factory.IModifiableCommentDialogPanel;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
@@ -121,7 +121,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * 
  * @author Sergiy Logvin
  */
-public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
+public class CommitPanel extends CommentPanel implements IModifiableCommentDialogPanel {
 	public static final int MSG_COMMIT = 0;
 	public static final int MSG_OVER_AND_COMMIT = 1;
 	public static final int MAXIMUM_CHECKS_SIZE = 100;
@@ -924,6 +924,6 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			}    		
     	}
     	return res;
-    }    
-	
+    }
+
 }
