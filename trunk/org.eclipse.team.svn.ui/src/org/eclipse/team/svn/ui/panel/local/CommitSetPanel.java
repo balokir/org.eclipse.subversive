@@ -28,7 +28,7 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
-import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
+import org.eclipse.team.svn.ui.extension.factory.IModifiableCommentDialogPanel;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel.CollectPropertiesOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -39,7 +39,7 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  * 
  * @author Alessandro Nistico
  */
-public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel {
+public class CommitSetPanel extends CommentPanel implements IModifiableCommentDialogPanel {
 	public static final int MSG_CREATE = 0;
 	public static final int MSG_EDIT = 1;
 	

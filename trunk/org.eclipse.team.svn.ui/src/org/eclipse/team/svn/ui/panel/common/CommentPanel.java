@@ -46,6 +46,10 @@ public class CommentPanel extends AbstractDialogPanel {
 		return this.appendBugtraqMessage(this.comment.getMessage());
 	}
 	
+	public void setMessage(String message) {
+		this.comment.setMessage(message);
+	}    
+	
     public void createControlsImpl(Composite parent) {
         this.comment = new CommentComposite(parent, this);
 		GridData data = new GridData(GridData.FILL_BOTH);
