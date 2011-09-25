@@ -87,6 +87,11 @@ public class SVNTeamPlugin extends Plugin {
 	public File getTemporaryFile(File parent, String fileName) {
 		File retVal = parent == null ? this.getStateLocation().append(".tmp" + System.currentTimeMillis()).append(fileName).toFile() : new File(parent, fileName); //$NON-NLS-1$
 		retVal.deleteOnExit();
+		parent = retVal.getParentFile();
+		if (!parent.exists()) {
+			parent.mkdirs();
+			parent.deleteOnExit();
+		}
 		return retVal;
 	}
 
