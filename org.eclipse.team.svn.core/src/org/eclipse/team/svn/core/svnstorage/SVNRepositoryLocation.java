@@ -355,15 +355,28 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     	String name = urlPath.lastSegment();
     	
     	if (location.isStructureEnabled()) {
-            if (name.equals(location.getTrunkLocation())) {
-                return new SVNRepositoryTrunk(location, url, SVNRevision.HEAD);
-            }
-            if (name.equals(location.getTagsLocation())) {
-                return new SVNRepositoryTags(location, url, SVNRevision.HEAD);
-            }
-            if (name.equals(location.getBranchesLocation())) {
-                return new SVNRepositoryBranches(location, url, SVNRevision.HEAD);
-            }
+    		boolean regularFolder = false;
+    		if (name.equals(location.getTrunkLocation()) || name.equals(location.getTagsLocation()) || name.equals(location.getBranchesLocation())) {
+	    		IPath tPath = SVNUtility.createPathForSVNUrl(url);
+	    		String tName = null;
+	    		while ((tPath = tPath.removeLastSegments(1)) != null && !tPath.isEmpty() && (tName = tPath.lastSegment()) != null) {
+	    			if (tName.equals(location.getTrunkLocation()) || tName.equals(location.getBranchesLocation()) || tName.equals(location.getTagsLocation())) {
+	    				regularFolder = true;
+	    				break;
+	    			}
+	    		}
+    		}
+    		if (!regularFolder) {
+	            if (name.equals(location.getTrunkLocation())) {
+	                return new SVNRepositoryTrunk(location, url, SVNRevision.HEAD);
+	            }
+	            if (name.equals(location.getTagsLocation())) {
+	                return new SVNRepositoryTags(location, url, SVNRevision.HEAD);
+	            }
+	            if (name.equals(location.getBranchesLocation())) {
+	                return new SVNRepositoryBranches(location, url, SVNRevision.HEAD);
+	            }
+    		}
     	}
     	IPath locationUrl = SVNUtility.createPathForSVNUrl(location.getUrl());
         if (urlPath.equals(locationUrl)) {
