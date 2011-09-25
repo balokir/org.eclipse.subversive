@@ -554,6 +554,10 @@ public final class FileUtility {
 			to = new File(to.getAbsolutePath() + "/" + what.getName()); //$NON-NLS-1$
 		}
 		if ((!to.exists() || (options & FileUtility.COPY_OVERRIDE_EXISTING_FILES) != 0) && !monitor.isCanceled()) {
+			File parent = to.getParentFile();
+			if (!parent.exists()) {
+				parent.mkdirs();
+			}
 			FileOutputStream output = null;
 			FileInputStream input = null;
 			try {
