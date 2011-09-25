@@ -132,7 +132,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 					resourcesWithSpecifiedRevision[i].setSelectedRevision(panel.getRevisionForRemoteResources());
 					resourcesWithSpecifiedRevision[i].setPegRevision(remoteResources[i].getPegRevision());
 				}
-				mainOp = new PreparedBranchTagOperation((actionType == BRANCH_ACTION ? "Branch" : "Tag"), remoteResources, destination, panel.getMessage(), forceCreate);
+				mainOp = new PreparedBranchTagOperation((actionType == BRANCH_ACTION ? "Branch" : "Tag"), resourcesWithSpecifiedRevision, destination, panel.getMessage(), forceCreate);
 			}
 			else {
 				mainOp = new PreparedBranchTagOperation((actionType == BRANCH_ACTION ? "Branch" : "Tag"), resources, remoteResources, destination, panel.getMessage(), forceCreate);
