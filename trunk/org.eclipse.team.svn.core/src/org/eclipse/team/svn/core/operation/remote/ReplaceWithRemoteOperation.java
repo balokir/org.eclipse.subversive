@@ -7,11 +7,15 @@
  *
  * Contributors:
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Neels Hofmeyr - Replace with Revision fails to notice trivial changes on locked files (Bug 353875)
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.remote;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -111,6 +115,36 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 				this.performReplacementRecursively(pathForReplacement + "/" + currentFromSource, sourcePath + "/" + currentFromSource, connectorProxy, monitor); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
+				// If a file is locked, this fails (a locked file has read-only permissions).
+				// That's perfectly fine, but if the files are identical, ignore the error.
+				if (toReplace.exists() && !toReplace.canWrite() && toReplace.isFile() && source.isFile() && toReplace.length() == source.length()) {
+					BufferedReader left = null;
+					BufferedReader right = null;
+
+					boolean identical = true;
+					try {
+						left = new BufferedReader(new FileReader(source));
+						right = new BufferedReader(new FileReader(toReplace));
+						while (identical) {
+							if (left.ready() != right.ready())
+								identical = false;
+							else if (!left.ready())
+								break;
+							else if (left.read() != right.read())
+								identical = false;
+						}
+					} 
+					catch (IOException ioe) {
+						identical = false;
+					}
+					finally {
+						if (left != null) {try {left.close();} catch (IOException e1) {}}
+						if (right != null) {try {right.close();} catch (IOException e1) {}}
+					}
+					if (identical) {
+						continue;
+					}
+				}
 				FileUtility.copyFile(toReplace, source, monitor);
 			}
 		}
