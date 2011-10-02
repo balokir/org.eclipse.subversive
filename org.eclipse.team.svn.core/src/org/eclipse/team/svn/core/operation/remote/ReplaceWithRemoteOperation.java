@@ -14,14 +14,15 @@ package org.eclipse.team.svn.core.operation.remote;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -99,7 +100,8 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 			}
 		}
 		connectorProxy.remove(pathsToDelete.toArray(new String [0]), "", ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
-		for (String currentFromSource : sourceChildren) {
+		for (Iterator<String> it = sourceChildren.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+			String currentFromSource = it.next();
 			File toReplace =  new File(pathForReplacement + "/" + currentFromSource); //$NON-NLS-1$
 			File source = new File(sourcePath + "/" + currentFromSource); //$NON-NLS-1$
 			if (source.isDirectory()) {
