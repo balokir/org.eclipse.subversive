@@ -106,7 +106,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		
 		try {
 			SVNChangeStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
-			if (status.length == 1) {
+			if (status.length == 1 && status[0].conflictNew != null && status[0].conflictOld != null) {
 				IContainer parent = resource.getParent();
 				parent.refreshLocal(IResource.DEPTH_ONE, monitor);
 				/*
