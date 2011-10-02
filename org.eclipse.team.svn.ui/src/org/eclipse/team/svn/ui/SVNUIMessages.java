@@ -981,6 +981,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PreferencePage_demoFolder;
 	public static String PreferencePage_demoFolderRevision;
 	public static String PreferencePage_demoFullname;
+	public static String PreferencePage_demoFullpath;
 	public static String PreferencePage_demoLocationLabel;
 	public static String PreferencePage_demoLocationURL;
 	public static String PreferencePage_demoProject;
@@ -1508,6 +1509,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String TextDecoratorVariable_date;
 	public static String TextDecoratorVariable_last_branchOrTag_child;
 	public static String TextDecoratorVariable_fullname;
+	public static String TextDecoratorVariable_fullpath;
 	public static String TextDecoratorVariable_location_label;
 	public static String TextDecoratorVariable_location_url;
 	public static String TextDecoratorVariable_name;

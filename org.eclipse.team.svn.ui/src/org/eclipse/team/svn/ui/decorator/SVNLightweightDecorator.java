@@ -387,6 +387,17 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 						}
 						return "";												 //$NON-NLS-1$
 					}
+					else if (var.equals(TextVariableSetProvider.VAR_FULLPATH)) {
+						if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
+							String retVal = SVNUtility.getPathUpToRoot(remote);
+							int pos = retVal.lastIndexOf('/');
+							if (pos != -1) {
+								retVal = retVal.substring(0, pos);
+							}
+							return retVal;
+						}
+						return "";												 //$NON-NLS-1$
+					}
 					else if (var.equals(TextVariableSetProvider.VAR_REMOTE_NAME)) {
 						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? remote.getName() : ""; //$NON-NLS-1$
 					}
