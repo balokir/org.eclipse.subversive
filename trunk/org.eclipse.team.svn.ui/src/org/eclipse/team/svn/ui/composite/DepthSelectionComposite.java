@@ -280,7 +280,7 @@ public class DepthSelectionComposite extends Composite {
 					int selectionIndex = this.depthSelector.getSelectionIndex();
 					this.depthSelector.remove(index);
 					if (index == selectionIndex) {
-						this.depthSelector.select(0);
+						this.depthSelector.select(this.depthSelector.indexOf(infinity));
 					}
 				}
 			} else {
