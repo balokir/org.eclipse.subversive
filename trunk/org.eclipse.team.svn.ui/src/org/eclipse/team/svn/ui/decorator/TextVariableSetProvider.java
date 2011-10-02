@@ -30,6 +30,7 @@ public class TextVariableSetProvider implements IVariableSetProvider {
 	public static final String NAME_OF_ASCENDANT = "first_branchOrTag_child";
 	public static final String NAME_OF_DESCENDANT = "last_branchOrTag_child";
 	public static final String NAME_OF_FULLNAME = "fullname";
+	public static final String NAME_OF_FULLPATH = "fullpath"; // path, relative to the ROOT node (tags, branches, trunk) and without the resource name
 	public static final String NAME_OF_RESOURCE_URL = "resource_url";
 	public static final String NAME_OF_SHORT_RESOURCE_URL = "short_url";
 	public static final String NAME_OF_REMOTE_NAME = "remote_name";
@@ -46,6 +47,7 @@ public class TextVariableSetProvider implements IVariableSetProvider {
 	public static final IVariable VAR_ASCENDANT = new PredefinedVariable(TextVariableSetProvider.DOMAIN_NAME, TextVariableSetProvider.NAME_OF_ASCENDANT);
 	public static final IVariable VAR_DESCENDANT = new PredefinedVariable(TextVariableSetProvider.DOMAIN_NAME, TextVariableSetProvider.NAME_OF_DESCENDANT);
 	public static final IVariable VAR_FULLNAME = new PredefinedVariable(TextVariableSetProvider.DOMAIN_NAME, TextVariableSetProvider.NAME_OF_FULLNAME);
+	public static final IVariable VAR_FULLPATH = new PredefinedVariable(TextVariableSetProvider.DOMAIN_NAME, TextVariableSetProvider.NAME_OF_FULLPATH);
 	public static final IVariable VAR_RESOURCE_URL = new PredefinedVariable(TextVariableSetProvider.DOMAIN_NAME, TextVariableSetProvider.NAME_OF_RESOURCE_URL);
 	public static final IVariable VAR_SHORT_RESOURCE_URL = new PredefinedVariable(TextVariableSetProvider.DOMAIN_NAME, TextVariableSetProvider.NAME_OF_SHORT_RESOURCE_URL);
 	public static final IVariable VAR_REMOTE_NAME = new PredefinedVariable(TextVariableSetProvider.DOMAIN_NAME, TextVariableSetProvider.NAME_OF_REMOTE_NAME);
@@ -67,6 +69,7 @@ public class TextVariableSetProvider implements IVariableSetProvider {
 		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_ASCENDANT, TextVariableSetProvider.VAR_ASCENDANT);
 		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_DESCENDANT, TextVariableSetProvider.VAR_DESCENDANT);
 		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_FULLNAME, TextVariableSetProvider.VAR_FULLNAME);
+		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_FULLPATH, TextVariableSetProvider.VAR_FULLPATH);
 		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_RESOURCE_URL, TextVariableSetProvider.VAR_RESOURCE_URL);
 		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_SHORT_RESOURCE_URL, TextVariableSetProvider.VAR_SHORT_RESOURCE_URL);
 		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_REMOTE_NAME, TextVariableSetProvider.VAR_REMOTE_NAME);

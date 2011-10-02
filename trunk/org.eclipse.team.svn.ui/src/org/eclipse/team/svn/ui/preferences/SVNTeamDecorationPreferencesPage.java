@@ -367,6 +367,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		projectOptions.add(TextVariableSetProvider.VAR_ASCENDANT);
 		projectOptions.add(TextVariableSetProvider.VAR_DESCENDANT);
 		projectOptions.add(TextVariableSetProvider.VAR_FULLNAME);
+		projectOptions.add(TextVariableSetProvider.VAR_FULLPATH);
 		projectOptions.add(TextVariableSetProvider.VAR_RESOURCE_URL);
 		projectOptions.add(TextVariableSetProvider.VAR_SHORT_RESOURCE_URL);
 		projectOptions.add(TextVariableSetProvider.VAR_REMOTE_NAME);
@@ -807,6 +808,9 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_FULLNAME)) {
 				return SVNUIMessages.PreferencePage_demoFullname;
+			}
+			else if (var.equals(TextVariableSetProvider.VAR_FULLPATH)) {
+				return SVNUIMessages.PreferencePage_demoFullpath;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_AUTHOR)) {
 				return SVNUIMessages.PreferencePage_demoAuthor;
