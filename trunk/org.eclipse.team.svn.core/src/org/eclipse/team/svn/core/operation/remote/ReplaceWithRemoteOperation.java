@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
- *    Neels Hofmeyr - Replace with Revision fails to notice trivial changes on locked files (Bug 353875)
+ *    Neels Hofmeyr (elego.de) - Replace with Revision fails to notice trivial changes on locked files (Bug 353875)
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.remote;
