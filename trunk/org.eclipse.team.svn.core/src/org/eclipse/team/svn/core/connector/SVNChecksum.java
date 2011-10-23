@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.connector;
 
 /**
- * Annotation call-back interface
+ * The SVN checksum representation
  * 
  * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL connector library
  * is not EPL compatible and we won't to pin plug-in with concrete connector implementation. So, the only way to do this is
@@ -20,14 +20,43 @@ package org.eclipse.team.svn.core.connector;
  * 
  * @author Alexander Gurov
  */
-public interface ISVNAnnotationCallback {
+public class SVNChecksum {
 	/**
-	 * This method will be called by the connector library for every line in a file.
-	 * 
-	 * @param line
-	 *            the annotated line content
-	 * @param data
-	 *            the line annotation information. See {@link SVNAnnotationData}.
+	 * Pre-SVN 1.7
 	 */
-	public void annotate(String line, SVNAnnotationData data);
+	public static final int LEGACY = -1;
+	/**
+	 * MD5 checksum type
+	 */
+	public static final int MD5 = 0;
+	/**
+	 * SHA1 checksum type
+	 */
+	public static final int SHA1 = 1;
+
+	/**
+	 * Checksum kind
+	 */
+	public final int kind;
+
+	/**
+	 * Checksum data
+	 */
+	public final byte []digest;
+
+	/**
+	 * The {@link SVNChecksum} instance could be initialized only once because all fields are final
+	 * 
+	 * @param kind
+	 *            the checksum kind
+	 * @param digest
+	 *            the checksum digest
+	 */
+	public SVNChecksum(int kind, byte []digest) {
+		this.kind = kind;
+		this.digest = digest != null ? new byte[digest.length] : null;
+		if (digest != null) {
+			System.arraycopy(digest, 0, this.digest, 0, digest.length);
+		}
+	}
 }

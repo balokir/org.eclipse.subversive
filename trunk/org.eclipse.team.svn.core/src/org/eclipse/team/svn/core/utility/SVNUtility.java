@@ -47,7 +47,6 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
@@ -65,7 +64,6 @@ import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -131,16 +129,10 @@ public final class SVNUtility {
 		if (local.isCopied()) {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 			ISVNConnector proxy = location.acquireSVNProxy();
-			final SVNChangeStatus []st = new SVNChangeStatus[1];
+			final String path = FileUtility.getWorkingCopyPath(resource);
+			SVNEntryInfo []st = null;
 			try {
-				final String path = FileUtility.getWorkingCopyPath(resource);
-				proxy.status(path, ISVNConnector.Depth.EMPTY, ISVNConnector.Options.INCLUDE_UNCHANGED | Options.IGNORE_EXTERNALS, null, new ISVNEntryStatusCallback() {
-					public void next(SVNChangeStatus status) {
-						if (path.equals(status.path)) {
-							st[0] = status;
-						}
-					}
-				}, new SVNNullProgressMonitor());
+				st = SVNUtility.info(proxy, new SVNEntryRevisionReference(path), ISVNConnector.Depth.EMPTY, new SVNNullProgressMonitor());
 			}
 			catch (SVNConnectorException ex) {
 				return null;
@@ -150,7 +142,7 @@ public final class SVNUtility {
 			}
 			
 			if (st[0] != null) {
-				String url = st[0].urlCopiedFrom;
+				String url = st[0].copyFromUrl;
 				if (url == null) {
 					IResource parent = resource.getParent();
 					if (parent != null && parent.getType() != IResource.ROOT) {
@@ -164,7 +156,7 @@ public final class SVNUtility {
 					url = SVNUtility.decodeURL(url);
 				}
 				IRepositoryResource retVal = SVNRemoteStorage.instance().asRepositoryResource(location, url, resource.getType() == IResource.FILE);
-				retVal.setSelectedRevision(SVNRevision.fromNumber(st[0].revisionCopiedFrom == SVNRevision.INVALID_REVISION_NUMBER ? st[0].revision : st[0].revisionCopiedFrom));
+				retVal.setSelectedRevision(SVNRevision.fromNumber(st[0].copyFromRevision == SVNRevision.INVALID_REVISION_NUMBER ? st[0].revision : st[0].copyFromRevision));
 				return retVal;
 			}
 		}
@@ -303,6 +295,18 @@ public final class SVNUtility {
 				statuses.add(status);
 			}
 		}, monitor);
+		
+		for (Iterator<SVNChangeStatus> it = statuses.iterator(); it.hasNext() && !monitor.isActivityCancelled(); ) {
+			final SVNChangeStatus svnChangeStatus = it.next();
+			if (svnChangeStatus.hasConflict && svnChangeStatus.treeConflicts == null) {
+				proxy.info(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+					public void next(SVNEntryInfo info) {
+						svnChangeStatus.treeConflicts = info.treeConflicts;
+					}
+				}, monitor);
+			}
+		}
+		
 		return statuses.toArray(new SVNChangeStatus[statuses.size()]);
 	}
 	
@@ -350,6 +354,19 @@ public final class SVNUtility {
 		SVNLogEntryCallbackWithMergeInfo callback = new SVNLogEntryCallbackWithMergeInfo();
 		proxy.logEntries(reference, revisionRanges, revProps, limit, options, callback, monitor);
 		return callback.getEntries();
+	}
+	
+	public static SVNEntryInfo []info(SVNEntryRevisionReference reference) {
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		try {
+			return SVNUtility.info(proxy, reference, ISVNConnector.Depth.EMPTY, new SVNNullProgressMonitor());
+		}
+		catch (Exception ex) {
+			return null;
+		}
+		finally {
+			proxy.dispose();
+		}
 	}
 	
 	public static SVNEntryInfo []info(ISVNConnector proxy, SVNEntryRevisionReference reference, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {

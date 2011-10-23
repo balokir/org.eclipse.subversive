@@ -70,7 +70,7 @@ public class ScanLocksOperation extends AbstractActionOperation {
 						SVNChangeStatus[] changeStatuses = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), ScanLocksOperation.this.depth, ISVNConnector.Options.SERVER_SIDE, new SVNProgressMonitor(ScanLocksOperation.this, monitor, null));
 						//filter out resources which don't have locks
 						for (SVNChangeStatus status : changeStatuses) {				
-							if (status.lockToken != null || status.reposLock != null) {
+							if (status.wcLock != null || status.reposLock != null) {
 								lockStatuses.add(status);
 							}
 						}
@@ -112,25 +112,25 @@ public class ScanLocksOperation extends AbstractActionOperation {
 		Date creationDate = null;
 		String comment = null;
 				
-		if (status.lockToken != null && status.reposLock != null && status.lockOwner.equals(status.reposLock.owner) && status.lockToken.equals(status.reposLock.token)) {
+		if (status.wcLock != null && status.reposLock != null && status.wcLock.owner.equals(status.reposLock.owner) && status.wcLock.token.equals(status.reposLock.token)) {
 			//locally locked
 			lockStatus = LockStatusEnum.LOCALLY_LOCKED;
-			owner = status.lockOwner;
-			creationDate = new Date(status.lockCreationDate);
-			comment = status.lockComment;
-		} else if (status.lockToken == null && status.reposLock != null) {
+			owner = status.wcLock.owner;
+			creationDate = new Date(status.wcLock.creationDate);
+			comment = status.wcLock.comment;
+		} else if (status.wcLock.token == null && status.reposLock != null) {
 			//other locked
 			lockStatus = LockStatusEnum.OTHER_LOCKED;
 			owner = status.reposLock.owner;
 			creationDate = new Date(status.reposLock.creationDate);
 			comment = status.reposLock.comment;
-		} else if (status.lockToken != null && status.reposLock == null) {
+		} else if (status.wcLock.token != null && status.reposLock == null) {
 			//broken
 			lockStatus = LockStatusEnum.BROKEN;
-			owner = status.lockOwner;
-			creationDate = new Date(status.lockCreationDate);
-			comment = status.lockComment;
-		} else if (status.lockToken != null && status.reposLock != null && !status.lockToken.equals(status.reposLock.token)) {
+			owner = status.wcLock.owner;
+			creationDate = new Date(status.wcLock.creationDate);
+			comment = status.wcLock.comment;
+		} else if (status.wcLock.token != null && status.reposLock != null && !status.wcLock.token.equals(status.reposLock.token)) {
 			//stolen
 			lockStatus = LockStatusEnum.STOLEN;
 			owner = status.reposLock.owner;

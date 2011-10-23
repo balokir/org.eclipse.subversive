@@ -31,7 +31,7 @@ public class SVNMergeInfo {
 	/**
 	 * Kind of merge info log classes
 	 */
-	public class LogKind {
+	public static class LogKind {
 		/**
 		 * Does not exist
 		 */

@@ -89,8 +89,9 @@ public interface ISVNCallListener {
 	public final String GET_REVISION_PROPERTIES = "getRevisionProperties";
 	public final String GET_REVISION_PROPERTY = "getRevisionProperty";
 	public final String SET_REVISION_PROPERTY = "setRevisionProperty";
-	public final String REMOVE_REVISION_PROPERTY = "removeRevisionProperty";
 	public final String CREATE_REPOSITORY = "createRepository";
+	public final String UPGRADE = "upgrade";
+	public final String PATCH = "patch";
 	
 	/**
 	 * Allows to modify parameters before call (for example, you can wrap progress monitor in order to intercept progress notifications)

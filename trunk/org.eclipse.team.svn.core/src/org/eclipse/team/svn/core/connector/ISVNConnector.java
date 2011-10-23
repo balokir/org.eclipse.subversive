@@ -198,6 +198,26 @@ public interface ISVNConnector {
 		 * Fetch locks information also.
 		 */
 		public static final long FETCH_LOCKS = 0x200000;
+
+		/**
+		 * @since 1.7 Report copied resources as additions.
+		 */
+		public static final long COPIES_AS_ADDITIONS = 0x400000;
+
+		/**
+		 * @since 1.7 Reverse patch.
+		 */
+		public static final long REVERSE = 0x800000;
+
+		/**
+		 * @since 1.7 Ignore whitespace difference while applying patch.
+		 */
+		public static final long IGNORE_WHITESPACE = 0x1000000;
+
+		/**
+		 * @since 1.7 Remove temporary files after patch is applied.
+		 */
+		public static final long REMOVE_TEMPORARY_FILES = 0x2000000;
 	}
 
 	/**
@@ -342,7 +362,7 @@ public interface ISVNConnector {
 
 	public SVNMergeInfo getMergeInfo(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void getMergeInfoLog(int logKind, SVNEntryReference reference, SVNEntryReference mergeSourceReference, String[] revProps, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void getMergeInfoLog(int logKind, SVNEntryReference reference, SVNEntryReference mergeSourceReference, String[] revProps, int depth, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public String[] suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -356,6 +376,7 @@ public interface ISVNConnector {
 
 	public void dumpChangeLists(String[] changeLists, String rootPath, int depth, ISVNChangeListCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
+	//--
 	public void merge(SVNEntryReference reference, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void mergeStatus(SVNEntryReference reference, String mergePath, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
@@ -371,6 +392,7 @@ public interface ISVNConnector {
 	
 	public void mergeStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
 		throws SVNConnectorException;
+	//--
 
 	public void doImport(String path, String url, String message, int depth, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -418,19 +440,21 @@ public interface ISVNConnector {
 
 	public SVNProperty getProperty(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void setProperty(String path, String name, String value, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void setProperty(String []path, SVNProperty property, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void removeProperty(String path, String name, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void removeProperty(String []path, String name, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public SVNProperty []getRevisionProperties(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public SVNProperty getRevisionProperty(SVNEntryReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void setRevisionProperty(SVNEntryReference reference, String name, String value, String originalValue, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void setRevisionProperty(SVNEntryReference reference, SVNProperty property, String originalValue, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	
-	public void removeRevisionProperty(SVNEntryReference reference, String name, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
-
 	public void createRepository(String repositoryPath, String repositoryType, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	
+	public void upgrade(String path, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	
+	public void patch(String patchPath, String targetPath, int stripCount, long options, ISVNPatchCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	
 	public void dispose();
 }

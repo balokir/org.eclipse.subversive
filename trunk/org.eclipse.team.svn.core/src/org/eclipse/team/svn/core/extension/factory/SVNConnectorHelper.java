@@ -9,9 +9,8 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.core.connector;
+package org.eclipse.team.svn.core.extension.factory;
 
-import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 
 /**
  * Helper class for svn connectors

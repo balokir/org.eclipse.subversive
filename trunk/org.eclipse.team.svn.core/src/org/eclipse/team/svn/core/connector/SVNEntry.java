@@ -24,7 +24,7 @@ public class SVNEntry {
 	/**
 	 * Entry node kind enumeration
 	 */
-	public class Kind {
+	public static class Kind {
 		/**
 		 * The entry is absent.
 		 */

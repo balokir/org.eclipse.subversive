@@ -83,49 +83,9 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	public final int repositoryPropStatus;
 
 	/**
-	 * The file name of the repository version if the entry changes is in conflicting state
+	 * @since 1.7 The lock in the working copy (<code>null</code> if not locked)
 	 */
-	public final String conflictNew;
-
-	/**
-	 * The file name of the base version if the entry changes is in conflicting state
-	 */
-	public final String conflictOld;
-
-	/**
-	 * The file name of the local version if the entry changes is in conflicting state
-	 */
-	public final String conflictWorking;
-
-	/**
-	 * Points to the URL from which the entry is copied until commit
-	 */
-	public final String urlCopiedFrom;
-
-	/**
-	 * Points to the revision from which the entry is copied until commit
-	 */
-	public final long revisionCopiedFrom;
-
-	/**
-	 * @since 1.2 Token specified for the lock (<code>null</code> if not locked)
-	 */
-	public final String lockToken;
-
-	/**
-	 * @since 1.2 Owner of the lock (<code>null</code> if not locked)
-	 */
-	public final String lockOwner;
-
-	/**
-	 * @since 1.2 Comment specified for the lock (<code>null</code> if not locked)
-	 */
-	public final String lockComment;
-
-	/**
-	 * @since 1.2 The lock creation date in microseconds since the epoch
-	 */
-	public final long lockCreationDate;
+	public final SVNLock wcLock;
 
 	/**
 	 * @since 1.2 The lock in the repository (<code>null</code> if not locked)
@@ -154,16 +114,19 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	public final String reposLastCmtAuthor;
 
 	/**
-     * @since 1.6
-     * is this item in a tree conflicted state
+     * @since 1.7 Is this item in a conflicted state or not. Starting from SVN 1.7 all the conflicts-related information were deleted from the status entry.
      */
-    public final boolean hasTreeConflict;
+    public final boolean hasConflict;
 
     /**
-     * @since 1.6
-     * description of the tree conflict
+     * @since 1.6 description of the tree conflict. Is ignored by SVN 1.7 API, so we leave it as non-final field in order to upload the information later. I can hardly understand the reason why it was removed, it sure looks unreasonable.
      */
-    public final SVNConflictDescriptor treeConflictDescriptor;
+    public SVNConflictDescriptor []treeConflicts;
+
+	/**
+	 * @since 1.7 The entry's change list name
+	 */
+	public final String changeListName;
 	
 	/**
 	 * The {@link SVNChangeStatus} instance could be initialized only once because all fields are final
@@ -194,26 +157,10 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	 *            if the item is locked (running or aborted operation)
 	 * @param copied
 	 *            if the item is copy
-	 * @param conflictOld
-	 *            in case of conflict, the file name of the the common base version
-	 * @param conflictNew
-	 *            in case of conflict, the file name of new repository version
-	 * @param conflictWorking
-	 *            in case of conflict, the file name of the former working copy version
-	 * @param urlCopiedFrom
-	 *            if copied, the url of the copy source
-	 * @param revisionCopiedFrom
-	 *            if copied, the revision number of the copy source
 	 * @param switched
 	 *            flag if the node has been switched in the path
-	 * @param lockToken
-	 *            the token for the current lock if any
-	 * @param lockOwner
-	 *            the owner of the current lock is any
-	 * @param lockComment
-	 *            the comment of the current lock if any
-	 * @param lockCreationDate
-	 *            the date, the lock was created if any
+	 * @param wcLock
+	 *            the lock as stored in the working copy if any
 	 * @param reposLock
 	 *            the lock as stored in the repository if any
 	 * @param reposLastCmtRevision
@@ -226,16 +173,18 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	 *            the author of the last commit, if out of date
 	 * @param isFileExternal
 	 *            has the item is a file external
-	 * @param hasTreeConflict
-	 *            is this item in a tree conflicted state
-	 * @param treeConflictDescriptor
-	 *            description of the tree conflict
+	 * @param hasConflict
+	 *            is this item in a conflicted state or not
+	 * @param treeConflicts
+	 *            description of the tree conflict. Is ignored by SVN 1.7 API, so we leave it as non-final field in order to upload the information later. I can hardly understand the reason why it was removed, it sure looks unreasonable.
+	 * @param changeListName
+	 *            The entry's change list name
 	 */
 	public SVNChangeStatus(String path, String url, int nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, int textStatus,
-			int propStatus, int repositoryTextStatus, int repositoryPropStatus, boolean locked, boolean copied, String conflictOld, String conflictNew, String conflictWorking,
-			String urlCopiedFrom, long revisionCopiedFrom, boolean switched, String lockToken, String lockOwner, String lockComment, long lockCreationDate, SVNLock reposLock,
+			int propStatus, int repositoryTextStatus, int repositoryPropStatus, boolean locked, boolean copied,
+			boolean switched, SVNLock wcLock, SVNLock reposLock,
 			long reposLastCmtRevision, long reposLastCmtDate, int reposKind, String reposLastCmtAuthor,
-			boolean isFileExternal, boolean hasTreeConflict, SVNConflictDescriptor treeConflictDescriptor) {
+			boolean isFileExternal, boolean hasConflict, SVNConflictDescriptor []treeConflicts, String changeListName) {
 		super(nodeKind, textStatus, propStatus);
 		this.path = path;
 		this.url = url;
@@ -247,24 +196,17 @@ public class SVNChangeStatus extends SVNEntryStatus {
 		this.isCopied = copied;
 		this.repositoryTextStatus = repositoryTextStatus;
 		this.repositoryPropStatus = repositoryPropStatus;
-		this.conflictOld = conflictOld;
-		this.conflictNew = conflictNew;
-		this.conflictWorking = conflictWorking;
-		this.urlCopiedFrom = urlCopiedFrom;
-		this.revisionCopiedFrom = revisionCopiedFrom;
 		this.isSwitched = switched;
-		this.lockToken = lockToken;
-		this.lockOwner = lockOwner;
-		this.lockComment = lockComment;
-		this.lockCreationDate = lockCreationDate;
+		this.wcLock = wcLock;
 		this.reposLock = reposLock;
 		this.reposLastCmtRevision = reposLastCmtRevision;
 		this.reposLastCmtDate = reposLastCmtDate;
 		this.reposKind = reposKind;
 		this.reposLastCmtAuthor = reposLastCmtAuthor;
 		this.isFileExternal = isFileExternal;
-		this.hasTreeConflict = hasTreeConflict;
-		this.treeConflictDescriptor = treeConflictDescriptor;
+		this.hasConflict = hasConflict;
+		this.treeConflicts = treeConflicts;
+		this.changeListName = changeListName;
 	}
 
 }

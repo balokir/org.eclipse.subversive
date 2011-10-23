@@ -116,7 +116,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				final ISVNConnector proxy = ThreeWayPropertyCompareInput.this.location.acquireSVNProxy();
 				try {
-					proxy.removeProperty(ThreeWayPropertyCompareInput.this.left.path, propName, Depth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
+					proxy.removeProperty(new String[] {ThreeWayPropertyCompareInput.this.left.path}, propName, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 				}
 				finally {
 					ThreeWayPropertyCompareInput.this.location.releaseSVNProxy(proxy);

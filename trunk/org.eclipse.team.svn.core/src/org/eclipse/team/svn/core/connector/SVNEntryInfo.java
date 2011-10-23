@@ -24,7 +24,7 @@ public class SVNEntryInfo {
 	/**
 	 * Enumeration of operation types which could be scheduled for the working copy entries
 	 */
-	public class ScheduledOperation {
+	public static class ScheduledOperation {
 		/**
 		 * No operation scheduled
 		 */
@@ -50,6 +50,11 @@ public class SVNEntryInfo {
 	 * The entry local path.
 	 */
 	public final String path;
+
+    /**
+     * @since 1.7 The working copy root
+     */
+    public final String wcRoot;
 
 	/**
 	 * The entry URL.
@@ -127,29 +132,25 @@ public class SVNEntryInfo {
 	public final long propTime;
 
 	/**
-	 * The entry checksum.
+	 * @since 1.7 The entry checksum.
 	 */
-	public final String checksum;
+	public final SVNChecksum checksum;
 
 	/**
-	 * The filename of the base version file (if the entry is in conflicting state).
+	 * @since 1.7 The entry's change list name
 	 */
-	public final String conflictOld;
+	public final String changeListName;
 
 	/**
-	 * The filename of the last repository version file (if the entry is in conflicting state).
+	 * @since 1.7 The size of the file after being translated into its local representation, or <code>-1</code> if unknown. Not applicable for directories.
 	 */
-	public final String conflictNew;
+	public final long wcSize;
 
 	/**
-	 * The filename of the working copy version file (if the entry is in conflicting state).
+	 * @since 1.7 The size of the file in the repository (untranslated, e.g. without adjustment of line endings and keyword expansion). Only applicable for file -- not directory -- URLs.
+     * For working copy paths, size will be <code>-1</code>.
 	 */
-	public final String conflictWrk;
-
-	/**
-	 * The rejected properties file.
-	 */
-	public final String propertyRejectFile;
+	public final long reposSize;
 
     /**
      * The depth of the directory or <code>null</code> if the item is a file.
@@ -161,12 +162,13 @@ public class SVNEntryInfo {
      * Info on any tree conflict of which this node is a victim
      * @since 1.6
      */
-	public final SVNConflictDescriptor treeConflict;
+	public final SVNConflictDescriptor []treeConflicts;
 	
-	public SVNEntryInfo(String path, String url, long rev, int kind, String reposRootUrl, String reposUUID, long lastChangedRev, long lastChangedDate, String lastChangedAuthor, SVNLock lock,
-			boolean hasWcInfo, int schedule, String copyFromUrl, long copyFromRev, long textTime, long propTime, String checksum, String conflictOld, String conflictNew,
-			String conflictWrk, String propertyRejectFile, int depth, SVNConflictDescriptor treeConflict) {
+	public SVNEntryInfo(String path, String wcRoot, String url, long rev, int kind, String reposRootUrl, String reposUUID, long lastChangedRev, long lastChangedDate, String lastChangedAuthor, SVNLock lock,
+			boolean hasWcInfo, int schedule, String copyFromUrl, long copyFromRev, long textTime, long propTime, SVNChecksum checksum, String changeListName, long wcSize, long reposSize,
+			int depth, SVNConflictDescriptor []treeConflicts) {
 		this.path = path;
+		this.wcRoot = wcRoot;
 		this.url = url;
 		this.revision = rev;
 		this.kind = kind;
@@ -183,12 +185,14 @@ public class SVNEntryInfo {
 		this.textTime = textTime;
 		this.propTime = propTime;
 		this.checksum = checksum;
-		this.conflictOld = conflictOld;
-		this.conflictNew = conflictNew;
-		this.conflictWrk = conflictWrk;
-		this.propertyRejectFile = propertyRejectFile;
+		this.changeListName = changeListName;
+		this.wcSize = wcSize;
+		this.reposSize = reposSize;
 		this.depth = depth;
-		this.treeConflict = treeConflict;
+		this.treeConflicts = treeConflicts != null ? new SVNConflictDescriptor[treeConflicts.length] : null;
+		if (treeConflicts != null) {
+			System.arraycopy(treeConflicts, 0, this.treeConflicts, 0, treeConflicts.length);
+		}
 	}
 
 }

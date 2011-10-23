@@ -34,6 +34,11 @@ public class SVNConflictDescriptor {
 		 * Conflicting properties
 		 */
 		public static final int PROPERTIES = 1;
+
+		/**
+		 * @since 1.7 Tree structure conflict
+		 */
+		public static final int TREE = 2;
 	}
 
 	/**

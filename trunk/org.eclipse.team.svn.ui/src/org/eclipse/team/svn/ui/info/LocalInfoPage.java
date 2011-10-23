@@ -76,7 +76,7 @@ public class LocalInfoPage extends PropertyPage {
 		composite.setLayoutData(data);
 		
 		this.resource = (IResource)Util.getAdapter(this.getElement(), IResource.class);
-		InfoOperation op = new InfoOperation(resource);
+		InfoOperation op = new InfoOperation(this.resource);
 		UIMonitorUtility.doTaskBusyDefault(op);
 		
 		this.local = op.getLocal();
@@ -94,7 +94,7 @@ public class LocalInfoPage extends PropertyPage {
 		data.widthHint = 300;
 		content.setLayoutData(data);
 		content.setEditable(false);
-		content.setText(resource.getFullPath().toString());
+		content.setText(this.resource.getFullPath().toString());
 		
 		//text status
 		description = new Label(composite, SWT.WRAP);
@@ -104,7 +104,7 @@ public class LocalInfoPage extends PropertyPage {
 		content = new Text(composite, SWT.SINGLE);
 		content.setLayoutData(new GridData());
 		content.setEditable(false);
-		content.setText(SVNUtility.getStatusText(local.getTextStatus()));
+		content.setText(SVNUtility.getStatusText(this.local.getTextStatus()));
 
 		//property status
 		description = new Label(composite, SWT.WRAP);
@@ -114,7 +114,7 @@ public class LocalInfoPage extends PropertyPage {
 		content = new Text(composite, SWT.SINGLE);
 		content.setLayoutData(new GridData());
 		content.setEditable(false);
-		content.setText(SVNUtility.getStatusText(local.getPropStatus()));
+		content.setText(SVNUtility.getStatusText(this.local.getPropStatus()));
 		
 		//is copied
 		description = new Label(composite, SWT.WRAP);
@@ -124,10 +124,10 @@ public class LocalInfoPage extends PropertyPage {
 		content = new Text(composite, SWT.SINGLE);
 		content.setLayoutData(new GridData());
 		content.setEditable(false);
-		content.setText(String.valueOf(local.isCopied()));		
+		content.setText(String.valueOf(this.local.isCopied()));		
 							
 		SVNEntryInfo info = op.getInfo();
-		if (IStateFilter.SF_ONREPOSITORY.accept(local) && info != null) {
+		if (IStateFilter.SF_ONREPOSITORY.accept(this.local) && info != null) {
 		    // add space
 		    new Label(composite, SWT.WRAP);
 		    new Label(composite, SWT.WRAP);
@@ -225,7 +225,7 @@ public class LocalInfoPage extends PropertyPage {
 		}
 		
 		//tree conflict		
-		if (local.hasTreeConflict()) {
+		if (this.local.hasTreeConflict()) {
 			//add space
 	    	new Label(composite, SWT.WRAP);
 	    	new Label(composite, SWT.WRAP);
@@ -238,12 +238,12 @@ public class LocalInfoPage extends PropertyPage {
 			data.widthHint = 300;
 			content.setLayoutData(data);
 			content.setEditable(false);		
-			content.setText(this.getTreeConflictDescription(local.getTreeConflictDescriptor()));
+			content.setText(this.getTreeConflictDescription(this.local.getTreeConflictDescriptor()));
 		}
 				
 		this.createOptions(composite);
 		
-		if (IStateFilter.SF_VERSIONED.accept(local)) {
+		if (IStateFilter.SF_VERSIONED.accept(this.local)) {
 			//add space
 			new Label(composite, SWT.WRAP);
 		    new Label(composite, SWT.WRAP);
@@ -258,7 +258,7 @@ public class LocalInfoPage extends PropertyPage {
 		    this.properties = new PropertiesComposite(group);
 		    IResourcePropertyProvider propertyProvider = new GetPropertiesOperation(resource);
 		    UIMonitorUtility.doTaskBusyDefault(propertyProvider);
-			this.properties.setResource(resource, propertyProvider);
+			this.properties.setResource(this.resource, propertyProvider);
 			UIMonitorUtility.doTaskBusyDefault(this.properties.getRefreshViewOperation());
 			this.properties.setLayoutData(new GridData(GridData.FILL_BOTH));
 		}

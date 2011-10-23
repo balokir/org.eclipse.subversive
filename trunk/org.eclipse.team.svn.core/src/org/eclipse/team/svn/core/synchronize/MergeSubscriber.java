@@ -170,9 +170,6 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			public SVNConflictDescriptor getTreeConflictDescriptor() {
 				return current.treeConflictDescriptor;
 			}
-			public boolean hasTreeConflict() {
-				return current.hasTreeConflict;
-			}
 		};
 		if (endProvider.getNodeKind() == SVNEntry.Kind.NONE && !current.hasTreeConflict) {
 			return null;
@@ -227,9 +224,6 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			}			
 			public SVNConflictDescriptor getTreeConflictDescriptor() {
 				return current.treeConflictDescriptor;
-			}
-			public boolean hasTreeConflict() {
-				return current.hasTreeConflict;
 			}
 		};
 		IResourceChange startResourceChange = SVNRemoteStorage.instance().asResourceChange(startProvider, false);

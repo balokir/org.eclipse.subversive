@@ -92,7 +92,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 		    final SVNProperty current = properties[i];
 		    this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
-					proxy.setProperty(wcPath, current.name, current.value, Depth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
+					proxy.setProperty(new String[] {wcPath}, current, Depth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
                 }
             }, monitor, properties.length);
 		}

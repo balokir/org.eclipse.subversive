@@ -32,6 +32,5 @@ public interface IChangeStateProvider {
 	public boolean isCopied();
 	public boolean isSwitched();
 	public IResource getExact(IResource []set);
-	public boolean hasTreeConflict();
 	SVNConflictDescriptor getTreeConflictDescriptor();
 }

@@ -12,10 +12,12 @@
 package org.eclipse.team.svn.core.synchronize.variant;
 
 import org.eclipse.team.core.variants.CachedResourceVariant;
-import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -59,8 +61,8 @@ public abstract class ResourceVariant extends CachedResourceVariant {
 	
 	public String getContentIdentifier() {
 	    if (this.local.isCopied()) {
-	    	SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(this.local.getResource());
-	    	return st != null ? String.valueOf(st.revisionCopiedFrom) : "unversioned"; 
+			SVNEntryInfo []st = SVNUtility.info(new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.local.getResource())));
+	    	return st != null ? String.valueOf(st[0].copyFromRevision) : "unversioned"; 
 	    }
 	    if (this.isNotOnRepository()) {
 	        return "unversioned";

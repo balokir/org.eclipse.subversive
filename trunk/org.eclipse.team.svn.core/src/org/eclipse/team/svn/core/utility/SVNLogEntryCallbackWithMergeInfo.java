@@ -8,10 +8,14 @@
  * Contributors:
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.svn.core.connector;
+package org.eclipse.team.svn.core.utility;
 
 import java.util.ArrayList;
 import java.util.Stack;
+
+import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
  * LogEntry call-back implementation which includes merge info

@@ -24,7 +24,7 @@ public class SVNNotification {
 	/**
 	 * Enumeration of possible working copy entry locking states
 	 */
-	public class NodeLock {
+	public static class NodeLock {
 		/**
 		 * The operation does not require any locks
 		 */
@@ -50,6 +50,9 @@ public class SVNNotification {
 		 */
 		public static final int UNLOCKED = 4;
 
+		public static boolean isKnownStatus(int status) {
+			return status >= NodeLock.INAPPLICABLE /*0*/ && status <= NodeLock.UNLOCKED /*4*/;
+		}
 	}
 
 	/**
@@ -96,6 +99,10 @@ public class SVNNotification {
 		 */
 		public static final int CONFLICTED = 7;
 
+		public static boolean isKnownStatus(int status) {
+			return status >= NodeStatus.INAPPLICABLE /*0*/ && status <= NodeStatus.CONFLICTED /*7*/;
+		}
+		
 		/**
 		 * The textual representation for the status types
 		 */
@@ -112,6 +119,8 @@ public class SVNNotification {
 	 * The connector library actions enumeration
 	 */
 	public static class PerformedAction {
+		public static final int _UNNKNOWN_COMMAND = -1;
+
 		/**
 		 * Adding a path to revision control.
 		 */
@@ -319,11 +328,156 @@ public class SVNNotification {
 	     */
 	    public static final int TREE_CONFLICT = 38;
 
+		/**
+		 * @since 1.7 A path has moved to another changelist.
+		 */
+		public static final int CHANGELIST_MOVED = 39;
+
+		/**
+		 * @since 1.7 A path has moved to another changelist.
+		 */
+		public static final int FAILED_EXTERNAL = 40;
+
+		/**
+		 * @since 1.7 Starting an update operation.
+		 */
+		public static final int UPDATE_STARTED = 41;
+
+		/**
+		 * @since 1.7 Skipping an obstruction working copy.
+		 */
+		public static final int UPDATE_SKIP_OBSTRUCTION = 42;
+
+		/**
+		 * @since 1.7 Skipping a working only node.
+		 */
+		public static final int UPDATE_SKIP_WORKING_ONLY = 43;
+
+		/**
+		 * @since 1.7 Skipped a file or directory to which access couldn't be obtained.
+		 */
+		public static final int UPDATE_SKIP_ACCESS_DENIED = 44;
+
+		/**
+		 * @since 1.7 An update operation removed an external working copy.
+		 */
+		public static final int UPDATE_EXTERNAL_REMOVED = 45;
+
+		/**
+		 * @since 1.7 Applying a shadowed add.
+		 */
+		public static final int UPDATE_SHADOWED_ADD = 46;
+
+		/**
+		 * @since 1.7 Applying a shadowed update.
+		 */
+		public static final int UPDATE_SHADOWED_UPDATE = 47;
+
+		/**
+		 * @since 1.7 Applying a shadowed delete.
+		 */
+		public static final int UPDATE_SHADOWED_DELETE = 48;
+
+		/**
+		 * @since 1.7 The mergeinfo on path was updated.
+		 */
+		public static final int MERGE_RECORD_INFO = 49;
+
+		/**
+		 * @since 1.7 An working copy directory was upgraded to the latest format.
+		 */
+		public static final int UPGRADED_PATH = 50;
+
+		/**
+		 * @since 1.7 Mergeinfo describing a merge was recorded.
+		 */
+		public static final int MERGE_RECORD_INFO_BEGIN = 51;
+
+		/**
+		 * @since 1.7 Mergeinfo was removed due to elision.
+		 */
+		public static final int MERGE_ELIDE_INFO = 52;
+
+		/**
+		 * @since 1.7 A file in the working copy was patched.
+		 */
+		public static final int PATCH = 53;
+
+		/**
+		 * @since 1.7 A hunk from a patch was applied.
+		 */
+		public static final int PATCH_APPLIED_HUNK = 54;
+
+		/**
+		 * @since 1.7 A hunk from a patch was rejected.
+		 */
+		public static final int PATCH_REJECTED_HUNK = 55;
+
+		/**
+		 * @since 1.7 A hunk from a patch was found to be already applied.
+		 */
+		public static final int PATCH_HUNK_ALREADY_APPLIED = 56;
+
+		/**
+		 * @since 1.7 Committing a non-overwriting copy (path is the target of the copy, not the source).
+		 */
+		public static final int COMMIT_COPIED = 57;
+
+		/**
+		 * @since 1.7 Committing an overwriting (replace) copy (path is the target of the copy, not the source).
+		 */
+		public static final int COMMIT_COPIED_REPLACED = 58;
+
+		/**
+		 * @since 1.7 The server has instructed the client to follow a URL redirection.
+		 */
+		public static final int URL_REDIRECT = 59;
+
+		/**
+		 * @since 1.7 The operation was attempted on a path which doesn't exist.
+		 */
+		public static final int PATH_NONEXISTENT = 60;
+
+		/**
+		 * @since 1.7 Removing a path by excluding it.
+		 */
+		public static final int EXCLUDE = 61;
+
+		/**
+		 * @since 1.7 Operation failed because the node remains in conflict.
+		 */
+		public static final int FAILED_CONFLICT = 62;
+
+		/**
+		 * @since 1.7 Operation failed because an added node is missing.
+		 */
+		public static final int FAILED_MISSING = 63;
+
+		/**
+		 * @since 1.7 Operation failed because a node is out of date.
+		 */
+		public static final int FAILED_OUT_OF_DATE = 64;
+
+		/**
+		 * @since 1.7 Operation failed because an added parent is not selected.
+		 */
+		public static final int FAILED_NO_PARENT = 65;
+
+		/**
+		 * @since 1.7 Operation failed because a node is locked.
+		 */
+		public static final int FAILED_LOCKED = 66;
+
+		/**
+		 * @since 1.7 Operation failed because the operation was forbidden.
+		 */
+		public static final int FAILED_FORBIDDEN_BY_SERVER = 67;
+
 		/*
 		 * Sometime native JavaHL client returns -1 as action (for example when file is replaced in branch then merged into trunk)...
 		 */
 		public static boolean isKnownAction(int action) {
-			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.TREE_CONFLICT /*38*/;
+			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.FAILED_FORBIDDEN_BY_SERVER /*67*/;
 		}
 		
 		/**
@@ -333,7 +487,11 @@ public class SVNNotification {
 				"update modified", "update completed", "update external", "status completed", "status external", "sending modified", "sending added", "sending deleted",
 				"sending replaced", "transfer", "blame revision processed", "locked", "unlocked", "locking failed", "unlocking failed", "path exists", "changelist set",
 				"changelist cleared", "merge begin", "foreign merge begin", "replaced",
-				"property added", "property modified", "property deleted", "nonexistent property deleted", "revprop set", "revprop deleted", "merge completed", "tree conflict"};
+				"property added", "property modified", "property deleted", "nonexistent property deleted", "revprop set", "revprop deleted", "merge completed", "tree conflict",
+				"changelist moved", "failed external", "update started", "update skip obstruction", "update skip working only", "update skip access denied", "update external removed",
+				"update shadowed add", "update shadowed update", "update shadowed delete", "merge record info", "upgraded path", "merge record info begin", "Merge elide info", 
+				"patch", "patch applied hunk", "patch rejected hunk", "patch hunk already applied", "commit copied", "commit copied replaced", "url redirect", "path nonexistent",
+				"exclude", "failed conflict", "failed missing", "failed out of date", "failed no parent", "failed by lock", "failed forbidden by server"};
 	}
 
 	/**
