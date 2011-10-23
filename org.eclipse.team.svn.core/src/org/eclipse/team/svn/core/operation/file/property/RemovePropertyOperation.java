@@ -65,7 +65,7 @@ public class RemovePropertyOperation extends AbstractFileOperation {
 					    final String name = RemovePropertyOperation.this.names[i];
 					    RemovePropertyOperation.this.protectStep(new IUnprotectedOperation() {
 			                public void run(IProgressMonitor monitor) throws Exception {
-			        			proxy.removeProperty(current.getAbsolutePath(), name, RemovePropertyOperation.this.isRecursive ? Depth.INFINITY : Depth.EMPTY, null, new SVNProgressMonitor(RemovePropertyOperation.this, monitor, null));
+			        			proxy.removeProperty(new String[] {current.getAbsolutePath()}, name, RemovePropertyOperation.this.isRecursive ? Depth.INFINITY : Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(RemovePropertyOperation.this, monitor, null));
 			                }
 			            }, monitor, RemovePropertyOperation.this.names.length);
 					}

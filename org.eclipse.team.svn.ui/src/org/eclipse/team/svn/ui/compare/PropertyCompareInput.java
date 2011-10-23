@@ -364,7 +364,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			ISVNConnector proxy = this.location.acquireSVNProxy();
 			try {
-				proxy.setProperty(this.reference.path, this.propToSet.name, this.propToSet.value, Depth.EMPTY, ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null));
+				proxy.setProperty(new String[] {this.reference.path}, new SVNProperty(this.propToSet.name, this.propToSet.value), Depth.EMPTY, ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
 				this.location.releaseSVNProxy(proxy);

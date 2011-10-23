@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.connector;
 
 /**
- * Annotation call-back interface
+ * Patch call-back interface
  * 
  * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL connector library
  * is not EPL compatible and we won't to pin plug-in with concrete connector implementation. So, the only way to do this is
@@ -20,14 +20,17 @@ package org.eclipse.team.svn.core.connector;
  * 
  * @author Alexander Gurov
  */
-public interface ISVNAnnotationCallback {
+public interface ISVNPatchCallback {
 	/**
-	 * This method will be called by the connector library for every line in a file.
+	 * This method will be called by the connector library for an every single patched file.
 	 * 
-	 * @param line
-	 *            the annotated line content
-	 * @param data
-	 *            the line annotation information. See {@link SVNAnnotationData}.
+	 * @param pathFromPatchfile
+	 *            the path in the patch file
+	 * @param patchPath
+	 *            the path of the patch
+	 * @param rejectPath
+	 *            the path of the reject file
+	 * @return <code>true</code> to filter out the prospective patch
 	 */
-	public void annotate(String line, SVNAnnotationData data);
+	public boolean singlePatch(String pathFromPatchfile, String patchPath, String rejectPath);
 }

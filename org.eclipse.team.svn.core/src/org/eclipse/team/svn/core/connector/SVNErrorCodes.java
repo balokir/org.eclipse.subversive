@@ -150,6 +150,9 @@ public class SVNErrorCodes {
 	public static final int wcCopyfromPathNotFound = 155028;
 
 	public static final int wcChangelistMove = 155029;
+	
+	// working copy was created by SVN version earlier then (1.7)
+	public static final int wcOldFormat = 155036;
 
 	public static final int fsGeneral = 160000;
 

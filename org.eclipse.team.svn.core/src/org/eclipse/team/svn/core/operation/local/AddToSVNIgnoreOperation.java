@@ -104,7 +104,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 			}
 		}
 		ignoreValue = AddToSVNIgnoreOperation.addMask(ignoreValue, mask);
-		proxy.setProperty(path, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
+		proxy.setProperty(new String[] {path}, new SVNProperty(BuiltIn.IGNORE, ignoreValue), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 	}
 	
 	protected static String addMask(String ignore, String mask) {

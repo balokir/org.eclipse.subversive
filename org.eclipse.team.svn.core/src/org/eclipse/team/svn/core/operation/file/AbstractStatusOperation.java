@@ -13,14 +13,18 @@ package org.eclipse.team.svn.core.operation.file;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -53,18 +57,38 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 		File []files = this.operableData();
 
 		final List<SVNChangeStatus> result = new ArrayList<SVNChangeStatus>();
+		final List<SVNChangeStatus> conflicts = new ArrayList<SVNChangeStatus>();
+		
 		ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
 				result.add(status);
+				if (status.hasConflict && status.treeConflicts == null) {
+					conflicts.add(status);
+				}
 			}
 		};
 		for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 			IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(files[i], false);
 			
 			IRepositoryLocation location = remote.getRepositoryLocation();
-			ISVNConnector proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 
+			conflicts.clear();
+			
 			this.reportStatuses(proxy, cb, files[i], monitor, files.length);
+			
+			for (Iterator<SVNChangeStatus> it = conflicts.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+				final SVNChangeStatus svnChangeStatus = it.next();
+				this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						proxy.info(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+							public void next(SVNEntryInfo info) {
+								svnChangeStatus.treeConflicts = info.treeConflicts;
+							}
+						}, new SVNProgressMonitor(AbstractStatusOperation.this, monitor, null, false));
+					}
+				}, monitor, files.length);
+			}
 			
 			location.releaseSVNProxy(proxy);
 		}
@@ -76,7 +100,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 			public void run(IProgressMonitor monitor) throws Exception {
 				proxy.status(
 						current.getAbsolutePath(), 
-						Depth.infinityOrImmediates(AbstractStatusOperation.this.recursive), AbstractStatusOperation.this.isRemote() ? ISVNConnector.Options.SERVER_SIDE: ISVNConnector.Options.NONE, null, cb, 
+						Depth.infinityOrImmediates(AbstractStatusOperation.this.recursive), AbstractStatusOperation.this.isRemote() ? ISVNConnector.Options.SERVER_SIDE : ISVNConnector.Options.NONE, null, cb, 
 						new SVNProgressMonitor(AbstractStatusOperation.this, monitor, null, false));
 			}
 		}, monitor, tasks);

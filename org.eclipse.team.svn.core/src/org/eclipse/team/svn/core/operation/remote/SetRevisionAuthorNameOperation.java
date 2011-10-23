@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
@@ -65,7 +66,7 @@ public class SetRevisionAuthorNameOperation extends AbstractActionOperation {
 			final SVNRevision rev =  SVNRevision.fromNumber(revisions[i].revision);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.setRevisionProperty(new SVNEntryReference(location.getUrl(), rev) , "svn:author", location.getAuthorName(), null, SetRevisionAuthorNameOperation.this.options, new SVNProgressMonitor(SetRevisionAuthorNameOperation.this, monitor, null)); //$NON-NLS-1$
+					proxy.setRevisionProperty(new SVNEntryReference(location.getUrl(), rev) , new SVNProperty(SVNProperty.BuiltIn.REV_AUTHOR, location.getAuthorName()), null, SetRevisionAuthorNameOperation.this.options, new SVNProgressMonitor(SetRevisionAuthorNameOperation.this, monitor, null)); //$NON-NLS-1$
 				}
 			}
 			, monitor, 1);			

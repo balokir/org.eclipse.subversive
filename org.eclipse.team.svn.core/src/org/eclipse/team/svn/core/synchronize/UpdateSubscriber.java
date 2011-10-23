@@ -126,10 +126,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				return FileUtility.selectOneOf(scope, set);
 			}
 			public SVNConflictDescriptor getTreeConflictDescriptor() {
-				return current.treeConflictDescriptor;
-			}
-			public boolean hasTreeConflict() {
-				return current.hasTreeConflict;
+				return current.treeConflicts == null ? null : current.treeConflicts[0];
 			}
 		};
 		if (provider.getNodeKind() == SVNEntry.Kind.NONE) {
@@ -206,7 +203,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 	
 	protected boolean isIncoming(SVNEntryStatus status) {
 		SVNChangeStatus st = (SVNChangeStatus)status;
-		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE || st.hasTreeConflict;
+		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE || st.hasConflict;
 	}
 	
 	/* 

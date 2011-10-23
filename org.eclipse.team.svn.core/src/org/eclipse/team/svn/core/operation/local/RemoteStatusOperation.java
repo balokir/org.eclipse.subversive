@@ -12,9 +12,11 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
@@ -23,14 +25,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNRevision.Number;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -74,9 +79,13 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			projectPaths.add(new Path(FileUtility.getWorkingCopyPath(resources[i].getProject())));
 		}
 		final HashMap<IPath, SVNChangeStatus> result = new HashMap<IPath, SVNChangeStatus>();
+		final List<SVNChangeStatus> conflicts = new ArrayList<SVNChangeStatus>();
 		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
 				result.put(new Path(status.path), status);
+				if (status.hasConflict && status.treeConflicts == null) {
+					conflicts.add(status);
+				}
 				String parent = new File(status.path).getParent();
 				if (parent != null) {// can be null for drive roots
 					IPath projectPath = this.getProjectPath(parent);
@@ -121,7 +130,11 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			private SVNChangeStatus makeStatus(String path, SVNChangeStatus status) {
 				int deltaSegments = new Path(status.path).segmentCount() - new Path(path).segmentCount();
-				return new SVNChangeStatus(path, status.url != null ? SVNUtility.createPathForSVNUrl(status.url).removeLastSegments(deltaSegments).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor, false, false, null);
+				return new SVNChangeStatus(
+						path, status.url != null ? SVNUtility.createPathForSVNUrl(status.url).removeLastSegments(deltaSegments).toString() : null, SVNEntry.Kind.DIR, 
+						SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, 
+						SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, false, null, null, status.reposLastCmtRevision, status.reposLastCmtDate, 
+						SVNEntry.Kind.DIR, status.reposLastCmtAuthor, false, false, null, null);
 			}
 			
 			private IPath getProjectPath(String path) {
@@ -142,6 +155,8 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			final IResource current = resources[i];
 			ProgressMonitorUtility.setTaskInfo(monitor, this, current.getFullPath().toString());
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn status -u \"" + FileUtility.normalizePath(current.getLocation().toString()) + "\\"" + FileUtility.getUsernameParam(location.getUsername()) + "\\n"
+			conflicts.clear();
+			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.status(
@@ -151,6 +166,19 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 				}
 			}, monitor, resources.length);
 			SVNUtility.removeSVNNotifyListener(proxy, this);
+			
+			for (Iterator<SVNChangeStatus> it = conflicts.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+				final SVNChangeStatus svnChangeStatus = it.next();
+				this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						proxy.info(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+							public void next(SVNEntryInfo info) {
+								svnChangeStatus.treeConflicts = info.treeConflicts;
+							}
+						}, new SVNProgressMonitor(RemoteStatusOperation.this, monitor, null, false));
+					}
+				}, monitor, resources.length);
+			}
 			
 			location.releaseSVNProxy(proxy);
 		}

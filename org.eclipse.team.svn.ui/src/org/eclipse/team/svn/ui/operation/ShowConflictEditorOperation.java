@@ -106,7 +106,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		
 		try {
 			SVNChangeStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
-			if (status.length == 1 && status[0].conflictNew != null && status[0].conflictOld != null) {
+			if (status.length == 1 && status[0].hasConflict && status[0].treeConflicts[0].remotePath != null && status[0].treeConflicts[0].basePath != null) {
 				IContainer parent = resource.getParent();
 				parent.refreshLocal(IResource.DEPTH_ONE, monitor);
 				/*
@@ -114,16 +114,16 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 				 * created, since it would be identical to the working file.
 				 */
 				IFile local = null;
-				if (status[0].conflictWorking != null && !"".equals(status[0].conflictWorking)) { //$NON-NLS-1$
-					local = parent.getFile(new Path(status[0].conflictWorking));
+				if (status[0].treeConflicts[0].localPath != null && !"".equals(status[0].treeConflicts[0].localPath)) { //$NON-NLS-1$
+					local = parent.getFile(new Path(status[0].treeConflicts[0].localPath));
 					if (!local.exists()) {
 						local = null;
 					}					
 				}
 				local = local == null ? resource : local;
 				
-				IFile remote = parent.getFile(new Path(status[0].conflictNew));
-				IFile ancestor = parent.getFile(new Path(status[0].conflictOld));
+				IFile remote = parent.getFile(new Path(status[0].treeConflicts[0].remotePath));
+				IFile ancestor = parent.getFile(new Path(status[0].treeConflicts[0].basePath));
 				
 				//detect compare editor
 				DetectExternalCompareOperationHelper detectCompareEditorHelper = new DetectExternalCompareOperationHelper(resource, SVNTeamDiffViewerPage.loadDiffViewerSettings(), false);

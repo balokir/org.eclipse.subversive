@@ -101,6 +101,11 @@ public class SVNProperty {
 	public final String value;
 
 	/**
+	 * The binary property value. Not <code>null</code>.
+	 */
+	public final byte []binValue;
+
+	/**
 	 * The {@link SVNProperty} instance could be initialized only once because all fields are final
 	 * 
 	 * @param name
@@ -110,7 +115,28 @@ public class SVNProperty {
 	 */
 	public SVNProperty(String name, String value) {
 		this.name = name;
-		this.value = value;
+		this.value = this.processTextProperty(value); 
+		this.binValue = value == null ? null : value.getBytes();
 	}
 
+	/**
+	 * The {@link SVNProperty} instance could be initialized only once because all fields are final
+	 * 
+	 * @param name
+	 *            the property name
+	 * @param value
+	 *            the value of the binary property
+	 */
+	public SVNProperty(String name, byte []value) {
+		this.name = name;
+		this.value = value == null ? null : new String(value);
+		this.binValue = value == null ? null : new byte[value.length];
+		if (value != null) {
+			System.arraycopy(value, 0, this.binValue, 0, value.length);
+		}
+	}
+
+	protected String processTextProperty(String str) {
+		return str != null ? str.replaceAll("\r\n|\r", "\n") : null;
+	}
 }

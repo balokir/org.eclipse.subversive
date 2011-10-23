@@ -896,7 +896,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			int nodeKind = SVNUtility.getNodeKind(statuses[i].path, statuses[i].nodeKind, true);
 			// ignore files absent in the WC base and WC working. But what is the reason why it is reported ?
 			//try to create local resource for file which has tree conflict but doesn't exist
-			if (nodeKind == SVNEntry.Kind.NONE && !statuses[i].hasTreeConflict) {
+			if (nodeKind == SVNEntry.Kind.NONE && !statuses[i].hasConflict) {
 				continue;
 			}
 			
@@ -953,7 +953,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
 				boolean forceCopied = parent != null && parent.isCopied();
 				int changeMask = SVNRemoteStorage.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched);
-				if (statuses[i].lockToken != null) {
+				if (statuses[i].wcLock != null) {
 					changeMask |= ILocalResource.IS_LOCKED;
 				}
 				
@@ -1000,7 +1000,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 
 				// fetch revision for "copied from"
 				long revision = statuses[i].lastChangedRevision == SVNRevision.INVALID_REVISION_NUMBER && (changeMask & ILocalResource.IS_COPIED) != 0 ? statuses[i].revision : statuses[i].lastChangedRevision;
-				local = this.registerResource(tRes, revision, statuses[i].revision, textStatus, propStatus, changeMask, statuses[i].lastCommitAuthor, statuses[i].lastChangedDate, statuses[i].treeConflictDescriptor);
+				local = this.registerResource(tRes, revision, statuses[i].revision, textStatus, propStatus, changeMask, statuses[i].lastCommitAuthor, statuses[i].lastChangedDate, statuses[i].treeConflicts == null ? null : statuses[i].treeConflicts[0]);
 			}
 			else {
 				this.writeChild(local.getResource(), local.getStatus(), local.getChangeMask());

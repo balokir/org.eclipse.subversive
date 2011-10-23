@@ -22,6 +22,11 @@ package org.eclipse.team.svn.core.connector;
  */
 public class SVNAnnotationData {
 	/**
+	 * The line number.
+	 */
+	public final long lineNum;
+	
+	/**
 	 * The annotated line revision
 	 */
 	public final long revision;
@@ -57,24 +62,33 @@ public class SVNAnnotationData {
 	public final String mergedPath;
 
 	/**
+	 * Tells if the line is changed locally or not.
+	 */
+	public final boolean hasLocalChange;
+
+	/**
 	 * The {@link SVNAnnotationData} instance could be initialized only once because all fields are final
 	 * 
+	 * @param lineNum
+	 *            the annotated line number
 	 * @param revision
 	 *            the annotated line revision
 	 * @param date
 	 *            the annotated line change date
 	 * @param author
 	 *            the annotated line author
-	 * @param mergedWithRevision
+	 * @param mergedRevision
 	 *            the revision of the last change merged into the line
-	 * @param mergedWithDate
+	 * @param mergedDate
 	 *            the date of the last change merged into the line
-	 * @param mergedWithAuthor
+	 * @param mergedAuthor
 	 *            the author of the last change merged into the line
-	 * @param mergedWithPath
+	 * @param mergedPath
 	 *            the path of the last change merged into the line
 	 */
-	public SVNAnnotationData(long revision, long date, String author, long mergedRevision, long mergedDate, String mergedAuthor, String mergedPath) {
+	public SVNAnnotationData(long lineNum, boolean hasLocalChange, long revision, long date, String author, long mergedRevision, long mergedDate, String mergedAuthor, String mergedPath) {
+		this.lineNum = lineNum;
+		this.hasLocalChange = hasLocalChange;
 		this.revision = revision;
 		this.date = date;
 		this.author = author;
