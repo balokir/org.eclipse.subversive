@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Kris De Volder  - https://bugs.eclipse.org/bugs/show_bug.cgi?id=361831
  *******************************************************************************/
 
 package org.eclipse.team.svn.core;
@@ -77,7 +78,7 @@ public class SVNFolderListener implements IResourceChangeListener {
 								if (RepositoryProvider.getProvider((IProject) resource, SVNTeamPlugin.NATURE_ID) != null) {
 									return false;
 								}
-								
+
 								SVNChangeStatus info = SVNUtility.getSVNInfoForNotConnected(resource);
 								if (info != null && info.url != null) {
 									String url = SVNUtility.decodeURL(info.url);
@@ -102,17 +103,21 @@ public class SVNFolderListener implements IResourceChangeListener {
 										}
 										location = SVNRemoteStorage.instance().newRepositoryLocation();
 										SVNUtility.initializeRepositoryLocation(location, url);
-										AddRepositoryLocationOperation mainOp = new AddRepositoryLocationOperation(location);
-										CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-										op.add(mainOp);
-										op.add(new SaveRepositoryLocationsOperation());
-										// important! location doubles when it is added asynchronously and several projects for the same location are imported 
-										ProgressMonitorUtility.doTaskExternal(op, monitor);
 									}
 									else {
 										location = roots[0].getRepositoryLocation();
 									}
-									ProgressMonitorUtility.doTaskScheduled(new ReconnectProjectOperation(new IProject[] {(IProject)resource}, location));
+									ReconnectProjectOperation mainOp = new ReconnectProjectOperation(new IProject[] {(IProject)resource}, location);
+									CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+									if (roots.length == 0) {
+										// important! location doubles when it is added asynchronously and several projects for the same location are imported
+										//	that is why we're doing it here and now
+										op.add(new AddRepositoryLocationOperation(location));
+										op.add(new SaveRepositoryLocationsOperation());
+									}
+									op.add(mainOp);
+									// do not use asynchronous execution, this is PRE_BUILD event, so we shouldn't defer marking resources as team-private
+									ProgressMonitorUtility.doTaskExternal(op, monitor);
 									return false;
 								}
 							}
