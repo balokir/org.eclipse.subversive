@@ -21,6 +21,7 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.history.ISVNHistoryView;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -83,8 +84,9 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 					try {
 						IHistoryView historyView = (IHistoryView)page.showView(IHistoryView.VIEW_ID);
 						if (historyView != null) {
-							SVNHistoryPage hPage = (SVNHistoryPage)historyView.showHistoryFor(ShowHistoryViewOperation.this.local != null ? (Object)ShowHistoryViewOperation.this.local : ShowHistoryViewOperation.this.remote);
-							if (hPage != null) {
+							IHistoryPage tPage = historyView.showHistoryFor(ShowHistoryViewOperation.this.local != null ? (Object)ShowHistoryViewOperation.this.local : ShowHistoryViewOperation.this.remote);
+							if (tPage != null && tPage instanceof SVNHistoryPage) {
+								SVNHistoryPage hPage = (SVNHistoryPage)tPage;
 								hPage.setOptions(ShowHistoryViewOperation.this.mask, ShowHistoryViewOperation.this.options);
 								hPage.setCompareWith(ShowHistoryViewOperation.this.compareWith);
 								if (ShowHistoryViewOperation.this.local != null && !ShowHistoryViewOperation.this.local.equals(hPage.getResource())) {
