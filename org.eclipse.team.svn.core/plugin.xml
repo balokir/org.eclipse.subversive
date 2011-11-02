@@ -66,5 +66,13 @@
          <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.core.resources.filterMatchers">
+      <filterMatcher
+            class="org.eclipse.team.svn.core.SVNFileInfoMatcher"
+            id="org.eclipse.team.svn.core.svnmeta"
+            name="SVN meta-information filter">
+      </filterMatcher>
+   </extension>
 
 </plugin>
