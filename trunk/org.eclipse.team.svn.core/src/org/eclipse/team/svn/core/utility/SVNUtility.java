@@ -812,7 +812,7 @@ public final class SVNUtility {
 	
 	public static IProxyData getProxyData(String host, String type) {
 		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
-		if (proxyService.isProxiesEnabled()) {
+		if (host != null && host.trim().length() > 0 && proxyService.isProxiesEnabled()) {
 			try {
 				URI uri = new URI(type, "//" + host, null); //$NON-NLS-1$
 				IProxyData[] proxyDatas = proxyService.select(uri);
