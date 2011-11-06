@@ -11,7 +11,10 @@
 
 package org.eclipse.team.svn.ui.compare;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -519,6 +522,32 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			this.setRight(new ResourceElement(remote, workingVersion, remoteChangeType != SVNEntryStatus.Kind.DELETED && remoteChangeType != SVNEntryStatus.Kind.NONE));
 		}
 
+		@Override
+		public void copy(boolean leftToRight) {
+			if (!leftToRight) {
+				InputStream stream = null;
+				try {
+					stream = ((ResourceElement)this.getRight()).getContents();
+					ByteArrayOutputStream data = new ByteArrayOutputStream();
+					byte []block = new byte[1024];
+					int len = 0;
+					while ((len = stream.read(block)) > 0) {
+						data.write(block, 0, len);
+					}
+					((ResourceElement)this.getLeft()).setContent(data.toByteArray());
+				} catch (IOException e) {
+				} 
+				finally {
+					if (stream != null) {
+						try {stream.close();} catch (IOException ex) {};
+					}
+				}
+			}
+			else {
+				super.copy(leftToRight);
+			}
+		}
+		
 		public int getLocalChangeType() {
 			return this.localChangeType;
 		}

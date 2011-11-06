@@ -444,6 +444,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			return this.dirty;
 		}
 		
+		public void setDirty(boolean dirty) {
+			this.dirty = dirty;
+		}
+		
 		public boolean isEditable() {
 			return this.editable && this.localAlias instanceof ILocalFile;
 		}
@@ -502,16 +506,21 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			if (this.op != null && this.op.getExecutionState() == IActionOperation.OK) {
 				return null;
 			}
-			if (this.resource.getSelectedRevision() != SVNRevision.INVALID_REVISION && this.resource instanceof IRepositoryFile) {
-				int revisionKind = this.resource.getSelectedRevision().getKind();
-				return this.op = revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 
-					(AbstractGetFileContentOperation)new GetLocalFileContentOperation(this.localAlias.getResource(), revisionKind) : 
-					new GetFileContentOperation(this.resource);
+			if (this.resource instanceof IRepositoryFile) {
+				if (this.resource.getSelectedRevision() != SVNRevision.INVALID_REVISION) {
+					int revisionKind = this.resource.getSelectedRevision().getKind();
+					return this.op = revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 
+						(AbstractGetFileContentOperation)new GetLocalFileContentOperation(this.localAlias.getResource(), revisionKind) : 
+						new GetFileContentOperation(this.resource);
+				}
+				else if (this.isEditable()) {
+					return this.op = new GetLocalFileContentOperation(this.localAlias.getResource(), SVNRevision.Kind.WORKING);
+				}
 			}
 			return this.op = null;
 		}
 	
-		public InputStream getContents() throws CoreException {
+		public InputStream getContents() {
 			return this.op == null || this.op.getExecutionState() != IActionOperation.OK ? null : this.op.getContent();
 		}
 	
