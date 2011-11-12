@@ -930,15 +930,28 @@ public final class SVNUtility {
 
 	public static Map<IProject, List<IResource>> splitWorkingCopies(IResource []resources) {
 		Map<IProject, List<IResource>> wc2Resources = new HashMap<IProject, List<IResource>>();
-		
-		for (int i = 0; i < resources.length; i++) {
-			IProject wcRoot = resources[i].getProject();
 
-			List<IResource> wcResources = wc2Resources.get(wcRoot);
-			if (wcResources == null) {
-				wc2Resources.put(wcRoot, wcResources = new ArrayList<IResource>());
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		try {
+			Map<File, IProject> roots = new HashMap<File, IProject>();
+			for (int i = 0; i < resources.length; i++) {
+				IProject wcRoot = resources[i].getProject();
+				Object []realRoot = SVNUtility.getWCRoot(proxy, FileUtility.getResourcePath(wcRoot).toFile(), null);
+				IProject tRoot = roots.get((File)realRoot[0]);
+				if (tRoot == null) {
+					roots.put((File)realRoot[0], tRoot = wcRoot);
+				}
+				wcRoot = tRoot;
+				
+				List<IResource> wcResources = wc2Resources.get(wcRoot);
+				if (wcResources == null) {
+					wc2Resources.put(wcRoot, wcResources = new ArrayList<IResource>());
+				}
+				wcResources.add(resources[i]);
 			}
-			wcResources.add(resources[i]);
+		}
+		finally {
+			proxy.dispose();
 		}
 
 		return wc2Resources;
