@@ -612,27 +612,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				}
 	    	}
 	    }
-	    ArrayList<IResource> removed = new ArrayList<IResource>();
-	    this.collectResourcesToRemove(resource, depth, removed);
-		for (Iterator it = removed.iterator(); it.hasNext(); ) {
-			IResource forRemove = (IResource)it.next();
-			IPath path = forRemove.getFullPath();
-			this.localResources.remove(path);
-			this.switchedToUrls.remove(path);
-            this.parent2Children.remove(path);
-        	this.parent2Children.remove(forRemove.getParent().getFullPath());
-		}
-	}
-	
-	protected void collectResourcesToRemove(IResource resource, int depth, ArrayList<IResource> removed) {
-		removed.add(resource);
-		if (depth != IResource.DEPTH_ZERO) {
-			Set children = (Set)this.parent2Children.get(resource.getFullPath());
-			if (children != null) {
-				for (Iterator it = children.iterator(); it.hasNext(); ) {
-					IResource child = (IResource)it.next();
-					this.collectResourcesToRemove(child, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE, removed);
-				}
+		IPath rootPath = resource.getFullPath();
+		for (Iterator it = this.localResources.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry)it.next();
+			ILocalResource local = (ILocalResource)entry.getValue();
+			IPath currentPath = (IPath)entry.getKey();
+			if (IStateFilter.SF_NOTEXISTS.accept(local) || rootPath.isPrefixOf(currentPath)) {
+				it.remove();
+				this.switchedToUrls.remove(currentPath);
+	            this.parent2Children.remove(currentPath);
+	        	this.parent2Children.remove(currentPath.removeLastSegments(1));
 			}
 		}
 	}
@@ -1126,12 +1115,14 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected void writeChild(IResource current, String status, int mask) {
-		IResource parent = current.getParent();
-		Set children = (Set)this.parent2Children.get(parent.getFullPath());
-		if (children == null) {
-			this.parent2Children.put(parent.getFullPath(), children = new HashSet());
+	    if (!SVNRemoteStorage.SF_NONSVN.accept(current, status, mask)) {
+			IResource parent = current.getParent();
+			Set children = (Set)this.parent2Children.get(parent.getFullPath());
+			if (children == null) {
+				this.parent2Children.put(parent.getFullPath(), children = new HashSet());
+			}
+			children.add(current);
 		}
-		children.add(current);
 	}
 	
 	protected ILocalResource getFirstExistingParentLocal(IResource node) {
