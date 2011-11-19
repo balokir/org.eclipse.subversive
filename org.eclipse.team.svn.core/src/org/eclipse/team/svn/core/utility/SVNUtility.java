@@ -936,7 +936,8 @@ public final class SVNUtility {
 			Map<File, IProject> roots = new HashMap<File, IProject>();
 			for (int i = 0; i < resources.length; i++) {
 				IProject wcRoot = resources[i].getProject();
-				Object []realRoot = SVNUtility.getWCRoot(proxy, FileUtility.getResourcePath(wcRoot).toFile(), null);
+				File tFile = FileUtility.getResourcePath(wcRoot).toFile();
+				Object []realRoot = SVNUtility.getWCRoot(proxy, tFile, SVNUtility.getSVNInfo(tFile, proxy));
 				IProject tRoot = roots.get((File)realRoot[0]);
 				if (tRoot == null) {
 					roots.put((File)realRoot[0], tRoot = wcRoot);
@@ -1013,11 +1014,11 @@ public final class SVNUtility {
 					return new Object[] {oldRoot, oldInfo};
 				}
 				oldRoot = node;
-				node = node.getParentFile();
 			}
 			else if (oldInfo != null) {
 				return new Object[] {oldRoot, oldInfo};
 			}
+			node = node.getParentFile();
 		}
 		
 		if (oldInfo == null) {
@@ -1043,7 +1044,9 @@ public final class SVNUtility {
 			svnMeta = new File(svnMeta.getAbsolutePath() + "/" + SVNUtility.getSVNFolderName()); //$NON-NLS-1$
 			if (svnMeta.exists()) {
 				try {
-					SVNEntryInfo []st = SVNUtility.info(proxy, new SVNEntryRevisionReference(root.getAbsolutePath(), null, SVNRevision.BASE), Depth.EMPTY, new SVNNullProgressMonitor());
+					//NOTE WARNING! JavaHL always tries to access repository when revision is specified, even if the specified revision one of two local kinds: WORKING or BASE.
+					//	so, just do not specify any revisions!
+					SVNEntryInfo []st = SVNUtility.info(proxy, new SVNEntryRevisionReference(root.getAbsolutePath()), Depth.EMPTY, new SVNNullProgressMonitor());
 					return st != null && st.length != 0 ? st[0] : null;
 				}
 				catch (Exception ex) {
