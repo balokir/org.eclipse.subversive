@@ -8,6 +8,54 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20111119-1700 [19 November 2011]
+
+Features:
+ * Add SVN 1.7 API support (bug 361257)
+ * Replace with Revision fails to notice trivial changes on locked files (bug 353875)
+   + special thanks to Neels Hofmeyr
+ * New decoration mode for branches and tags [fullpath] (bug 359650)
+ * UI commit extensions improvement (bug 356025)
+   + special thanks to Jc Temp
+ * Create patch to Workspace could default location to current project (bug 356042)
+ * IRepositoryLocation state listener (bug 356024)
+   + special thanks to Jc Temp, Eike Stepper
+ * ISVNConnector calls interception API (bug 356023)
+   + special thanks to Jc Temp, Eike Stepper, Adrian
+
+Fixes:
+ * Subversive doesn't refresh synchronize view after commit (bug 329555)
+ * JavaHL: Commit across multiple project atomically does not work (bug 362182)
+ * Collapse All and Expand All buttons are separated in Team Sync view (bug 230868)
+ * "Subversive JDT ignore recommendations" plug-in deadlocks on Eclipse startup (bug 359199)
+ * Problem with RevisionComposite_Reverse (bug 363635)
+   + special thanks to Satoru Yoshida
+ * Problem with MarkAsMergedAction.tooltip (bug 363634)
+   + special thanks to Satoru Yoshida
+ * SVN Compare does not allow new files to be copied (bug 362652)
+ * NPE while obtaining IProxyData data for the specified host [ID-ELYHN] (bug 362983)
+ * If there were no SVN-related activities on the workspace startup, Subversive can't see that imported projects are linked to SVN (bug 336689)
+   + special thanks to Brice Laurencin, Kris De Volder
+ * ClassCastException in ShowHistoryViewOperation [ID-L8NW8] (bug 362570)
+ * Team-private members are marked at wrong time while importing the already shared project (bug 361831)
+   + special thanks to Kris De Volder
+ * There are no notification about the repository node absence while synchronizing workspace (bug 361829)
+ * ReplaceWithRemoteOperation ignores cancellation event (bug 359652)
+ * When updating depth "Recursively" should be the default option (bug 359651)
+ * SVN: '0x00400113: Show Conflict Editor' operation finished with error: null (bug 358998)
+ * FileNotFoundException in ReplaceWithLatestRevisionAction [ID-PASE4] (bug 323684)
+ * Unable to compare files from different branches (bug 356870)
+ * False warning about tag modification (bug 358068)
+ * Create branch from revision not work on project (bug 357562)
+ * NPE in SwitchOperation [ID-LK5LW] (bug 351434)
+ * NPE in ResourceCompareInput [ID-H92AC] (bug 356872)
+ * NPE in MarkAsMergedOperation [ID-WZ3PP] (bug 357104)
+ * Problem during Replace with Latest from repository (temporary path is too long) (bug 297721)
+ * Changes model initialization shouldn't cause an I/O exception [ID-AI4E7] (bug 355901)
+ * Class Preferences, methods savePluginPreferences() and getProxyDataForHost() are deprecated (bug 355996)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20110819-1700 [19 August 2011]
 
 Features:

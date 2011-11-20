@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.revision.graph"
       label="%featureName"
-      version="0.7.9.I20110602-1700"
+      version="0.7.9.I20111119-1700"
       provider-name="%providerName">
 
    <description>
@@ -34,7 +34,7 @@
          id="org.eclipse.team.svn.revision.graph"
          download-size="7"
          install-size="7"
-         version="0.7.9.I20110318-1700"
+         version="0.7.9.I20111119-1700"
          unpack="false"/>
 
 </feature>
