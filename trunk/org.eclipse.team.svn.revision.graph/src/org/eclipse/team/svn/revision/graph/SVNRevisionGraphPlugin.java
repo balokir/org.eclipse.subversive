@@ -54,7 +54,7 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
     }
     
 	public IEclipsePreferences getPreferences() {
-		return InstanceScope.INSTANCE.getNode(this.getBundle().getSymbolicName());
+		return new InstanceScope().getNode(this.getBundle().getSymbolicName());
 	}
 
 	public void savePreferences() {
