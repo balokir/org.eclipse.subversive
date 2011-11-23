@@ -8,6 +8,13 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20111123-1700 [23 November 2011]
+
+Fixes:
+ * There are Eclipse 3.7-specific API usage due to misleading documentation (bug 364572)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20111119-1700 [19 November 2011]
 
 Features:
