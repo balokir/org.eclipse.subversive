@@ -52,7 +52,7 @@
 	</context>	
 	<context id="commentTemplatesPreferencesContext">
 		<description>On this page user can create, edit or remove comment templates for committing, preview selected template. To add a comment template press 'New' and simply type it in an editable space of a dialog.</description>
-		<topic label="Comment Templates Preferences" href="preferences/pref_comments.html"/>
+		<topic label="Commit Settings Preferences" href="preferences/pref_comments.html"/>
 	</context>
 	<context id="consolePreferencesContext">
 		<description>Allows to customize SVN Console.</description>
