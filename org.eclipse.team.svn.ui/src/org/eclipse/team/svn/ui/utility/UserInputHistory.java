@@ -20,6 +20,7 @@ import java.util.ListIterator;
 
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * This storage allow us to handle comment, user name etc. histories in one way
@@ -36,7 +37,7 @@ public class UserInputHistory {
     protected List history;
 
     public UserInputHistory(String name) {
-        this(name, 5);
+        this(name, SVNTeamPreferences.getCommentTemplatesInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_NAME));
     }
 
     public UserInputHistory(String name, int depth) {

@@ -212,6 +212,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CommentTemplatesPreferencePage_UserTemplates;
 	public static String CommentTemplatesPreferencePage_ViewHint;
 	public static String CommentTemplatesPreferencePage_historySavedCommentsCount;
+	public static String CommentTemplatesPreferencePage_historySavedPathsCount;
 	public static String CommitCommand_tooltip;
 	public static String CommitPanel_Comment;
 	public static String CommitPanel_CompareWith_Group;

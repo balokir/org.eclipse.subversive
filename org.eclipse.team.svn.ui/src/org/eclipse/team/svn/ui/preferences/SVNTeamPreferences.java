@@ -275,11 +275,13 @@ public final class SVNTeamPreferences {
 	public static final String COMMENT_TEMPLATES_LIST_ENABLED_NAME = "comment.templates.enabled"; //$NON-NLS-1$
 	public static final String COMMENT_LOG_TEMPLATES_ENABLED_NAME = "comment.logTemplates.enabled"; //$NON-NLS-1$
 	public static final String COMMENT_SAVED_COMMENTS_COUNT_NAME = "savedCommentsCount"; //$NON-NLS-1$
+	public static final String COMMENT_SAVED_PATHS_COUNT_NAME = "savedPathsCount"; //$NON-NLS-1$
 	
 	public static final String COMMENT_TEMPLATES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	public static final boolean COMMENT_TEMPLATES_LIST_ENABLED_DEFAULT = true;
 	public static final boolean COMMENT_LOG_TEMPLATES_ENABLED_DEFAULT = true;
 	public static final int COMMENT_SAVED_COMMENTS_COUNT_DEFAULT = 10;
+	public static final int COMMENT_SAVED_PATHS_COUNT_DEFAULT = 10;
 	
 	public static final String COMMIT_DIALOG_WEIGHT_NAME = "CommitPanel.weight"; //$NON-NLS-1$
 	public static final String COMMIT_DIALOG_KEEP_LOCKS = "CommitPanel.keepLocks"; //$NON-NLS-1$
@@ -470,6 +472,7 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME), SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME), SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_NAME), SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_NAME), SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_DEFAULT);
 	}
 	
 	public static void setDefaultConsoleValues(final IPreferenceStore store) {
@@ -613,6 +616,7 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME), SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME), SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_NAME), SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullCommentTemplatesName(SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_NAME), SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_DEFAULT);
 	}
 	
 	public static void resetToDefaultConsoleValues(IPreferenceStore store) {
