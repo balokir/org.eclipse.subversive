@@ -62,12 +62,14 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 	protected Button removeButton;
 	protected Button useLogTemplatesButton;
 	protected Button useTemplatesButton;
+	protected Button useShiftEnterButton;
 	protected int savedCommentsCount;
 	protected int savedPathsCount;
 	protected Text savedCommentsCountField;
 	protected Text savedPathsCountField;
 	protected boolean logTemplatesEnabled;
 	protected boolean userTemplatesEnabled;
+	protected boolean useShiftEnter;
 	
 	public SVNTeamCommentTemplatesPreferencesPage() {
 		super();
@@ -78,6 +80,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		SVNTeamPreferences.setCommentTemplatesInt(store, SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_NAME, this.savedPathsCount);
 		SVNTeamPreferences.setCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME, this.logTemplatesEnabled);
 		SVNTeamPreferences.setCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME, this.userTemplatesEnabled);
+		SVNTeamPreferences.setCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_USE_SHIFT_ENTER_NAME, this.useShiftEnter);
 		
 		int numTemplates = this.listViewer.getList().getItemCount();
 		String[] templates = new String[numTemplates];
@@ -90,6 +93,9 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 	protected void loadDefaultValues(IPreferenceStore store) {
 		this.savedCommentsCount = SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_DEFAULT;
 		this.savedPathsCount = SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_DEFAULT;
+		this.logTemplatesEnabled = SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_DEFAULT;
+		this.userTemplatesEnabled = SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_DEFAULT;
+		this.useShiftEnter = SVNTeamPreferences.COMMENT_USE_SHIFT_ENTER_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
@@ -97,6 +103,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		this.savedPathsCount = SVNTeamPreferences.getCommentTemplatesInt(store, SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_NAME);
 		this.logTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME);
 		this.userTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME);
+		this.useShiftEnter = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_USE_SHIFT_ENTER_NAME);
 	}
 	
 	protected void initializeControls() {
@@ -104,6 +111,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		this.savedPathsCountField.setText(String.valueOf(this.savedPathsCount));
 		this.useLogTemplatesButton.setSelection(this.logTemplatesEnabled);
 		this.useTemplatesButton.setSelection(this.userTemplatesEnabled);
+		this.useShiftEnterButton.setSelection(this.useShiftEnter);
 		
 		this.listViewer.getControl().setEnabled(this.userTemplatesEnabled);
 		this.newButton.setEnabled(this.userTemplatesEnabled);
@@ -172,6 +180,17 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 				}
 				catch (Exception ex) {
 				}
+			}
+		});
+		
+		this.useShiftEnterButton = new Button(checkBoxComposite, SWT.CHECK);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		this.useShiftEnterButton.setLayoutData(data);
+		this.useShiftEnterButton.setText(SVNUIMessages.CommentTemplatesPreferencePage_UseShiftEnter);
+		this.useShiftEnterButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamCommentTemplatesPreferencesPage.this.useShiftEnter = SVNTeamCommentTemplatesPreferencesPage.this.useShiftEnterButton.getSelection();
 			}
 		});
 		

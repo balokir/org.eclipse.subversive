@@ -16,9 +16,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 
 /**
@@ -63,6 +66,21 @@ public class CommentPanel extends AbstractDialogPanel {
     public void postInit() {
     	super.postInit();
     	this.comment.postInit(this.manager);
+		
+    	if (!SVNTeamPreferences.getCommentTemplatesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_USE_SHIFT_ENTER_NAME)) {
+			// disallow the default SHIFT+Enter combination, it will cause the minor visual changes - 
+			//	the enter button won't be 'default' anymore (at least in visual aspect), still it could be hit from the keyboard with the Ctrl+Enter combination
+			//	there was one other way around - to override everything related to the button instantiation and then just skip selection event with the Shift modifier, 
+			//	but there then will be a lose of focus from the current control which will be severely annoying, so it'll be better without the visual aspects of a "default button" anyway
+			//	resetting the defaultButton flag is wrong since selectionEvent listener is not the only thing related to the default buttons
+	    	//	and that is why the least invasive method is to reset default button for the commit comment panel only (multiline editors)
+			Shell shell = this.parent.getShell();
+			if (shell != null) {
+				// Attention! It is important to do it twice, if you're interested why - just check the shell.setDefaultButton() code
+				shell.setDefaultButton(null);
+				shell.setDefaultButton(null);
+			}
+    	}
     }
     
     protected void saveChangesImpl() {
