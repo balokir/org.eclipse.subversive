@@ -63,7 +63,9 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 	protected Button useLogTemplatesButton;
 	protected Button useTemplatesButton;
 	protected int savedCommentsCount;
+	protected int savedPathsCount;
 	protected Text savedCommentsCountField;
+	protected Text savedPathsCountField;
 	protected boolean logTemplatesEnabled;
 	protected boolean userTemplatesEnabled;
 	
@@ -73,6 +75,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 	
 	protected void saveValues(IPreferenceStore store) {
 		SVNTeamPreferences.setCommentTemplatesInt(store, SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_NAME, this.savedCommentsCount);
+		SVNTeamPreferences.setCommentTemplatesInt(store, SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_NAME, this.savedPathsCount);
 		SVNTeamPreferences.setCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME, this.logTemplatesEnabled);
 		SVNTeamPreferences.setCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME, this.userTemplatesEnabled);
 		
@@ -86,16 +89,19 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
 		this.savedCommentsCount = SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_DEFAULT;
+		this.savedPathsCount = SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
 		this.savedCommentsCount = SVNTeamPreferences.getCommentTemplatesInt(store, SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_NAME);
+		this.savedPathsCount = SVNTeamPreferences.getCommentTemplatesInt(store, SVNTeamPreferences.COMMENT_SAVED_PATHS_COUNT_NAME);
 		this.logTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME);
 		this.userTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME);
 	}
 	
 	protected void initializeControls() {
 		this.savedCommentsCountField.setText(String.valueOf(this.savedCommentsCount));
+		this.savedPathsCountField.setText(String.valueOf(this.savedPathsCount));
 		this.useLogTemplatesButton.setSelection(this.logTemplatesEnabled);
 		this.useTemplatesButton.setSelection(this.userTemplatesEnabled);
 		
@@ -140,6 +146,29 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 			public void modifyText(ModifyEvent e) {
 				try {
 					SVNTeamCommentTemplatesPreferencesPage.this.savedCommentsCount = Integer.parseInt(SVNTeamCommentTemplatesPreferencesPage.this.savedCommentsCountField.getText());
+				}
+				catch (Exception ex) {
+				}
+			}
+		});
+		
+		label = new Label(checkBoxComposite, SWT.NONE);
+		data = new GridData();
+		label.setLayoutData(data);
+		labelText = SVNUIMessages.CommentTemplatesPreferencePage_historySavedPathsCount;
+		label.setText(labelText);
+		
+		this.savedPathsCountField = new Text(checkBoxComposite, SWT.SINGLE | SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.savedPathsCountField.setLayoutData(data);
+		verifier = new CompositeVerifier();
+		verifier.add(new NonEmptyFieldVerifier(labelText));
+		verifier.add(new IntegerFieldVerifier(labelText, true));
+		this.attachTo(this.savedPathsCountField, verifier);
+		this.savedPathsCountField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				try {
+					SVNTeamCommentTemplatesPreferencesPage.this.savedPathsCount = Integer.parseInt(SVNTeamCommentTemplatesPreferencesPage.this.savedPathsCountField.getText());
 				}
 				catch (Exception ex) {
 				}
