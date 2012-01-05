@@ -94,6 +94,10 @@ import org.eclipse.team.svn.core.svnstorage.SVNRevisionLink;
  */
 public final class SVNUtility {
 	private static String svnFolderName = null;
+	
+	public static boolean isPriorToSVN17() {
+		return CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_7_x;
+	}
 
 	public static IRepositoryResource asRepositoryResource(String url, boolean isFolder) {
 		if (!SVNUtility.isValidSVNURL(url)) {
@@ -873,7 +877,7 @@ public final class SVNUtility {
 	public static SVNChangeStatus getSVNInfoForNotConnected(IResource root) {
 		IPath location = FileUtility.getResourcePath(root);
 		IPath checkedPath = root.getType() == IResource.FILE ? location.removeLastSegments(1) : location;
-		if (!checkedPath.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
+		if (SVNUtility.isPriorToSVN17() && !checkedPath.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
 			return null;
 		}
 		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();

@@ -757,14 +757,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		// search for first parent which contains .svn folder
 		//	only folders due to condition above - check for presence of SVN meta directly at the path...
 		boolean hasSVNMeta = true;
-		while (!this.canFetchStatuses(resourcePath)) {
-			if (target == null || target.getType() == IResource.PROJECT) {
-				return null;
+		if (SVNUtility.isPriorToSVN17()) {
+			while (!this.canFetchStatuses(resourcePath)) {
+				if (target == null || target.getType() == IResource.PROJECT) {
+					return null;
+				}
+				hasSVNMeta = false;
+				// load statuses non-recursively for the found parent
+				resourcePath = resourcePath.removeLastSegments(1);
+				target = target.getParent();
 			}
-			hasSVNMeta = false;
-			// load statuses non-recursively for the found parent
-			resourcePath = resourcePath.removeLastSegments(1);
-			target = target.getParent();
 		}
 		IRepositoryResource baseResource = provider.getRepositoryResource();
 		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString());
@@ -959,7 +961,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				 * then we consider this folder as unversioned folder created by external definition and
 				 * make its status in corresponding way, i.e. Ignored.
 				 */
-				if (textStatus == IStateFilter.ST_NEW && this.containsSVNMetaInChildren(tRes)) {
+				if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR && this.containsSVNMetaInChildren(tRes)) {
 					local = this.registerExternalUnversionedResource(tRes);
 					continue;
 				}
@@ -983,7 +985,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					textStatus = this.getDelegatedStatus(tRes, IStateFilter.ST_NEW, changeMask);
 				}
 				
-				if (textStatus == IStateFilter.ST_NEW && this.canFetchStatuses(new Path(fsNodePath))) {
+				if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR && this.canFetchStatuses(new Path(fsNodePath))) { // still, could be the case even with the SVN 1.7 working copy
 					textStatus = IStateFilter.ST_OBSTRUCTED;
 				}
 

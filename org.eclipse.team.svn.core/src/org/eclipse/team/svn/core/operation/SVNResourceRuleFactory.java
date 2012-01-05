@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Resource scheduling rule factory implementation
@@ -28,8 +29,14 @@ public class SVNResourceRuleFactory extends ResourceRuleFactory {
 		super();
 	}
 	
-	public ISchedulingRule moveRule(IResource source, IResource destination) {
-		return destination.getProject();
+	public ISchedulingRule refreshRule(IResource resource) {
+    	if (resource.getType() != IResource.ROOT && resource.getType() != IResource.PROJECT && !SVNUtility.isPriorToSVN17()) {
+	    	IResource metaInfo = resource.getProject().findMember(SVNUtility.getSVNFolderName());
+	    	if (metaInfo != null) {
+	    		return resource.getProject();
+	    	}
+    	}
+    	return super.refreshRule(resource);
 	}
 	
 }
