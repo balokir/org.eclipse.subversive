@@ -11,23 +11,15 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
-import java.util.HashSet;
-
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -68,48 +60,42 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 		this.refreshType = refreshType;
 	}
 
-    public ISchedulingRule getSchedulingRule() {
-    	ISchedulingRule rule = super.getSchedulingRule();
-    	if (rule instanceof IWorkspaceRoot) {
-    		return rule;
-    	}
-    	IResource []resources = this.operableData();
-    	HashSet<ISchedulingRule> ruleSet = new HashSet<ISchedulingRule>();
-    	for (int i = 0; i < resources.length; i++) {
-			ruleSet.add(SVNResourceRuleFactory.INSTANCE.refreshRule(resources[i]));
-    	}
-    	return new MultiRule(ruleSet.toArray(new IResource[ruleSet.size()]));
-    }
-
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IResource []resources = this.operableData();
-		IResource []original = resources;
-		if (this.depth == IResource.DEPTH_INFINITE) {
-			resources = FileUtility.shrinkChildNodes(resources);
-		}
+		IResource []original = this.operableData();
+		final IResource []resources = this.depth == IResource.DEPTH_INFINITE ? FileUtility.shrinkChildNodes(original) : original;
 		
 		if (this.refreshType != RefreshResourcesOperation.REFRESH_CACHE) {
-			// simply refresh workspace resources in order to avoid double-caching of a changed resources
-			for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
-				ProgressMonitorUtility.setTaskInfo(monitor, this, resources[i].getName());
-				final IResource resource = resources[i];
-				this.protectStep(new IUnprotectedOperation() {
-					public void run(IProgressMonitor monitor) throws Exception {
-						if (resource instanceof IContainer && RefreshResourcesOperation.this.depth != IResource.DEPTH_INFINITE) {
-							RefreshResourcesOperation.this.refreshMetaInfo((IContainer)resource);
-						}
-						if (!(resource instanceof IProject)) {
-							IContainer parent = resource.getParent();
-							RefreshResourcesOperation.this.refreshMetaInfo(parent);
-							// parent it self cannot be refreshed any case due to validation of scheduling rules...
-						}
-						RefreshResourcesOperation.this.doRefresh(resource, RefreshResourcesOperation.this.depth);
+	    	ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
+						ProgressMonitorUtility.setTaskInfo(monitor, RefreshResourcesOperation.this, resources[i].getName());
+						final IResource resource = resources[i];
+						RefreshResourcesOperation.this.protectStep(new IUnprotectedOperation() {
+							public void run(IProgressMonitor monitor) throws Exception {
+								if (SVNUtility.isPriorToSVN17()) {
+									if (resource.getType() != IResource.FILE && RefreshResourcesOperation.this.depth != IResource.DEPTH_INFINITE) {
+										// if depth is set to "infinite", then meta info will be refreshed together with the resource itself
+										RefreshResourcesOperation.this.refreshMetaInfo((IContainer)resource, monitor);
+									}
+									if (resource.getType() != IResource.PROJECT) {
+										// refresh parent's meta info if exists
+										RefreshResourcesOperation.this.refreshMetaInfo(resource.getParent(), monitor);
+									}
+								}
+								else {
+									// if the SVN meta info is present inside the project then it is in the project root or higher (we do not consider mixed working copies at the moment)
+									RefreshResourcesOperation.this.refreshMetaInfo(resource.getProject(), monitor);
+								}
+								RefreshResourcesOperation.this.doRefresh(resource, RefreshResourcesOperation.this.depth, monitor);
+							}
+						}, monitor, resources.length);
 					}
-				}, monitor, resources.length);
-			}
+				}
+			}, null, IWorkspace.AVOID_UPDATE, monitor);
 		}
 		
-		if (RefreshResourcesOperation.this.refreshType != RefreshResourcesOperation.REFRESH_CHANGES) {
+		// FIXME there could be event doubles when SVN 1.7 is used
+		if (RefreshResourcesOperation.this.refreshType != RefreshResourcesOperation.REFRESH_CHANGES || !SVNUtility.isPriorToSVN17()) {
 			SVNRemoteStorage.instance().refreshLocalResources(resources, this.depth);
 			
 			IResource []roots = FileUtility.getPathNodes(resources);
@@ -118,20 +104,16 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	protected void refreshMetaInfo(IContainer container) throws Exception {
+	protected void refreshMetaInfo(IContainer container, IProgressMonitor monitor) throws CoreException {
 		IResource metaInfo = container.findMember(SVNUtility.getSVNFolderName());
 		if (metaInfo != null) {
-			this.doRefresh(metaInfo, IResource.DEPTH_INFINITE);
+			this.doRefresh(metaInfo, IResource.DEPTH_INFINITE, monitor);
 		}
 	}
 	
-	protected void doRefresh(final IResource resource, final int depth) throws Exception {
-    	ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				resource.refreshLocal(depth, monitor);
-				FileUtility.findAndMarkSVNInternals(resource, true);
-			}
-		}, null, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+	protected void doRefresh(final IResource resource, final int depth, IProgressMonitor monitor) throws CoreException {
+		resource.refreshLocal(depth, monitor);
+		FileUtility.findAndMarkSVNInternals(resource, true);
 	}
 
 }
