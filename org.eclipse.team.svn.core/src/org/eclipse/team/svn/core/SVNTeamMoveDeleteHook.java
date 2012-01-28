@@ -157,9 +157,11 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 			GetPropertiesOperation op = new GetPropertiesOperation(source);
 			this.runOperation(op, monitor);
 			SVNProperty []props = op.getProperties();
-			for (int i = 0; i < props.length; i++) {
-				if (SVNProperty.BuiltIn.KEYWORDS.equals(props[i].name)) {
-					return true;
+			if (props != null) {
+				for (int i = 0; i < props.length; i++) {
+					if (SVNProperty.BuiltIn.KEYWORDS.equals(props[i].name)) {
+						return true;
+					}
 				}
 			}
 		}
