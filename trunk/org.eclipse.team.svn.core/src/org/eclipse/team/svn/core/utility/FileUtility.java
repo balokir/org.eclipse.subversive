@@ -462,12 +462,21 @@ public final class FileUtility {
 		HashSet<IResource> parents = new HashSet<IResource>();
 		for (int i = 0; i < resources.length; i++) {
 			IResource parent = resources[i];
-			while ((parent = parent.getParent()) != null && !(parent instanceof IWorkspaceRoot)) {
+			if (parent.getType() == IResource.PROJECT) {
 				parents.add(parent);
+			}
+			else {
+				while ((parent = parent.getParent()) != null && !(parent instanceof IWorkspaceRoot)) {
+					parents.add(parent);
+				}
 			}
 		}
 		if (excludeIncoming) {
-			parents.removeAll(Arrays.asList(resources));
+			for (int i = 0; i < resources.length; i++) {
+				if (resources[i].getType() != IResource.PROJECT) {
+					parents.remove(resources[i]);
+				}
+			}
 		}
 		return parents.toArray(new IResource[parents.size()]);
 	}
