@@ -27,11 +27,11 @@ public class EditConflictsAction extends AbstractRecursiveTeamAction {
 	}
 
 	public void runImpl(IAction action) {
-		this.runScheduled(new ShowConflictEditorOperation(this.getSelectedResourcesRecursive(IStateFilter.SF_CONTENT_CONFLICTING), false));
+		this.runScheduled(new ShowConflictEditorOperation(this.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING), false));
 	}
 	
 	public boolean isEnabled() {
-		return this.checkForResourcesPresenceRecursive(IStateFilter.SF_CONTENT_CONFLICTING);
+		return this.checkForResourcesPresenceRecursive(IStateFilter.SF_CONFLICTING);
 	}
 
 	protected boolean needsToSaveDirtyEditors() {

@@ -26,7 +26,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
@@ -34,8 +37,10 @@ import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
 import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.DetectExternalCompareOperationHelper;
 import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.ExternalCompareOperationHelper;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -43,6 +48,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.compare.ComparePanel;
 import org.eclipse.team.svn.ui.compare.ConflictingFileEditorInput;
+import org.eclipse.team.svn.ui.compare.PropertyCompareInput;
+import org.eclipse.team.svn.ui.compare.ThreeWayPropertyCompareInput;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -88,56 +95,82 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		
 		for (int i = 0; i < conflictingResources.length && !monitor.isCanceled(); i++) {
 			final IResource current = conflictingResources[i];
-			if (current.getType() == IResource.FILE) {
-				this.protectStep(new IUnprotectedOperation() {
-					public void run(IProgressMonitor monitor) throws Exception {
-						ShowConflictEditorOperation.this.showEditorFor((IFile)current, monitor);
-					}
-				}, monitor, conflictingResources.length);
-			}
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					ShowConflictEditorOperation.this.showEditorFor(current, monitor);
+				}
+			}, monitor, conflictingResources.length);
 		}
 	}
 
-	protected void showEditorFor(IFile resource, IProgressMonitor monitor) throws Exception {
+	protected void showEditorFor(final IResource resource, IProgressMonitor monitor) throws Exception {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		
 		IRepositoryLocation location = storage.getRepositoryLocation(resource);
 		ISVNConnector proxy = location.acquireSVNProxy();
+		SVNChangeStatus []status;
 		
 		try {
-			SVNChangeStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
-			if (status.length == 1 && status[0].hasConflict && status[0].treeConflicts[0].remotePath != null && status[0].treeConflicts[0].basePath != null) {
-				IContainer parent = resource.getParent();
-				parent.refreshLocal(IResource.DEPTH_ONE, monitor);
-				/*
-				 * If Subversion considers the file to be unmergeable, then the .mine file isn't 
-				 * created, since it would be identical to the working file.
-				 */
-				IFile local = null;
-				if (status[0].treeConflicts[0].localPath != null && !"".equals(status[0].treeConflicts[0].localPath)) { //$NON-NLS-1$
-					local = parent.getFile(new Path(status[0].treeConflicts[0].localPath));
-					if (!local.exists()) {
-						local = null;
-					}					
-				}
-				local = local == null ? resource : local;
-				
-				IFile remote = parent.getFile(new Path(status[0].treeConflicts[0].remotePath));
-				IFile ancestor = parent.getFile(new Path(status[0].treeConflicts[0].basePath));
-				
-				//detect compare editor
-				DetectExternalCompareOperationHelper detectCompareEditorHelper = new DetectExternalCompareOperationHelper(resource, SVNTeamDiffViewerPage.loadDiffViewerSettings(), false);
-				detectCompareEditorHelper.execute(monitor);
-				ExternalProgramParameters externalProgramParams = detectCompareEditorHelper.getExternalProgramParameters();
-				if (externalProgramParams != null) {
-					this.openExternalEditor(resource, local, remote, ancestor, externalProgramParams, monitor);
-				} else {
-					this.openEclipseEditor(resource, local, remote, ancestor, monitor);	
-				}
-			}
+			status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
+		}
+		
+		// open property editor if required
+		if (status.length == 1 && status[0].propStatus == SVNEntryStatus.Kind.CONFLICTED) {
+			CompareConfiguration cc = new CompareConfiguration();
+			cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
+			ILocalResource baseResource = SVNRemoteStorage.instance().asLocalResource(resource);
+			IRepositoryResource remote =  SVNRemoteStorage.instance().asRepositoryResource(resource);
+		    SVNEntryRevisionReference baseReference = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE);
+		    SVNEntryRevisionReference remoteReference = baseReference;
+			final PropertyCompareInput compare = new ThreeWayPropertyCompareInput(cc, resource, remoteReference, baseReference, remote.getRepositoryLocation(), baseResource.getRevision());
+			compare.run(monitor);
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					if (ShowConflictEditorOperation.this.showInDialog) {
+						ComparePanel panel = new ComparePanel(compare, resource);
+						DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+						dlg.open();
+						//CompareUI.openCompareDialog(compare);
+					}
+					else {
+						CompareUI.openCompareEditor(compare);
+					}
+				}
+			});
+		}
+		
+		// open compare editor if required
+		if (status.length == 1 && status[0].hasConflict && status[0].treeConflicts[0].remotePath != null && status[0].treeConflicts[0].basePath != null) {
+			IContainer parent = resource.getParent();
+			parent.refreshLocal(IResource.DEPTH_ONE, monitor);
+			/*
+			 * If Subversion considers the file to be unmergeable, then the .mine file isn't 
+			 * created, since it would be identical to the working file.
+			 */
+			IFile local = null;
+			if (status[0].treeConflicts[0].localPath != null && !"".equals(status[0].treeConflicts[0].localPath)) { //$NON-NLS-1$
+				local = parent.getFile(new Path(status[0].treeConflicts[0].localPath));
+				if (!local.exists()) {
+					local = null;
+				}					
+			}
+			local = local == null ? (IFile)resource : local;
+			
+			IFile remote = parent.getFile(new Path(status[0].treeConflicts[0].remotePath));
+			IFile ancestor = parent.getFile(new Path(status[0].treeConflicts[0].basePath));
+			
+			//detect compare editor
+			DetectExternalCompareOperationHelper detectCompareEditorHelper = new DetectExternalCompareOperationHelper(resource, SVNTeamDiffViewerPage.loadDiffViewerSettings(), false);
+			detectCompareEditorHelper.execute(monitor);
+			ExternalProgramParameters externalProgramParams = detectCompareEditorHelper.getExternalProgramParameters();
+			if (externalProgramParams != null) {
+				this.openExternalEditor((IFile)resource, local, remote, ancestor, externalProgramParams, monitor);
+			} else {
+				this.openEclipseEditor((IFile)resource, local, remote, ancestor, monitor);	
+			}
 		}
 	}
 	
