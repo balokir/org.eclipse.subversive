@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -35,13 +34,13 @@ public class EditConflictsActionHelper extends AbstractActionHelper {
 	public FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}) {
 			public boolean select(SyncInfo info) {
-				return super.select(info) && info.getLocal().getType() == IResource.FILE && IStateFilter.SF_CONTENT_CONFLICTING.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+				return super.select(info) && IStateFilter.SF_CONFLICTING.accept(((AbstractSVNSyncInfo)info).getLocalResource());
 			}
 		};
 	}
 
 	public IActionOperation getOperation() {
-		return new ShowConflictEditorOperation(this.getSyncInfoSelector().getSelectedResources(IStateFilter.SF_CONTENT_CONFLICTING), false);
+		return new ShowConflictEditorOperation(this.getSyncInfoSelector().getSelectedResources(IStateFilter.SF_CONFLICTING), false);
 	}
 
 }
