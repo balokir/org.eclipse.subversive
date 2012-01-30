@@ -33,7 +33,7 @@ public class SaveContentVisitor implements IResourceChangeVisitor {
 		ILocalResource local = change.getLocal();
 		if (local instanceof ILocalFile) {
 	    	if (IStateFilter.SF_DELETED.accept(local) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(local) ||
-	    		IStateFilter.SF_UNVERSIONED.accept(local) && "dir_conflicts.prej".equals(local.getName())) {
+	    		IStateFilter.SF_UNVERSIONED.accept(local) && "dir_conflicts.prej".equals(local.getName())) { //$NON-NLS-1$
         		return;//skip save file content for deleted files; skip directory property reject files
         	}
 	    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
