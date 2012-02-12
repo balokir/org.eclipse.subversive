@@ -4,10 +4,10 @@
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="features/org.eclipse.team.svn_0.7.9.I20111123-1700.jar" id="org.eclipse.team.svn" version="0.7.9.I20111123-1700">
+   <feature url="features/org.eclipse.team.svn_0.7.9.I20120210-1700.jar" id="org.eclipse.team.svn" version="0.7.9.I20120210-1700">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.nl1_0.7.9.I20111119-1700.jar" id="org.eclipse.team.svn.nl1" version="0.7.9.I20111119-1700">
+   <feature url="features/org.eclipse.team.svn.nl1_0.7.9.I20120210-1700.jar" id="org.eclipse.team.svn.nl1" version="0.7.9.I20120210-1700">
       <category name="Subversive (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.9.I20111119-1700.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="0.7.9.I20111119-1700">
@@ -16,10 +16,10 @@
    <feature url="features/org.eclipse.team.svn.mylyn_0.7.9.I20110602-1700.jar" id="org.eclipse.team.svn.mylyn" version="0.7.9.I20110602-1700">
       <category name="Subversive Integration (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.revision.graph_0.7.9.I20111123-1700.jar" id="org.eclipse.team.svn.revision.graph" version="0.7.9.I20111123-1700">
+   <feature url="features/org.eclipse.team.svn.revision.graph_0.7.9.I20120210-1700.jar" id="org.eclipse.team.svn.revision.graph" version="0.7.9.I20120210-1700">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_0.7.9.I20111123-1700.jar" id="org.eclipse.team.svn.source" version="0.7.9.I20111123-1700">
+   <feature url="features/org.eclipse.team.svn.source_0.7.9.I20120210-1700.jar" id="org.eclipse.team.svn.source" version="0.7.9.I20120210-1700">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
    <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin (Incubation)">

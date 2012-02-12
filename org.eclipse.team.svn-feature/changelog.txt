@@ -8,6 +8,26 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20120210-1700 [10 February 2012]
+
+Features:
+ * Rename "Commit Templates" preferences node to the "Comments and Input History" (bug 367026)
+ * Smartcard Login on Windows (MSCAPI Support) (bug 351510)
+   + special thanks for the contribution to Markus Oberlassnig (ilogs information logistics GmbH) 
+
+Fixes:
+ * org.eclipse.team.svn.ui.compare.ResourceCompareInput.ResourceElement fails to return an InputStream from getContents when compare is invoked against a folder (bug 363845)
+ * If there were no SVN-related activities on the workspace startup, Subversive can't see that imported projects are linked to SVN (bug 336689)
+ * Provide "Edit properties conflicts" to edit conflicts on properties (and mark as merged) (bug 364407)
+ * "Edit Conflicts" action should cover both: property and content conflict cases (bug 370072)
+ * "Mark As Merged" seemingly has no effect on projects with property conflicts (bug 370071)
+ * Exception produced on Show Revision Graph for a source folder (bug 369217)
+ * Move refactoring cause NPE (bug 368325)
+ * Shift and Enter in the commit message window -annoyingly- always causes a commit (bug 366954)
+ * Add "path history depth" setting (bug 367027)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20111123-1700 [23 November 2011]
 
 Fixes:
