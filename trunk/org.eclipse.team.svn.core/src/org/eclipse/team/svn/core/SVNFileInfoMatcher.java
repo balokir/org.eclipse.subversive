@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
- * SVN folder matcher, though it is not used by Subversive directly (indirect usage way is the plug-in activation which allows to solve the issue #336689), it still could be used by some external plug-ins.
+ * SVN folder matcher, though it is not used by Subversive, it still could be used by some external plug-ins.
  * Usage sample:
  *		this.getProject().createFilter(IResourceFilterDescription.INHERITABLE | IResourceFilterDescription.FOLDERS, new FileInfoMatcherDescription("org.eclipse.team.svn.core.svnmeta", null), IResource.DEPTH_INFINITE, new NullProgressMonitor());
  * 
