@@ -2389,5 +2389,11 @@
             icon="icons/objects/changeset.gif"
             modelProviderId="org.eclipse.team.svn.core.svnChangeSetModel"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.eclipse.team.svn.ui.SVNUIStartup">
+      </startup>
+   </extension>
 
  </plugin>
