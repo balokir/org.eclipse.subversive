@@ -547,7 +547,8 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			});
 		}
 		
-		protected void handleOpen(final SelectionEvent event) {
+		@Override
+		protected void handleDoubleSelect(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
 			CompositeOperation fetchContent = node.getFetcher();
 			fetchContent.add(new AbstractActionOperation("Operation_FetchContent", SVNUIMessages.class) { //$NON-NLS-1$
@@ -570,6 +571,8 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				}
 			});
 			UIMonitorUtility.doTaskNowDefault(fetchContent, true);
+			
+			super.handleDoubleSelect(event);
 		}
 		
 		protected class LabelProviderWrapper implements ILabelProvider {
