@@ -32,6 +32,7 @@ import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 public class CommentPanel extends AbstractDialogPanel {
 	protected CommentComposite comment;
 	protected BugtraqModel bugtraqModel;
+	protected String message;
 
     public CommentPanel(String title) {
         super();
@@ -46,11 +47,17 @@ public class CommentPanel extends AbstractDialogPanel {
     }
 
 	public String getMessage() {
-		return this.appendBugtraqMessage(this.comment.getMessage());
+		if (this.comment != null) {
+			this.message = this.comment.getMessage();
+		}
+		return this.appendBugtraqMessage(this.message);
 	}
 	
 	public void setMessage(String message) {
-		this.comment.setMessage(message);
+		this.message = message;
+		if (this.comment != null) {
+			this.comment.setMessage(message);
+		}
 	}    
 	
     public void createControlsImpl(Composite parent) {
@@ -66,6 +73,9 @@ public class CommentPanel extends AbstractDialogPanel {
     public void postInit() {
     	super.postInit();
     	this.comment.postInit(this.manager);
+		if (this.message != null) {
+			this.comment.setMessage(this.message);
+		}
 		
     	if (!SVNTeamPreferences.getCommentTemplatesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_USE_SHIFT_ENTER_NAME)) {
 			// disallow the default SHIFT+Enter combination, it will cause the minor visual changes - 
