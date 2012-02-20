@@ -2129,6 +2129,7 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.AddToSVNIgnoreCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction"
           name="%AddToSVNIgnoreCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
@@ -2153,6 +2154,7 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.CommitCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.CommitAction"
           name="%CommitCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
@@ -2173,10 +2175,12 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.CompareWithLatestRevisionCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.CompareWithLatestRevisionAction"
           name="%CompareWithLatestRevisionCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.CompareWithRevisionCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.CompareWithRevisionAction"
           name="%CompareWithRevisionCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
@@ -2193,6 +2197,7 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.CreatePatchCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.CreatePatchAction"
           name="%CreatePatchCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
@@ -2213,10 +2218,12 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.EditPropertiesCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.EditPropertiesAction"
           name="%EditPropertiesCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.LockCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.LockAction"
           name="%LockCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
@@ -2229,6 +2236,7 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.MergeCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.MergeAction"
           name="%MergeCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
@@ -2265,14 +2273,17 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.ShowAnnotationCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.ShowAnnotationAction"
           name="%ShowAnnotationCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.ShowResourceHistoryCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.ShowHistoryAction"
           name="%ShowResourceHistoryCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.SynchronizeCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.SynchronizeAction"
           name="%SynchronizeCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
@@ -2293,10 +2304,12 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.UpdateCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.UpdateAction"
           name="%UpdateCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.UpdateToRevisionCommand"
+          defaultHandler="org.eclipse.team.svn.ui.action.local.UpdateToRevisionAction"
           name="%UpdateToRevisionCommand.label"/>          
  </extension>
  <extension
