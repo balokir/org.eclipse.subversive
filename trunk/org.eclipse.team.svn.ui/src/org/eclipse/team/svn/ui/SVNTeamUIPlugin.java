@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.console.SVNConsole;
+import org.eclipse.team.svn.ui.console.SVNConsoleFactory;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
 import org.eclipse.team.svn.ui.discovery.DiscoveryConnectorsHelper;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
@@ -53,7 +54,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 	private URL baseUrl;
 //	private ProblemListener problemListener;
 	
-	private SVNConsole console;
 	private ActiveChangeSetManager activeChangeSetManager;
 
     public SVNTeamUIPlugin() {
@@ -69,12 +69,18 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
     	return SVNTeamUIPlugin.instance;
     }
     
+    /**
+     * @deprecated
+     */
     public SVNConsole getConsole() {
-    	return this.console;
+    	return SVNConsoleFactory.getConsole();
     }
     
+    /**
+     * @deprecated
+     */
     public IConsoleStream getConsoleStream() {
-    	return this.console == null ? null : this.console.getConsoleStream();
+    	return SVNConsoleFactory.getConsole().getConsoleStream();
     }
     
     public ImageDescriptor getImageDescriptor(String path) {
@@ -123,8 +129,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.addResourceChangeListener(SVNTeamUIPlugin.this.pcListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 		
-		this.console = new SVNConsole();
-				
 		IPreferenceStore store = this.getPreferenceStore();
 		if (store.getBoolean(SVNTeamPreferences.FIRST_STARTUP)) {
 			// If we enable the decorator in the XML, the SVN plugin will be loaded
@@ -164,7 +168,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public void stop(BundleContext context) throws Exception {
-		this.console.shutdown();
+		SVNConsoleFactory.destroyConsole();
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
