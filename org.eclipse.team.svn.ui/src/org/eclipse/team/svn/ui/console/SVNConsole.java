@@ -48,7 +48,6 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 	protected MessageConsoleStream warningStream;
 	protected MessageConsoleStream errorStream;
 	
-	protected int autoshow;
 	protected boolean enabled;
 	
 	/**
@@ -66,7 +65,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
 				if (console == SVNConsole.this) {
-					SVNConsole.this.init();
+					SVNConsole.this.initialize();
 				}
 			}
 		}
@@ -76,7 +75,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 				IConsole console = consoles[i];
 				if (console == SVNConsole.this) {
 					ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
-					SVNConsole.this.dispose();
+					SVNConsole.this.destroy();
 				}
 			}
 		}
@@ -85,21 +84,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 	public SVNConsole() {
 		super(SVNUIMessages.SVNConsole_Name, SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/console.gif")); //$NON-NLS-1$
 		
-		super.setType(SVNConsole.SVN_CONSOLE_TYPE);
-		
-		super.init();
-		
-		this.setTabWidth(4);
-		
-		this.cmdStream = this.newMessageStream();
-		this.okStream = this.newMessageStream();
-		this.warningStream = this.newMessageStream();
-		this.errorStream = this.newMessageStream();
-		
-		this.loadPreferences();
-		
-		JFaceResources.getFontRegistry().addListener(this);
-		SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this);
+		this.setType(SVNConsole.SVN_CONSOLE_TYPE);
 	}
 	
 	public IConsoleStream getConsoleStream() {
@@ -108,51 +93,71 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().startsWith(SVNTeamPreferences.CONSOLE_BASE)) {
-			this.loadPreferences();
-		}
-	}
-	
-	public void shutdown() {
-		super.dispose();
-		
-		SVNTeamUIPlugin.instance().getPreferenceStore().removePropertyChangeListener(this);
-		JFaceResources.getFontRegistry().removeListener(this);
-		
-		this.enabled = false;
-		
-		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[] {this});
-		
-		Color tmp1 = this.cmdStream.getColor();
-		Color tmp2 = this.okStream.getColor();
-		Color tmp3 = this.warningStream.getColor();
-		Color tmp4 = this.errorStream.getColor();
-		
-		// unsupported in Eclipse IDE 3.0
-		try {this.cmdStream.close();} catch (Exception ex) {}
-		try {this.okStream.close();} catch (Exception ex) {}
-		try {this.warningStream.close();} catch (Exception ex) {}
-		try {this.errorStream.close();} catch (Exception ex) {}
-		
-		if (tmp1 != null) {
-			tmp1.dispose();
-		}
-		if (tmp1 != null) {
-			tmp2.dispose();
-		}
-		if (tmp1 != null) {
-			tmp3.dispose();
-		}
-		if (tmp1 != null) {
-			tmp4.dispose();
+			UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					SVNConsole.this.loadPreferences();
+				}
+			});
 		}
 	}
 	
 	protected void init() {
-		this.enabled = true; 
+		if (!this.enabled) {
+			super.init();
+			
+			this.setTabWidth(4);
+			
+			this.cmdStream = this.newMessageStream();
+			this.okStream = this.newMessageStream();
+			this.warningStream = this.newMessageStream();
+			this.errorStream = this.newMessageStream();
+			
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					SVNConsole.this.loadPreferences();
+				}
+			});
+			JFaceResources.getFontRegistry().addListener(this);
+			SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this);
+			
+			this.enabled = true;
+		}
 	}
 	
 	protected void dispose() {
-		this.enabled = false; 
+		if (this.enabled) {
+			this.enabled = false; 
+			super.dispose();
+			
+			SVNTeamUIPlugin.instance().getPreferenceStore().removePropertyChangeListener(this);
+			JFaceResources.getFontRegistry().removeListener(this);
+			
+			ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[] {this});
+			
+			Color tmp1 = this.cmdStream.getColor();
+			Color tmp2 = this.okStream.getColor();
+			Color tmp3 = this.warningStream.getColor();
+			Color tmp4 = this.errorStream.getColor();
+			
+			// unsupported in Eclipse IDE 3.0
+			try {this.cmdStream.close();} catch (Exception ex) {}
+			try {this.okStream.close();} catch (Exception ex) {}
+			try {this.warningStream.close();} catch (Exception ex) {}
+			try {this.errorStream.close();} catch (Exception ex) {}
+			
+			if (tmp1 != null) {
+				tmp1.dispose();
+			}
+			if (tmp1 != null) {
+				tmp2.dispose();
+			}
+			if (tmp1 != null) {
+				tmp3.dispose();
+			}
+			if (tmp1 != null) {
+				tmp4.dispose();
+			}
+		}
 	}
 	
 	protected void loadPreferences() {
@@ -186,8 +191,6 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			this.setConsoleWidth(-1); 
 		}
 		
-		this.autoshow = SVNTeamPreferences.getConsoleInt(store, SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME);
-
 		if (SVNTeamPreferences.getConsoleBoolean(store, SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_NAME)) {
 			int limit = SVNTeamPreferences.getConsoleInt(store, SVNTeamPreferences.CONSOLE_LIMIT_VALUE_NAME);
 			this.setWaterMarks(1000 < limit ? 1000 : limit - 1, limit);
@@ -196,13 +199,19 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			this.setWaterMarks(-1, 0);
 		}
 		
-		UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				SVNConsole.this.setFont(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry().get(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_FONT_NAME)));
-			}
-		});
+		SVNConsole.this.setFont(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry().get(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_FONT_NAME)));
 	}
 
+	protected boolean canShowConsoleAutomatically(int severity) {
+		int autoshow = SVNTeamPreferences.getConsoleInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME);
+		return 
+			autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ALWAYS ||
+			autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ERROR && 
+			severity == IConsoleStream.LEVEL_ERROR ||
+			autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_WARNING_ERROR && 
+			(severity == IConsoleStream.LEVEL_ERROR || severity == IConsoleStream.LEVEL_WARNING);
+	}
+	
 	protected class SVNConsoleStream implements IConsoleStream {
 		protected long start;
 		protected String buffer;
@@ -244,14 +253,14 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 		
 		public void write(int severity, String data) {
 			this.flushBuffer();
-			
-			if (SVNConsole.this.enabled && !this.activated) {
-				//show console view
-				ConsolePlugin.getDefault().getConsoleManager().showConsoleView(SVNConsole.this);				
-				this.activated = true;
-			} else if (!SVNConsole.this.enabled && this.canShowConsoleAutomatically(severity)) {
-				//open console
-				SVNConsoleFactory.showConsole();
+
+			if (!this.activated && SVNConsole.this.canShowConsoleAutomatically(severity)) {
+				if (!SVNConsole.this.enabled) {
+					SVNConsoleFactory.showConsole();
+				}
+				else {
+					ConsolePlugin.getDefault().getConsoleManager().showConsoleView(SVNConsole.this);
+				}
 				this.activated = true;
 			}
 			
@@ -280,15 +289,6 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			}
 		}
 
-		protected boolean canShowConsoleAutomatically(int severity) {
-			return 
-				SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ALWAYS ||
-				SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ERROR && 
-				severity == IConsoleStream.LEVEL_ERROR ||
-				SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_WARNING_ERROR && 
-				(severity == IConsoleStream.LEVEL_ERROR || severity == IConsoleStream.LEVEL_WARNING);
-		}
-		
 		public void markCancelled() {
 			this.cancelled = true;
 		}

@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.utility;
 
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.console.SVNConsoleFactory;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 
 /**
@@ -25,7 +25,7 @@ public class UILoggedOperationFactory implements ILoggedOperationFactory {
 	public IActionOperation getLogged(IActionOperation operation) {
 		IActionOperation retVal = this.wrappedOperation(operation);
 		
-		retVal.setConsoleStream(SVNTeamUIPlugin.instance().getConsoleStream());
+		retVal.setConsoleStream(SVNConsoleFactory.getConsole().getConsoleStream());
 		
 		return retVal;
 	}
