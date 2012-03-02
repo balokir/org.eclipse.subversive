@@ -33,7 +33,7 @@ public class SVNConsoleRemoveAction extends Action {
 	
 	public void run() {
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-		SVNConsole console = SVNTeamUIPlugin.instance().getConsole();
+		SVNConsole console = SVNConsoleFactory.getConsole();
 		if (console != null) {
 			manager.removeConsoles(new IConsole[] {console});
 			ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(console.new SVNConsoleListener());

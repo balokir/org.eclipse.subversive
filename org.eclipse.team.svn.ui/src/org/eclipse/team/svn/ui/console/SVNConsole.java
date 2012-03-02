@@ -11,27 +11,29 @@
 
 package org.eclipse.team.svn.ui.console;
 
+import java.io.IOException;
 import java.util.Date;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleListener;
-import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
+import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.internal.console.IOConsolePage;
+import org.eclipse.ui.part.IPageBookViewPage;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
@@ -40,13 +42,13 @@ import com.ibm.icu.text.SimpleDateFormat;
  * 
  * @author Alexander Gurov
  */
-public class SVNConsole extends MessageConsole implements IPropertyChangeListener {
+public class SVNConsole extends IOConsole implements IPropertyChangeListener {
 	public static final String SVN_CONSOLE_TYPE = "org.eclipse.team.svn.ui.console.SVNConsole"; //$NON-NLS-1$
 	
-	protected MessageConsoleStream cmdStream;
-	protected MessageConsoleStream okStream;
-	protected MessageConsoleStream warningStream;
-	protected MessageConsoleStream errorStream;
+	protected IOConsoleOutputStream cmdStream;
+	protected IOConsoleOutputStream okStream;
+	protected IOConsoleOutputStream warningStream;
+	protected IOConsoleOutputStream errorStream;
 	
 	protected boolean enabled;
 	
@@ -101,16 +103,22 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 		}
 	}
 	
+    public IPageBookViewPage createPage(IConsoleView view) {
+        IOConsolePage page = (IOConsolePage) super.createPage(view);
+        page.setReadOnly();
+        return page;
+    }
+    
 	protected void init() {
 		if (!this.enabled) {
 			super.init();
 			
 			this.setTabWidth(4);
 			
-			this.cmdStream = this.newMessageStream();
-			this.okStream = this.newMessageStream();
-			this.warningStream = this.newMessageStream();
-			this.errorStream = this.newMessageStream();
+			this.cmdStream = this.newOutputStream();
+			this.okStream = this.newOutputStream();
+			this.warningStream = this.newOutputStream();
+			this.errorStream = this.newOutputStream();
 			
 			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 				public void run() {
@@ -293,17 +301,12 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			this.cancelled = true;
 		}
 		
-		protected void print(final MessageConsoleStream stream, final String data) {
-			// workaround for the Eclipse issue #136943 
-			if (UIMonitorUtility.getDisplay().getThread() == Thread.currentThread()) {
-				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_WriteToConsoleResources", SVNUIMessages.class) { //$NON-NLS-1$
-					protected void runImpl(IProgressMonitor monitor) throws Exception {
-						stream.print(data);
-					}
-				}, true);
+		protected void print(final IOConsoleOutputStream stream, final String data) {
+			try {
+				stream.write(data);
 			}
-			else {
-				stream.print(data);
+			catch (IOException ex) {
+				UILoggedOperation.reportError(this.getClass().getName(), ex);
 			}
 		}
 		
