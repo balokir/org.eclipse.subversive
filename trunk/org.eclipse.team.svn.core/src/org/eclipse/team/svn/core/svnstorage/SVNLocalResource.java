@@ -93,7 +93,7 @@ public abstract class SVNLocalResource implements ILocalResource {
 	}
 
 	public boolean hasTreeConflict() {
-		return this.treeConflictDescriptor != null;
+		return this.treeConflictDescriptor != null && this.treeConflictDescriptor.conflictKind == SVNConflictDescriptor.Kind.TREE;
 	}
 	
 	public SVNConflictDescriptor getTreeConflictDescriptor() {
