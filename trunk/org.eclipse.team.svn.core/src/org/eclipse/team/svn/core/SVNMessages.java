@@ -456,6 +456,9 @@ public class SVNMessages extends BaseMessages {
 	public static String Operation_TrackDeleteResult;
 	public static String Operation_TrackDeleteResult_Id;
 	
+	public static String Operation_Upgrade;
+	public static String Operation_Upgrade_Id;
+	
 	public static String Progress_Done;
 	public static String Progress_Running;
 	public static String Progress_SubTask;

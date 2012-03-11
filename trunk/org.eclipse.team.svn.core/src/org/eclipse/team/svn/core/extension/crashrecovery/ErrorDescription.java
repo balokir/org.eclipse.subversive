@@ -25,6 +25,7 @@ public class ErrorDescription {
 	public static final int REPOSITORY_LOCATION_IS_DISCARDED = ErrorDescription.codeCounter++;
 	public static final int CANNOT_READ_PROJECT_METAINFORMATION = ErrorDescription.codeCounter++;
 	public static final int PROJECT_IS_RELOCATED_OUTSIDE_PLUGIN = ErrorDescription.codeCounter++;
+	public static final int WORKING_COPY_REQUIRES_UPGRADE = ErrorDescription.codeCounter++;
 	
 	public final int code;
 	public final Object context;

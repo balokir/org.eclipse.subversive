@@ -1575,6 +1575,8 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ValidConnectorsSelectionPanel_Description;
 	public static String ValidConnectorsSelectionPanel_Message;
 	public static String ValidConnectorsSelectionPanel_Title;
+	public static String UpgradeWorkingCopyDialog_Title;
+	public static String UpgradeWorkingCopyDialog_Message;
 	public static String Verifier_AbsolutePath;
 	public static String Verifier_Abstract;
 	public static String Verifier_Comment_Error;
