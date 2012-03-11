@@ -21,9 +21,10 @@
 
 	<extension point="org.eclipse.team.svn.core.crashrecovery">
 		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.DiscardedLocationHelper"/>
-		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.InvalidMetaHelper"/>
 		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.RelocatedProjectHelper"/>
 		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.InaccessibleLocationDataHelper"/>
+		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.InvalidMetaHelper"/>
+		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.UpgradeWorkingCopyHelper"/>
 	</extension>
 
 	<extension point="org.eclipse.core.runtime.adapters">
@@ -286,6 +287,23 @@
 			objectClass="org.eclipse.core.resources.IProject"
 			id="org.eclipse.team.svn.ui.IProjectContributions">
 
+			<action
+				label="%UpgradeProjectsAction.label"
+				helpContextId="org.eclipse.team.svn.ui.team_share_projects_action_context"
+				class="org.eclipse.team.svn.ui.action.local.management.UpgradeProjectsAction"
+				tooltip="%UpgradeProjectsAction.tooltip"
+				menubarPath="team.main/projectGroup"
+				definitionId="org.eclipse.team.svn.ui.command.UpgradeProjectsCommand"
+				id="org.eclipse.team.svn.ui.action.local.management.UpgradeProjectsAction">
+			</action>
+         
+		</objectContribution>
+		
+		<objectContribution
+			adaptable="true"
+			objectClass="org.eclipse.core.resources.IProject"
+			id="org.eclipse.team.svn.ui.IProjectContributions">
+
 			<visibility>
 				<not>
 					<objectState name="projectPersistentProperty" value="org.eclipse.team.core.repository"/>
@@ -300,6 +318,22 @@
 				menubarPath="team.main/projectGroup"
 				definitionId="org.eclipse.team.svn.ui.command.ShareProjectsCommand"
 				id="org.eclipse.team.svn.ui.action.local.management.ShareProjectsAction">
+			</action>
+         
+		</objectContribution>
+		
+		<objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.ui.IWorkingSet"
+            id="org.eclipse.team.svn.ui.IWorkingSetContributions">
+			
+			<action
+				label="%UpgradeProjectsAction.label"
+				helpContextId="org.eclipse.team.svn.ui.team_share_projects_action_context"
+				class="org.eclipse.team.svn.ui.action.local.management.UpgradeProjectsAction"
+				tooltip="%UpgradeProjectsAction.tooltip"
+				menubarPath="team.main/projectGroup"
+				id="org.eclipse.team.svn.ui.action.local.management.UpgradeProjectsAction">
 			</action>
          
 		</objectContribution>
@@ -1830,6 +1864,14 @@
            tooltip="%DisconnectAction.tooltip"
            label="%DisconnectAction.label">
      </action>
+     <action
+           class="org.eclipse.team.svn.ui.action.local.management.UpgradeProjectsAction"
+           definitionId="org.eclipse.team.svn.ui.command.UpgradeProjectsCommand"
+           id="org.eclipse.team.svn.ui.action.local.management.UpgradeProjectsAction"
+           menubarPath="svn.main/projectGroup"
+		   helpContextId="org.eclipse.team.svn.ui.team_upgrade_projects_action_context"
+		   tooltip="%UpgradeProjectsAction.tooltip"
+           label="%UpgradeProjectsAction.label"/>
            
      <action
            class="org.eclipse.team.svn.ui.action.local.ExportAction"
@@ -2207,6 +2249,10 @@
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.ShareProjectsCommand"
           name="%ShareProjectsCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.UpgradeProjectsCommand"
+          name="%UpgradeProjectsCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.EditConflictsCommand"

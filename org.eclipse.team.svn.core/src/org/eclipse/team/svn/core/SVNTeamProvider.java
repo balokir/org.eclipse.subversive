@@ -18,16 +18,23 @@ import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.history.SVNFileHistoryProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.HiddenException;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.management.DisconnectOperation;
@@ -36,6 +43,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
@@ -195,7 +203,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 			else if (this.errorCode == ErrorDescription.CANNOT_READ_LOCATION_DATA) {
 				context = new Object[] {this.getProject(), this.relocatedTo, this.locationId};
 			}
-			else if (this.errorCode == ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION) {
+			else {
 				context = this.getProject();
 			}
 				
@@ -235,25 +243,55 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		return SVNMessages.formatErrorString("Error_AutoDisconnect", new String[] {this.getProject().getName()}); //$NON-NLS-1$
 	}
 	
+	public static boolean requiresUpgrade(IProject project) {
+		IPath location = FileUtility.getResourcePath(project);
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		try {
+			SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+		}		
+		catch (Exception ex) {
+			if (ex instanceof SVNConnectorException && ((SVNConnectorException)ex).getErrorId() == SVNErrorCodes.wcOldFormat) {
+				return true;
+			}
+		}
+		finally {
+			proxy.dispose();
+		}
+		return false;
+	}
+	
 	protected int uploadRepositoryResource() {
 		int errorCode = this.uploadRepositoryLocation();
 		
 		IProject project = this.getProject();
-		
-		SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(project);
-		if (st != null) {
-			this.relocatedTo = SVNUtility.decodeURL(st.url);
-			if (this.location != null) {
-				this.resource = this.location.asRepositoryContainer(this.relocatedTo, true);
-				if (this.resource == null) {
-					return ErrorDescription.PROJECT_IS_RELOCATED_OUTSIDE_PLUGIN;
-				}
-			}
-		}
-		else {
+		IPath location = FileUtility.getResourcePath(project);
+		if (SVNUtility.isPriorToSVN17() && !location.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
 			return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
 		}
-		
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		try {
+			SVNChangeStatus []sts = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+			if (sts != null && sts.length > 0) {
+				SVNUtility.reorder(sts, true);
+				SVNChangeStatus st = sts[0];
+				this.relocatedTo = SVNUtility.decodeURL(st.url);
+				if (this.location != null) {
+					this.resource = this.location.asRepositoryContainer(this.relocatedTo, true);
+					if (this.resource == null) {
+						return ErrorDescription.PROJECT_IS_RELOCATED_OUTSIDE_PLUGIN;
+					}
+				}
+			}
+		}		
+		catch (Exception ex) {
+			if (ex instanceof SVNConnectorException && ((SVNConnectorException)ex).getErrorId() == SVNErrorCodes.wcOldFormat) {
+				return ErrorDescription.WORKING_COPY_REQUIRES_UPGRADE;
+			}
+			return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
+		}
+		finally {
+			proxy.dispose();
+		}
 		return errorCode;
 	}
 	
