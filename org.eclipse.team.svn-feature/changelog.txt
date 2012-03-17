@@ -8,6 +8,21 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20120316-1700 [16 March 2012]
+
+Features:
+ * Add SVN 1.7 support (bug 365627)
+ * Include JavaHL 1.7 connector into the early access/Juno simulatenous release builds (bug 372781)
+
+Fixes:
+ * NPE in EditTreeConflictsPanel due to wrong enablement (bug 373821)
+ * Class SVNConsole shouldn't extend MessageConsole (bug 373049)
+ * SVNConsole class shouldn't be initialized at plug-in startup (bug 370374)
+ * [KeyBindings] SVN Sync and Commit keybindings no longer work (bug 309074)
+ * Commit UI extension fails to set a commit message prior to opening the dialog (bug 372027)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20120210-1700 [10 February 2012]
 
 Features:
