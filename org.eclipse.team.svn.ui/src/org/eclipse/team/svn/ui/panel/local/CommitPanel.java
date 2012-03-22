@@ -269,6 +269,10 @@ public class CommitPanel extends CommentPanel implements IModifiableCommentDialo
 		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		int first = SVNTeamPreferences.getDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME);
+		if (first < 20 || first > 80) // limit saved the value range to something acceptable, since there could be workspace crashes etc. (see bug 375038)
+		{
+			first = 50;
+		}
 		this.sForm.setWeights(new int[] {first, 100 - first});
 		
 		this.selectionComposite.addResourcesSelectionChangedListener(new IResourceSelectionChangeListener() {
