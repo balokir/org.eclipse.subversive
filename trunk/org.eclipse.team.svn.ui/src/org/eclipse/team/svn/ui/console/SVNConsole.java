@@ -272,7 +272,7 @@ public class SVNConsole extends IOConsole implements IPropertyChangeListener {
 				this.activated = true;
 			}
 			
-			if (this.activated) {
+			if (SVNConsole.this.enabled && this.activated && !SVNConsole.this.cmdStream.isClosed()) {
 				switch (severity) {
 					case IConsoleStream.LEVEL_CMD: {
 						this.print(SVNConsole.this.cmdStream, data);
