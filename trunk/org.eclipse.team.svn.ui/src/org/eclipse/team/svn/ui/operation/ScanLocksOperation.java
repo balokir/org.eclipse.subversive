@@ -41,7 +41,7 @@ import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
  */
 public class ScanLocksOperation extends AbstractActionOperation {
 
-	protected IResource[] resources;	
+	protected IResource[] resources;
 	protected int depth;
 	
 	protected Map<IResource, List<LockResource>> lockResources = new HashMap<IResource, List<LockResource>>();
@@ -118,19 +118,19 @@ public class ScanLocksOperation extends AbstractActionOperation {
 			owner = status.wcLock.owner;
 			creationDate = new Date(status.wcLock.creationDate);
 			comment = status.wcLock.comment;
-		} else if (status.wcLock.token == null && status.reposLock != null) {
+		} else if ((status.wcLock == null || status.wcLock.token == null) && status.reposLock != null) {
 			//other locked
 			lockStatus = LockStatusEnum.OTHER_LOCKED;
 			owner = status.reposLock.owner;
 			creationDate = new Date(status.reposLock.creationDate);
 			comment = status.reposLock.comment;
-		} else if (status.wcLock.token != null && status.reposLock == null) {
+		} else if (status.wcLock != null && status.wcLock.token != null && status.reposLock == null) {
 			//broken
 			lockStatus = LockStatusEnum.BROKEN;
 			owner = status.wcLock.owner;
 			creationDate = new Date(status.wcLock.creationDate);
 			comment = status.wcLock.comment;
-		} else if (status.wcLock.token != null && status.reposLock != null && !status.wcLock.token.equals(status.reposLock.token)) {
+		} else if (status.wcLock != null && status.wcLock.token != null && status.reposLock != null && !status.wcLock.token.equals(status.reposLock.token)) {
 			//stolen
 			lockStatus = LockStatusEnum.STOLEN;
 			owner = status.reposLock.owner;
