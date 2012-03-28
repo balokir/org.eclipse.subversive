@@ -473,11 +473,16 @@ public class SVNNotification {
 		 */
 		public static final int FAILED_FORBIDDEN_BY_SERVER = 67;
 
+		/**
+		 * @since 1.7 Operation skipped the path because it was conflicted.
+		 */
+		public static final int SKIP_CONFLICTED = 68;
+
 		/*
 		 * Sometime native JavaHL client returns -1 as action (for example when file is replaced in branch then merged into trunk)...
 		 */
 		public static boolean isKnownAction(int action) {
-			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.FAILED_FORBIDDEN_BY_SERVER /*67*/;
+			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.SKIP_CONFLICTED /*68*/;
 		}
 		
 		/**
