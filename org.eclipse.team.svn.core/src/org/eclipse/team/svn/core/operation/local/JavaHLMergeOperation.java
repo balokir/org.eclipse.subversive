@@ -123,7 +123,6 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 		IRepositoryLocation location = from.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		
-		proxy.setTouchUnresolved(true);
 		try {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			SVNEntryReference ref1 = SVNUtility.getEntryReference(from);
@@ -147,7 +146,6 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			proxy.merge(ref1, this.revisions, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
-			proxy.setTouchUnresolved(false);
 			location.releaseSVNProxy(proxy);
 		}
 	}
@@ -156,7 +154,6 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 		IRepositoryLocation location = from1.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		
-		proxy.setTouchUnresolved(true);
 		try {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(from1);
@@ -168,7 +165,6 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			proxy.merge(ref1, ref2, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
-			proxy.setTouchUnresolved(false);
 			location.releaseSVNProxy(proxy);
 		}
 	}
@@ -177,7 +173,6 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 		IRepositoryLocation location = from1.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		
-		proxy.setTouchUnresolved(true);
 		try {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			SVNEntryReference ref1 = SVNUtility.getEntryReference(from1);
@@ -187,7 +182,6 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			proxy.mergeReintegrate(ref1, wcPath, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
-			proxy.setTouchUnresolved(false);
 			location.releaseSVNProxy(proxy);
 		}
 	}

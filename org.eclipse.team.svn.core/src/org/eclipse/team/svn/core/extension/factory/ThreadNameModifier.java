@@ -272,16 +272,6 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public boolean isTouchUnresolved() {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.connector.isTouchUnresolved();
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
 	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
@@ -596,16 +586,6 @@ public class ThreadNameModifier implements ISVNConnector {
 		String oldName = this.overrideThreadName();
 		try {
 			this.connector.setSSLCertificateCacheEnabled(enabled);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setTouchUnresolved(boolean touchUnresolved) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setTouchUnresolved(touchUnresolved);
 		}
 		finally {
 			this.restoreThreadName(oldName);

@@ -48,7 +48,6 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 		IRepositoryLocation location = this.from1.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		
-		proxy.setTouchUnresolved(true);
 		if (this.notify != null) {
 			SVNUtility.addSVNNotifyListener(proxy, this.notify);
 		}
@@ -61,7 +60,6 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 			if (this.notify != null) {
 				SVNUtility.removeSVNNotifyListener(proxy, this.notify);
 			}
-			proxy.setTouchUnresolved(false);
 			location.releaseSVNProxy(proxy);
 		}
 	}
