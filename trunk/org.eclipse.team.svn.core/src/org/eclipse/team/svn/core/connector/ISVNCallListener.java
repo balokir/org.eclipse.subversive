@@ -39,8 +39,6 @@ public interface ISVNCallListener {
 	public final String SET_SSH_CREDENTIALS_PASSWORD = "setSSHCredentialsPassword";
 	public final String SET_COMMIT_MISSING_FILES = "setCommitMissingFiles";
 	public final String IS_COMMIT_MISSING_FILES = "isCommitMissingFiles";
-	public final String SET_TOUCH_UNRESOLVED = "setTouchUnresolved";
-	public final String IS_TOUCH_UNRESOLVED = "isTouchUnresolved";
 	public final String SET_NOTIFICATION_CALLBACK = "setNotificationCallback";
 	public final String GET_NOTIFICATION_CALLBACK = "getNotificationCallback";
 	public final String CHECKOUT = "checkout";

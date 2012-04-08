@@ -37,23 +37,20 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class UpdateOperation extends AbstractFileConflictDetectionOperation implements IFileProvider {
-	protected boolean updateUnresolved;
 	protected SVNRevision selectedRevision;
 	protected boolean ignoreExternals;
 	protected int depth = ISVNConnector.Depth.INFINITY;
 	protected boolean isStickyDepth;
 	protected String updateDepthPath;
 	
-	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean updateUnresolved, boolean ignoreExternals) {
+	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean ignoreExternals) {
 		super("Operation_UpdateFile", SVNMessages.class, files); //$NON-NLS-1$
-		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
 		this.ignoreExternals = ignoreExternals;
 	}
 
-	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean updateUnresolved, boolean ignoreExternals) {
+	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean ignoreExternals) {
 		super("Operation_UpdateFile", SVNMessages.class, provider); //$NON-NLS-1$
-		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
 		this.ignoreExternals = ignoreExternals;
 	}
@@ -101,7 +98,6 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 			});
 			
 			final ISVNConnector proxy = location.acquireSVNProxy();
-			proxy.setTouchUnresolved(this.updateUnresolved);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					long options = UpdateOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
@@ -109,7 +105,6 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 					proxy.update(paths, UpdateOperation.this.selectedRevision, UpdateOperation.this.depth, options, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());
-			proxy.setTouchUnresolved(false);
 			
 			location.releaseSVNProxy(proxy);
 		}

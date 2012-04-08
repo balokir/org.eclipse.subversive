@@ -322,10 +322,6 @@ public interface ISVNConnector {
 
 	public boolean isCommitMissingFiles();
 
-	public void setTouchUnresolved(boolean touchUnresolved);
-
-	public boolean isTouchUnresolved();
-
 	public void setNotificationCallback(ISVNNotificationCallback notify);
 
 	public ISVNNotificationCallback getNotificationCallback();

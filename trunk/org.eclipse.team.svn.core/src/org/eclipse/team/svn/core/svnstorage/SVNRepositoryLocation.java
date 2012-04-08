@@ -844,7 +844,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	    
 		proxy.setCredentialsCacheEnabled(false);
 		proxy.setSSLCertificateCacheEnabled(true);
-		proxy.setTouchUnresolved(false);
 		proxy.setCommitMissingFiles(true);
 		
 	    ISVNCredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
