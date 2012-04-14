@@ -8,6 +8,19 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20120413-1700 [13 April 2012]
+
+Features:
+ * Create the SVNKit-based SVN 1.7 compatible connector (bug 374582)
+ * Update JavaHL 1.7 connector to the 1.7.4 version
+
+Fixes:
+ * NPE in ScanLocksOperation.createLockFile [ID-OKCDI] (bug 375150)
+ * "Document is closed" exception while writing to the console [ID-UODT8] (bug 374884)
+ * Missing Text fields in Commit dialog (bug 375038)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20120316-1700 [16 March 2012]
 
 Features:
