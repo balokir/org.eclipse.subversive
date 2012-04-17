@@ -91,10 +91,10 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		this.limitEnabled = SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_DEFAULT;
 		this.limitValue = SVNTeamPreferences.CONSOLE_LIMIT_VALUE_DEFAULT;
 		
-		this.cmdEditor.loadDefault();
-		this.okEditor.loadDefault();
-		this.wrnEditor.loadDefault();
-		this.errEditor.loadDefault();
+		this.cmdEditor.getColorSelector().setColorValue(SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT);
+		this.okEditor.getColorSelector().setColorValue(SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT);
+		this.wrnEditor.getColorSelector().setColorValue(SVNTeamPreferences.CONSOLE_WRN_COLOR_DEFAULT);
+		this.errEditor.getColorSelector().setColorValue(SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT);
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
