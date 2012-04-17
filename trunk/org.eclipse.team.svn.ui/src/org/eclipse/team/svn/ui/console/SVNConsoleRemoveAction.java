@@ -14,9 +14,6 @@ package org.eclipse.team.svn.ui.console;
 import org.eclipse.jface.action.Action;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
 
 /**
  * Action that removes the SVN console from the console view. The console
@@ -32,12 +29,7 @@ public class SVNConsoleRemoveAction extends Action {
 	}
 	
 	public void run() {
-		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-		SVNConsole console = SVNConsoleFactory.getConsole();
-		if (console != null) {
-			manager.removeConsoles(new IConsole[] {console});
-			ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(console.new SVNConsoleListener());
-		}
+		SVNConsoleFactory.destroyConsole();
 	}
 	
 }
