@@ -28,7 +28,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -51,37 +50,6 @@ public class SVNConsole extends IOConsole implements IPropertyChangeListener {
 	protected IOConsoleOutputStream errorStream;
 	
 	protected boolean enabled;
-	
-	/**
-	 * This listener is needed to correctly react if console was removed
-	 * (by Remove action from console tool bar) and
-	 * then added: if we remove console by remove action and then add it then
-	 * console's <code>init</code> method will not be called so we call it explicitly here;
-	 * if we call remove action two or more times <code>dispose</code> method
-	 * isn't called so we call it explicitly here.
-	 * 
-	 */
-	public class SVNConsoleListener implements IConsoleListener {
-		
-		public void consolesAdded(IConsole[] consoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				IConsole console = consoles[i];
-				if (console == SVNConsole.this) {
-					SVNConsole.this.initialize();
-				}
-			}
-		}
-		
-		public void consolesRemoved(IConsole[] consoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				IConsole console = consoles[i];
-				if (console == SVNConsole.this) {
-					ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
-					SVNConsole.this.destroy();
-				}
-			}
-		}
-	}
 	
 	public SVNConsole() {
 		super(SVNUIMessages.SVNConsole_Name, SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/console.gif")); //$NON-NLS-1$
