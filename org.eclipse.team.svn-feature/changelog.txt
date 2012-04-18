@@ -8,7 +8,7 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.9.I20120413-1700 [13 April 2012]
+Version 0.7.9.I20120417-1700 [17 April 2012]
 
 Features:
  * Create the SVNKit-based SVN 1.7 compatible connector (bug 374582)
