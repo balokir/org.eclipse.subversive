@@ -534,7 +534,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	public IRepositoryResource asRepositoryResource(IRepositoryLocation location, String url, boolean isFile) {
-		if (!SVNUtility.createPathForSVNUrl(location.getRepositoryRootUrl()).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
+		String rootURL = location.getRepositoryRootUrl();
+		if (rootURL == null) {
+			rootURL = location.getUrl(); // the repository is unavailable, assume the repository root and the location url are the same
+		}
+		if (!SVNUtility.createPathForSVNUrl(rootURL).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 			location = this.wrapLocationIfRequired(location, url, isFile);
 		}
 		
