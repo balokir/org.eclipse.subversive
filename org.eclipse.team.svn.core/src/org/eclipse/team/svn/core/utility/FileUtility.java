@@ -785,13 +785,15 @@ public final class FileUtility {
 	}
 	
 	private static void markSVNInternalsTree(IResource node, boolean isTeamPrivate) throws CoreException {
-		if (node instanceof IContainer) {
-			IResource []children = FileUtility.resourceMembers((IContainer)node, false);
-			for (int i = 0; i < children.length; i++) {
-				FileUtility.markSVNInternalsTree(children[i], isTeamPrivate);
+		if (node.exists()) {
+			if (node instanceof IContainer) {
+				IResource []children = FileUtility.resourceMembers((IContainer)node, false);
+				for (int i = 0; i < children.length; i++) {
+					FileUtility.markSVNInternalsTree(children[i], isTeamPrivate);
+				}
 			}
+			node.setTeamPrivateMember(isTeamPrivate);
 		}
-		node.setTeamPrivateMember(isTeamPrivate);
 	}
 	
 	private static void addChildren(Set<IResource> resources, IResource []roots, IStateFilter filter, int depth, IActionOperation calledFrom, IProgressMonitor monitor) {
