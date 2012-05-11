@@ -21,20 +21,29 @@
    </url>
 
    <requires>
+      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.core.filesystem"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.eclipse.ui.intro.universal"/>
+      <import plugin="org.eclipse.core.net" version="1.2.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.security" version="1.0.0" match="compatible"/>
+      <import plugin="com.ibm.icu"/>
+      <import plugin="org.eclipse.ui.navigator"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.ui.browser"/>
    </requires>
 
    <plugin
