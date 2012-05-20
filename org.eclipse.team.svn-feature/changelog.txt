@@ -8,6 +8,17 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20120520-1700 [20 May 2012]
+
+Fixes:
+ * Incorrect console color preferences handling (bug 376929)
+ * NPE in SVNUtility when repository is unavailable [ID-S1M7B] (bug 377166)
+ * Correct supported Eclipse Platform version restriction according to the used API (bug 377864)
+ * "Resource '/.../.svn' does not exist" exception while checking for SVN meta-information [ID-BHMBD] (bug 378922)
+ * NPE while sharing project using the SVN 1.7 connector [ID-FMF5P] (bug 379628)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20120417-1700 [17 April 2012]
 
 Features:
