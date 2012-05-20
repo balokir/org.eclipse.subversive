@@ -975,7 +975,14 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				}
 				
 				if ((changeMask & ILocalResource.IS_SWITCHED) != 0) {
-					this.switchedToUrls.put(tRes.getFullPath(), SVNUtility.decodeURL(statuses[i].url));
+					// statuses[i].url == null when ILocalResource.IS_SWITCHED flag is set ??? Most likely the SVN client library issue in either one: url or state representation.
+					//	So, for now just avoid NPE here and remove the switched flag.
+					if (statuses[i].url != null) {
+						this.switchedToUrls.put(tRes.getFullPath(), SVNUtility.decodeURL(statuses[i].url));
+					}
+					else {
+						changeMask ^= ILocalResource.IS_SWITCHED;
+					}
 				}
 				
 				if (textStatus == IStateFilter.ST_DELETED && nodeKind == SVNEntry.Kind.FILE && new File(statuses[i].path).exists()) {
