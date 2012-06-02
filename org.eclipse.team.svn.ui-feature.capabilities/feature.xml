@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.ui.capabilities"
       label="%featureName"
-      version="0.7.9.I20100512-1900"
+      version="1.0.0.I20120601-1700"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn.ui.capabilities">
 
@@ -11,7 +11,7 @@
    </description>
 
    <license url="license.html">
-		%license
+      %license
    </license>
 
    <url>
@@ -19,11 +19,15 @@
       <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
    </url>
 
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+
    <plugin
          id="org.eclipse.team.svn.ui.capabilities"
          download-size="0"
          install-size="0"
-         version="0.7.9.I20100512-1900"
+         version="1.0.0.I20120601-1700"
          unpack="false"/>
 
 </feature>

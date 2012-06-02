@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.ui.capabilities;singleton:=true
-Bundle-Version: 0.7.9.I20100512-1900
+Bundle-Version: 1.0.0.I20120601-1700
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui
 Bundle-Localization: plugin

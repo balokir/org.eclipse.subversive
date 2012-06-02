@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn"
       label="%featureName"
-      version="0.7.9.I20120520-1700"
+      version="1.0.0.I20120601-1700"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn">
    <install-handler/>
@@ -21,11 +21,16 @@
    </url>
 
    <requires>
+      <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.eclipse.ui.intro.universal"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.eclipse.core.net" version="1.2.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.security" version="1.0.0" match="compatible"/>
+      <import plugin="com.ibm.icu"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.jface.text"/>
@@ -36,11 +41,6 @@
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.ui.intro"/>
-      <import plugin="org.eclipse.ui.intro.universal"/>
-      <import plugin="org.eclipse.core.net" version="1.2.0" match="compatible"/>
-      <import plugin="org.eclipse.equinox.security" version="1.0.0" match="compatible"/>
-      <import plugin="com.ibm.icu"/>
       <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.browser"/>
@@ -50,28 +50,28 @@
          id="org.eclipse.team.svn"
          download-size="4"
          install-size="4"
-         version="0.7.9.I20110318-1700"
+         version="1.0.0.I20120601-1700"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.core"
          download-size="900"
          install-size="900"
-         version="0.7.9.I20120520-1700"
+         version="1.0.0.I20120601-1700"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.ui"
          download-size="1600"
          install-size="1600"
-         version="0.7.9.I20120520-1700"
+         version="1.0.0.I20120601-1700"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.help"
          download-size="1900"
          install-size="1900"
-         version="0.7.9.I20120520-1700"
+         version="1.0.0.I20120601-1700"
          unpack="false"/>
 
 </feature>

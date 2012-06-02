@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn.tests"
-      label="Subversive SVN Team Provider Tests (Incubation)"
+      label="Subversive SVN Team Provider Tests"
       version="0.0.1"
       provider-name="Eclipse.org"
       colocation-affinity="org.eclipse.team.svn">
