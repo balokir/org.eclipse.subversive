@@ -5,11 +5,11 @@
 <xsl:for-each select="site">
 	<html>
 	<head>
-	<title>SVN PDE Build Extensions update site (Incubation)</title>
+	<title>SVN PDE Build Extensions update site</title>
 	<style>@import url("web/site.css");</style>
 	</head>
 	<body>
-	<h1 class="title">SVN PDE Build Extensions update-site (Incubation)</h1>
+	<h1 class="title">SVN PDE Build Extensions update-site</h1>
 	<p class="bodyText"><xsl:value-of select="description"/></p>
 	<p class="bodyText">All downloads are provided under the terms and conditions of the <a href="notice.html">Eclipse Foundation Software User Agreement</a> unless otherwise specified.</p>
 	<table width="100%" border="0" cellspacing="1" cellpadding="2">

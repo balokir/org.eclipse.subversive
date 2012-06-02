@@ -8,6 +8,13 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.0.I20120601-1700 [01 June 2012]
+
+Features:
+ * Graduation release
+
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20120520-1700 [20 May 2012]
 
 Fixes:
