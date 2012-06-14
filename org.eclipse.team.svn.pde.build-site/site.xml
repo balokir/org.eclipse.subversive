@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description url="http://download.eclipse.org/technology/subversive/pde-build/0.7/update-site/">
+   <description url="http://download.eclipse.org/technology/subversive/pde-build/1.0/update-site/">
       Eclipse Subversive - SVN PDE Build Extensions
    </description>
    <feature url="features/org.eclipse.team.svn.pde.build_1.0.0.I20120601-1700.jar" id="org.eclipse.team.svn.pde.build" version="1.0.0.I20120601-1700">

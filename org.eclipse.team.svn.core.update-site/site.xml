@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site
-      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/headless-update-site/site.xml&amp;protocol=http&amp;format=xml">
-   <description url="http://download.eclipse.org/technology/subversive/0.7/headless-update-site/">
+      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/1.0/headless-update-site/site.xml&amp;protocol=http&amp;format=xml">
+   <description url="http://download.eclipse.org/technology/subversive/1.0/headless-update-site/">
       Eclipse Subversive - SVN Team Provider Core
    </description>
    <feature url="features/org.eclipse.team.svn.core_1.0.0.I20120601-1700.jar" id="org.eclipse.team.svn.core" version="1.0.0.I20120601-1700">
