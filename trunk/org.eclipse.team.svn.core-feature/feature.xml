@@ -16,8 +16,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/0.7/headless-update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/0.7/headless-update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/1.0/headless-update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/1.0/headless-update-site/"/>
    </url>
 
    <requires>
