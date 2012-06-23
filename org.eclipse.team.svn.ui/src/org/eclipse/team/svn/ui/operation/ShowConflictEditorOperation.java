@@ -151,16 +151,20 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 			 * created, since it would be identical to the working file.
 			 */
 			IFile local = null;
+			Path tPath = null;
 			if (status[0].treeConflicts[0].localPath != null && !"".equals(status[0].treeConflicts[0].localPath)) { //$NON-NLS-1$
-				local = parent.getFile(new Path(status[0].treeConflicts[0].localPath));
+				tPath = new Path(status[0].treeConflicts[0].localPath);
+				local = parent.getFile(tPath.removeFirstSegments(tPath.segmentCount() - 1));
 				if (!local.exists()) {
 					local = null;
 				}					
 			}
 			local = local == null ? (IFile)resource : local;
 			
-			IFile remote = parent.getFile(new Path(status[0].treeConflicts[0].remotePath));
-			IFile ancestor = parent.getFile(new Path(status[0].treeConflicts[0].basePath));
+			tPath = new Path(status[0].treeConflicts[0].remotePath);
+			IFile remote = parent.getFile(tPath.removeFirstSegments(tPath.segmentCount() - 1));
+			tPath = new Path(status[0].treeConflicts[0].basePath);
+			IFile ancestor = parent.getFile(tPath.removeFirstSegments(tPath.segmentCount() - 1));
 			
 			//detect compare editor
 			DetectExternalCompareOperationHelper detectCompareEditorHelper = new DetectExternalCompareOperationHelper(resource, SVNTeamDiffViewerPage.loadDiffViewerSettings(), false);

@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.core.connector;
 
+import java.io.File;
+
+
 /**
  * The conflict description container
  * 
@@ -229,10 +232,38 @@ public class SVNConflictDescriptor {
 		this.action = action;
 		this.reason = reason;
 		this.operation = operation;
-		this.basePath = basePath;
-		this.remotePath = remotePath;
-		this.localPath = localPath;
-		this.mergedPath = mergedPath;
+		if (this.path != null && basePath != null && !basePath.startsWith(this.path))
+		{
+			this.basePath = new File(this.path).getParent() + File.separator + basePath;
+		}
+		else
+		{
+			this.basePath = basePath;
+		}
+		if (this.path != null && remotePath != null && !remotePath.startsWith(this.path))
+		{
+			this.remotePath = new File(this.path).getParent() + File.separator + remotePath;
+		}
+		else
+		{
+			this.remotePath = remotePath;
+		}
+		if (this.path != null && localPath != null && !localPath.startsWith(this.path))
+		{
+			this.localPath = new File(this.path).getParent() + File.separator + localPath;
+		}
+		else
+		{
+			this.localPath = localPath;
+		}
+		if (this.path != null && mergedPath != null && !mergedPath.startsWith(this.path))
+		{
+			this.mergedPath = new File(this.path).getParent() + File.separator + mergedPath;
+		}
+		else
+		{
+			this.mergedPath = mergedPath;
+		}
 		this.srcLeftVersion = srcLeftVersion;
 		this.srcRightVersion = srcRightVersion;
 	}
