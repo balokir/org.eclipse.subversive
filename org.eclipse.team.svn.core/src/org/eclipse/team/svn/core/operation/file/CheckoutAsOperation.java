@@ -44,7 +44,12 @@ public class CheckoutAsOperation extends AbstractFileOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		File to = this.operableData()[0];
 		if (this.override) {
-			FileUtility.deleteRecursive(to, monitor);
+			File []children = to.listFiles();
+			if (children != null) {
+				for (File child : children) {
+					FileUtility.deleteRecursive(child, monitor);
+				}
+			}
 		}
 		
 		to.mkdirs();
