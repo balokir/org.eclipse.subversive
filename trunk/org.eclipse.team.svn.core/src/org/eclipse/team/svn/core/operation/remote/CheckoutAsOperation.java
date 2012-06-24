@@ -188,8 +188,12 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	
 	protected void deleteFolderContent(String targetPath, IProgressMonitor monitor) throws Exception {
 		File target = new File(targetPath);
-		if (!FileUtility.deleteRecursive(target, monitor)) {
-			File []children = target.listFiles();
+		File []children = target.listFiles();
+		if (children != null && children.length > 0) {
+			for (File child : children) {
+				FileUtility.deleteRecursive(child, monitor);
+			}
+			children = target.listFiles();
 			if (children != null && children.length > 0) {
 				String message = this.getNationalizedString("Error_LockedExternally"); //$NON-NLS-1$
 				throw new UnreportableException(BaseMessages.format(message, new Object[] {children[0].getAbsolutePath()}));
