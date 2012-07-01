@@ -54,7 +54,7 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 		super(SelectDestinationPage.class.getName(), 
 				SVNUIMessages.RepositoryTreePanel_Description,
 				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
-		this.setDescription(AbstractDialogPanel.makeToBeOperatedMessage(resources));
+		this.setDescription(AbstractDialogPanel.makeToBeOperatedMessage(resources) + "\r\n" + SVNUIMessages.AbstractCopyToMoveTo_Message); //$NON-NLS-1$
 		this.resources = resources;
 	}
 

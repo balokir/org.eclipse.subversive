@@ -1705,6 +1705,7 @@ public class SVNUIMessages extends BaseMessages {
     public static String ShowAnnotationPanel_FromRevision;
     public static String ShowAnnotationPanel_ToRevision;
     public static String AbstractBranchTagPanel_Message;
+    public static String AbstractCopyToMoveTo_Message;
     
     public static String ReplaceBranchTagPanel_ConstructResultVerifierError;
     public static String ReplaceBranchTagPanel_ResultDescription;
