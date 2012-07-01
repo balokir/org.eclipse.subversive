@@ -1410,6 +1410,9 @@ public final class SVNUtility {
 							
 			String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe //$NON-NLS-1$
 			for (int i = 0; i < externals.length; i++) {
+				if (externals[i].startsWith("#")) { // commented externals, see bug #316114
+					continue;
+				}
 				boolean isCheckSpacesInLocalPath = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_6_x;
 				String[] parts = SVNExternalPropertyData.splitExternalOnParts(externals[i], isCheckSpacesInLocalPath);
 				// 2 - name + URL
