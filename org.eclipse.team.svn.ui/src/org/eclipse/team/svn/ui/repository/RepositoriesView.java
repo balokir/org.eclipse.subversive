@@ -418,18 +418,19 @@ public class RepositoriesView extends ViewPart {
 	    Action tmp = new Action() {};
 	    AbstractSVNTeamAction action = null;
 	    
-	    action = new RefreshAction();
-	    action.selectionChanged(tmp, selection);
-	    action.setActivePart(tmp, RepositoriesView.this);
-	    if (tmp.isEnabled()) {
+	    if (selection.isEmpty()) {
+	    	action = new RefreshRepositoryLocationAction();
+		    action.selectionChanged(tmp, selection);
+		    action.setActivePart(tmp, RepositoriesView.this);
 		    action.run(tmp);
 	    }
-	    
-    	action = new RefreshRepositoryLocationAction();
-	    action.selectionChanged(tmp, selection);
-	    action.setActivePart(tmp, RepositoriesView.this);
-	    if (tmp.isEnabled()) {
-		    action.run(tmp);
+	    else {
+		    action = new RefreshAction();
+		    action.selectionChanged(tmp, selection);
+		    action.setActivePart(tmp, RepositoriesView.this);
+		    if (tmp.isEnabled()) {
+			    action.run(tmp);
+		    }
 	    }
 	}
 
