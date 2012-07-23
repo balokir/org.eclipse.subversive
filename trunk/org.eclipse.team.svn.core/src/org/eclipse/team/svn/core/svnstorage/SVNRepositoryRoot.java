@@ -50,7 +50,7 @@ public class SVNRepositoryRoot extends SVNRepositoryRootBase {
 			return false;
 		}
 		// do not ask root URL if not required !
-		if (this.getRepositoryLocation() == ((IRepositoryRoot)obj).getRepositoryLocation()) {
+		if (this.getKind() == ((IRepositoryRoot)obj).getKind() && this.getRepositoryLocation() == ((IRepositoryRoot)obj).getRepositoryLocation()) {
 			return true;
 		}
 		return super.equals(obj);
