@@ -1095,35 +1095,22 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		
 		protected boolean tryCachedRealm(String realm) {
 			/*
-			 * As we don't have an exact way to determine whether existing realm credentials
-			 * are valid or not to decide whether to use them or show auth prompt dialog 
-			 * we suppose that credentials are not valid if we get 2 credential prompts in a row
-			 * from the same thread and with the same realm, this can be thought as:
-			 * on first auth prompt we provide existing realm credentials without
-			 * showing prompt dialog (of course, if we have credentials) and if these credentials
-			 * are not valid then we got second auth prompt for the same realm and from the same thread, 
-			 * as in this second prompt we consider that our existing realm credentials
-			 * are not valid then we show auth prompt dialog.  
-			 * This will not work if from the same thread we make several successful requests
-			 * in a row, in this case we'll show auth prompt dialog for each separate request
-			 * (if connector doesn't remember previously provided successful credentials).
+			 * There shouldn't be any checks on emptiness of the basic authentication password, since there might be other than basic authentication access method used (SSH key-file, for example).
 			 */
 			String threadName = Thread.currentThread().getName();
 			if (this.tryRealm == null || !this.tryRealm.equals(realm) || !threadName.equals(this.threadName)) {
 				this.realmLocation = this.location.getLocationForRealm(realm);
-				if (this.realmLocation != null) {
-					//check that realm has not empty credentials
-					String username = this.realmLocation.getUsername();
-					String pswd = this.realmLocation.getPassword();
-					if (username != null && !"".equals(username) && pswd != null && !"".equals(pswd)) {
-						this.tryRealm = realm;
-						this.threadName = threadName;
-						return true;
-					}
+				if (this.realmLocation != null && this.realmLocation.getUsername() != null && !this.realmLocation.getUsername().equals("")) {
+					this.tryRealm = realm;
+					this.threadName = threadName;
+					return true;
 				}
 			}
-			this.tryRealm = realm;
-			this.threadName = threadName;
+			else {
+				this.tryRealm = null;
+				this.realmLocation = null;
+				this.threadName = null;
+			}
 			return false;
 		}
 		
