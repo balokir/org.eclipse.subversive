@@ -405,7 +405,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public ILocalResource asLocalResourceAccessible(IResource resource) {
 		ILocalResource retVal = this.asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(retVal)) {
-			throw new UnreportableException(SVNMessages.formatErrorString("Error_InaccessibleResource", new String[]{FileUtility.getWorkingCopyPath(resource)})); //$NON-NLS-1$
+			// resource == null because workspace is not refreshed, in order to avoid NPE there should be another message used...
+			throw new UnreportableException(SVNMessages.formatErrorString("Error_InaccessibleResource", new String[]{resource == null ? "" : FileUtility.getWorkingCopyPath(resource)})); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return retVal;
 	}
