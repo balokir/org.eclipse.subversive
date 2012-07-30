@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.IResourceChangeVisitor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
@@ -32,6 +33,7 @@ import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility.SVNExternalPropertyData;
 
 /**
@@ -108,7 +110,11 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 			for (SVNExternalPropertyData external : externals) {				
 				if (external.pegRevision == null && external.revision == null) {
 					IContainer container = (IContainer)change.getLocal().getResource();
-					ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(container.findMember(external.localPath));
+					IResource target = container.findMember(external.localPath);
+					if (target == null) {
+						throw new UnreportableException(SVNMessages.formatErrorString("Error_InaccessibleResource", new String[]{FileUtility.getWorkingCopyPath(container) + "/" + external.localPath})); //$NON-NLS-1$
+					}
+					ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(target);
 					external.revision = String.valueOf(local.getBaseRevision());
 				} 
 				newValue += external.toString();			
