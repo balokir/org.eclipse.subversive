@@ -87,6 +87,10 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 			keepLocks = commitPanel.getKeepLocks();
 		}
 		
+		if (resources[0] == null) {
+			return null;
+		}
+		
 		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndCommit", SVNUIMessages.class); //$NON-NLS-1$
 
 		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg, keepLocks);
