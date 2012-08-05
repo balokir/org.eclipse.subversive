@@ -8,6 +8,22 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.0.I20120803-1700 [03 August 2012]
+
+Fixes:
+ * Edit conflict can not find -right.r file with the SVN 1.7-compatible connectors (bug 383183)
+ * "Check Out As" shouldn't delete an empty project folder, since folder creation later may be impossible due to security restrictions (bug 321810)
+ * [Subversive] - svn:externals syntax check too strict (bug 316114)
+ * Branch/Tag/Copy dialogs should notify about possible ways of "/" character usage (bug 382311)
+ * Refresh on location/root nodes in SVN Repositories View shows multiple credential dialogs (bug 385690)
+ * Unchecked "Save password" repository location option shouldn't prevent user name from being saved (bug 385890)
+ * Using svn+ssh:// repositories with private key authentication causes subversive to popup ssh login dialog two times for every repository operation. (bug 239871)
+ * NPE in FreezeExternalsOperation [ID-IP4PU] (bug 385818)
+ * NPEs in Override and Commit in models mode [ID-BOO7P] (bug 372098)
+ * ClassCastException in time of branch/tag operation [ID-M43MD] (bug 385530)
+
+--------------------------------------------------------------------------------
+
 Version 1.0.0.I20120601-1700 [01 June 2012]
 
 Features:
