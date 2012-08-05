@@ -48,8 +48,8 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
     protected boolean override;
     protected boolean keepLocks;
     protected String overrideMessage;
-    protected IResource []committables;
-    protected IResource []withDifferentNodeKind;
+    protected IResource []committables = new IResource[0];
+    protected IResource []withDifferentNodeKind = new IResource[0];
     protected boolean ignoreExternals;
     
 	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean ignoreExternals) {
@@ -92,8 +92,6 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		IResource []resources = FileUtility.shrinkChildNodesWithSwitched(this.operableData());
 		final ArrayList<IResource> committables = new ArrayList<IResource>();
 		final ArrayList<IResource> withDifferentNodeKind = new ArrayList<IResource>();
-		this.committables = new IResource[0];
-		this.withDifferentNodeKind = new IResource[0];
 
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final IResource current = resources[i];
