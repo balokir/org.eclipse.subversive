@@ -1269,28 +1269,31 @@ public final class SVNUtility {
 	private static IRepositoryRoot getRootLocation(IRepositoryResource resource, String rootName) {
 		IRepositoryLocation location = resource.getRepositoryLocation();
 		IRepositoryRoot root = (IRepositoryRoot)resource.getRoot();
-		if (!location.isStructureEnabled()) {
+		if (!location.isStructureEnabled() || root.getName().equals(rootName)) {
 			return root;
 		}
-		
+		IRepositoryResource retVal = null;
 		int rootKind = root.getKind();
-		if (rootKind == IRepositoryRoot.KIND_ROOT) {
-			return (IRepositoryRoot)root.asRepositoryContainer(rootName, false);
+		IRepositoryResource parent = root.getParent();
+		if (rootKind == IRepositoryRoot.KIND_ROOT || parent == null /*repository and location root at the same time*/) {
+			retVal = root.asRepositoryContainer(rootName, false);
 		}
 		else if (rootKind == IRepositoryRoot.KIND_LOCATION_ROOT) {
-			IRepositoryResource parent = root.getParent();
-			if (parent == null) {
-				return (IRepositoryRoot)root.asRepositoryContainer(rootName, false);
-			}
 			IRepositoryRoot tmp = (IRepositoryRoot)parent.getRoot();
-			rootKind = tmp.getKind();
-			if (rootKind == IRepositoryRoot.KIND_ROOT) {
-				return (IRepositoryRoot)root.asRepositoryContainer(rootName, false);
+			if (tmp.getKind() == IRepositoryRoot.KIND_ROOT) {
+				retVal = root.asRepositoryContainer(rootName, false);
 			}
 			root = tmp;
 		}
-		IRepositoryResource rootParent = root.getParent();
-		return (IRepositoryRoot)rootParent.asRepositoryContainer(rootName, false);
+		if (retVal == null) {
+			IRepositoryResource rootParent = root.getParent();
+			retVal = rootParent.asRepositoryContainer(rootName, false);
+		}
+		if (!(retVal instanceof IRepositoryRoot)) {
+			// check for issue conditions (see bug #385530)
+			throw new RuntimeException("Resource " + resource.getUrl() + " rootName " + rootName + " detected root " + String.valueOf(rootKind) + " " + root.getUrl() + " location URL " + location.getUrl()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		return (IRepositoryRoot)retVal;
 	}
 	
 	/**
