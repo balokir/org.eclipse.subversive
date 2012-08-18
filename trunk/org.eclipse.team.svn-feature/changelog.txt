@@ -8,6 +8,13 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.0.I20120818-1700 [18 August 2012]
+
+Fixes:
+ * Inaccurate preference names and documentation regarding "freeze svn:externals" feature (bug 387324)
+
+--------------------------------------------------------------------------------
+
 Version 1.0.0.I20120803-1700 [03 August 2012]
 
 Fixes:
