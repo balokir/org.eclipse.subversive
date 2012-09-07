@@ -141,14 +141,10 @@ public abstract class AbstractSVNSyncInfo extends SyncInfo {
      * If resource doesn't exist locally, return null
      */
     protected static IResourceVariant makeBaseVariant(ILocalResource local) {
-		if (local == null) {
+		if (local == null || IStateFilter.SF_UNVERSIONED.accept(local)) {
 			return null;
 		}
-				
-		if (local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {			
-			return null;
-		}
-				
+		
 		return (local instanceof ILocalFolder) ? (IResourceVariant)new BaseFolderVariant(local) : new BaseFileVariant(local);
 	}
 	
