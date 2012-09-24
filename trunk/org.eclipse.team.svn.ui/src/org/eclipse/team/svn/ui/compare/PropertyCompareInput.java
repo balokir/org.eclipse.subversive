@@ -11,12 +11,19 @@
 
 package org.eclipse.team.svn.ui.compare;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
@@ -44,11 +51,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -122,6 +132,9 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 	protected abstract void fillMenu(IMenuManager manager, TreeSelection selection);
 	
 	protected String getRevisionPart(SVNEntryRevisionReference reference) {
+		if (reference == null) {
+			return SVNUIMessages.ResourceCompareInput_PrejFile;
+		}
 		return SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_RevisionSign, new String [] {String.valueOf(reference.revision)});
 	}
 	
@@ -132,14 +145,14 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		this.propSet = new HashSet<String>();
 		
 		//read the properties
-		GetPropertiesOperation leftPropOperation = new GetPropertiesOperation(this.left, this.location);
-		GetPropertiesOperation rightPropOperation = new GetPropertiesOperation(this.right, this.location);
+		GetPropertiesOperation leftPropOperation = new GetPropertiesOperation(this.left, this.location, false);
+		GetPropertiesOperation rightPropOperation = new GetPropertiesOperation(this.right == null ? this.left : this.right, this.location, this.right == null);
 		GetPropertiesOperation ancestorPropOperation = null;
 		final CompositeOperation op = new CompositeOperation(leftPropOperation.getOperationName(), SVNMessages.class);
 		op.add(leftPropOperation);
 		op.add(rightPropOperation);
 		if (this.ancestor != null) {
-			ancestorPropOperation = new GetPropertiesOperation(this.ancestor, this.location);
+			ancestorPropOperation = new GetPropertiesOperation(this.ancestor, this.location, false);
 			op.add(ancestorPropOperation);
 		}
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -176,6 +189,9 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 			String rightValue = this.rightProps.get(current);
 			String ancestorValue = this.ancestorProps.get(current);
 			int diffKind = this.calculateDifference(leftValue, rightValue, ancestorValue);
+			if (rightPropOperation.isConflicting(current)) {
+				diffKind |= Differencer.CONFLICTING;
+			}
 			if (diffKind != Differencer.NO_CHANGE) {
 				new PropertyCompareNode(
 						root,
@@ -376,21 +392,138 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		protected SVNEntryRevisionReference reference;
 		protected IRepositoryLocation location;
 		protected SVNProperty [] properties;
+		protected ArrayList<SVNProperty> propsAdd = new ArrayList<SVNProperty>();
+		protected ArrayList<SVNProperty> propsChange = new ArrayList<SVNProperty>();
+		protected ArrayList<SVNProperty> propsDel = new ArrayList<SVNProperty>();
+		protected boolean usePropsRej;
 		
-		public GetPropertiesOperation(SVNEntryRevisionReference reference, IRepositoryLocation location) {
+		public GetPropertiesOperation(SVNEntryRevisionReference reference, IRepositoryLocation location, boolean usePropsRej) {
 			super("Operation_GetRevisionProperties", SVNMessages.class); //$NON-NLS-1$
 			this.reference = reference;
 			this.location = location;
+			this.usePropsRej = usePropsRej;
+		}
+		
+		public boolean isConflicting(String name) {
+			return this.usePropsRej && 
+				(this.findProperty(name, this.propsAdd) != null ||
+				this.findProperty(name, this.propsChange) != null ||
+				this.findProperty(name, this.propsDel) != null);
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			ISVNConnector proxy = this.location.acquireSVNProxy();
 			try {
-				this.properties = SVNUtility.properties(proxy, this.reference, new SVNProgressMonitor(this, monitor, null));
+				this.properties = SVNUtility.properties(proxy, this.reference, new SVNProgressMonitor(this, monitor, null));				
+				if (this.usePropsRej) {
+					SVNChangeStatus []status = SVNUtility.status(proxy, this.reference.path, Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
+					if (status.length > 0 && status[0].propStatus == SVNEntryStatus.Kind.CONFLICTED && 
+						status[0].treeConflicts != null && status[0].treeConflicts.length > 0 && status[0].treeConflicts[0].remotePath != null) {
+						File rejFile = new File(status[0].treeConflicts[0].remotePath);
+						if (rejFile.exists()) {
+							BufferedInputStream is = null;
+							BufferedReader reader = null;
+							try {
+								is = new BufferedInputStream(new FileInputStream(rejFile));
+								reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+								String line = null, pName = null, pValue = null;
+								int state = 0;
+								while ((line = reader.readLine()) != null) {
+									if ((state == 0 || state == 2) && line.startsWith("Trying to add new property '")) {
+										if (state == 2) {
+											this.propsAdd.add(new SVNProperty(pName, pValue));
+										}
+										pName = line.substring("Trying to add new property '".length(), line.length() - 1);
+										pValue = null;
+										state = 1;
+									}
+									if ((state == 0 || state == 2) && line.startsWith("Trying to change property '")) {
+										if (state == 2) {
+											this.propsAdd.add(new SVNProperty(pName, pValue));
+										}
+										pName = line.substring("Trying to change property '".length(), line.length() - 1);
+										pValue = null;
+										state = 3;
+									}
+									if ((state == 0 || state == 2) && line.startsWith("Trying to delete property '")) {
+										if (state == 2) {
+											this.propsAdd.add(new SVNProperty(pName, pValue));
+										}
+										pName = line.substring("Trying to change property '".length(), line.length() - 1);
+										this.propsDel.add(new SVNProperty(pName, ""));
+										pName = null;
+										pValue = null;
+										state = 6;
+									}
+									if (state == 1 && line.equals("Incoming property value:")) {
+										state = 2;
+										continue;
+									}
+									if (state == 2) {
+										pValue = pValue != null ? pValue + "\n" + line : line;
+									}
+									if (state == 3 && line.equals("<<<<<<< (local property value)")) {
+										state = 4;
+										continue;
+									}
+									if (state == 4 && line.endsWith("=======")) {
+										state = 5;
+										continue;
+									}
+									if (state == 5) {
+										if (line.endsWith(">>>>>>> (incoming property value)")) {
+											line = line.substring(0, line.length() - ">>>>>>> (incoming property value)".length());
+											pValue = pValue != null ? pValue + "\n" + line : line;
+											this.propsChange.add(new SVNProperty(pName, pValue));
+											state = 0;
+										}
+										else {
+											pValue = pValue != null ? pValue + "\n" + line : line;
+										}
+									}
+									if (state == 6 && line.endsWith(">>>>>>> (incoming property value)")) {
+										state = 0;
+									}
+								}
+								if (state == 2) {
+									this.propsAdd.add(new SVNProperty(pName, pValue));
+								}
+								ArrayList<SVNProperty> props = new ArrayList<SVNProperty>();
+								props.addAll(this.propsAdd);
+								props.addAll(this.propsChange);
+								for (int i = 0; i < this.properties.length; i++) {
+									if (this.findProperty(this.properties[i].name, this.propsDel) == null &&
+										this.findProperty(this.properties[i].name, this.propsChange) == null &&
+										this.findProperty(this.properties[i].name, this.propsAdd) == null) {
+										props.add(this.properties[i]);
+									}
+								}
+								this.properties = props.toArray(new SVNProperty[props.size()]);
+							}
+							catch (IOException ex) {
+								// uninterested
+							}
+							finally {
+								if (reader != null) try {reader.close();} catch (IOException ex) {};
+								if (is != null) try {is.close();} catch (IOException ex) {};
+							}
+						}
+					}
+				}
 			}
 			finally {
 				this.location.releaseSVNProxy(proxy);
 			}
+		}
+		
+		private SVNProperty findProperty(String name, ArrayList<SVNProperty> props) {
+			for (Iterator<SVNProperty> it = props.iterator(); it.hasNext(); ) {
+				SVNProperty p = it.next();
+				if (name.equals(p.name)) {
+					return p;
+				}
+			}
+			return null;
 		}
 		
 		public SVNProperty [] getProperties() {
