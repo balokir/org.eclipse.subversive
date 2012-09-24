@@ -16,11 +16,11 @@ package org.eclipse.team.svn.ui.preferences;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -479,15 +479,14 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultConsoleValues(final IPreferenceStore store) {
-		UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				// PreferenceConverter contains static constructor which interacts with SWT threads
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME), SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT);
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME), SVNTeamPreferences.CONSOLE_WRN_COLOR_DEFAULT);
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_OK_COLOR_NAME), SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT);
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME), SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT);
-			}
-		});
+		// PreferenceConverter contains static constructor which interacts with SWT threads
+		//	So, instead of using PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME), SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT);
+		//	in UI thread context just convert colors directly: StringConverter.asString(value) (the same as PreferenceConverter does)
+		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME), StringConverter.asString(SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT));
+		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME), StringConverter.asString(SVNTeamPreferences.CONSOLE_WRN_COLOR_DEFAULT));
+		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_OK_COLOR_NAME), StringConverter.asString(SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT));
+		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME), StringConverter.asString(SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT));
+		
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME), SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME), SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRAP_ENABLED_NAME), SVNTeamPreferences.CONSOLE_WRAP_ENABLED_DEFAULT);
