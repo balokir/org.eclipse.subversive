@@ -124,8 +124,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 			ILocalResource baseResource = SVNRemoteStorage.instance().asLocalResource(resource);
 			IRepositoryResource remote =  SVNRemoteStorage.instance().asRepositoryResource(resource);
 		    SVNEntryRevisionReference baseReference = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE);
-		    SVNEntryRevisionReference remoteReference = baseReference;
-			final PropertyCompareInput compare = new ThreeWayPropertyCompareInput(cc, resource, remoteReference, baseReference, remote.getRepositoryLocation(), baseResource.getRevision());
+			final PropertyCompareInput compare = new ThreeWayPropertyCompareInput(cc, resource, null, baseReference, remote.getRepositoryLocation(), baseResource.getRevision());
 			compare.run(monitor);
 			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 				public void run() {

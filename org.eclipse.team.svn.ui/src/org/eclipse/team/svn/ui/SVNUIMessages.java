@@ -1280,6 +1280,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RepositoryTreePanel_Message_Single;
 	public static String RepositoryTreePanel_Message_UpTo4;
 	public static String ResourceCompareInput_BaseSign;
+	public static String ResourceCompareInput_PrejFile;
 	public static String ResourceCompareInput_CheckingDelta;
 	public static String ResourceCompareInput_Fetch;
 	public static String ResourceCompareInput_LocalSign;

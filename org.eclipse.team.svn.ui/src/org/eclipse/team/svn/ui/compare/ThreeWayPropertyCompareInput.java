@@ -20,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -29,6 +30,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
@@ -54,7 +56,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 										long baseRevisionNumber) {
 		super(configuration,
 				new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(left), null, SVNRevision.WORKING),
-				right,
+				SVNRemoteStorage.instance().asLocalResource(left).getPropStatus() != IStateFilter.ST_CONFLICTING ? right : null,
 				ancestor,
 				location);
 		this.baseRevisionNumber = baseRevisionNumber;
@@ -150,6 +152,9 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	}
 	
 	protected String getRevisionPart(SVNEntryRevisionReference reference) {
+		if (reference == null) {
+			return SVNUIMessages.ResourceCompareInput_PrejFile;
+		}
 		if (reference.revision == SVNRevision.WORKING) {
 			return SVNUIMessages.ResourceCompareInput_LocalSign;
 		}
