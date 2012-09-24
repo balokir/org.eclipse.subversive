@@ -117,7 +117,7 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 		expandAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/expandall.gif")); //$NON-NLS-1$
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
-				ISynchronizePageConfiguration.MODE_GROUP,
+				ISynchronizePageConfiguration.NAVIGATE_GROUP,
 				expandAllAction);
 		
 		//commit
