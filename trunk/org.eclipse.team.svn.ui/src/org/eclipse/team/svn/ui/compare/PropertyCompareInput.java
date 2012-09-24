@@ -190,7 +190,9 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 			String ancestorValue = this.ancestorProps.get(current);
 			int diffKind = this.calculateDifference(leftValue, rightValue, ancestorValue);
 			if (rightPropOperation.isConflicting(current)) {
-				diffKind |= Differencer.CONFLICTING;
+				int tDiffKind = this.calculateDifference(leftValue, ancestorValue, ancestorValue);
+				diffKind = (rightPropOperation.isAdded(current) ? Differencer.ADDITION : (rightPropOperation.isChanged(current) ? Differencer.CHANGE : Differencer.DELETION));
+				diffKind = Differencer.CONFLICTING | (diffKind == Differencer.CHANGE ? tDiffKind : diffKind);
 			}
 			if (diffKind != Differencer.NO_CHANGE) {
 				new PropertyCompareNode(
@@ -212,7 +214,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		int diffKind = Differencer.NO_CHANGE;
 		if (this.ancestor == null) {
 			if (leftValue != null && rightValue != null) {
-				diffKind = (rightValue.equals(leftValue)) ? Differencer.NO_CHANGE : Differencer.CHANGE;
+				diffKind = rightValue.equals(leftValue) ? Differencer.NO_CHANGE : Differencer.CHANGE;
 			}
 			else if (leftValue == null) {
 				diffKind = Differencer.ADDITION;
@@ -251,9 +253,15 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 				}
 				else if (leftValue == null) {
 					diffKind = Differencer.LEFT | Differencer.DELETION;
+					if (!rightValue.equals(ancestorValue)) {
+						diffKind |= Differencer.CONFLICTING;
+					}
 				}
 				else if (rightValue == null) {
 					diffKind = Differencer.RIGHT | Differencer.DELETION;
+					if (!leftValue.equals(ancestorValue)) {
+						diffKind |= Differencer.CONFLICTING;
+					}
 				}
 			}
 		}
@@ -411,6 +419,18 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 				this.findProperty(name, this.propsDel) != null);
 		}
 		
+		public boolean isAdded(String name) {
+			return this.usePropsRej && this.findProperty(name, this.propsAdd) != null;
+		}
+		
+		public boolean isChanged(String name) {
+			return this.usePropsRej && this.findProperty(name, this.propsChange) != null;
+		}
+		
+		public boolean isDeleted(String name) {
+			return this.usePropsRej && this.findProperty(name, this.propsDel) != null;
+		}
+		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			ISVNConnector proxy = this.location.acquireSVNProxy();
 			try {
@@ -430,7 +450,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 								int state = 0;
 								while ((line = reader.readLine()) != null) {
 									if ((state == 0 || state == 2) && line.startsWith("Trying to add new property '")) {
-										if (state == 2) {
+										if (state == 2 || state == 8) {
 											this.propsAdd.add(new SVNProperty(pName, pValue));
 										}
 										pName = line.substring("Trying to add new property '".length(), line.length() - 1);
@@ -438,7 +458,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 										state = 1;
 									}
 									if ((state == 0 || state == 2) && line.startsWith("Trying to change property '")) {
-										if (state == 2) {
+										if (state == 2 || state == 8) {
 											this.propsAdd.add(new SVNProperty(pName, pValue));
 										}
 										pName = line.substring("Trying to change property '".length(), line.length() - 1);
@@ -446,7 +466,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 										state = 3;
 									}
 									if ((state == 0 || state == 2) && line.startsWith("Trying to delete property '")) {
-										if (state == 2) {
+										if (state == 2 || state == 8) {
 											this.propsAdd.add(new SVNProperty(pName, pValue));
 										}
 										pName = line.substring("Trying to change property '".length(), line.length() - 1);
@@ -457,6 +477,10 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 									}
 									if (state == 1 && line.equals("Incoming property value:")) {
 										state = 2;
+										continue;
+									}
+									if (state == 1 && line.equals("<<<<<<< (local property value)")) {
+										state = 7;
 										continue;
 									}
 									if (state == 2) {
@@ -484,8 +508,23 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 									if (state == 6 && line.endsWith(">>>>>>> (incoming property value)")) {
 										state = 0;
 									}
+									if (state == 7 && line.endsWith("=======")) {
+										state = 8;
+										continue;
+									}
+									if (state == 8) {
+										if (line.endsWith(">>>>>>> (incoming property value)")) {
+											line = line.substring(0, line.length() - ">>>>>>> (incoming property value)".length());
+											pValue = pValue != null ? pValue + "\n" + line : line;
+											this.propsAdd.add(new SVNProperty(pName, pValue));
+											state = 0;
+										}
+										else {
+											pValue = pValue != null ? pValue + "\n" + line : line;
+										}
+									}
 								}
-								if (state == 2) {
+								if (state == 2 || state == 8) {
 									this.propsAdd.add(new SVNProperty(pName, pValue));
 								}
 								ArrayList<SVNProperty> props = new ArrayList<SVNProperty>();
