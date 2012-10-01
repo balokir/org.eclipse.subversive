@@ -51,49 +51,69 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo implements IMergeSyncInfo
 		if (this.isLinked(localKind, localMask)) {
         	// Corresponding resource at remote site can produce a change
 			if (this.isAdded(remoteKind, remoteMask)) {
+				this.localKind = SyncInfo.OUTGOING | SyncInfo.ADDITION;
+				this.remoteKind = SyncInfo.INCOMING | SyncInfo.ADDITION;
 				return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
 			}
 			if (this.isModified(remoteKind, remoteMask) || this.isReplaced(remoteKind, remoteMask)) {
+				this.localKind = SyncInfo.OUTGOING | SyncInfo.ADDITION;
+				this.remoteKind = SyncInfo.INCOMING | SyncInfo.CHANGE;
 				return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
 			}
 			if (this.isDeleted(remoteKind, remoteMask)) {
+				this.localKind = SyncInfo.OUTGOING | SyncInfo.ADDITION;
+				this.remoteKind = SyncInfo.INCOMING | SyncInfo.DELETION;
 				return SyncInfo.CONFLICTING | SyncInfo.DELETION;
 			}
 			return SyncInfo.IN_SYNC;
 		}
 
 	    if (this.isTreeConflicted(localKind, localMask)) {
-	    	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;        	
+			this.localKind = SyncInfo.OUTGOING | SyncInfo.CHANGE;
+			this.remoteKind = SyncInfo.INCOMING | SyncInfo.CHANGE;
+	    	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
 	    }
 	    if (this.isTreeConflicted(remoteKind, remoteMask)) {
-	    	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;        	
+			this.localKind = SyncInfo.OUTGOING | SyncInfo.CHANGE;
+			this.remoteKind = SyncInfo.INCOMING | SyncInfo.CHANGE;
+	    	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
 	    }
 		
 		if (this.isAdded(remoteKind, remoteMask)) {
+			this.remoteKind = SyncInfo.INCOMING | SyncInfo.ADDITION;
 			if (this.isNotExists(localKind, localMask) || this.isDeleted(localKind, localMask)) {
 				return SyncInfo.INCOMING | SyncInfo.ADDITION;
 			}
+			this.localKind = SyncInfo.OUTGOING | SyncInfo.ADDITION;
 			return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
 		}
 		if (this.isConflicted(remoteKind, remoteMask)) {
+			this.localKind = SyncInfo.OUTGOING | SyncInfo.CHANGE;
+			this.remoteKind = SyncInfo.INCOMING | SyncInfo.CHANGE;
 			return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
 		}
 		if (this.isModified(remoteKind, remoteMask)) {
+			this.remoteKind = SyncInfo.INCOMING | SyncInfo.CHANGE;
 			if (this.isNotExists(localKind, localMask)) {
+				this.remoteKind = SyncInfo.INCOMING | SyncInfo.ADDITION;
 				return SyncInfo.INCOMING | SyncInfo.ADDITION;
 			}
 			if (this.isDeleted(localKind, localMask)) {
+				this.localKind = SyncInfo.OUTGOING | SyncInfo.DELETION;
 				return SyncInfo.CONFLICTING | SyncInfo.DELETION;
 			}
 			return SyncInfo.INCOMING | SyncInfo.CHANGE;
 		}
 		if (this.isDeleted(remoteKind, remoteMask)) {
+			this.remoteKind = SyncInfo.INCOMING | SyncInfo.DELETION;
 			if (this.isNotExists(localKind, localMask) || this.isDeleted(localKind, localMask)) {
+				this.remoteKind = SyncInfo.IN_SYNC;
 				return SyncInfo.IN_SYNC;
 			}
 			if (this.isNotModified(localKind, localMask)) {
 				return SyncInfo.INCOMING | SyncInfo.DELETION;
 			}
+			this.localKind = SyncInfo.OUTGOING | SyncInfo.CHANGE;
 			return SyncInfo.CONFLICTING | SyncInfo.DELETION;
 		}
 

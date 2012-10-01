@@ -16,7 +16,6 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
@@ -39,6 +38,9 @@ public abstract class AbstractSVNSyncInfo extends SyncInfo {
 	//If there are no remote changes it's null
 	protected IResourceChange remoteStatus;	
 	
+	protected int localKind = SyncInfo.IN_SYNC;
+	protected int remoteKind = SyncInfo.IN_SYNC;
+	
 	public AbstractSVNSyncInfo(ILocalResource local, IResourceChange remote, IResourceVariantComparator comparator) {						
 		this(local, AbstractSVNSyncInfo.makeBaseVariant(local), AbstractSVNSyncInfo.makeRemoteVariant(local, remote), comparator, remote);
 	}
@@ -51,6 +53,14 @@ public abstract class AbstractSVNSyncInfo extends SyncInfo {
 	
 	public ILocalResource getLocalResource() {
 		return this.local;
+	}
+	
+	public int getLocalKind() {
+		return this.localKind;
+	}
+	
+	public int getRemoteKind() {
+		return this.remoteKind;
 	}
 	
 	/**
