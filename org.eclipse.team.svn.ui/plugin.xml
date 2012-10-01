@@ -2391,7 +2391,7 @@
     <key
           commandId="org.eclipse.team.svn.ui.command.EditPropertiesCommand"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          sequence="CTRL+ALT+W"/>
+          sequence="CTRL+ALT+T"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.ShowAnnotationCommand"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
