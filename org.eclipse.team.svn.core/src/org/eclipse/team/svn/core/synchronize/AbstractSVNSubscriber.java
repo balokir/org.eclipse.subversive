@@ -346,15 +346,18 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 						FileUtility.reorder(resources, true);						
 																		
 						//process
-						for (int i = 0; i < resources.length; i ++) {
+						for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 							IResource resource = resources[i];
-							IResourceChange resourceChange = resourcesMap.get(resource);
+							final IResourceChange resourceChange = resourcesMap.get(resource);
+							final AbstractActionOperation self = this;
 							
-							ProgressMonitorUtility.setTaskInfo(monitor, this, String.valueOf(resourceChange.getRevision()));
-							AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
+							this.protectStep(new IUnprotectedOperation() {
+								public void run(IProgressMonitor monitor) throws Exception {
+									ProgressMonitorUtility.setTaskInfo(monitor, self, String.valueOf(resourceChange.getRevision()));
+									AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
+								}
+							}, monitor, resources.length);
 							changes.add(resourceChange.getResource());
-							
-							ProgressMonitorUtility.progress(monitor, i, statuses.length);
 						}																								
 					}
 				}
