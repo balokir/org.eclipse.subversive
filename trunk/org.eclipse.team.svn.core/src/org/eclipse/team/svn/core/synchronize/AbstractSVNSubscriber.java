@@ -21,18 +21,28 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.ITwoWayDiff;
+import org.eclipse.team.core.diff.provider.ThreeWayDiff;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.mapping.provider.ResourceDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
+import org.eclipse.team.internal.core.mapping.ResourceVariantFileRevision;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -128,6 +138,45 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		}
 		return roots.toArray(new IResource[roots.size()]);
     }
+    
+    // override in order to correctly support models
+	public IDiff getDiff(IResource resource) throws CoreException {
+		AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)this.getSyncInfo(resource);
+		if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
+			return null;
+		}
+		int direction = SyncInfo.getDirection(info.getKind());
+		ITwoWayDiff local = null;
+		if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING) {
+			int kind = SyncInfo.getChange(info.getLocalKind());
+			if (resource.getType() == IResource.FILE) {
+				IFileRevision before = this.asFileState(info.getBase());
+				//FIXME: SVNLocalFileRevision - move all the related stuff from the UI plug-in
+				IFileRevision after = new LocalFileRevision((IFile)local);
+				local = new ResourceDiff(info.getLocal(), kind, 0, before, after);
+			}
+			else {// For folders, we don't need file states
+				local = new ResourceDiff(info.getLocal(), kind);
+			}
+		}		
+		ITwoWayDiff remote = null;
+		if (direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING) {
+			int kind = SyncInfo.getChange(info.getRemoteKind());
+			if (info.getLocal().getType() == IResource.FILE) {
+				IFileRevision before = this.asFileState(info.getBase());
+				IFileRevision after = this.asFileState(info.getRemote());
+				remote = new ResourceDiff(info.getLocal(), kind, 0, before, after);
+			}
+			else {
+				remote = new ResourceDiff(info.getLocal(), kind);
+			}
+		}
+		return new ThreeWayDiff(local, remote);
+	}
+
+	private IFileRevision asFileState(IResourceVariant variant) {
+		return variant == null ? null : new ResourceVariantFileRevision(variant);
+	}
 
     public SyncInfo getSyncInfo(IResource resource) throws TeamException {
 		if (!this.isSupervised(resource)) {
