@@ -81,6 +81,14 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 	}
 
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {	
+		if (!resource.isAccessible() && bytes != null) {
+			// just one level of a phantom resources could be created by an ISynchronizer at once
+			//	so, we run through all the parents to ensure everything is all right.
+			IResource parent = resource.getParent();
+			if (parent != null && !parent.isAccessible()) {
+				this.setBytes(parent, new byte[0]);
+			}
+		}
 		return super.setBytes(resource, bytes);		
 	}	
 	
