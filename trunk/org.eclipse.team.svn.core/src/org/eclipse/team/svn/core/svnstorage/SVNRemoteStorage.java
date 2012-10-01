@@ -366,8 +366,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	public synchronized IResource []getRegisteredChildren(IContainer container) throws Exception {
-		// for null, inaccessible resource and workspace root members shouldn't be provided
-		if (container == null || !container.isAccessible() || container.getProject() == null) {
+		// for null and workspace root members shouldn't be provided
+		if (container == null || container.getProject() == null) {
 			return null;
 		}
 		IResource []members = FileUtility.resourceMembers(container, false);

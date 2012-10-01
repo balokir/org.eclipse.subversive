@@ -716,14 +716,16 @@ public final class FileUtility {
 	}
 	
 	public static IResource []resourceMembers(IContainer node, boolean includePhantoms) throws CoreException {
-		try {
-			return node.members(includePhantoms);
-		}
-		catch (CoreException ex) {
-			// if project asynchronously closed then skip node
-			//	checked only in case of exception and not before members() due to non-transactional nature of isAccessible()/members() methods pair
-			if (node.isAccessible()) {
-				throw ex;
+		if (node.isAccessible()) {
+			try {
+				return node.members(includePhantoms);
+			}
+			catch (CoreException ex) {
+				// if project asynchronously closed then skip node
+				//	checked only in case of exception and not before members() due to non-transactional nature of isAccessible()/members() methods pair
+				if (node.isAccessible()) {
+					throw ex;
+				}
 			}
 		}
 		return new IResource[0];
