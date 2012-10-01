@@ -13,6 +13,8 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1104,6 +1106,22 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 					this.tryRealm = realm;
 					this.threadName = threadName;
 					return true;
+				}
+				if (this.realmLocation == null && CoreExtensionsManager.instance().getSVNConnectorFactory().getId().indexOf("svnkit") != -1) {
+					String protocol = "file"; //$NON-NLS-1$
+					try {
+						URL url = SVNUtility.getSVNUrl(location.getUrl());
+						protocol = url.getProtocol();
+						if (protocol.equals("file")) { //$NON-NLS-1$
+							this.realmLocation = this.location;
+							this.tryRealm = realm;
+							this.threadName = threadName;
+							return true;
+						}
+					}
+					catch (MalformedURLException ex) {
+						//skip
+					}
 				}
 			}
 			else {
