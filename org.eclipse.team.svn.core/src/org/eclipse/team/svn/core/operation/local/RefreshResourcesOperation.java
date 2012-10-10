@@ -82,10 +82,10 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 										RefreshResourcesOperation.this.refreshMetaInfo(resource.getParent(), monitor);
 									}
 								}
-								else {
-									// if the SVN meta info is present inside the project then it is in the project root or higher (we do not consider mixed working copies at the moment)
-									RefreshResourcesOperation.this.refreshMetaInfo(resource.getProject(), monitor);
-								}
+//								else {
+//									// if the SVN meta info is present inside the project then it is in the project root or higher (we do not consider mixed working copies at the moment)
+//									RefreshResourcesOperation.this.refreshMetaInfo(resource.getProject(), monitor);
+//								}
 								RefreshResourcesOperation.this.doRefresh(resource, RefreshResourcesOperation.this.depth, monitor);
 							}
 						}, monitor, resources.length);

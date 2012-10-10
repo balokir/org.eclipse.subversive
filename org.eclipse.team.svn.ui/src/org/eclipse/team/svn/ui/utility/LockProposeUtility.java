@@ -39,7 +39,7 @@ public class LockProposeUtility {
 	public static IStatus proposeLock(final IResource[] resources, Shell shell) {
 		CompositeOperation op = LockProposeUtility.performLockAction(resources, false, shell);
 		if (op != null) {
-			UIMonitorUtility.doTaskBusyDefault(op);
+			UIMonitorUtility.doTaskBusyWorkspaceModify(op);
 			return op.getStatus();
 		}				
 		return Status.CANCEL_STATUS;
