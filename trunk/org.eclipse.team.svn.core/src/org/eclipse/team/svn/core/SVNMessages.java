@@ -334,6 +334,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Operation_RefreshResources;
 	public static String Operation_RefreshResources_Error;
 	public static String Operation_RefreshResources_Id;
+	public static String Operation_RefreshResources_DamagedProjectFile;
 	public static String Operation_RelocateFile;
 	public static String Operation_RelocateFile_Error;
 	public static String Operation_RelocateFile_Id;

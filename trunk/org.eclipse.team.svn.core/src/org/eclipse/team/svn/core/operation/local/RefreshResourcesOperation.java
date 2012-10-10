@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -112,7 +113,15 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	protected void doRefresh(final IResource resource, final int depth, IProgressMonitor monitor) throws CoreException {
-		resource.refreshLocal(depth, monitor);
+		try {
+			resource.refreshLocal(depth, monitor);
+		}
+		catch (CoreException ex) {
+			if (ex.getStatus() != null && ex.getStatus().toString().indexOf("(.project)") != -1) {
+				throw new UnreportableException(SVNMessages.Operation_RefreshResources_DamagedProjectFile);
+			}
+			throw ex;
+		}
 		FileUtility.findAndMarkSVNInternals(resource, true);
 	}
 
