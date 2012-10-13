@@ -8,6 +8,25 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.0.I20121013-1700 [13 October 2012]
+
+Fixes:
+ * Synchronize window showing add icon decoration instead of delete icon for outgoing change Eclipse 4.2 (bug 388445)
+ * "Edit conflicts" does nothing with a merge conflict caused by properties (bug 390168)
+ * Property change statuses are shown incorrectly when incoming/outgoing deletion is involved (bug 390171)
+ * "Workbench has not been created yet" exception after "out of PermGen space" crash (bug 390177)
+ * "Expand All" is in wrong toolbar group in the "Models" Synchronize View mode (bug 390181)
+ * When working with SVN 1.7-compatible connectors deleted folders are handled improperly (bug 390851)
+ * Moved folder's status is shown wrongly when models support is enabled (bug 390858)
+ * On a repository that is accessed using the file protocol SVN Kit leads to an excessive password prompt (bug 390865)
+ * Resource '...' does not exist exception in AbstractSVNSubscriber [ID-GZMNK] (bug 388899)
+ * Shortcut for "Show Properties" overrides the sign "|" in Slovenian keyboard scheme [CTRL+ALT+W -> CTRL+ALT+T] (bug 390005)
+ * Error when trying to modify a file with the property "svn:needs-lock" in the JSP editor (bug 377013)
+ * Show a user friendly error message if the merge/update/switch caused an unresolved conflict over the .project file [ID-UOAA9] (bug 365867)
+ * Wrong error message text spelling [when resources refresh fails] (bug 391575)
+
+--------------------------------------------------------------------------------
+
 Version 1.0.0.I20120818-1700 [18 August 2012]
 
 Fixes:
