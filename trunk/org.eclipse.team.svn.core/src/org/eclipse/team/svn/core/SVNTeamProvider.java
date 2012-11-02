@@ -24,10 +24,10 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNChangeStatus;
-import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.history.SVNFileHistoryProvider;
@@ -39,8 +39,8 @@ import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.management.DisconnectOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -245,19 +245,8 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	
 	public static boolean requiresUpgrade(IProject project) {
 		IPath location = FileUtility.getResourcePath(project);
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
-		try {
-			SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
-		}		
-		catch (Exception ex) {
-			if (ex instanceof SVNConnectorException && ((SVNConnectorException)ex).getErrorId() == SVNErrorCodes.wcOldFormat) {
-				return true;
-			}
-		}
-		finally {
-			proxy.dispose();
-		}
-		return false;
+		location = location.append(SVNUtility.getSVNFolderName());
+		return !SVNUtility.isPriorToSVN17() && location.toFile().exists() && !location.append("pristine").toFile().exists();
 	}
 	
 	protected int uploadRepositoryResource() {
