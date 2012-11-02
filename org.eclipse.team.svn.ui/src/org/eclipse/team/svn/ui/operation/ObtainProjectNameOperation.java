@@ -34,6 +34,13 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Obtain project names from .project files operation 
@@ -130,11 +137,30 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 			BufferedReader reader = null;
 			try {
 				reader = new BufferedReader(new InputStreamReader(is, "UTF-8")); //$NON-NLS-1$
+				
+				NameReceiver receiver = new NameReceiver();
+				XMLReader parser = XMLReaderFactory.createXMLReader();
+				parser.setContentHandler(receiver);
+				parser.parse(new InputSource(reader));
+				return receiver.getName();
+			}
+			catch (Exception ex) {
+				// do nothing, try reading plainly
+			}
+			finally {
+				if (reader != null) {
+					try {reader.close();} catch (Exception ex) {}
+				}
+				try {is.close();} catch (Exception ex) {}
+			}
+			is = op.getContent();
+			try {
+				reader = new BufferedReader(new InputStreamReader(is, "UTF-8")); //$NON-NLS-1$
+				
 				String currentString;
 				int first;
 				int last;
 				while ((currentString = reader.readLine()) != null) {
-					//FIXME incorrect search: could be on different lines
 					if ((first = currentString.indexOf("<name>")) >= 0 && //$NON-NLS-1$
 						(last = currentString.indexOf("</name>")) >= 0) { //$NON-NLS-1$
 						String name = currentString.substring(first + "<name>".length(), last); //$NON-NLS-1$
@@ -156,5 +182,45 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 	public HashMap<String, IRepositoryResource> getNames2Resources() {
 		return this.names2Resources;
 	}
-	
+
+	private static class NameReceiver
+		implements ContentHandler
+	{
+		private int state = 0;
+		private String name = "";//$NON-NLS-1$
+		public String getName() {
+			return this.name;
+		}
+		public void setDocumentLocator(Locator locator) {
+		}
+		public void startDocument() throws SAXException {
+		}
+		public void endDocument() throws SAXException {
+		}
+		public void startPrefixMapping(String prefix, String uri) throws SAXException {
+		}
+		public void endPrefixMapping(String prefix) throws SAXException {
+		}
+		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+			if (localName.equals("name")) {//$NON-NLS-1$
+				this.state = 1;
+			}
+		}
+		public void endElement(String uri, String localName, String qName) throws SAXException {
+			if (localName.equals("name")) {//$NON-NLS-1$
+				this.state = 0;
+			}
+		}
+		public void characters(char[] ch, int start, int length) throws SAXException {
+			if (this.state == 1) {
+				this.name += new String(ch, start, length);
+			}
+		}
+		public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+		}
+		public void processingInstruction(String target, String data) throws SAXException {
+		}
+		public void skippedEntity(String name) throws SAXException {
+		}
+	}
 }
