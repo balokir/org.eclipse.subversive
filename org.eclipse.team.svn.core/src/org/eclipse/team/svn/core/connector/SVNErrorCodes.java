@@ -153,6 +153,8 @@ public class SVNErrorCodes {
 	
 	// working copy was created by SVN version earlier then (1.7)
 	public static final int wcOldFormat = 155036;
+	
+	public static final int wcCleanupRequired = 155037;
 
 	public static final int fsGeneral = 160000;
 

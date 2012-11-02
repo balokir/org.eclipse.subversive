@@ -25,6 +25,7 @@
 		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.InaccessibleLocationDataHelper"/>
 		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.InvalidMetaHelper"/>
 		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.UpgradeWorkingCopyHelper"/>
+		<crashrecovery class="org.eclipse.team.svn.ui.crashrecovery.CleanupWorkingCopyHelper"/>
 	</extension>
 
 	<extension point="org.eclipse.core.runtime.adapters">

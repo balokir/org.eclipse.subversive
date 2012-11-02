@@ -272,8 +272,12 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 				}
 			}
 		}		
-		catch (Exception ex) {
-			if (ex instanceof SVNConnectorException && ((SVNConnectorException)ex).getErrorId() == SVNErrorCodes.wcOldFormat) {
+		catch (SVNConnectorException ex) {
+			if (ex.getErrorId() == SVNErrorCodes.wcCleanupRequired) {
+				// no way to read statuses, return some fake for now...
+				return ErrorDescription.WORKING_COPY_REQUIRES_CLEANUP;
+			}
+			if (ex.getErrorId() == SVNErrorCodes.wcOldFormat) {
 				return ErrorDescription.WORKING_COPY_REQUIRES_UPGRADE;
 			}
 			return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
