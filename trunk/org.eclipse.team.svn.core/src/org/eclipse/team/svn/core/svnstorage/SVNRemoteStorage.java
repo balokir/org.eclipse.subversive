@@ -54,6 +54,7 @@ import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -868,7 +869,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		// So, suppress throwing "Path is not a working copy directory" exception.
 		// 155007 is error code for "Path is not a working copy directory".
 		catch (SVNConnectorException cwe) {
-			if (cwe.getErrorId() != 155007) {
+			if (cwe.getErrorId() == SVNErrorCodes.wcCleanupRequired) {
+				// no way to read statuses, return some fake for now...
+				return new SVNChangeStatus[] {new SVNChangeStatus(path, "", SVNEntry.Kind.DIR, 0, 0, 0, "", SVNEntryStatus.Kind.MODIFIED, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL, false, false, false, null, null, 0, 0, SVNEntry.Kind.DIR, "", false, false, null, null)};
+			}
+			if (cwe.getErrorId() != SVNErrorCodes.wcNotDirectory) {
 				throw cwe;
 			}
 			return new SVNChangeStatus[0];
