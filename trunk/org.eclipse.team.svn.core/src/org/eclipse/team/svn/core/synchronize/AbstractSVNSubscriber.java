@@ -148,7 +148,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		int direction = SyncInfo.getDirection(info.getKind());
 		ITwoWayDiff local = null;
 		if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING) {
-			int kind = SyncInfo.getChange(info.getLocalKind());
+			int kind = AbstractSVNSubscriber.syncKind2DiffKind(info.getLocalKind());
 			if (resource.getType() == IResource.FILE) {
 				IFileRevision before = this.asFileState(info.getBase());
 				//FIXME: SVNLocalFileRevision - move all the related stuff from the UI plug-in
@@ -161,7 +161,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		}		
 		ITwoWayDiff remote = null;
 		if (direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING) {
-			int kind = SyncInfo.getChange(info.getRemoteKind());
+			int kind = AbstractSVNSubscriber.syncKind2DiffKind(info.getRemoteKind());
 			if (info.getLocal().getType() == IResource.FILE) {
 				IFileRevision before = this.asFileState(info.getBase());
 				IFileRevision after = this.asFileState(info.getRemote());
@@ -172,6 +172,11 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 			}
 		}
 		return new ThreeWayDiff(local, remote);
+	}
+	
+	private static int syncKind2DiffKind(int kind) {
+		kind = SyncInfo.getChange(kind);
+		return kind == SyncInfo.ADDITION ? IDiff.ADD : (kind == SyncInfo.DELETION ? IDiff.REMOVE : kind == SyncInfo.CHANGE ? IDiff.CHANGE : IDiff.NO_CHANGE);
 	}
 
 	private IFileRevision asFileState(IResourceVariant variant) {
