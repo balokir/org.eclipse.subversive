@@ -51,6 +51,7 @@ import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.svn.core.mapping.SVNActiveChangeSet;
 import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.svn.core.mapping.SVNUnassignedChangeSet;
@@ -149,7 +150,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 									viewer.add(viewer.getInput(), set);
 								}
 							}
-							else {
+							else if (!(set instanceof SVNActiveChangeSet) || !((SVNActiveChangeSet)set).isManagedExternally()) {
 								viewer.remove(set);
 							}
 						}
@@ -199,7 +200,11 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 								viewer.add(viewer.getInput(), visibleAddedSets);
 							}
 							if (visibleRemovedSets.length > 0) {
-								viewer.remove(visibleRemovedSets);
+								for (int i = 0; i < visibleRemovedSets.length; i++) {
+									if (!(visibleRemovedSets[i] instanceof SVNActiveChangeSet) || !((SVNActiveChangeSet)visibleRemovedSets[i]).isManagedExternally()) {
+										viewer.remove(visibleRemovedSets[i]);
+									}
+								}
 							}
 							for (int i = 0; i < visibleChangedSets.length; i++) {
 								viewer.refresh(visibleChangedSets[i], true);		

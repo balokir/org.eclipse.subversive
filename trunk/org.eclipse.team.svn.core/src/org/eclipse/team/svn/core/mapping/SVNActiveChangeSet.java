@@ -19,5 +19,9 @@ public class SVNActiveChangeSet extends ActiveChangeSet {
 	public SVNActiveChangeSet(ActiveChangeSetManager manager, String title) {
 		super(manager, title);
 	}
+	
+	public boolean isManagedExternally() {
+		return false;
+	}
 
 }
