@@ -62,6 +62,11 @@ public class SVNConflictDescriptor {
 		 * Deleting entry
 		 */
 		public static final int DELETE = 2;
+
+		/**
+		 * Replacing entry
+		 */
+		public static final int REPLACE = 3;
 	}
 
 	/**

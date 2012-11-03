@@ -1677,6 +1677,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String EditTreeConflictsPanel_DefaultMessage;
 	public static String EditTreeConflictsPanel_Delete_Action;
 	public static String EditTreeConflictsPanel_Delete_Reason;
+	public static String EditTreeConflictsPanel_Replace_Action;
 	public static String EditTreeConflictsPanel_Description;
 	public static String EditTreeConflictsPanel_EndRevision_Label;
 	public static String EditTreeConflictsPanel_IncomingAction_Label;

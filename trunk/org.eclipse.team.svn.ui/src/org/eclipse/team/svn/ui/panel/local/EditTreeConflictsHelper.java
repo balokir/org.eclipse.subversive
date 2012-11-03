@@ -103,7 +103,7 @@ public class EditTreeConflictsHelper {
 	}
 	
 	public String getActionAsString() {
-		String action = ""; //$NON-NLS-1$
+		String action = SVNUIMessages.EditTreeConflictsPanel_Replace_Action;
 		if (this.treeConflict.action == Action.MODIFY) {
 			action = SVNUIMessages.EditTreeConflictsPanel_Modify_Action;
 		} else if (this.treeConflict.action == Action.ADD) {
@@ -147,7 +147,7 @@ public class EditTreeConflictsHelper {
 	 * some resolutions require 'revert' operation (which clears conflict markers) 
 	 */
 	public boolean isRemoteOperationResolveTheConflict() {
-		return this.treeConflict.action == Action.MODIFY && (this.treeConflict.operation == Operation.UPDATE || this.treeConflict.operation == Operation.SWITCHED);
+		return (this.treeConflict.action == Action.MODIFY || this.treeConflict.action == Action.REPLACE) && (this.treeConflict.operation == Operation.UPDATE || this.treeConflict.operation == Operation.SWITCHED);
 	}
 	
 	public IActionOperation getOperation(boolean isRemoteResolution, boolean isLocalResolution, boolean markAsMerged) {
@@ -166,7 +166,7 @@ public class EditTreeConflictsHelper {
 				cmpOp = this.getRemoteAddOperation(opName, isRecursive);										
 			} else if (this.treeConflict.action == Action.DELETE) {
 				cmpOp = this.getRemoteDeleteOperation(opName);
-			} else if (this.treeConflict.action == Action.MODIFY) {																
+			} else if (this.treeConflict.action == Action.MODIFY || this.treeConflict.action == Action.REPLACE) {																
 				cmpOp = this.getRemoteModifyOperation(opName, isRecursive);								
 			}						
 		}
