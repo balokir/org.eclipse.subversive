@@ -336,7 +336,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		ArrayList<ChangeSet> result = new ArrayList<ChangeSet>();
 		ChangeSet[] sets = this.getAllSets();
 		for (int i = 0; i < sets.length; i++) {
-			if (this.hasChildren(TreePath.EMPTY.createChildPath(sets[i]))) {
+			if (this.hasChildren(TreePath.EMPTY.createChildPath(sets[i])) || sets[i] instanceof ActiveChangeSet && ((ActiveChangeSet)sets[i]).isUserCreated()) {
 				result.add(sets[i]);
 			}
 		}
