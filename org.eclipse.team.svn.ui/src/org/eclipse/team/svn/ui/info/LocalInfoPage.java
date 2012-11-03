@@ -306,6 +306,9 @@ public class LocalInfoPage extends PropertyPage {
 		case SVNConflictDescriptor.Action.DELETE:
 			action = "delete"; //$NON-NLS-1$
 			break;			
+		case SVNConflictDescriptor.Action.REPLACE:
+			action = "replace"; //$NON-NLS-1$
+			break;
 		default:
 			action = Integer.toString(conflictDescriptor.action);
 			break;
