@@ -93,7 +93,19 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			if (SVNChangeSetContentProvider.this.isVisibleInMode(set) || SVNChangeSetContentProvider.this.isVisibleInMode(previousDefault)) {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						((AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer()).update(previousDefault != null ? new Object[] {previousDefault, set} : set, null);
+						AbstractTreeViewer viewer = (AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer();
+						viewer.getControl().setRedraw(false);
+						try {
+							if (previousDefault != null) {
+								viewer.refresh(previousDefault, true);
+							}
+							if (set != null) {
+								viewer.refresh(set, true);
+							}
+						}
+						finally {
+							viewer.getControl().setRedraw(true);
+						}
 					}
 				});
 			}
