@@ -58,6 +58,10 @@ public class SVNContextChangeSet extends SVNActiveChangeSet implements IAdaptabl
 		updateLabel();
 	}
 	
+	public boolean isManagedExternally() {
+		return true;
+	}
+	
 	public boolean isUserCreated() {
 		return true;
 	}
