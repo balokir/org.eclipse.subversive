@@ -30,8 +30,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffChangeEvent;
-import org.eclipse.team.core.diff.IDiffChangeListener;
-import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
@@ -42,10 +40,10 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager;
+import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener;
-import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
@@ -73,20 +71,26 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		
 		public void setAdded(final ChangeSet set) {
 			if (set instanceof ActiveChangeSet) {
+				final DiffChangeSet unassigned = SVNChangeSetContentProvider.this.getUnassignedSet();
+				unassigned.remove(set.getResources());
 				if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							AbstractTreeViewer viewer = (AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer();
-							viewer.add(viewer.getInput(), set);
+							viewer.getControl().setRedraw(false);
+							try {
+								viewer.add(viewer.getInput(), set);
+								if (unassigned.isEmpty()) {
+									viewer.remove(unassigned);
+								}
+							}
+							finally {
+								viewer.getControl().setRedraw(true);
+							}
 						}
 					});
 				}
-				SVNChangeSetContentProvider.this.getUnassignedSet().remove(set.getResources());
 			}
-		}
-
-		private void handleSetAddition(final ChangeSet set) {
-			SVNChangeSetContentProvider.this.getUnassignedSet().remove(set.getResources());
 		}
 
 		public void defaultSetChanged(final ChangeSet previousDefault, final ChangeSet set) {
@@ -113,14 +117,25 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 
 		public void setRemoved(final ChangeSet set) {
 			if (set instanceof ActiveChangeSet) {
+				this.handleSetRemoval(set);
 				if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							((AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer()).remove(TreePath.EMPTY.createChildPath(set));
+							AbstractTreeViewer viewer = (AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer();
+							viewer.getControl().setRedraw(false);
+							try {
+								viewer.remove(set);
+								DiffChangeSet unassigned = SVNChangeSetContentProvider.this.getUnassignedSet();
+								if (!unassigned.isEmpty()) {
+									viewer.add(viewer.getInput(), unassigned);
+								}
+							}
+							finally {
+								viewer.getControl().setRedraw(true);
+							}
 						}
 					});
 				}
-				this.handleSetRemoval(set);
 			}
 		}
 
@@ -128,8 +143,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			IResource[] resources = set.getResources();
 			ArrayList<IDiff> toAdd = new ArrayList<IDiff>();
 			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				IDiff diff = getContext().getDiffTree().getDiff(resource);
+				IDiff diff = getContext().getDiffTree().getDiff(resources[i]);
 				//if active change set deleted, then we can freely add its resources to unassigned change set 
 				if (diff != null) {
 					toAdd.add(diff);
@@ -142,7 +156,8 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						((AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer()).update(set, null);
+						AbstractTreeViewer viewer = (AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer();
+						viewer.update(set, null);
 					}
 				});
 			}
@@ -150,25 +165,38 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 
 		public void resourcesChanged(final ChangeSet set, final IPath[] paths) {
 			if (set instanceof ActiveChangeSet) {
+				this.handleSetChange(set, paths);
 				if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							AbstractTreeViewer viewer = (AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer();
-							if (SVNChangeSetContentProvider.this.hasChildrenInContext(set)){
-								if (SVNChangeSetContentProvider.this.getVisibleSetsInViewer().contains(set)) {
-									viewer.refresh(set, true);
+							viewer.getControl().setRedraw(false);
+							try {
+								if (SVNChangeSetContentProvider.this.hasChildrenInContext(set)){
+									if (SVNChangeSetContentProvider.this.getVisibleSetsInViewer().contains(set)) {
+										viewer.refresh(set, true);
+									}
+									else {
+										viewer.add(viewer.getInput(), set);
+									}
+								}
+								else if (!(set instanceof SVNActiveChangeSet) || !((SVNActiveChangeSet)set).isManagedExternally()) {
+									viewer.remove(set);
+								}
+								DiffChangeSet unassigned = SVNChangeSetContentProvider.this.getUnassignedSet();
+								if (!unassigned.isEmpty()) {
+									viewer.add(viewer.getInput(), unassigned);
 								}
 								else {
-									viewer.add(viewer.getInput(), set);
+									viewer.remove(unassigned);
 								}
 							}
-							else if (!(set instanceof SVNActiveChangeSet) || !((SVNActiveChangeSet)set).isManagedExternally()) {
-								viewer.remove(set);
+							finally {
+								viewer.getControl().setRedraw(true);
 							}
 						}
 					});
 				}
-				this.handleSetChange(set, paths);
 			}
 		}
 
@@ -202,36 +230,11 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			final ChangeSet[] visibleRemovedSets = this.getVisibleSets(removedSets);
 			ChangeSet[] changedSets = event.getChangedSets();
 			final ChangeSet[] visibleChangedSets = this.getVisibleSets(changedSets);
-			if (visibleAddedSets.length > 0 || visibleRemovedSets.length > 0 || visibleChangedSets.length > 0) {
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						AbstractTreeViewer viewer = (AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer();
-						try {
-							viewer.getControl().setRedraw(false);
-							if (visibleAddedSets.length > 0) {
-								viewer.add(viewer.getInput(), visibleAddedSets);
-							}
-							if (visibleRemovedSets.length > 0) {
-								for (int i = 0; i < visibleRemovedSets.length; i++) {
-									if (!(visibleRemovedSets[i] instanceof SVNActiveChangeSet) || !((SVNActiveChangeSet)visibleRemovedSets[i]).isManagedExternally()) {
-										viewer.remove(visibleRemovedSets[i]);
-									}
-								}
-							}
-							for (int i = 0; i < visibleChangedSets.length; i++) {
-								viewer.refresh(visibleChangedSets[i], true);		
-							}
-						}
-						finally {
-							SVNChangeSetContentProvider.this.getViewer().getControl().setRedraw(true);
-						}
-					}
-				});
-			}
+			final DiffChangeSet unassigned = SVNChangeSetContentProvider.this.getUnassignedSet();
 			try {
 				SVNChangeSetContentProvider.this.getTheRest().beginInput();
 				for (int i = 0; i < addedSets.length; i++) {
-					this.handleSetAddition(addedSets[i]);
+					unassigned.remove(addedSets[i].getResources());
 				}
 				if (removedSets.length > 0) {
 					SVNChangeSetContentProvider.this.addAllUnassignedToUnassignedSet();
@@ -261,6 +264,38 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			finally {
 				SVNChangeSetContentProvider.this.getTheRest().endInput(monitor);
 			}
+			if (visibleAddedSets.length > 0 || visibleRemovedSets.length > 0 || visibleChangedSets.length > 0) {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						AbstractTreeViewer viewer = (AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer();
+						try {
+							viewer.getControl().setRedraw(false);
+							if (visibleAddedSets.length > 0) {
+								viewer.add(viewer.getInput(), visibleAddedSets);
+							}
+							if (visibleRemovedSets.length > 0) {
+								for (int i = 0; i < visibleRemovedSets.length; i++) {
+									if (!(visibleRemovedSets[i] instanceof SVNActiveChangeSet) || !((SVNActiveChangeSet)visibleRemovedSets[i]).isManagedExternally()) {
+										viewer.remove(visibleRemovedSets[i]);
+									}
+								}
+							}
+							for (int i = 0; i < visibleChangedSets.length; i++) {
+								viewer.refresh(visibleChangedSets[i], true);		
+							}
+							if (!unassigned.isEmpty()) {
+								viewer.add(viewer.getInput(), unassigned);
+							}
+							else {
+								viewer.remove(unassigned);
+							}
+						}
+						finally {
+							viewer.getControl().setRedraw(true);
+						}
+					}
+				});
+			}
 		}
 
 		private ChangeSet[] getVisibleSets(ChangeSet[] sets) {
@@ -279,47 +314,14 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 	private SVNIncomingChangeSetCollector incomingCollector;
 	private boolean collectorInitialized;
 	private IChangeSetChangeListener collectorListener = new CollectorListener();
-	
-	private IDiffChangeListener diffTreeListener = new IDiffChangeListener() {
-		
-		public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
-		}
-	
-		boolean isSetVisible(DiffChangeSet set) {
-			return SVNChangeSetContentProvider.this.getVisibleSetsInViewer().contains(set);
-		}
-		
-		public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
-			Object input = getViewer().getInput();
-			if (input instanceof SVNChangeSetModelProvider
-					&& SVNChangeSetContentProvider.this.unassignedDiffs != null
-					&& event.getTree() == SVNChangeSetContentProvider.this.unassignedDiffs.getDiffTree()) {
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						if (SVNChangeSetContentProvider.this.unassignedDiffs.isEmpty()
-								|| !hasChildren(TreePath.EMPTY.createChildPath(getUnassignedSet()))) {
-							((AbstractTreeViewer)getViewer()).remove(SVNChangeSetContentProvider.this.unassignedDiffs);
-						}
-						else if (!isSetVisible(SVNChangeSetContentProvider.this.unassignedDiffs)) {
-							((AbstractTreeViewer)getViewer()).add(getViewer().getInput(), SVNChangeSetContentProvider.this.unassignedDiffs);
-						}
-						else {
-							((AbstractTreeViewer)getViewer()).refresh(SVNChangeSetContentProvider.this.unassignedDiffs);
-						}
-					}
-				});
-			}
-		}
-	
-	};
-	
+
 	protected String getModelProviderId() {
 		return SVNChangeSetModelProvider.ID;
 	}
 
 	protected boolean isVisibleInMode(ChangeSet set) {
 		if (this.getViewer().getInput() instanceof SVNChangeSetModelProvider) {
-			if (set instanceof ActiveChangeSet) {
+			if (set instanceof ActiveChangeSet || set instanceof SVNUnassignedChangeSet) {
 				return getConfiguration().getMode() != ISynchronizePageConfiguration.INCOMING_MODE;
 			}
 			if (set instanceof DiffChangeSet) {
@@ -366,7 +368,6 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 	private synchronized DiffChangeSet getUnassignedSet() {
 		if (this.unassignedDiffs == null) {
 			this.unassignedDiffs = new SVNUnassignedChangeSet(SVNUIMessages.ChangeSetModel_UnassignedChangeSetTitle);
-			this.unassignedDiffs.getDiffTree().addDiffChangeListener(this.diffTreeListener);
 			this.addAllUnassignedToUnassignedSet();
 		}
 		return this.unassignedDiffs;
@@ -698,9 +699,6 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			this.incomingCollector.removeListener(this.collectorListener);
 			this.incomingCollector.dispose();
 		}
-		if (this.unassignedDiffs != null) {
-			this.unassignedDiffs.getDiffTree().removeDiffChangeListener(this.diffTreeListener);
-		}
 		super.dispose();
 	}
 	
@@ -715,7 +713,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		return this.getTheRest();
 	}
 	
-	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+	public void diffsChanged(final IDiffChangeEvent event, IProgressMonitor monitor) {
 		IPath[] removed = event.getRemovals();
 		IDiff[] added = event.getAdditions();
 		IDiff[] changed = event.getChanges();
@@ -735,13 +733,13 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		}
 		UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				SVNChangeSetContentProvider.this.getViewer().refresh();
+				AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
+				viewer.refresh();
 			}
 		});
 	}
 	
 	protected void doDiffsChanged(IDiff[] diff) {
-		
 		for (int i = 0; i < diff.length; i++) {
 			if (!this.isContainedInSet(diff[i], this.getOutgoingSets())) {
 				if (this.hasLocalChanges(diff[i])) {
