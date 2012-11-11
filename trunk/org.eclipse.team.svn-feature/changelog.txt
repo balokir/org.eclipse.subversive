@@ -8,6 +8,24 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.0.I20121109-1700 [09 November 2012]
+
+Features:
+ * Update JavaHL binaries to 1.7.7 (bug 393486)
+ * Use SVN Kit 1.7.6 (bug 393484)
+ 
+Fixes:
+ * Format code on a source directory with some hundreds of files: takes ages [slowed down by SVN change sets] (bug 392979)
+ * Default change set is not refreshed in the Synchronize View after it is changed (bug 393483)
+ * Mylyn active change set shouldn't be removed automatically when all its changes were moved to another change set (bug 393481)
+ * If Mylyn task is active but empty it does not reappear automatically after IDE restart in SVN change-sets (bug 393480)
+ * Updating an operating system locked file corrupts the project repository (bug 392955)
+ * ampersand in project name (bug 392049)
+ * "Upgrade working copy" action is always disabled for SVN Kit 1.7.5 (bug 393431)
+ * After latest update, icons in synchronize view sometimes not shown (bug 392884)
+ 
+--------------------------------------------------------------------------------
+
 Version 1.0.0.I20121013-1700 [13 October 2012]
 
 Fixes:
