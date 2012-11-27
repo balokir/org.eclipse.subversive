@@ -129,11 +129,8 @@ public class SVNProperty {
 	 */
 	public SVNProperty(String name, byte []value) {
 		this.name = name;
-		this.value = value == null ? null : new String(value);
-		this.binValue = value == null ? null : new byte[value.length];
-		if (value != null) {
-			System.arraycopy(value, 0, this.binValue, 0, value.length);
-		}
+		this.value = value == null ? null : this.processTextProperty(new String(value));
+		this.binValue = value == null ? null : this.value.getBytes();
 	}
 
 	protected String processTextProperty(String str) {
