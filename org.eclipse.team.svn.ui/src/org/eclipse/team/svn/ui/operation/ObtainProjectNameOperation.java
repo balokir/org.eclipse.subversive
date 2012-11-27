@@ -188,6 +188,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 	{
 		private int state = 0;
 		private String name = "";//$NON-NLS-1$
+		private int level = 0;;
 		public String getName() {
 			return this.name;
 		}
@@ -202,14 +203,16 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 		public void endPrefixMapping(String prefix) throws SAXException {
 		}
 		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-			if (localName.equals("name")) {//$NON-NLS-1$
+			this.level++;
+			if (localName.equals("name") && this.level == 2) {//$NON-NLS-1$
 				this.state = 1;
 			}
 		}
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if (localName.equals("name")) {//$NON-NLS-1$
+			if (localName.equals("name") && this.level == 2) {//$NON-NLS-1$
 				this.state = 0;
 			}
+			this.level--;
 		}
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			if (this.state == 1) {
