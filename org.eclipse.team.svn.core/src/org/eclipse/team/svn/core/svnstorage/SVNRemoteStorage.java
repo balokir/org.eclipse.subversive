@@ -48,17 +48,18 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
-import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
@@ -893,129 +894,158 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		
 		ILocalResource retVal = null;
 		
-		for (int i = 0; i < statuses.length; i++) {
-			int nodeKind = SVNUtility.getNodeKind(statuses[i].path, statuses[i].nodeKind, true);
-			// ignore files absent in the WC base and WC working. But what is the reason why it is reported ?
-			//try to create local resource for file which has tree conflict but doesn't exist
-			if (nodeKind == SVNEntry.Kind.NONE && !statuses[i].hasConflict) {
-				continue;
-			}
-			
-			String fsNodePath = statuses[i].path;
-			String nodePath = statuses[i].path;
-			
-			nodePath = nodePath.length() >= subPathStart ? nodePath.substring(subPathStart) : ""; //$NON-NLS-1$
-			if (nodePath.length() > 0 && nodePath.charAt(nodePath.length() - 1) == '/') {
-				nodePath = nodePath.substring(0, nodePath.length() - 1);
-			}
-			else if (i > 0 && nodePath.trim().length() == 0) {
-				// Debug code was removed. We already have all information about the JavaSVN bug.
-				continue;
-			}
-			
-			IResource tRes = null;
-			if (new Path(statuses[i].path).equals(requestedPath) && (resource.getType() > IResource.FOLDER || resource.getType() == nodeKind)) {//if nodekind not equals do not use default resource
-			    tRes = resource;
-			}
-			else {
-				if (nodeKind == SVNEntry.Kind.DIR) {
-					if (nodePath.length() == 0) {
-						tRes = project;
+		ISVNConnector proxy = null;
+		try {
+			for (int i = 0; i < statuses.length; i++) {
+				int nodeKind = SVNUtility.getNodeKind(statuses[i].path, statuses[i].nodeKind, true);
+				// deleted in the branch then committed, deleted in the trunk then committed and then during merge we have a node with an unknown node kind but in the "tree conflict" state 
+				//	while the tree conflict flag isn't reported and some of SVN client calls knows nothing about the node itself, it still prevents commits.
+				//	So, in order to solve the problem we should recognize the node as conflicting and allow to perform "revert" or "mark as merged" for it.  
+				if (statuses[i].hasConflict && statuses[i].treeConflicts == null || nodeKind == SVNEntry.Kind.NONE) {
+					if (proxy == null) {
+						proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 					}
-					else {
-						tRes = project.getFolder(new Path(nodePath));
+					final SVNConflictDescriptor [][]treeConflicts = new SVNConflictDescriptor[1][];
+					try {
+						proxy.info(new SVNEntryRevisionReference(statuses[i].path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+							public void next(SVNEntryInfo info) {
+								treeConflicts[0] = info.treeConflicts;
+							}
+						}, new SVNNullProgressMonitor());
 					}
-				}
-				else {
-				    tRes = project.getFile(new Path(nodePath));
-				}
-			}
-			
-			ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
-			if (local == null) {
-				ILocalResource parent = this.getFirstExistingParentLocal(tRes);
-												
-				if (statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL) {
-					/*
-					 * Sometimes we can get the situation that resource has status SVNEntryStatus.Kind.EXTERNAL, 
-					 * but it is versioned (and created by external), so we try to retrieve its
-					 * status despite that SVN returned that it is unversioned.
-					 */					
-					statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
-					if (statuses[i] == null) {
-						local = this.registerExternalUnversionedResource(tRes);
-						if (tRes == resource) {
-							retVal = local;
-						}
-						continue;	
+					catch (Exception ex) {
+						// ignore
 					}
-				}																		
-				
-				 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
-				boolean forceCopied = parent != null && parent.isCopied();
-				int changeMask = SVNRemoteStorage.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched);
-				if (statuses[i].wcLock != null) {
-					changeMask |= ILocalResource.IS_LOCKED;
+					statuses[i].treeConflicts = treeConflicts[0];
 				}
-				
-				//check file external
-				if (statuses[i].isFileExternal) {				
-					changeMask |= ILocalResource.IS_SWITCHED;
-				}								
-				
-				String textStatus = SVNRemoteStorage.getTextStatusString(statuses[i].propStatus, statuses[i].textStatus, false);
-				String propStatus = SVNRemoteStorage.getPropStatusString(statuses[i].propStatus);
-								
-				/*
-				 * If folder is unversioned but contains in one of its children .svn folder,
-				 * then we consider this folder as unversioned folder created by external definition and
-				 * make its status in corresponding way, i.e. Ignored.
-				 */
-				if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR && this.containsSVNMetaInChildren(tRes)) {
-					local = this.registerExternalUnversionedResource(tRes);
+				if (nodeKind == SVNEntry.Kind.NONE && statuses[i].treeConflicts == null) {
 					continue;
 				}
 				
-				if (!statuses[i].isSwitched && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl)) {
-					changeMask |= ILocalResource.IS_SWITCHED;
+				String fsNodePath = statuses[i].path;
+				String nodePath = statuses[i].path;
+				
+				nodePath = nodePath.length() >= subPathStart ? nodePath.substring(subPathStart) : ""; //$NON-NLS-1$
+				if (nodePath.length() > 0 && nodePath.charAt(nodePath.length() - 1) == '/') {
+					nodePath = nodePath.substring(0, nodePath.length() - 1);
+				}
+				else if (i > 0 && nodePath.trim().length() == 0) {
+					// Debug code was removed. We already have all information about the JavaSVN bug.
+					continue;
 				}
 				
-				if ((changeMask & ILocalResource.IS_SWITCHED) != 0) {
-					// statuses[i].url == null when ILocalResource.IS_SWITCHED flag is set ??? Most likely the SVN client library issue in either one: url or state representation.
-					//	So, for now just avoid NPE here and remove the switched flag.
-					if (statuses[i].url != null) {
-						this.switchedToUrls.put(tRes.getFullPath(), SVNUtility.decodeURL(statuses[i].url));
+				IResource tRes = null;
+				if (new Path(statuses[i].path).equals(requestedPath) && (resource.getType() > IResource.FOLDER || resource.getType() == nodeKind)) {//if nodekind not equals do not use default resource
+				    tRes = resource;
+				}
+				else {
+					if (nodeKind == SVNEntry.Kind.DIR) {
+						if (nodePath.length() == 0) {
+							tRes = project;
+						}
+						else {
+							tRes = project.getFolder(new Path(nodePath));
+						}
 					}
 					else {
-						changeMask ^= ILocalResource.IS_SWITCHED;
+					    tRes = project.getFile(new Path(nodePath));
 					}
 				}
 				
-				if (textStatus == IStateFilter.ST_DELETED && nodeKind == SVNEntry.Kind.FILE && new File(statuses[i].path).exists()) {
-					textStatus = IStateFilter.ST_PREREPLACED;
+				ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
+				if (local == null) {
+					ILocalResource parent = this.getFirstExistingParentLocal(tRes);
+													
+					if (statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL) {
+						/*
+						 * Sometimes we can get the situation that resource has status SVNEntryStatus.Kind.EXTERNAL, 
+						 * but it is versioned (and created by external), so we try to retrieve its
+						 * status despite that SVN returned that it is unversioned.
+						 */					
+						statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
+						if (statuses[i] == null) {
+							local = this.registerExternalUnversionedResource(tRes);
+							if (tRes == resource) {
+								retVal = local;
+							}
+							continue;	
+						}
+					}																		
+					
+					 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
+					boolean forceCopied = parent != null && parent.isCopied();
+					int changeMask = SVNRemoteStorage.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched);
+					if (statuses[i].wcLock != null) {
+						changeMask |= ILocalResource.IS_LOCKED;
+					}
+					if (nodeKind == SVNEntry.Kind.NONE && statuses[i].treeConflicts != null) {
+						changeMask |= ILocalResource.TREE_CONFLICT_UNKNOWN_NODE_KIND;
+					}
+					
+					//check file external
+					if (statuses[i].isFileExternal) {				
+						changeMask |= ILocalResource.IS_SWITCHED;
+					}								
+					
+					String textStatus = statuses[i].treeConflicts != null ? IStateFilter.ST_CONFLICTING : SVNRemoteStorage.getTextStatusString(statuses[i].propStatus, statuses[i].textStatus, false);
+					String propStatus = SVNRemoteStorage.getPropStatusString(statuses[i].propStatus);
+									
+					/*
+					 * If folder is unversioned but contains in one of its children .svn folder,
+					 * then we consider this folder as unversioned folder created by external definition and
+					 * make its status in corresponding way, i.e. Ignored.
+					 */
+					if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR && this.containsSVNMetaInChildren(tRes)) {
+						local = this.registerExternalUnversionedResource(tRes);
+						continue;
+					}
+					
+					if (!statuses[i].isSwitched && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl)) {
+						changeMask |= ILocalResource.IS_SWITCHED;
+					}
+					
+					if ((changeMask & ILocalResource.IS_SWITCHED) != 0) {
+						// statuses[i].url == null when ILocalResource.IS_SWITCHED flag is set ??? Most likely the SVN client library issue in either one: url or state representation.
+						//	So, for now just avoid NPE here and remove the switched flag.
+						if (statuses[i].url != null) {
+							this.switchedToUrls.put(tRes.getFullPath(), SVNUtility.decodeURL(statuses[i].url));
+						}
+						else {
+							changeMask ^= ILocalResource.IS_SWITCHED;
+						}
+					}
+					
+					if (textStatus == IStateFilter.ST_DELETED && nodeKind == SVNEntry.Kind.FILE && new File(statuses[i].path).exists()) {
+						textStatus = IStateFilter.ST_PREREPLACED;
+					}
+					
+					if (FileUtility.isLinked(tRes)) {
+						textStatus = IStateFilter.ST_LINKED;
+					}
+					else if (textStatus != IStateFilter.ST_OBSTRUCTED && statuses[i].textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.UNVERSIONED) {
+						textStatus = this.getDelegatedStatus(tRes, IStateFilter.ST_NEW, changeMask);
+					}
+					
+					if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR && this.canFetchStatuses(new Path(fsNodePath))) { // still, could be the case even with the SVN 1.7 working copy
+						textStatus = IStateFilter.ST_OBSTRUCTED;
+					}
+	
+					// fetch revision for "copied from"
+					long revision = statuses[i].lastChangedRevision == SVNRevision.INVALID_REVISION_NUMBER && (changeMask & ILocalResource.IS_COPIED) != 0 ? statuses[i].revision : statuses[i].lastChangedRevision;
+					local = this.registerResource(tRes, revision, statuses[i].revision, textStatus, propStatus, changeMask, statuses[i].lastCommitAuthor, statuses[i].lastChangedDate, statuses[i].treeConflicts == null ? null : statuses[i].treeConflicts[0]);
 				}
-				
-				if (FileUtility.isLinked(tRes)) {
-					textStatus = IStateFilter.ST_LINKED;
+				else {
+					this.writeChild(local.getResource(), local.getStatus(), local.getChangeMask());
 				}
-				else if (textStatus != IStateFilter.ST_OBSTRUCTED && statuses[i].textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.UNVERSIONED) {
-					textStatus = this.getDelegatedStatus(tRes, IStateFilter.ST_NEW, changeMask);
+	
+				if (tRes == resource) {
+					retVal = local;
 				}
-				
-				if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR && this.canFetchStatuses(new Path(fsNodePath))) { // still, could be the case even with the SVN 1.7 working copy
-					textStatus = IStateFilter.ST_OBSTRUCTED;
-				}
-
-				// fetch revision for "copied from"
-				long revision = statuses[i].lastChangedRevision == SVNRevision.INVALID_REVISION_NUMBER && (changeMask & ILocalResource.IS_COPIED) != 0 ? statuses[i].revision : statuses[i].lastChangedRevision;
-				local = this.registerResource(tRes, revision, statuses[i].revision, textStatus, propStatus, changeMask, statuses[i].lastCommitAuthor, statuses[i].lastChangedDate, statuses[i].treeConflicts == null ? null : statuses[i].treeConflicts[0]);
 			}
-			else {
-				this.writeChild(local.getResource(), local.getStatus(), local.getChangeMask());
-			}
-
-			if (tRes == resource) {
-				retVal = local;
+		}
+		finally {
+			if (proxy != null) {
+				proxy.dispose();
 			}
 		}
 		
