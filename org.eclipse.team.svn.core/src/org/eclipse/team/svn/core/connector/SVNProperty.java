@@ -134,6 +134,6 @@ public class SVNProperty {
 	}
 
 	protected String processTextProperty(String str) {
-		return str != null ? str.replaceAll("\r\n|\r", "\n") : null;
+		return str != null ? str.replaceAll("\\r\\n|\\r", "\n") : null;
 	}
 }
