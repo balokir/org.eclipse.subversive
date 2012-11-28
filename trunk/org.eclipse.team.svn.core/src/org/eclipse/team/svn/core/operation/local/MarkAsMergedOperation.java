@@ -103,12 +103,18 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 						committables.add(local.getResource());
 					}
 					else if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
-						boolean nodeKindChanged = MarkAsMergedOperation.this.markExisting(local, monitor);
-						if (!nodeKindChanged) {
-							committables.add(local.getResource());
+						if ((local.getChangeMask() & ILocalResource.TREE_CONFLICT_UNKNOWN_NODE_KIND) != 0) {
+							MarkAsMergedOperation.this.doOperation(new RevertOperation(new IResource[] {local.getResource()}, true), monitor);
+							MarkAsMergedOperation.this.doOperation(new RefreshResourcesOperation(new IResource[] {local.getResource()}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL), monitor);
 						}
 						else {
-						    withDifferentNodeKind.add(local.getResource());
+							boolean nodeKindChanged = MarkAsMergedOperation.this.markExisting(local, monitor);
+							if (!nodeKindChanged) {
+								committables.add(local.getResource());
+							}
+							else {
+							    withDifferentNodeKind.add(local.getResource());
+							}
 						}
 					}
 				}

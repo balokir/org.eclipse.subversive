@@ -34,10 +34,7 @@ public interface ILocalResource {
 	public static final int IS_COPIED = 0x04;
 	public static final int IS_SWITCHED = 0x08;
 	public static final int IS_LOCKED = 0x10;
-	
-	//It's not used anymore
-	//public static final int IS_EXTERNAL = 0x20;
-	
+	public static final int TREE_CONFLICT_UNKNOWN_NODE_KIND = 0x20;
 	public static final int IS_UNVERSIONED_EXTERNAL = 0x40;
 	
 	public IResource getResource();
