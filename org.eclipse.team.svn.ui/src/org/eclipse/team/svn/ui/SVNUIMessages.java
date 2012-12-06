@@ -158,6 +158,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Button_Advanced;
 	public static String Button_Browse;
 	public static String Button_ClearSelection;
+	public static String Button_ClearAll;
 	public static String Button_Edit;
 	public static String Button_New;
 	public static String Button_Remove;

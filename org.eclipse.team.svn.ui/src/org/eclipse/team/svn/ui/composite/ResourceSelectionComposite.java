@@ -396,7 +396,7 @@ public class ResourceSelectionComposite extends Composite {
 
 		Composite tComposite = new Composite(this, SWT.RIGHT);
 		GridLayout gLayout = new GridLayout();
-		gLayout.numColumns = 3;
+		gLayout.numColumns = 4;
 		gLayout.marginWidth = 0;
 		tComposite.setLayout(gLayout);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -419,6 +419,24 @@ public class ResourceSelectionComposite extends Composite {
 
 		Button deselectButton = new Button(tComposite, SWT.PUSH);
 		deselectButton.setText(SVNUIMessages.Button_ClearSelection);
+		data = new GridData();
+		data.widthHint = DefaultDialog.computeButtonWidth(deselectButton);
+		deselectButton.setLayoutData(data);
+		listener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				TableItem []items = ResourceSelectionComposite.this.tableViewer.getTable().getSelection();
+				for (TableItem item : items)
+				{
+					ResourceSelectionComposite.this.tableViewer.setChecked(item.getData(), false);
+				}
+				ResourceSelectionComposite.this.selectionListener.selectionChanged(null);
+				ResourceSelectionComposite.this.fireResourcesSelectionChanged(new ResourceSelectionChangedEvent(new IResource[0]));
+			}
+		};
+		deselectButton.addSelectionListener(listener);
+
+		deselectButton = new Button(tComposite, SWT.PUSH);
+		deselectButton.setText(SVNUIMessages.Button_ClearAll);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(deselectButton);
 		deselectButton.setLayoutData(data);
