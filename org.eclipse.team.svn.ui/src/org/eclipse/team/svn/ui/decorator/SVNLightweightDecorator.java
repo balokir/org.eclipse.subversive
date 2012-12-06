@@ -39,6 +39,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamProvider;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -196,7 +197,7 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 				}			
 	        }				
 		} catch (Throwable ex) {			
-			//LoggedOperation.reportError("SVN Decorator", ex);			
+			LoggedOperation.reportError("SVN Decorator", ex);//$NON-NLS-1$
 		}		
 	}
 	
