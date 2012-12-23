@@ -17,6 +17,8 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
@@ -40,7 +42,8 @@ public abstract class ResourceVariant extends CachedResourceVariant {
 	}
 
 	protected String getCachePath() {
-		return this.local.getResource().getFullPath().toString() + ":" + this.getContentIdentifier();
+		IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.local.getResource());
+		return location.getId() + this.local.getResource().getFullPath().toString() + " " + this.getContentIdentifier();
 	}
 
 	protected String getCacheId() {
