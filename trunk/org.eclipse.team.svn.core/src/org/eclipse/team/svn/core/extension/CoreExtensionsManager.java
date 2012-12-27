@@ -63,7 +63,10 @@ public class CoreExtensionsManager {
 					HashSet<String> inferiors = new HashSet<String>();
 					for (int i = 0; i < extensions.length; i++) {
 						IOptionProvider optProvider = (IOptionProvider)extensions[i];
-						CoreExtensionsManager.instance.registerOptionProvider(optProvider);
+						String id = CoreExtensionsManager.instance.registerOptionProvider(optProvider);
+						if (i == extensions.length - 1) {
+							CoreExtensionsManager.instance.selectOptionProvider(id);
+						}
 						String []inferiorOnes = optProvider.getCoveredProviders();
 						if (inferiorOnes != null) {
 							for (int k = 0; k < inferiorOnes.length; k++) {
