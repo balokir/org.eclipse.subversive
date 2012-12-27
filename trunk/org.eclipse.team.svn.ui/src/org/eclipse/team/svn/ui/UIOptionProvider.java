@@ -32,6 +32,15 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class UIOptionProvider implements IOptionProvider {
 	private SVNTeamModificationValidator modificationValidator = new SVNTeamModificationValidator();
+	public static final String ID = "org.eclipse.team.svn.ui.optionprovider"; //$NON-NLS-1$
+	
+	public String getId() {
+		return UIOptionProvider.ID;
+	}
+	
+	public String []getCoveredProviders() {
+		return new String[] {IOptionProvider.DEFAULT.getId()};
+	}
 	
 	public ISVNCredentialsPrompt getCredentialsPrompt() {
 		return PromptCredentialsPanel.DEFAULT_PROMPT;

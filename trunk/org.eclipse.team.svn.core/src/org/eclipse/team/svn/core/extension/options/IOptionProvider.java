@@ -26,6 +26,12 @@ import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
  */
 public interface IOptionProvider {
 	public static final IOptionProvider DEFAULT = new IOptionProvider() {
+		public String getId() {
+			return "org.eclipse.team.svn.core.optionprovider"; //$NON-NLS-1$
+		}
+		public String []getCoveredProviders() {
+			return null;
+		}
 		public ISVNCredentialsPrompt getCredentialsPrompt() {
 			return null;
 		}
@@ -47,13 +53,13 @@ public interface IOptionProvider {
 			return ISVNConnectorFactory.DEFAULT_ID;
 		}
 		public String getDefaultBranchesName() {
-			return "branches";
+			return "branches"; //$NON-NLS-1$
 		}
 		public String getDefaultTagsName() {
-			return "tags";
+			return "tags"; //$NON-NLS-1$
 		}
 		public String getDefaultTrunkName() {
-			return "trunk";
+			return "trunk"; //$NON-NLS-1$
 		}
 		public SVNProperty[] getAutomaticProperties(String template) {
 			return new SVNProperty[0];
@@ -68,6 +74,18 @@ public interface IOptionProvider {
 			return true;
 		}
 	};
+	
+	/**
+	 * Returns option provider ID
+	 * @return {@link String}
+	 */
+	public String getId();
+	
+	/**
+	 * Returns a set of option provider identifiers this one is superior to or <code>null</code> if there are none.
+	 * @return String []
+	 */
+	public String []getCoveredProviders();
 	
 	/**
 	 * Returns read-only files modification validator

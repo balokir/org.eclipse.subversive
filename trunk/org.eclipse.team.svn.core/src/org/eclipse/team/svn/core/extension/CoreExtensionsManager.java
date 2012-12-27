@@ -45,7 +45,8 @@ public class CoreExtensionsManager {
 
 	private HashMap<String, ISVNConnectorFactory> connectors;
 	private HashSet<String> validConnectors;
-	private IOptionProvider optionProvider;
+	private HashMap<String, IOptionProvider> optionProviders = new HashMap<String, IOptionProvider>();
+	private String selectedOptionProviderId;
 	private IResolutionHelper []helpers;
 	private IIgnoreRecommendations []ignoreRecommendations;
 
@@ -59,7 +60,25 @@ public class CoreExtensionsManager {
 			synchronized (CoreExtensionsManager.class) {
 				if (!CoreExtensionsManager.instance.initialized) {
 					Object []extensions = CoreExtensionsManager.loadCoreExtensions(CoreExtensionsManager.CORE_OPTIONS);
-					CoreExtensionsManager.instance.optionProvider = extensions.length != 0 ? (IOptionProvider)extensions[0] : IOptionProvider.DEFAULT;
+					HashSet<String> inferiors = new HashSet<String>();
+					for (int i = 0; i < extensions.length; i++) {
+						IOptionProvider optProvider = (IOptionProvider)extensions[i];
+						CoreExtensionsManager.instance.registerOptionProvider(optProvider);
+						String []inferiorOnes = optProvider.getCoveredProviders();
+						if (inferiorOnes != null) {
+							for (int k = 0; k < inferiorOnes.length; k++) {
+								inferiors.add(inferiorOnes[k]);
+							}
+						}
+					}
+					for (int i = 0; i < extensions.length; i++) {
+						IOptionProvider optProvider = (IOptionProvider)extensions[i];
+						String id = optProvider.getId();
+						if (!inferiors.contains(id)) {
+							CoreExtensionsManager.instance.selectOptionProvider(id);
+							break;
+						}
+					}
 					extensions = CoreExtensionsManager.loadCoreExtensions(CoreExtensionsManager.CRASH_RECOVERY);
 					CoreExtensionsManager.instance.helpers = Arrays.asList(extensions).toArray(new IResolutionHelper[extensions.length]);
 					extensions = CoreExtensionsManager.loadCoreExtensions(CoreExtensionsManager.IGNORE_RECOMMENDATIONS);
@@ -87,13 +106,29 @@ public class CoreExtensionsManager {
 		return this.disableHelpers;
 	}
 	
-	public IOptionProvider getOptionProvider() {
-		return this.optionProvider;
+	public IOptionProvider getOptionProvider(String id) {
+		return this.optionProviders.containsKey(id) ? this.optionProviders.get(id) : IOptionProvider.DEFAULT;
 	}
 	
-	//FIXME remove later after Integration API is changed: SVN Team Core should supports multiple IOptionProvider instances, each of those should provide also configuration ID which will be used in order to create separate SVN Team Core instance. This will allows simultaneous work of different tools with SVN Team Core module without loss of stability and supportability.
+	public IOptionProvider getOptionProvider() {
+		return this.getOptionProvider(this.selectedOptionProviderId);
+	}
+	
 	public void setOptionProvider(IOptionProvider optionProvider) {
-		this.optionProvider = optionProvider;
+		this.selectOptionProvider(this.registerOptionProvider(optionProvider));
+	}
+
+	public void selectOptionProvider(String id) {
+		this.selectedOptionProviderId = id;
+	}
+	
+	public String getSelectedOptionProviderId() {
+		return this.selectedOptionProviderId;
+	}
+	
+	public String registerOptionProvider(IOptionProvider optionProvider) {
+		this.optionProviders.put(optionProvider.getId(), optionProvider);
+		return optionProvider.getId();
 	}
 	
 	public Collection<String> getAccessibleClientIds() {
