@@ -8,6 +8,26 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.0.I20121228-1700 [28 December 2012]
+
+Features:
+ * Allow to use "Core Configuration Options" extension point (bug 389933)
+ * SVN Connectors failed to install in Eclipse 64 bit for RCP and RAP Developers [Win64 support]. (bug 376317)
+ * Enable error logging for SVN lightweight decorator (bug 395971)
+ * "Clear selection" in the commit dialog unchecks all the items, not only the selected ones (bug 370254)
+ * Human/Numeric ordering option for branches e tags (bug 390467)
+ 
+Fixes:
+ * Being prompted too aggressively to install SVN connectors (bug 319292)
+ * Charset failure when Applying Patch to a resource (bug 363289)
+ * Got wrong contents for remote file in Subversive (bug 375633)
+ * Text selection extremely slow in C++ editor (bug 350306)
+ * JavaHL connector fails to commit svn:ignore property (bug 395063)
+ * Some tree conflicts caused by merge won't be shown and won't allow user to commit merged changes (bug 395295)
+ * Checkout of a java project from Subversion needs to mangled project name (bug 394761)
+ 
+--------------------------------------------------------------------------------
+
 Version 1.0.0.I20121109-1700 [09 November 2012]
 
 Features:
