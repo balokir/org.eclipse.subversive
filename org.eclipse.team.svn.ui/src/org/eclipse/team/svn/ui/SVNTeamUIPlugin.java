@@ -139,10 +139,10 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 			// we will not re-enable since we only enable automatically on the first startup.
 			PlatformUI.getWorkbench().getDecoratorManager().setEnabled(SVNLightweightDecorator.ID, true);
 			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
+			
+			//run discovery connectors
+			this.discoveryConnectors();	
 		}
-		
-		//run discovery connectors
-		this.discoveryConnectors();	
 	}
 	
 	protected void discoveryConnectors() {
