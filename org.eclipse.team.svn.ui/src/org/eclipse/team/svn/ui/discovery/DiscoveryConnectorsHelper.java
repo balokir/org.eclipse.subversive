@@ -73,27 +73,26 @@ public class DiscoveryConnectorsHelper {
 	public void run(IProgressMonitor monitor) throws Exception {
 		//check that connectors exist
 		if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty() && Platform.getBundle("org.eclipse.equinox.p2.repository") != null) { //$NON-NLS-1$
-			final IConnectorsInstallJob[] installJob = new IConnectorsInstallJob[1];
-			
 			try {
-				installJob[0] = this.getInstallJob();				
-			} catch (Throwable e) {
+				final IConnectorsInstallJob installJob = this.getInstallJob();
+				
+				if (installJob != null) {
+					//set proxy authenticator to WebUtil for accessing Internet files
+					WebUtil.setAuthenticator(new ProxyAuthenticator());							
+					
+					UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							ConnectorDiscoveryWizard wizard = new ConnectorDiscoveryWizard(installJob);
+							WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
+							dialog.open();		
+						}
+					});	
+				}			
+			}
+			catch (Throwable e) {
 				//make more user-friendly error message
 				throw new UnreportableException("Errors occured while initializing provisioning framework. This make cause discovery install to fail.", e); //$NON-NLS-1$
 			}
-			
-			if (installJob[0] != null) {
-				//set proxy authenticator to WebUtil for accessing Internet files
-				WebUtil.setAuthenticator(new ProxyAuthenticator());							
-				
-				UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						ConnectorDiscoveryWizard wizard = new ConnectorDiscoveryWizard(installJob[0]);
-						WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
-						dialog.open();		
-					}
-				});	
-			}			
 		}
 	}
 	

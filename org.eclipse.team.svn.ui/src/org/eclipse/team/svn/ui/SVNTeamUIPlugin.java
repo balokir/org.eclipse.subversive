@@ -131,6 +131,8 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 		IPreferenceStore store = this.getPreferenceStore();
 		if (store.getBoolean(SVNTeamPreferences.FIRST_STARTUP)) {
+			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
+			this.savePreferences();
 			// If we enable the decorator in the XML, the SVN plugin will be loaded
 			// on startup even if the user never uses SVN. Therefore, we enable the 
 			// decorator on the first start of the SVN plugin since this indicates that 
@@ -138,7 +140,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 			// the SVN plugin unless the user disables the decorator. In this case,
 			// we will not re-enable since we only enable automatically on the first startup.
 			PlatformUI.getWorkbench().getDecoratorManager().setEnabled(SVNLightweightDecorator.ID, true);
-			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
 			
 			//run discovery connectors
 			this.discoveryConnectors();	
@@ -162,7 +163,8 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 				}
 				return Status.OK_STATUS;
 			}
-		};				
+		};
+		job.setSystem(true);
 		job.setUser(false);
 		job.schedule();
 	}
