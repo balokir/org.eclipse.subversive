@@ -174,11 +174,11 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		tabFolder.setLayoutData(new GridData());
 		
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Automatic properties");
+		tabItem.setText(SVNUIMessages.PreferencePage_automaticProperties);
 		tabItem.setControl(this.createAutopropsComposite(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Custom properties");
+		tabItem.setText(SVNUIMessages.PreferencePage_customProperties);
 		tabItem.setControl(this.createCustompropsComposite(tabFolder));
 		
 		//Setting context help

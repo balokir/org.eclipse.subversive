@@ -1026,6 +1026,10 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PreferencePage_textTabName;
 	public static String PreferencePage_textTagPrefix;
 	public static String PreferencePage_textTrunkPrefix;
+	public static String PreferencePage_formatGroup;
+	public static String PreferencePage_rootPrefixGroup;
+	public static String PreferencePage_automaticProperties;
+	public static String PreferencePage_customProperties;
 	public static String PreviewErrorReportPanel_Description;
 	public static String PreviewReportPanel_Message;
 	public static String PreviewReportPanel_Title;
