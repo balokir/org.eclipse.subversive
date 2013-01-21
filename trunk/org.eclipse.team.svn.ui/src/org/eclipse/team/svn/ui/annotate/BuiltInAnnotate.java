@@ -107,6 +107,10 @@ public class BuiltInAnnotate {
 						revision.addMergeInfo(i + 1, data[i].mergedRevision, data[i].mergedDate, data[i].mergedAuthor == null ? noAuthor : data[i].mergedAuthor, data[i].mergedPath);
 					}
 				}
+				if (revisions.size() == 0) {
+					// all lines were ignored, for example when annotating from HEAD to HEAD
+					return;
+				}
 				long from = SVNRevision.INVALID_REVISION_NUMBER, to = SVNRevision.INVALID_REVISION_NUMBER;
 				for (BuiltInAnnotateRevision revision : revisions.values()) {
 					revision.addLine(BuiltInAnnotateRevision.END_LINE);
