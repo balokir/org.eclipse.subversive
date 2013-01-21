@@ -43,12 +43,12 @@
                   
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on SVN Kit library (SVN/1.7.6 SVNKit/1.7.6 r9487_v20121029_2008). Compatible with SVN 1.7.x. Pure Java. Supported platforms: All."
+            description="SVN connector based on SVN Kit library (SVN/1.7.8 SVNKit/1.7.8 r9538_v20130107_2001). Compatible with SVN 1.7.x. Pure Java. Supported platforms: All."
             groupId="org.eclipse.team.svn.discovery-svnkit"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit17"
             kind="task"
             license="TMate Open Source License"
-            name="SVN Kit 1.7.6"
+            name="SVN Kit 1.7.8"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/3.0/kepler-site/">
          <icon image32="images/Polarion.png">
