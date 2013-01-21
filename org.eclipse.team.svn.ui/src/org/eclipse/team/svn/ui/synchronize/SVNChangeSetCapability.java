@@ -40,7 +40,7 @@ public class SVNChangeSetCapability extends ChangeSetCapability {
 	
 	public static String getProposedComment(IResource []resourcesToCommit) {
 		String retVal = null;
-		ChangeSet []sets = SVNTeamUIPlugin.instance().getModelCangeSetManager().getSets();
+		ChangeSet []sets = SVNTeamUIPlugin.instance().getModelChangeSetManager().getSets();
 		for (int i = 0; i < sets.length; i++) {
 			if (SVNChangeSetCapability.containsOneOf(sets[i], resourcesToCommit)) {
 				String comment = sets[i].getComment();
@@ -103,7 +103,7 @@ public class SVNChangeSetCapability extends ChangeSetCapability {
 	}
 
 	public ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getModelCangeSetManager();
+		return SVNTeamUIPlugin.instance().getModelChangeSetManager();
 	}
 	
 	public boolean enableActiveChangeSetsFor(ISynchronizePageConfiguration configuration) {

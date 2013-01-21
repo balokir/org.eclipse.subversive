@@ -94,7 +94,7 @@ public class CommitActionHelper extends AbstractActionHelper {
 	 * during commit, synchronize or not
 	 */
 	public static boolean isIncludeChangeSets(final String message) {		
-		if (SVNTeamUIPlugin.instance().getModelCangeSetManager().getSets().length == 0)
+		if (SVNTeamUIPlugin.instance().getModelChangeSetManager().getSets().length == 0)
 			return false;
 		
 		final IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();

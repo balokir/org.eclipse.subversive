@@ -41,7 +41,7 @@ public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 	}
 
 	public String getText(Object element) {
-		if (element instanceof ActiveChangeSet && SVNTeamUIPlugin.instance().getModelCangeSetManager().isDefault((ActiveChangeSet)element)) {
+		if (element instanceof ActiveChangeSet && SVNTeamUIPlugin.instance().getModelChangeSetManager().isDefault((ActiveChangeSet)element)) {
 			return super.getText(element) + " " + SVNUIMessages.ChangeSet_DefaultDecoration; //$NON-NLS-1$
 		}
 		return super.getText(element);

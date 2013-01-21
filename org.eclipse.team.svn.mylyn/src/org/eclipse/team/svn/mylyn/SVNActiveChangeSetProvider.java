@@ -24,7 +24,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  */
 public class SVNActiveChangeSetProvider extends AbstractActiveChangeSetProvider {
 	public ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getModelCangeSetManager();
+		return SVNTeamUIPlugin.instance().getModelChangeSetManager();
 	}
 	
 	public IContextChangeSet createChangeSet(ITask task) {
