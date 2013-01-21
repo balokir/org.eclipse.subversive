@@ -331,7 +331,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		layout.verticalSpacing = 1;
 		formatGroup.setLayout(layout);
 		formatGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		formatGroup.setText("Format");
+		formatGroup.setText(SVNUIMessages.PreferencePage_formatGroup);
 		
 		List<IVariable> fileOptions = new ArrayList<IVariable>();
 		fileOptions.add(TextVariableSetProvider.VAR_OUTGOING_FLAG);
@@ -392,7 +392,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		layout.verticalSpacing = 1;
 		prefixGroup.setLayout(layout);
 		prefixGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		prefixGroup.setText("Root Prefix");
+		prefixGroup.setText(SVNUIMessages.PreferencePage_rootPrefixGroup);
 		
 		this.trunkPrefixField = this.createFormatControl(prefixGroup, "PreferencePage_textTrunkPrefix", projectOptions, grayedOptions); //$NON-NLS-1$
 		this.trunkPrefixField.addModifyListener(new ModifyListener() {
