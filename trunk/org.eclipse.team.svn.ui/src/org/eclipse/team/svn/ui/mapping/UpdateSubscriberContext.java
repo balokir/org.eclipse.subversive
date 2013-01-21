@@ -341,7 +341,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 
 		protected ResourceTraversal[] adjustInputTraversals(ResourceTraversal[] traversals) {
 			if (this.isConsultSets()) {
-				return SVNTeamUIPlugin.instance().getModelCangeSetManager().adjustInputTraversals(traversals);
+				return SVNTeamUIPlugin.instance().getModelChangeSetManager().adjustInputTraversals(traversals);
 			}
 			return super.adjustInputTraversals(traversals);
 		}

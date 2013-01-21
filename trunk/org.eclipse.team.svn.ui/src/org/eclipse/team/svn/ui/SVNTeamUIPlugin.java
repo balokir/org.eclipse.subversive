@@ -122,7 +122,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 //		Platform.addLogListener(this.problemListener);
 		
-		this.getModelCangeSetManager();
+		this.getModelChangeSetManager();
 		
         this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
 		
@@ -184,7 +184,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		super.stop(context);
 	}
 	
-	public synchronized ActiveChangeSetManager getModelCangeSetManager() {
+	public synchronized ActiveChangeSetManager getModelChangeSetManager() {
 		if (this.activeChangeSetManager == null) {
 			this.activeChangeSetManager = new SVNActiveChangeSetCollector(UpdateSubscriber.instance());
 		}
