@@ -8,6 +8,19 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.0.I20130122-1700 [22 January 2013]
+
+Features:
+ * Update JavaHL binaries to 1.7.8 (bug 398671)
+ * Use SVN Kit 1.7.8 (bug 398669)
+ 
+Fixes:
+ * Spelling error in the method name SVNTeamUIPlugin.getModelC(h)angeSetManager (bug 398654)
+ * Negative revision number exception when all the lines are skipped by SVN annotate [ID-I71M1] (bug 398565)
+ * several texts are not externalized in preference (bug 398261)
+ 
+--------------------------------------------------------------------------------
+
 Version 1.0.0.I20121228-1700 [28 December 2012]
 
 Features:

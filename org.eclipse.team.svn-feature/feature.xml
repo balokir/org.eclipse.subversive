@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn"
       label="%featureName"
-      version="1.0.0.I20121228-1700"
+      version="1.0.0.I20130122-1700"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn">
    <install-handler/>
@@ -50,7 +50,7 @@
          id="org.eclipse.team.svn"
          download-size="4"
          install-size="4"
-         version="1.0.0.I20121228-1700"
+         version="1.0.0.I20130122-1700"
          unpack="false"/>
 
    <plugin
@@ -64,7 +64,7 @@
          id="org.eclipse.team.svn.ui"
          download-size="1600"
          install-size="1600"
-         version="1.0.0.I20121228-1700"
+         version="1.0.0.I20130122-1700"
          unpack="false"/>
 
    <plugin
