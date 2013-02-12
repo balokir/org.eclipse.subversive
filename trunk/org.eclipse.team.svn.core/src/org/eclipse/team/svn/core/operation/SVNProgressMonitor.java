@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.core.operation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.svn.core.SVNMessages;
@@ -18,6 +21,7 @@ import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNConnectorUnresolvedConflictException;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -33,6 +37,7 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 	protected IConsoleStream stream;
 	protected IPath root;
 	protected boolean enableConsoleOutput;
+	protected ArrayList<SVNPostCommitError> postCommitErrors;
 
 	public SVNProgressMonitor(IActionOperation parent, org.eclipse.core.runtime.IProgressMonitor monitor, IPath root) {
 		this(parent, monitor, root, true);
@@ -45,8 +50,19 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 		this.stream = parent.getConsoleStream();
 		this.enableConsoleOutput = enableConsoleOutput;
 	}
+	
+	public Collection<SVNPostCommitError> getPostCommitErrors() {
+		return this.postCommitErrors;
+	}
 
 	public void progress(int current, int total, ItemState state) {
+		if (state.action == SVNNotification.PerformedAction._POSTCOMMIT_FAILURE) {
+			if (this.postCommitErrors == null) {
+				this.postCommitErrors = new ArrayList<SVNPostCommitError>();
+			}
+			this.postCommitErrors.add(new SVNPostCommitError(state.error, state.path, state.revision));
+			return;
+		}
 		if (state.error != null) {
 			SVNConnectorException ex = state.path != null && state.path.length() > 0 ? new SVNConnectorUnresolvedConflictException(state.error) : new SVNConnectorException(state.error);
 			this.parent.reportStatus(IStatus.ERROR, null, ex);
