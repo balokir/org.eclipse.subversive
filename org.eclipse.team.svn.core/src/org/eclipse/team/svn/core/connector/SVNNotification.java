@@ -122,6 +122,11 @@ public class SVNNotification {
 		public static final int _UNNKNOWN_COMMAND = -1;
 
 		/**
+		 * Post-commit hook failure.
+		 */
+		public static final int _POSTCOMMIT_FAILURE = -10;
+
+		/**
 		 * Adding a path to revision control.
 		 */
 		public static final int ADD = 0;
@@ -510,7 +515,7 @@ public class SVNNotification {
 	public final int action;
 
 	/**
-	 * The entry kind (see {@link Kind}).
+	 * The entry kind (see {@link SVNEntry.Kind}).
 	 */
 	public final int kind;
 
