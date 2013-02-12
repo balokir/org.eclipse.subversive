@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
+import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
@@ -67,6 +68,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 
 		op.add(mainOp);
+		op.add(new ShowPostCommitErrorsOperation(mainOp));
 		op.add(new ClearUpdateStatusesOperation(resources), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
 

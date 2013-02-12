@@ -96,6 +96,7 @@ import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.IModifiableCommentDialogPanel;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
+import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipantHelper;
@@ -551,6 +552,7 @@ public class CommitPanel extends CommentPanel implements IModifiableCommentDialo
 						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null, ignoreExternals);
 						CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 						op.add(mainOp);
+						op.add(new ShowPostCommitErrorsOperation(mainOp));
 						op.add(new RefreshResourcesOperation(FileUtility.getParents(selectedResources, false)));
 						UIMonitorUtility.doTaskNowDefault(op, false);
 					}
