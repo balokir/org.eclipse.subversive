@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
+import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
@@ -38,6 +39,7 @@ public class MarkAsMergedAction extends AbstractNonRecursiveTeamAction {
 		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
+		op.add(new ShowPostCommitErrorsOperation(mainOp));
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
 		
 		this.runScheduled(op);

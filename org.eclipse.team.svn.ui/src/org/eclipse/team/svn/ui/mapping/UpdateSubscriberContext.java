@@ -64,6 +64,7 @@ import org.eclipse.team.svn.ui.action.local.UpdateAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
+import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
 import org.eclipse.team.svn.ui.panel.local.OverrideResourcesPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
@@ -287,6 +288,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
+		op.add(new ShowPostCommitErrorsOperation(mainOp));
 		op.add(new ClearUpdateStatusesOperation(resources), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
 		ProgressMonitorUtility.doTaskExternal(op, monitor);

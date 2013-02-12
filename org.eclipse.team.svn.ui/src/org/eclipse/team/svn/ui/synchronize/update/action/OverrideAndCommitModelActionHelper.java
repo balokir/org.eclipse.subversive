@@ -38,6 +38,7 @@ import org.eclipse.team.svn.ui.dialog.NotifyNodeKindChangedDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
+import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractActionHelper;
@@ -95,6 +96,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 
 		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg, keepLocks);
 		op.add(mergeOp);
+		op.add(new ShowPostCommitErrorsOperation(mergeOp));
 		final IResource []addition = FileUtility.getResourcesRecursive(resources[0], OverrideAndCommitModelActionHelper.SF_NEW);
 		if (addition.length != 0) {
 		    IResourceProvider additionProvider = new IResourceProvider() {
@@ -137,6 +139,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
                 }
             }
 		});
+		op.add(new ShowPostCommitErrorsOperation(mainOp));
 		op.add(new ClearUpdateStatusesOperation(resources[0]), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(resources[0]));
 		ExtensionsManager.getInstance().getCurrentCommitFactory().performAfterCommitTasks(op, mainOp, dependsOn, configuration.getSite().getPart());

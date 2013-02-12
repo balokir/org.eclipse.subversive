@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,7 +22,9 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.IPostCommitErrorsProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
+import org.eclipse.team.svn.core.operation.SVNPostCommitError;
 import org.eclipse.team.svn.core.operation.local.change.FolderChange;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
@@ -44,13 +47,14 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * 
  * @author Alexander Gurov
  */
-public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor, IResourceProvider {
+public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor, IResourceProvider, IPostCommitErrorsProvider {
     protected boolean override;
     protected boolean keepLocks;
     protected String overrideMessage;
     protected IResource []committables = new IResource[0];
     protected IResource []withDifferentNodeKind = new IResource[0];
     protected boolean ignoreExternals;
+	protected ArrayList<SVNPostCommitError> postCommitErrors;
     
 	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean ignoreExternals) {
 		this(resources, override, overrideMessage, false, ignoreExternals);
@@ -84,6 +88,10 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	    return this.withDifferentNodeKind;
 	}
 	
+	public SVNPostCommitError [] getPostCommitErrors() {
+		return this.postCommitErrors == null ? null : this.postCommitErrors.toArray(new SVNPostCommitError[this.postCommitErrors.size()]);
+	}
+	
 	public void doOperation(IActionOperation op, IProgressMonitor monitor) {
 	    this.reportStatus(op.run(monitor).getStatus());
 	}
@@ -92,6 +100,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		IResource []resources = FileUtility.shrinkChildNodesWithSwitched(this.operableData());
 		final ArrayList<IResource> committables = new ArrayList<IResource>();
 		final ArrayList<IResource> withDifferentNodeKind = new ArrayList<IResource>();
+		this.postCommitErrors = new ArrayList<SVNPostCommitError>();
 
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final IResource current = resources[i];
@@ -169,7 +178,12 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 			    nodeKindChanged = this.prepareToOverride(change, monitor);
 			    //do additional check for exists because prepareToOverride can delete resources
 			    if (new File(wcPath).exists()) {
-			    	this.doOperation(new CommitOperation(new IResource[] {local.getResource()}, this.overrideMessage, true, this.keepLocks), monitor);
+			    	CommitOperation op = new CommitOperation(new IResource[] {local.getResource()}, this.overrideMessage, true, this.keepLocks);
+			    	this.doOperation(op, monitor);
+			    	SVNPostCommitError []errors = op.getPostCommitErrors();
+			    	if (errors != null) {
+			    		this.postCommitErrors.addAll(Arrays.asList(errors));
+			    	}
 			    }
 			}
 			
