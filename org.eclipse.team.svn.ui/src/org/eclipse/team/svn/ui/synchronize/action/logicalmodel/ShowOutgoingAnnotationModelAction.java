@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.action.logicalmodel;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -18,8 +19,9 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.operation.LocalShowAnnotationOperation;
+import org.eclipse.team.svn.ui.annotate.BuiltInAnnotate;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -50,7 +52,7 @@ public class ShowOutgoingAnnotationModelAction extends AbstractSynchronizeLogica
 	}
 	
 	protected IActionOperation getOperation() {
-		return new LocalShowAnnotationOperation(this.getSelectedResource());
+		return new BuiltInAnnotate().getAnnotateOperation(UIMonitorUtility.getActivePage(), (IFile)this.getSelectedResource(), UIMonitorUtility.getShell());
 	}
 
 }
