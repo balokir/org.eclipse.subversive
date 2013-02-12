@@ -16,7 +16,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
-import org.eclipse.team.svn.ui.operation.LocalShowAnnotationOperation;
+import org.eclipse.team.svn.ui.annotate.BuiltInAnnotate;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Show annotation for local versioned file
@@ -30,11 +31,12 @@ public class ShowAnnotationAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {
-    	IResource resource = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY)[0];
-    	// could be called by keyboard actions for any resource
-    	if (resource instanceof IFile) {
-        	this.runScheduled(new LocalShowAnnotationOperation(resource));
-    	}
+		IResource resource = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY)[0];
+		IWorkbenchPage page = this.getTargetPage();
+		// could be called by keyboard actions for any resource, or there could be no page to show annotation in
+		if (resource.getType() == IResource.FILE && page != null) {
+			this.runScheduled(new BuiltInAnnotate().getAnnotateOperation(page, (IFile)resource, this.getShell()));
+		}
 	}
 	
 	public boolean isEnabled() {

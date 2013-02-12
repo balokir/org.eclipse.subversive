@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNAnnotationData;
@@ -34,14 +35,18 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetResourceAnnotationOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
+import org.eclipse.team.svn.ui.panel.common.ShowAnnotationPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryView;
@@ -68,7 +73,40 @@ public class BuiltInAnnotate {
 	protected AbstractDecoratedTextEditor textEditor;
 	protected SVNHistoryPage historyPage;
 	
+	public void open(IWorkbenchPage page, IFile resource, Shell parentShell) {
+		UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), this.getAnnotateOperation(page, resource, parentShell));
+	}
+
 	public void open(IWorkbenchPage page, IRepositoryResource remote, IFile resource, SVNRevisionRange revisions) {
+		UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), this.getAnnotateOperation(page, remote, resource, revisions));
+	}
+
+	public IActionOperation getAnnotateOperation(IWorkbenchPage page, IFile resource, Shell parentShell) {
+		if (page == null) {
+			return null;
+		}
+    	ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
+    	SVNRevision revision = local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision());    	    	
+    	IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
+    	remote.setPegRevision(revision); // make sure it is visible
+    	// we should ask annotation only up to the current revision, since for the HEAD one we may receive log messages for the lines that has yet to made their way into the local copy
+    	//	so, this will be default value for the top revision, if one wants to force annotate up to HEAD revision that could be easily changed in the dialog
+    	remote.setSelectedRevision(revision);
+
+    	if (parentShell != null) {
+			ShowAnnotationPanel panel = new ShowAnnotationPanel(remote);
+			DefaultDialog dialog = new DefaultDialog(parentShell, panel);
+			if (dialog.open() == 0) {
+				return this.getAnnotateOperation(page, remote, resource, panel.getRevisions());
+			}
+    	}
+    	else {
+    		return this.getAnnotateOperation(page, remote, resource, new SVNRevisionRange(SVNRevision.fromNumber(1), revision));
+    	}
+		return null;
+	}
+
+	public IActionOperation getAnnotateOperation(IWorkbenchPage page, IRepositoryResource remote, IFile resource, SVNRevisionRange revisions) {
 		GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(remote, revisions);
 		annotateOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		annotateOp.setRetryIfMergeInfoNotSupported(true);
@@ -76,7 +114,7 @@ public class BuiltInAnnotate {
 		CompositeOperation op = new CompositeOperation(showOp.getId(), showOp.getMessagesClass());
 		op.add(annotateOp);
 		op.add(showOp, new IActionOperation[] {annotateOp});
-		UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), op);
+		return op;
 	}
 
 	protected IActionOperation prepareBuiltInAnnotate(final GetResourceAnnotationOperation annotateOp, final IWorkbenchPage page, final IRepositoryResource remote, final IFile resource) {
