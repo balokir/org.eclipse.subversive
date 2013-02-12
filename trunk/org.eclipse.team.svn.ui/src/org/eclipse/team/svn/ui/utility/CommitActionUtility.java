@@ -30,6 +30,7 @@ import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
+import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -178,6 +179,7 @@ public class CommitActionUtility {
 		op.add(new ClearUpdateStatusesOperation(selectedResources), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(selectedResources));
 		op.add(new NotifyUnresolvedConflictOperation(mainOp));
+		op.add(new ShowPostCommitErrorsOperation(mainOp));
 		
 		ExtensionsManager.getInstance().getCurrentCommitFactory().performAfterCommitTasks(op, mainOp, null, part);
 	}

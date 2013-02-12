@@ -728,6 +728,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String NotifyNodeKindChangedDialog_Title;
 	public static String NotifyUnresolvedConflictDialog_Message;
 	public static String NotifyUnresolvedConflictDialog_Title;
+	public static String ShowPostCommitErrorsDialog_Title;
 
 	public static String OperationErrorDialog_Message_DifferentProjects;
 	public static String OperationErrorDialog_Message_DifferentRepositories;
@@ -828,6 +829,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_NotifyConflicts;
 	public static String Operation_NotifyConflicts_Error;
 	public static String Operation_NotifyConflicts_Id;
+	public static String Operation_ShowPostCommitErrors;
+	public static String Operation_ShowPostCommitErrors_Error;
+	public static String Operation_ShowPostCommitErrors_Id;
 	public static String Operation_ObtainProjectName;
 	public static String Operation_ObtainProjectName_Id;
 	public static String Operation_ObtainProjectName_Scanning;
