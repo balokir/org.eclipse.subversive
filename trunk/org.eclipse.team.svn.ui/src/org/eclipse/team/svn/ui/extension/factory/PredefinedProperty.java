@@ -17,13 +17,21 @@ package org.eclipse.team.svn.ui.extension.factory;
  * @author Sergiy Logvin
  */
 public class PredefinedProperty {
+	public static final int TYPE_NONE = 0x0;
+	public static final int TYPE_REVISION = 0x1;
+	public static final int TYPE_FILE = 0x2;
+	public static final int TYPE_FOLDER = 0x4;
+	public static final int TYPE_COMMON = PredefinedProperty.TYPE_FOLDER | PredefinedProperty.TYPE_FILE;
+	public static final int TYPE_GROUP = 0x8;
+	
 	public final String name;
 	public final String description;
 	public final String value;
 	public final String validationRegexp;
+	public final int type;
 	
 	public PredefinedProperty(String name) {
-		this(name, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		this(name, "", "", null, PredefinedProperty.TYPE_GROUP); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public PredefinedProperty(String name, String description, String value) {
@@ -31,10 +39,15 @@ public class PredefinedProperty {
 	}
 	
 	public PredefinedProperty(String name, String description, String value, String validationRegexp) {
+		this(name, description, value, validationRegexp, PredefinedProperty.TYPE_COMMON);
+	}
+	
+	public PredefinedProperty(String name, String description, String value, String validationRegexp, int type) {
 		this.name = name;
 		this.description = description;
 		this.value = value;
 		this.validationRegexp = validationRegexp;
+		this.type = type;
 	}
 	
 	public boolean equals(Object arg0) {

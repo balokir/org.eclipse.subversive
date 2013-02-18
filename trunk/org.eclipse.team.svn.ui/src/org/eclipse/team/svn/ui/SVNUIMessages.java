@@ -40,6 +40,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AbstractPropertyEditPanel_custom_description;
 	public static String AbstractPropertyEditPanel_custom_hint;
 	public static String AbstractPropertyEditPanel_svn_description;
+	public static String AbstractPropertyEditPanel_revprop_description;
 	public static String AcceptAll_Message_Multi;
 	public static String AcceptAll_Message_Single;
 	public static String AcceptAll_Title;

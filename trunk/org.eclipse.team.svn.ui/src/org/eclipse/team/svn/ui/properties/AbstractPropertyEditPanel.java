@@ -35,6 +35,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -298,9 +299,26 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 	 * 
 	 * @return a list of predefined properties. Must not be null.
 	 */
-	protected abstract List<PredefinedProperty> getPredefinedProperties();
+	protected List<PredefinedProperty> getPredefinedProperties() {
+		ArrayList<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
+		for (PredefinedProperty property : ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedProperties()) {
+			if (this.isPropertyAccepted(property)) {
+				properties.add(property);
+			}
+		}
+		return properties;
+	}
+
+	protected Map<String, String> getPredefinedPropertiesRegexps() {
+		HashMap<String, String> regexpmap = new HashMap<String, String>();
+		for (PredefinedProperty property : this.getPredefinedProperties()) {
+			regexpmap.put(property.name, property.validationRegexp);
+		}
+		return regexpmap;
+	}
+	
+	protected abstract boolean isPropertyAccepted(PredefinedProperty property);
 	protected abstract void fillVerifiersMap();
-	protected abstract Map<String, String> getPredefinedPropertiesRegexps();
 	
 	protected String[] getPropertyNames(List<PredefinedProperty> predefinedProperties, SVNTeamPropsPreferencePage.CustomProperty [] customProperties) {
 		List<String> names = new ArrayList<String>();
