@@ -11,9 +11,6 @@
 
 package org.eclipse.team.svn.ui.properties;
 
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
@@ -29,7 +26,6 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ApplyPropertyMethodComposite;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
-import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.verifier.PropertyVerifier;
 
@@ -72,15 +68,11 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 			this.verifiers.put(this.customProps[i].propName, new PropertyVerifier("EditPropertiesInputField", this.customProps[i].regExp.equals("") ? null : this.customProps[i].regExp, this.customProps[i].propName, base)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
-	protected List<PredefinedProperty> getPredefinedProperties() {
-		return ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedProperties();
+
+	protected boolean isPropertyAccepted(PredefinedProperty property) {
+		return (property.type & PredefinedProperty.TYPE_REVISION) == 0;
 	}
 
-	protected Map<String, String> getPredefinedPropertiesRegexps() {
-		return ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedPropertiesRegexps();
-	}
-	
 	public boolean isStrict() {
 		return this.strict;
 	}
