@@ -17,18 +17,24 @@ package org.eclipse.team.svn.ui.extension.factory;
  * @author Sergiy Logvin
  */
 public class PredefinedProperty {
-	final public String name;
-	final public String description;
-	final public String value;
+	public final String name;
+	public final String description;
+	public final String value;
+	public final String validationRegexp;
 	
 	public PredefinedProperty(String name) {
-		this(name, null, null);
+		this(name, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public PredefinedProperty(String name, String description, String value) {
+		this(name, description, value, null);
+	}
+	
+	public PredefinedProperty(String name, String description, String value, String validationRegexp) {
 		this.name = name;
 		this.description = description;
 		this.value = value;
+		this.validationRegexp = validationRegexp;
 	}
 	
 	public boolean equals(Object arg0) {
