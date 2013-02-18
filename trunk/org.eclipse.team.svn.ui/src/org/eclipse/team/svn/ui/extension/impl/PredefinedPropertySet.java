@@ -17,9 +17,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 
 /**
  * IPropertyProvider implementation
@@ -28,10 +31,27 @@ import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
  */
 public class PredefinedPropertySet implements IPredefinedPropertySet {
 	
-	protected static Map<String, PredefinedProperty> properties = new LinkedHashMap<String, PredefinedProperty>();
+	protected static Map<String, PredefinedProperty> properties = null;
 	
-	static
-	{
+	public List<PredefinedProperty> getPredefinedProperties() {
+		PredefinedPropertySet.init();
+		return new ArrayList<PredefinedProperty>(PredefinedPropertySet.properties.values());
+	}
+	
+	public Map<String, String> getPredefinedPropertiesRegexps() {
+		HashMap<String, String> regexpmap = new HashMap<String, String>();
+		for (PredefinedProperty property : this.getPredefinedProperties()) {
+			regexpmap.put(property.name, property.validationRegexp);
+		}
+		return regexpmap;
+	}
+	
+	protected static void init() {
+		if (PredefinedPropertySet.properties != null) {
+			return;
+		}
+		PredefinedPropertySet.properties = new LinkedHashMap<String, PredefinedProperty>();
+		
 		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description));
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:eol-style", SVNUIMessages.Property_SVN_EOL, "", "((native)|(LF)|(CR)|(CRLF))"));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:executable", SVNUIMessages.Property_SVN_Executable, "")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -64,23 +84,25 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:author", SVNUIMessages.Property_SVN_Author, "", null, PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:date", SVNUIMessages.Property_SVN_Date, "", null, PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:autoversioned", SVNUIMessages.Property_SVN_Autoversioned, "", null, PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	protected static void registerProperty(PredefinedProperty property)
-	{
-		PredefinedPropertySet.properties.put(property.name, property);
-	}
-	
-	public List<PredefinedProperty> getPredefinedProperties() {
-		return new ArrayList<PredefinedProperty>(PredefinedPropertySet.properties.values());
-	}
-	
-	public Map<String, String> getPredefinedPropertiesRegexps() {
-		HashMap<String, String> regexpmap = new HashMap<String, String>();
-		for (PredefinedProperty property : this.getPredefinedProperties()) {
-			regexpmap.put(property.name, property.validationRegexp);
+		
+		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_custom_description));
+		PredefinedProperty []customProps = SVNTeamPropsPreferencePage.loadCustomProperties(SVNTeamPreferences.getCustomPropertiesList(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME));
+		if (customProps.length > 0) {
+			PredefinedPropertySet.registerProperties(customProps);
 		}
-		return regexpmap;
+		else {
+			PredefinedPropertySet.registerProperty(new PredefinedProperty("    " + SVNUIMessages.AbstractPropertyEditPanel_custom_hint)); //$NON-NLS-1$
+		}
+	}
+	
+	protected static void registerProperties(PredefinedProperty []properties) {
+		for (PredefinedProperty property : properties) {
+			PredefinedPropertySet.registerProperty(property);
+		}
+	}
+	
+	protected static void registerProperty(PredefinedProperty property) {
+		PredefinedPropertySet.properties.put(property.name, property);
 	}
 	
 }

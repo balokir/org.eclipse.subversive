@@ -61,6 +61,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.common.EditAutoPropertiesPanel;
 import org.eclipse.team.svn.ui.panel.common.EditCustomPropertiesPanel;
 import org.eclipse.ui.PlatformUI;
@@ -112,18 +113,6 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		}
 	}
 	
-	public static class CustomProperty {
-		public String propName;
-		public String regExp;
-		public String descriprion;
-		
-		public CustomProperty(String propName, String regExp, String description) {
-			this.propName = propName;
-			this.regExp = regExp;
-			this.descriprion = description;
-		}
-	}
-
 	protected void saveValues(IPreferenceStore store) {
 		int propsCount = this.autopropTableViewer.getTable().getItemCount();
 		String []props = new String[3 * propsCount];
@@ -139,10 +128,10 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		propsCount = this.custompropTableViewer.getTable().getItemCount();
 		props = new String[3 * propsCount];
 		for (int i = 0; i < propsCount; i++) {
-			SVNTeamPropsPreferencePage.CustomProperty property = (SVNTeamPropsPreferencePage.CustomProperty)this.custompropTableViewer.getElementAt(i);
-			props[3 * i] = property.propName;
-			props[3 * i + 1] = property.regExp;
-			props[3 * i + 2] = property.descriprion;
+			PredefinedProperty property = (PredefinedProperty)this.custompropTableViewer.getElementAt(i);
+			props[3 * i] = property.name;
+			props[3 * i + 1] = property.validationRegexp;
+			props[3 * i + 2] = property.description;
 		}
 		this.customPropsValue = FileUtility.encodeArrayToString(props);
 		SVNTeamPreferences.setCustomPropertiesList(store, SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME, this.customPropsValue);
@@ -617,10 +606,10 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 
 			public String getColumnText(Object element, int columnIndex) {
 				if (columnIndex == 0) {
-					return ((SVNTeamPropsPreferencePage.CustomProperty)element).propName;
+					return ((PredefinedProperty)element).name;
 				}
 				else if (columnIndex == 1) {
-					return ((SVNTeamPropsPreferencePage.CustomProperty)element).regExp;
+					return ((PredefinedProperty)element).validationRegexp;
 				}
 				return "";  //$NON-NLS-1$
 			}
@@ -673,7 +662,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			this.customPropDescription.setText(SVNUIMessages.CustomPropsPreferencePage_description);
 			return;
 		}
-		String description = ((SVNTeamPropsPreferencePage.CustomProperty)selection.getFirstElement()).descriprion;
+		String description = ((PredefinedProperty)selection.getFirstElement()).description;
 		if (description.equals("")) { //$NON-NLS-1$
 			this.customPropDescription.setText("No description available.");
 		}
@@ -692,12 +681,11 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	
 	public void editCustomProperty() {
 		IStructuredSelection selection = (IStructuredSelection)this.custompropTableViewer.getSelection();
-		SVNTeamPropsPreferencePage.CustomProperty property =
-			(SVNTeamPropsPreferencePage.CustomProperty)selection.getFirstElement();
+		PredefinedProperty property = (PredefinedProperty)selection.getFirstElement();
 		EditCustomPropertiesPanel panel = new EditCustomPropertiesPanel(property);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
-			property  = panel.getProperty();
+			property = panel.getProperty();
 			this.custompropTableViewer.update(property, null);
 			this.refreshDescription();
 		}
@@ -709,18 +697,17 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		this.refreshDescription();
 	}
 	
-	public static SVNTeamPropsPreferencePage.CustomProperty [] loadCustomProperties(String encodedProps) {
-		ArrayList<SVNTeamPropsPreferencePage.CustomProperty> propsList = new ArrayList<SVNTeamPropsPreferencePage.CustomProperty>();
+	public static PredefinedProperty []loadCustomProperties(String encodedProps) {
+		ArrayList<PredefinedProperty> propsList = new ArrayList<PredefinedProperty>();
 		String[] props = FileUtility.decodeStringToArray(encodedProps);
 		for (int i = 0; i < props.length; i += 3) {
 			String propName = props[i];
 			String regexp =  (i + 1 == props.length) ? "" : props[i + 1]; //$NON-NLS-1$
 			String description =  (i + 2 >= props.length) ? "" :  props[i + 2]; //$NON-NLS-1$
-			SVNTeamPropsPreferencePage.CustomProperty property = 
-				new SVNTeamPropsPreferencePage.CustomProperty(propName, regexp, description);
+			PredefinedProperty property = new PredefinedProperty(propName, description, "", regexp); //$NON-NLS-1$
 			propsList.add(property);
 		}
-		return propsList.toArray(new SVNTeamPropsPreferencePage.CustomProperty [propsList.size()]);
+		return propsList.toArray(new PredefinedProperty[propsList.size()]);
 	}
 	
 	public static Object[] loadAutoProperties(String encodedProps) {
