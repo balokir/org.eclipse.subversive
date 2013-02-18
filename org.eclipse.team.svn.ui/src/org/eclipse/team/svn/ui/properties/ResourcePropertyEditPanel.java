@@ -27,7 +27,6 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ApplyPropertyMethodComposite;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
-import org.eclipse.team.svn.ui.verifier.PropertyVerifier;
 
 /**
  * Edit property panel
@@ -58,21 +57,15 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 		this.fillVerifiersMap();
 	}
 	
-	protected void fillVerifiersMap() {
-		String [] properties = this.predefinedPropertiesRegexps.keySet().toArray(new String[0]);
-		IRepositoryResource base = SVNRemoteStorage.instance().asRepositoryResource(this.selectedResources[0]);
-		for (int i = 0; i <  properties.length; i++) {
-			this.verifiers.put(properties[i], new PropertyVerifier("EditPropertiesInputField", this.predefinedPropertiesRegexps.get(properties[i]), properties[i], base)); //$NON-NLS-1$
-		}
-		for (int i = 0; i < this.customProps.length; i++) {
-			this.verifiers.put(this.customProps[i].propName, new PropertyVerifier("EditPropertiesInputField", this.customProps[i].regExp.equals("") ? null : this.customProps[i].regExp, this.customProps[i].propName, base)); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
 	protected boolean isPropertyAccepted(PredefinedProperty property) {
-		return (property.type & PredefinedProperty.TYPE_REVISION) == 0;
+		// is there any properties that could be used for both: revisions and resources?
+		return (property.type & PredefinedProperty.TYPE_REVISION) == PredefinedProperty.TYPE_NONE;
 	}
 
+	protected IRepositoryResource getRepostioryResource() {
+		return SVNRemoteStorage.instance().asRepositoryResource(this.selectedResources[0]);
+	}
+	
 	public boolean isStrict() {
 		return this.strict;
 	}

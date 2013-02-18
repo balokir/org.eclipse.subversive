@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
+import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
@@ -38,12 +38,12 @@ import org.eclipse.team.svn.ui.verifier.PropertyNameVerifier;
  */
 public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 
-	protected SVNTeamPropsPreferencePage.CustomProperty property;
+	protected PredefinedProperty property;
 	protected Text propName;
 	protected Text propRegexp;
 	protected StyledText propDescription;
 	
-	public EditCustomPropertiesPanel(SVNTeamPropsPreferencePage.CustomProperty property) {
+	public EditCustomPropertiesPanel(PredefinedProperty property) {
 		super();
 		this.property = property;
 		this.dialogTitle = property == null ? SVNUIMessages.EditCustomPropertiesPanel_Title_Add : SVNUIMessages.EditAutoPropertiesPanel_Title_Edit;
@@ -59,7 +59,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		Label propNameLabel = new Label(parent, SWT.NONE);
 		propNameLabel.setText(SVNUIMessages.EditCustomPropertiesPanel_PropName);
 		this.propName = new Text(parent, SWT.BORDER);
-		this.propName.setText((this.property == null) ? "" : this.property.propName); //$NON-NLS-1$
+		this.propName.setText((this.property == null) ? "" : this.property.name); //$NON-NLS-1$
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.propName.setLayoutData(layoutData);
 		
@@ -81,7 +81,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		Label propRegexpLabel = new Label(optional, SWT.NONE);
 		propRegexpLabel.setText(SVNUIMessages.EditCustomPropertiesPanel_PropRegExp);
 		this.propRegexp = new Text(optional, SWT.BORDER);
-		this.propRegexp.setText((this.property == null) ? "" : this.property.regExp); //$NON-NLS-1$
+		this.propRegexp.setText((this.property == null) ? "" : this.property.validationRegexp); //$NON-NLS-1$
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.propRegexp.setLayoutData(layoutData);
 		this.attachTo(this.propRegexp, new AbstractFormattedVerifier("EditCustomProperty_Regexp") {			 //$NON-NLS-1$
@@ -107,10 +107,10 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		layoutData.heightHint = 80;
 		layoutData.widthHint = 0;
         this.propDescription = SpellcheckedTextProvider.getTextWidget(optional, layoutData, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-		this.propDescription.setText((this.property == null) ? "" : this.property.descriprion); //$NON-NLS-1$
+		this.propDescription.setText((this.property == null) ? "" : this.property.description); //$NON-NLS-1$
 	}
 	
-	public SVNTeamPropsPreferencePage.CustomProperty getProperty() {
+	public PredefinedProperty getProperty() {
 		return this.property;
 	}
 	
@@ -118,14 +118,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 	}
 
 	protected void saveChangesImpl() {
-		if (this.property == null) {
-			this.property = new SVNTeamPropsPreferencePage.CustomProperty(this.propName.getText(), this.propRegexp.getText(), this.propDescription.getText());
-		}
-		else {
-			this.property.propName = this.propName.getText();
-			this.property.regExp = this.propRegexp.getText();
-			this.property.descriprion = this.propDescription.getText();
-		}
+		this.property = new PredefinedProperty(this.propName.getText(), this.propDescription.getText(), "", this.propRegexp.getText()); //$NON-NLS-1$
 	}
 
 }

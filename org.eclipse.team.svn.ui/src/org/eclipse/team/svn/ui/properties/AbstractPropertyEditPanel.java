@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,14 +31,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositePropertiesVerifier;
@@ -47,6 +45,7 @@ import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.ExistingResourceVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.PropertyNameVerifier;
+import org.eclipse.team.svn.ui.verifier.PropertyVerifier;
 
 /**
  * Abstract panel for editing properties implementation.
@@ -68,9 +67,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 	protected String propertyValue;
 	protected String propertyFile;
 	
-	protected SVNTeamPropsPreferencePage.CustomProperty [] customProps;
 	protected List<PredefinedProperty> predefinedProperties;
-	protected Map<String, String> predefinedPropertiesRegexps;
 	protected HashMap<String, AbstractFormattedVerifier> verifiers;
 	
 	public AbstractPropertyEditPanel(SVNProperty[] propertyData, String dialogTitle, String dialogDescription) {
@@ -79,14 +76,12 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 			this.propertyName = propertyData[0].name;
 			this.propertyValue = propertyData[0].value;
 		}
-		this.customProps = SVNTeamPropsPreferencePage.loadCustomProperties(SVNTeamPreferences.getCustomPropertiesList(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME));
 		this.verifiers = new HashMap<String, AbstractFormattedVerifier>();
 		this.dialogTitle = dialogTitle;
 		this.dialogDescription = dialogDescription;
 		this.source = propertyData;
 		this.fileSelected = false;
 		this.predefinedProperties = this.getPredefinedProperties();
-		this.predefinedPropertiesRegexps = this.getPredefinedPropertiesRegexps();
 		this.alreadyExistent = new HashMap<String, String>();
 		if (propertyData != null) {
 			for (SVNProperty current : propertyData) {
@@ -111,15 +106,6 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		return this.propertyValue;
 	}
 	
-	protected SVNTeamPropsPreferencePage.CustomProperty getCustomProperty(String name) {
-		for (int i = 0; i < this.customProps.length; i++) {
-			if (this.customProps[i].propName.equals(name)) {
-				return this.customProps[i];
-			}
-		}
-		return null;
-	}
-
 	public void setPropertyToEdit(SVNProperty propertyToEdit) {
 		if (propertyToEdit != null) {
 			this.propertyName = propertyToEdit.name;
@@ -146,7 +132,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		this.nameField.setLayoutData(data);
 		this.nameField.setVisibleItemCount(10);
-		this.nameField.setItems(this.getPropertyNames(this.predefinedProperties, this.customProps));
+		this.nameField.setItems(this.getPropertyNames(this.predefinedProperties));
 		this.nameField.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				String selected = AbstractPropertyEditPanel.this.nameField.getItem(AbstractPropertyEditPanel.this.nameField.getSelectionIndex());
@@ -309,31 +295,22 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		return properties;
 	}
 
-	protected Map<String, String> getPredefinedPropertiesRegexps() {
-		HashMap<String, String> regexpmap = new HashMap<String, String>();
-		for (PredefinedProperty property : this.getPredefinedProperties()) {
-			regexpmap.put(property.name, property.validationRegexp);
+	protected void fillVerifiersMap() {
+		IRepositoryResource base = this.getRepostioryResource();
+		for (PredefinedProperty current : this.predefinedProperties) {
+			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", "".equals(current.validationRegexp) ? null : current.validationRegexp, current.name, base)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return regexpmap;
 	}
 	
 	protected abstract boolean isPropertyAccepted(PredefinedProperty property);
-	protected abstract void fillVerifiersMap();
+	protected abstract IRepositoryResource getRepostioryResource();
 	
-	protected String[] getPropertyNames(List<PredefinedProperty> predefinedProperties, SVNTeamPropsPreferencePage.CustomProperty [] customProperties) {
+	protected String[] getPropertyNames(List<PredefinedProperty> predefinedProperties) {
 		List<String> names = new ArrayList<String>();
 		for (Iterator<PredefinedProperty> it = predefinedProperties.iterator(); it.hasNext(); ) {
 			names.add(it.next().name);
 		}
-		names.add(SVNUIMessages.AbstractPropertyEditPanel_custom_description);
-		for (int i = 0; i < customProperties.length; i++) {
-			names.add(customProperties[i].propName);
-		}
-		if (this.customProps.length == 0) {
-			names.add("    " + SVNUIMessages.AbstractPropertyEditPanel_custom_hint); //$NON-NLS-1$
-		}
-		String[] propertyNames = names.toArray(new String[names.size()]);
-		return propertyNames;
+		return names.toArray(new String[names.size()]);
 	}
 	
 	protected String getDescriptionText() {
@@ -341,10 +318,6 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		PredefinedProperty prop = this.getPredefinedProperty(propName);
 		if (prop != null) {
 			return (prop.description != null && prop.description.trim().length() > 0) ? prop.description : SVNUIMessages.AbstractPropertyEditPanel_NoDescription;			
-		}
-		SVNTeamPropsPreferencePage.CustomProperty customProp = this.getCustomProperty(propName);
-		if (customProp != null && !customProp.descriprion.equals("")) { //$NON-NLS-1$
-			return customProp.descriprion;
 		}
 		return SVNUIMessages.AbstractPropertyEditPanel_UserDefined;
 	}
