@@ -90,17 +90,13 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 	protected List<PredefinedProperty> getPredefinedProperties() {
 		ArrayList<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
 		properties.add(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.add(new PredefinedProperty("svn:log", this.getDescription("SVN_Log"), ""));		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:author", this.getDescription("SVN_Author"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:date", this.getDescription("SVN_Date"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:autoversioned", this.getDescription("SVN_Autoversioned"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("svn:log", SVNUIMessages.Property_SVN_Log, ""));		 //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:author", SVNUIMessages.Property_SVN_Author, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:date", SVNUIMessages.Property_SVN_Date, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:autoversioned", SVNUIMessages.Property_SVN_Autoversioned, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		return properties;
 	}
 	
-	protected String getDescription(String id) {
-		return SVNUIMessages.getString("Property_" + id); //$NON-NLS-1$
-	}
-
 	protected Map<String, String> getPredefinedPropertiesRegexps() {
 		return Collections.emptyMap();
 	}
