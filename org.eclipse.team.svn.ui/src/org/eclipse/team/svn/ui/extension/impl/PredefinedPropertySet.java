@@ -32,22 +32,22 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		List<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
 		
 		properties.add(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.add(new PredefinedProperty("svn:eol-style", this.getDescription("SVN_EOL"), ""));		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:executable", this.getDescription("SVN_Executable"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:externals", this.getDescription("SVN_Externals"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:ignore", this.getDescription("SVN_Ignore"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:keywords", this.getDescription("SVN_Keywords"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:mime-type", this.getDescription("SVN_Mimetype"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:mergeinfo", this.getDescription("SVN_Mergeinfo"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("svn:needs-lock", this.getDescription("SVN_NeedsLock"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("svn:eol-style", SVNUIMessages.Property_SVN_EOL, ""));		 //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:executable", SVNUIMessages.Property_SVN_Executable, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:externals", SVNUIMessages.Property_SVN_Externals, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:ignore", SVNUIMessages.Property_SVN_Ignore, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:keywords", SVNUIMessages.Property_SVN_Keywords, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:mime-type", SVNUIMessages.Property_SVN_Mimetype, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:mergeinfo", SVNUIMessages.Property_SVN_Mergeinfo, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:needs-lock", SVNUIMessages.Property_SVN_NeedsLock, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.getBugtrackProperties(properties);
 		properties.add(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_tsvn_description, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.add(new PredefinedProperty("tsvn:logtemplate", this.getDescription("TSVN_LogTemplate"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("tsvn:logwidthmarker", this.getDescription("TSVN_LogWidthMarker"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("tsvn:logminsize", this.getDescription("TSVN_LogMinSize"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("tsvn:lockmsgminsize", this.getDescription("TSVN_LockMsgMinSize"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("tsvn:logfilelistenglish", this.getDescription("TSVN_LogFileListEnglish"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("tsvn:projectlanguage", this.getDescription("TSVN_ProjectLanguage"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("tsvn:logtemplate", SVNUIMessages.Property_TSVN_LogTemplate, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("tsvn:logwidthmarker", SVNUIMessages.Property_TSVN_LogWidthMarker, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("tsvn:logminsize", SVNUIMessages.Property_TSVN_LogMinSize, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("tsvn:lockmsgminsize", SVNUIMessages.Property_TSVN_LockMsgMinSize, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("tsvn:logfilelistenglish", SVNUIMessages.Property_TSVN_LogFileListEnglish, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("tsvn:projectlanguage", SVNUIMessages.Property_TSVN_ProjectLanguage, "")); //$NON-NLS-1$ //$NON-NLS-2$
 						
 		return properties;
 	}
@@ -81,13 +81,13 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 	 */
 	protected void getBugtrackProperties(List<PredefinedProperty> properties) {
 		properties.add(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_bugtraq_description, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.add(new PredefinedProperty("bugtraq:url", this.getDescription("Bugtraq_URL"), "%BUGID%")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("bugtraq:logregex", this.getDescription("Bugtraq_LogRegex"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("bugtraq:label", this.getDescription("Bugtraq_Label"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("bugtraq:message", this.getDescription("Bugtraq_Message"), "%BUGID%")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("bugtraq:number", this.getDescription("Bugtraq_Number"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("bugtraq:warnifnoissue", this.getDescription("Bugtraq_WarnIfNoIssue"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.add(new PredefinedProperty("bugtraq:append", this.getDescription("Bugtraq_Append"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("bugtraq:url", SVNUIMessages.Property_Bugtraq_URL, "%BUGID%")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("bugtraq:logregex", SVNUIMessages.Property_Bugtraq_LogRegex, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("bugtraq:label", SVNUIMessages.Property_Bugtraq_Label, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("bugtraq:message", SVNUIMessages.Property_Bugtraq_Message, "%BUGID%")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("bugtraq:number", SVNUIMessages.Property_Bugtraq_Number, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("bugtraq:warnifnoissue", SVNUIMessages.Property_Bugtraq_WarnIfNoIssue, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("bugtraq:append", SVNUIMessages.Property_Bugtraq_Append, "")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -102,11 +102,6 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		regexpmap.put("bugtraq:number", "((true)|(false))"); //$NON-NLS-1$ //$NON-NLS-2$
 		regexpmap.put("bugtraq:warnifnoissue", "((true)|(false))"); //$NON-NLS-1$ //$NON-NLS-2$
 		regexpmap.put("bugtraq:append", "((true)|(false))"); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	
-	protected String getDescription(String id) {
-		return SVNUIMessages.getString("Property_" + id); //$NON-NLS-1$
 	}
 	
 }
