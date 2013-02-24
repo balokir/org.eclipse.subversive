@@ -15,6 +15,7 @@ package org.eclipse.team.svn.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,10 +28,13 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
+import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.console.SVNConsoleFactory;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
@@ -130,7 +134,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		workspace.addResourceChangeListener(SVNTeamUIPlugin.this.pcListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 		
 		IPreferenceStore store = this.getPreferenceStore();
-		if (store.getBoolean(SVNTeamPreferences.FIRST_STARTUP)) {
+		if (store.getBoolean(SVNTeamPreferences.FIRST_STARTUP) || this.isConnectorsRequired()) {
 			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
 			this.savePreferences();
 			// If we enable the decorator in the XML, the SVN plugin will be loaded
@@ -144,6 +148,18 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 			//run discovery connectors
 			this.discoveryConnectors();	
 		}
+	}
+	
+	protected boolean isConnectorsRequired() {
+		boolean svnProjectFound = false;
+		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			svnProjectFound |= projects[i].findMember(SVNUtility.getSVNFolderName()) != null || FileUtility.isConnected(projects[i]);
+			if (svnProjectFound) {
+				break;
+			}
+		}
+		return svnProjectFound && !CoreExtensionsManager.isExtensionsRegistered(CoreExtensionsManager.SVN_CONNECTOR);
 	}
 	
 	protected void discoveryConnectors() {
