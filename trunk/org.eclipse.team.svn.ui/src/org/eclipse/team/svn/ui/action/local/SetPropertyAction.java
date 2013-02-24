@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.action.local;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +35,9 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
+import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -87,7 +91,30 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		SetPropertyAction.doSetProperty(resources, data, loadOp, isRecursive, applyMethod, useMask, filterMask, strict, addOn);
 	}
 	
-	public static void doSetProperty(final IResource []resources, final SVNProperty []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, boolean strict, IActionOperation addOn) {
+	public static void doSetProperty(final IResource []resources, SVNProperty []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, boolean strict, IActionOperation addOn) {
+		ArrayList<SVNProperty> folderPropsList = new ArrayList<SVNProperty>();
+		ArrayList<SVNProperty> filePropsList = new ArrayList<SVNProperty>();
+		IPredefinedPropertySet set = ExtensionsManager.getInstance().getPredefinedPropertySet();
+		for (SVNProperty prop : data) {
+			int type = PredefinedProperty.TYPE_COMMON;
+			PredefinedProperty pProp = set.getPredefinedProperty(prop.name);
+			if (pProp != null) {
+				type = pProp.type;
+			}
+			if (type == PredefinedProperty.TYPE_FILE) {
+				filePropsList.add(prop);
+			}
+			else if (type == PredefinedProperty.TYPE_FOLDER) {
+				folderPropsList.add(prop);
+			}
+			else if (type == PredefinedProperty.TYPE_COMMON) {
+				filePropsList.add(prop);
+				folderPropsList.add(prop);
+			}
+		}
+		final SVNProperty []folderProps = folderPropsList.toArray(new SVNProperty[folderPropsList.size()]);
+		final SVNProperty []fileProps = filePropsList.toArray(new SVNProperty[filePropsList.size()]);
+		
 		final StringMatcher matcher = useMask ? new StringMatcher(filterMask) : null;
 		IStateFilter filter = new IStateFilter.AbstractStateFilter() {
 			protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
@@ -105,14 +132,14 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		};
 				
 		IActionOperation mainOp;
-		if (!isRecursive || applyMethod == PropertiesComposite.APPLY_TO_ALL && !useMask) {
+		if ((!isRecursive || applyMethod == PropertiesComposite.APPLY_TO_ALL && !useMask) && folderProps.length == fileProps.length) {
 			// use faster version
 			mainOp = new SetPropertiesOperation(FileUtility.getResourcesRecursive(resources, filter, IResource.DEPTH_ZERO), data, isRecursive & !strict);
 		}
 		else {
 			IPropertyProvider propertyProvider = new IPropertyProvider() {
 				public SVNProperty []getProperties(IResource resource) {
-					return data;
+					return resource.getType() == IResource.FILE ? fileProps : folderProps;
 				}
 			};
 			mainOp = new SetMultiPropertiesOperation(resources, propertyProvider, filter, isRecursive && !strict ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO);

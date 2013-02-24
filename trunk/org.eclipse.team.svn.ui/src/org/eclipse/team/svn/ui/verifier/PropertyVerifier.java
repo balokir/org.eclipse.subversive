@@ -35,16 +35,17 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
         super(fieldName);
         if (regExp == null) {
         	this.toValidate = false;
-        	return;
         }
-        this.toValidate = true;
+        else {
+            this.toValidate = true;
+            this.pattern = Pattern.compile(regExp);
+        }
+        this.base = base;
         String [] parts = propName.split(":"); //$NON-NLS-1$
 		this.propName = ""; //$NON-NLS-1$
 		for (int i = 0; i < parts.length; i++) {
 			this.propName += parts[i];
 		} 
-        this.pattern = Pattern.compile(regExp);
-        this.base = base;
     }
 	
 	protected String getErrorMessageImpl(Control input) {
@@ -100,7 +101,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 	}	
 
 	protected String getWarningMessageImpl(Control input) {
-		if (this.propName == null) {
+		if (!this.toValidate) {
 			return null;
 		}
 		if (this.propName.equals("svnauthor") //$NON-NLS-1$

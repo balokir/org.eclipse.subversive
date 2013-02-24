@@ -81,7 +81,6 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		this.dialogDescription = dialogDescription;
 		this.source = propertyData;
 		this.fileSelected = false;
-		this.predefinedProperties = this.getPredefinedProperties();
 		this.alreadyExistent = new HashMap<String, String>();
 		if (propertyData != null) {
 			for (SVNProperty current : propertyData) {
@@ -296,6 +295,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 	}
 
 	protected void fillVerifiersMap() {
+		this.predefinedProperties = this.getPredefinedProperties();
 		IRepositoryResource base = this.getRepostioryResource();
 		for (PredefinedProperty current : this.predefinedProperties) {
 			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", "".equals(current.validationRegexp) ? null : current.validationRegexp, current.name, base)); //$NON-NLS-1$ //$NON-NLS-2$
