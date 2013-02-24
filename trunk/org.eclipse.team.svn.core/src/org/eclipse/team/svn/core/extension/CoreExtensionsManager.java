@@ -157,6 +157,11 @@ public class CoreExtensionsManager {
 		return retVal;
 	}
 	
+	public static boolean isExtensionsRegistered(String extensionPoint) {
+		Object []extensions = CoreExtensionsManager.loadCoreExtensions(extensionPoint);
+		return extensions != null && extensions.length > 0;
+	}
+	
 	private ISVNConnectorFactory getFirstValidConnector(String id) {
 		this.initializeConnectors();
 		
