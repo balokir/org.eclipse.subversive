@@ -48,18 +48,28 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 	protected boolean applyToFolders;
 	protected IResource []selectedResources;
 	protected boolean strict;
+	protected int mask;
 
 	public ResourcePropertyEditPanel(SVNProperty[] data, IResource []selectedResources, boolean strict) {
 		super(data, data != null ? SVNUIMessages.PropertyEditPanel_Title_Edit : SVNUIMessages.PropertyEditPanel_Title_Add, SVNUIMessages.PropertyEditPanel_Description);
 		this.strict = strict;	
 		this.selectedResources = selectedResources;
 		this.resourcesType = this.computeResourcesType();
+		this.mask = PredefinedProperty.TYPE_GROUP;
+		for (IResource resource : this.selectedResources) {
+			if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
+				this.mask |= PredefinedProperty.TYPE_COMMON;
+			}
+			else if (resource.getType() == IResource.FILE) {
+				this.mask |= PredefinedProperty.TYPE_FILE;
+			}
+		}
 		this.fillVerifiersMap();
 	}
 	
 	protected boolean isPropertyAccepted(PredefinedProperty property) {
 		// is there any properties that could be used for both: revisions and resources?
-		return (property.type & PredefinedProperty.TYPE_REVISION) == PredefinedProperty.TYPE_NONE;
+		return (property.type & PredefinedProperty.TYPE_REVISION) == PredefinedProperty.TYPE_NONE && (property.type & this.mask) != PredefinedProperty.TYPE_NONE;
 	}
 
 	protected IRepositoryResource getRepostioryResource() {

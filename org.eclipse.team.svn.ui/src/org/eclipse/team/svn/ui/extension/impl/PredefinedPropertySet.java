@@ -38,6 +38,10 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		return new ArrayList<PredefinedProperty>(PredefinedPropertySet.properties.values());
 	}
 	
+	public PredefinedProperty getPredefinedProperty(String name) {
+		return PredefinedPropertySet.properties.get(name);
+	}
+	
 	public Map<String, String> getPredefinedPropertiesRegexps() {
 		HashMap<String, String> regexpmap = new HashMap<String, String>();
 		for (PredefinedProperty property : this.getPredefinedProperties()) {
@@ -53,14 +57,14 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		PredefinedPropertySet.properties = new LinkedHashMap<String, PredefinedProperty>();
 		
 		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description));
-		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:eol-style", SVNUIMessages.Property_SVN_EOL, "", "((native)|(LF)|(CR)|(CRLF))"));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:executable", SVNUIMessages.Property_SVN_Executable, "")); //$NON-NLS-1$ //$NON-NLS-2$
-		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:externals", SVNUIMessages.Property_SVN_Externals, "")); //$NON-NLS-1$ //$NON-NLS-2$
-		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:ignore", SVNUIMessages.Property_SVN_Ignore, "", "([^\\\\/\\:])+")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:keywords", SVNUIMessages.Property_SVN_Keywords, "", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedRevision)|(LastChangedBy)|(URL)|(\\s))+")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:mime-type", SVNUIMessages.Property_SVN_Mimetype, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:eol-style", SVNUIMessages.Property_SVN_EOL, "", "((native)|(LF)|(CR)|(CRLF))", PredefinedProperty.TYPE_FILE));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:executable", SVNUIMessages.Property_SVN_Executable, "", null, PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:externals", SVNUIMessages.Property_SVN_Externals, "", null, PredefinedProperty.TYPE_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:ignore", SVNUIMessages.Property_SVN_Ignore, "", "([^\\\\/\\:])+", PredefinedProperty.TYPE_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:keywords", SVNUIMessages.Property_SVN_Keywords, "", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedRevision)|(LastChangedBy)|(URL)|(\\s))+", PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:mime-type", SVNUIMessages.Property_SVN_Mimetype, "", null, PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:mergeinfo", SVNUIMessages.Property_SVN_Mergeinfo, "")); //$NON-NLS-1$ //$NON-NLS-2$
-		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:needs-lock", SVNUIMessages.Property_SVN_NeedsLock, "")); //$NON-NLS-1$ //$NON-NLS-2$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:needs-lock", SVNUIMessages.Property_SVN_NeedsLock, "", null, PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_bugtraq_description));
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("bugtraq:url", SVNUIMessages.Property_Bugtraq_URL, "%BUGID%", "((http:\\/\\/)|(https:\\/\\/))(\\S+)?((\\%BUGID\\%))(\\S+)?")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
