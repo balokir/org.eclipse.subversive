@@ -31,12 +31,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.properties.PredefinedProperty;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.extension.ExtensionsManager;
-import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -286,7 +286,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 	 */
 	protected List<PredefinedProperty> getPredefinedProperties() {
 		ArrayList<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
-		for (PredefinedProperty property : ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedProperties()) {
+		for (PredefinedProperty property : CoreExtensionsManager.instance().getPredefinedPropertySet().getPredefinedProperties()) {
 			if (this.isPropertyAccepted(property)) {
 				properties.add(property);
 			}

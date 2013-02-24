@@ -6,8 +6,8 @@
 	<extension-point id="coreoptions" name="SVN Team Core Options" schema="schema/coreoptions.exsd"/>
 	<extension-point id="crashrecovery" name="SVN Team Core Crash Recovery" schema="schema/crashrecovery.exsd"/>
 	<extension-point id="resourceIgnoreRules" name="SVN Team Core Ignore Recommendations" schema="schema/resourceIgnoreRules.exsd"/>
-	
 	<extension-point id="connectorDiscovery" name="Connector Discovery" schema="schema/connectorDiscovery.exsd"/>
+	<extension-point id="svnproperties" name="SVN Properties" schema="schema/svnproperties.exsd"/>
 
 <!-- ************** SVN Team Services ********************** -->
    <extension

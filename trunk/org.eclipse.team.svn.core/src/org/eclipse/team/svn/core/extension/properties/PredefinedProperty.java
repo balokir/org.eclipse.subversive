@@ -9,7 +9,7 @@
  *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.extension.factory;
+package org.eclipse.team.svn.core.extension.properties;
 
 /**
  * Predefined property class
