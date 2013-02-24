@@ -11,6 +11,13 @@
    <extension-point id="reporterfactory" name="Reporter Factory" schema="schema/reporterfactory.exsd"/>
    <extension-point id="synchronizeActionContribution" name="Synchronize Action Contributions" schema="schema/synchronizeActionContribution.exsd"/>
    
+   <extension point="org.eclipse.team.svn.core.svnproperties">
+		<svnpropertyset class="org.eclipse.team.svn.ui.properties.SVNPropertySet"/>
+		<svnpropertyset class="org.eclipse.team.svn.ui.properties.BugtraqPropertySet"/>
+		<svnpropertyset class="org.eclipse.team.svn.ui.properties.TortoiseSVNPropertySet"/>
+		<svnpropertyset class="org.eclipse.team.svn.ui.properties.CustomPropertySet"/>
+	</extension>
+   
 	<extension point="org.eclipse.team.svn.ui.reportingdescriptor">
 		<reportingdescriptor class="org.eclipse.team.svn.ui.extension.impl.DefaultReportingDescriptor"/>
 	</extension>

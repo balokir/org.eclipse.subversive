@@ -20,13 +20,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.properties.IPredefinedPropertySet;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.decorator.IDecorationFilter;
 import org.eclipse.team.svn.ui.extension.factory.ICheckoutFactory;
 import org.eclipse.team.svn.ui.extension.factory.ICommitActionFactory;
 import org.eclipse.team.svn.ui.extension.factory.IHistoryViewFactory;
-import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
 import org.eclipse.team.svn.ui.extension.factory.IReporterFactory;
 import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
@@ -39,7 +40,6 @@ import org.eclipse.team.svn.ui.extension.impl.DefaultDecorationFilter;
 import org.eclipse.team.svn.ui.extension.impl.DefaultHistoryViewFactory;
 import org.eclipse.team.svn.ui.extension.impl.DefaultShareProjectFactory;
 import org.eclipse.team.svn.ui.extension.impl.DefaultSynchronizeViewActionContributor;
-import org.eclipse.team.svn.ui.extension.impl.PredefinedPropertySet;
 
 /**
  * Manager for extension components. Used to extend Subversive without direct dependencies.
@@ -54,7 +54,6 @@ public class ExtensionsManager {
 	private ICheckoutFactory currentCheckoutFactory;
 	private IShareProjectFactory currentShareProjectFactory;
 	private IDecorationFilter currentDecorationFilter;
-	private IPredefinedPropertySet predefinedPropertySet;
 	private ISynchronizeViewActionContributor currentActionContributor;
 
 	private IReportingDescriptor []reportingDescriptors;
@@ -149,12 +148,11 @@ public class ExtensionsManager {
 		this.currentMessageFactory = currentMessageFactory;
 	}
 
-	public void setPredefinedPropertySet(IPredefinedPropertySet provider) {
-		this.predefinedPropertySet = provider;
-	}
-	
-	public IPredefinedPropertySet getPredefinedPropertySet() {		
-		return this.predefinedPropertySet;	
+	/**
+	 * @deprecated
+	 */
+	public IPredefinedPropertySet getPredefinedPropertySet() {
+		return CoreExtensionsManager.instance().getPredefinedPropertySet();
 	}
 
 	public static ICommitActionFactory getDefaultTeamCommitFactory() {
@@ -182,7 +180,6 @@ public class ExtensionsManager {
 	}
 	
 	private ExtensionsManager() {
-		this.predefinedPropertySet = new PredefinedPropertySet();
 		this.currentDecorationFilter = (IDecorationFilter)this.loadUIExtension("decoration"); //$NON-NLS-1$
 		this.currentMessageFactory = (IHistoryViewFactory)this.loadUIExtension("history"); //$NON-NLS-1$
 		this.currentCommitFactory = (ICommitActionFactory)this.loadUIExtension("commit"); //$NON-NLS-1$

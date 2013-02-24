@@ -21,6 +21,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.properties.IPredefinedPropertySet;
+import org.eclipse.team.svn.core.extension.properties.PredefinedProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -35,9 +38,6 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.extension.ExtensionsManager;
-import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
-import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -94,7 +94,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	public static void doSetProperty(final IResource []resources, SVNProperty []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, boolean strict, IActionOperation addOn) {
 		ArrayList<SVNProperty> folderPropsList = new ArrayList<SVNProperty>();
 		ArrayList<SVNProperty> filePropsList = new ArrayList<SVNProperty>();
-		IPredefinedPropertySet set = ExtensionsManager.getInstance().getPredefinedPropertySet();
+		IPredefinedPropertySet set = CoreExtensionsManager.instance().getPredefinedPropertySet();
 		for (SVNProperty prop : data) {
 			int type = PredefinedProperty.TYPE_COMMON;
 			PredefinedProperty pProp = set.getPredefinedProperty(prop.name);

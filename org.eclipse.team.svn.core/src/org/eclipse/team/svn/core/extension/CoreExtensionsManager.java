@@ -29,6 +29,9 @@ import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.factory.ThreadNameModifierFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
+import org.eclipse.team.svn.core.extension.properties.IPredefinedPropertySet;
+import org.eclipse.team.svn.core.extension.properties.PredefinedProperty;
+import org.eclipse.team.svn.core.extension.properties.PredefinedPropertySet;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 
 /**
@@ -49,6 +52,7 @@ public class CoreExtensionsManager {
 	private String selectedOptionProviderId;
 	private IResolutionHelper []helpers;
 	private IIgnoreRecommendations []ignoreRecommendations;
+	private ArrayList<IPredefinedPropertySet> svnPropertySets;
 
 	private static CoreExtensionsManager instance = new CoreExtensionsManager();
 	
@@ -88,11 +92,71 @@ public class CoreExtensionsManager {
 					CoreExtensionsManager.instance.ignoreRecommendations = Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
 					CoreExtensionsManager.instance.initialized = true;
 				}
+
+				PredefinedPropertySet pSet = null;
+				CoreExtensionsManager.instance.svnPropertySets = new ArrayList<IPredefinedPropertySet>();
+				IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CoreExtensionsManager.EXTENSION_NAMESPACE, "svnproperties"); //$NON-NLS-1$
+				for (IExtension ext : extension.getExtensions()) {
+					IConfigurationElement[] configElements = ext.getConfigurationElements();
+					for (IConfigurationElement element : configElements) {
+						if (element.getName() == "svnproperty") { //$NON-NLS-1$
+							if (pSet == null) {
+								pSet = new PredefinedPropertySet();
+								CoreExtensionsManager.instance.svnPropertySets.add(pSet);
+							}
+				            String name = element.getAttribute("name"); //$NON-NLS-1$
+				            String typeStr = element.getAttribute("type"); //$NON-NLS-1$
+				            typeStr = typeStr == null ? "common" : typeStr; //$NON-NLS-1$
+				            String revision = element.getAttribute("revision"); //$NON-NLS-1$
+				            String group = element.getAttribute("group"); //$NON-NLS-1$
+				            IConfigurationElement[] partNode = element.getChildren("description"); //$NON-NLS-1$
+				            String description = partNode != null && partNode.length > 0 ? partNode[0].getValue() : ""; //$NON-NLS-1$
+				            partNode = element.getChildren("defaultValue"); //$NON-NLS-1$
+				            String defaultValue = partNode != null && partNode.length > 0 ? partNode[0].getValue() : ""; //$NON-NLS-1$
+				            partNode = element.getChildren("validationRegexp"); //$NON-NLS-1$
+				            String validationRegexp = partNode != null && partNode.length > 0 ? partNode[0].getValue() : null;
+				            
+				            int type = PredefinedProperty.TYPE_NONE;
+				            if ("file".equals(typeStr)) { //$NON-NLS-1$
+				            	type = PredefinedProperty.TYPE_FILE;
+				            }
+				            else if ("folder".equals(typeStr)) { //$NON-NLS-1$
+				            	type = PredefinedProperty.TYPE_FOLDER;
+				            }
+				            else if ("common".equals(typeStr)) { //$NON-NLS-1$
+				            	type = PredefinedProperty.TYPE_COMMON;
+				            }
+				            if (revision != null && Boolean.parseBoolean(revision)) {
+				            	type |= PredefinedProperty.TYPE_REVISION;
+				            }
+				            if (group != null && Boolean.parseBoolean(group)) {
+				            	type |= PredefinedProperty.TYPE_GROUP;
+				            }
+				            pSet.registerProperty(new PredefinedProperty(name, description, defaultValue, validationRegexp, type));
+						}
+						else { // svnpropertyset
+							try {
+								CoreExtensionsManager.instance.svnPropertySets.add((IPredefinedPropertySet)element.createExecutableExtension("class"));
+							}
+							catch (CoreException ex) {
+								LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadExtensions"), ex); //$NON-NLS-1$
+							}
+						}
+					}
+				}
 			}
 		}
 		return CoreExtensionsManager.instance;
 	}
 	
+	public IPredefinedPropertySet getPredefinedPropertySet() {
+		PredefinedPropertySet retVal = new PredefinedPropertySet();
+		for (IPredefinedPropertySet set : this.svnPropertySets) {
+			retVal.registerProperties(set.getPredefinedProperties());
+		}
+		return retVal;
+	}
+
 	public IIgnoreRecommendations []getIgnoreRecommendations() {
 		return this.ignoreRecommendations;
 	}
