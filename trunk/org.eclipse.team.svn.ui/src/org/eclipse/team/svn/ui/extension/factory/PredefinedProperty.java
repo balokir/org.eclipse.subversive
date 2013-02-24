@@ -31,7 +31,11 @@ public class PredefinedProperty {
 	public final int type;
 	
 	public PredefinedProperty(String name) {
-		this(name, "", "", null, PredefinedProperty.TYPE_GROUP); //$NON-NLS-1$ //$NON-NLS-2$
+		this(name, PredefinedProperty.TYPE_NONE);
+	}
+
+	public PredefinedProperty(String name, int type) {
+		this(name, "", "", null, type); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public PredefinedProperty(String name, String description, String value) {

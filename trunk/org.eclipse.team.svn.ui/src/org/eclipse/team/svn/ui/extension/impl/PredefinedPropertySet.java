@@ -56,7 +56,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		}
 		PredefinedPropertySet.properties = new LinkedHashMap<String, PredefinedProperty>();
 		
-		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description));
+		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description, PredefinedProperty.TYPE_GROUP | PredefinedProperty.TYPE_COMMON));
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:eol-style", SVNUIMessages.Property_SVN_EOL, "", "((native)|(LF)|(CR)|(CRLF))", PredefinedProperty.TYPE_FILE));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:executable", SVNUIMessages.Property_SVN_Executable, "", null, PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:externals", SVNUIMessages.Property_SVN_Externals, "", null, PredefinedProperty.TYPE_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -66,7 +66,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:mergeinfo", SVNUIMessages.Property_SVN_Mergeinfo, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:needs-lock", SVNUIMessages.Property_SVN_NeedsLock, "", null, PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_bugtraq_description));
+		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_bugtraq_description, PredefinedProperty.TYPE_GROUP | PredefinedProperty.TYPE_COMMON));
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("bugtraq:url", SVNUIMessages.Property_Bugtraq_URL, "%BUGID%", "((http:\\/\\/)|(https:\\/\\/))(\\S+)?((\\%BUGID\\%))(\\S+)?")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("bugtraq:logregex", SVNUIMessages.Property_Bugtraq_LogRegex, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("bugtraq:label", SVNUIMessages.Property_Bugtraq_Label, "")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -75,7 +75,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("bugtraq:warnifnoissue", SVNUIMessages.Property_Bugtraq_WarnIfNoIssue, "", "((true)|(false))")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("bugtraq:append", SVNUIMessages.Property_Bugtraq_Append, "", "((true)|(false))")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_tsvn_description));
+		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_tsvn_description, PredefinedProperty.TYPE_GROUP | PredefinedProperty.TYPE_COMMON));
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("tsvn:logtemplate", SVNUIMessages.Property_TSVN_LogTemplate, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("tsvn:logwidthmarker", SVNUIMessages.Property_TSVN_LogWidthMarker, "", "(\\d+)")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("tsvn:logminsize", SVNUIMessages.Property_TSVN_LogMinSize, "", "(\\d+)")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -83,19 +83,19 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("tsvn:logfilelistenglish", SVNUIMessages.Property_TSVN_LogFileListEnglish, "", "((true)|(false))")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("tsvn:projectlanguage", SVNUIMessages.Property_TSVN_ProjectLanguage, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_revprop_description, "", "", null, PredefinedProperty.TYPE_GROUP | PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
+		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_revprop_description, PredefinedProperty.TYPE_GROUP | PredefinedProperty.TYPE_REVISION | PredefinedProperty.TYPE_COMMON));
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:log", SVNUIMessages.Property_SVN_Log, "", null, PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:author", SVNUIMessages.Property_SVN_Author, "", null, PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:date", SVNUIMessages.Property_SVN_Date, "", null, PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
 		PredefinedPropertySet.registerProperty(new PredefinedProperty("svn:autoversioned", SVNUIMessages.Property_SVN_Autoversioned, "", null, PredefinedProperty.TYPE_REVISION)); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_custom_description));
+		PredefinedPropertySet.registerProperty(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_custom_description, PredefinedProperty.TYPE_GROUP | PredefinedProperty.TYPE_COMMON));
 		PredefinedProperty []customProps = SVNTeamPropsPreferencePage.loadCustomProperties(SVNTeamPreferences.getCustomPropertiesList(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME));
 		if (customProps.length > 0) {
 			PredefinedPropertySet.registerProperties(customProps);
 		}
 		else {
-			PredefinedPropertySet.registerProperty(new PredefinedProperty("    " + SVNUIMessages.AbstractPropertyEditPanel_custom_hint)); //$NON-NLS-1$
+			PredefinedPropertySet.registerProperty(new PredefinedProperty("    " + SVNUIMessages.AbstractPropertyEditPanel_custom_hint, PredefinedProperty.TYPE_GROUP | PredefinedProperty.TYPE_COMMON)); //$NON-NLS-1$
 		}
 	}
 	

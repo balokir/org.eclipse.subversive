@@ -55,7 +55,7 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 		this.strict = strict;	
 		this.selectedResources = selectedResources;
 		this.resourcesType = this.computeResourcesType();
-		this.mask = PredefinedProperty.TYPE_GROUP;
+		this.mask = PredefinedProperty.TYPE_NONE;
 		for (IResource resource : this.selectedResources) {
 			if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
 				this.mask |= PredefinedProperty.TYPE_COMMON;
