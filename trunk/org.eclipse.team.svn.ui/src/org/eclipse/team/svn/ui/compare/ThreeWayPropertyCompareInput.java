@@ -15,20 +15,18 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.SVNMessages;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.property.RemovePropertiesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -113,18 +111,11 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	protected void removeProperty(PropertyCompareNode currentNode){	
 		//perform property removing
 		final String propName = currentNode.getName();
-		IActionOperation op = null;
-		UIMonitorUtility.doTaskNowDefault(op = new AbstractActionOperation("Operation_RemoveProperties", SVNMessages.class) { //$NON-NLS-1$
-			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				final ISVNConnector proxy = ThreeWayPropertyCompareInput.this.location.acquireSVNProxy();
-				try {
-					proxy.removeProperty(new String[] {ThreeWayPropertyCompareInput.this.left.path}, propName, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
-				}
-				finally {
-					ThreeWayPropertyCompareInput.this.location.releaseSVNProxy(proxy);
-				}
-			}
-		}, false);
+		IActionOperation op = new RemovePropertiesOperation(new IResource[] {this.leftResource}, new SVNProperty[] {new SVNProperty(propName, "")}, false);
+		CompositeOperation cmpOp = new CompositeOperation(op.getId(), op.getMessagesClass());
+		cmpOp.add(op);
+		cmpOp.add(new RefreshResourcesOperation(new IResource[] {this.leftResource}, IResource.DEPTH_ZERO, RefreshResourcesOperation.REFRESH_CHANGES));
+		UIMonitorUtility.doTaskNowDefault(cmpOp, false);
 		
 		if (op.getExecutionState() != IActionOperation.OK) {
 			return;
