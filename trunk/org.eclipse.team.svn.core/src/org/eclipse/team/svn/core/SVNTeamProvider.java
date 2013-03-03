@@ -261,9 +261,10 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		try {
 			SVNChangeStatus []sts = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
 			if (sts != null && sts.length > 0) {
-				SVNUtility.reorder(sts, true);
-				SVNChangeStatus st = sts[0];
-				this.relocatedTo = SVNUtility.decodeURL(st.url);
+				this.relocatedTo = this.getProjectURL(location.toString(), sts);
+				if (this.relocatedTo == null) {
+					return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
+				}
 				if (this.location != null) {
 					this.resource = this.location.asRepositoryContainer(this.relocatedTo, true);
 					if (this.resource == null) {
@@ -286,6 +287,18 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 			proxy.dispose();
 		}
 		return errorCode;
+	}
+	
+	protected String getProjectURL(String projectPath, SVNChangeStatus []sts) {
+		SVNUtility.reorder(sts, true);
+		for (SVNChangeStatus st : sts) {
+			if (st.url != null && !st.isFileExternal && !st.isSwitched && !st.isCopied) { // sometime SVN client library fails to return URL for an unknown reason, so, we'll just take it from one of the children resources
+				String url = SVNUtility.decodeURL(st.url);
+				url = url.substring(0, url.length() - (st.path.length() - projectPath.length()));
+				return url;
+			}
+		}
+		return null;
 	}
 	
 	protected int uploadRepositoryLocation() {
