@@ -664,6 +664,9 @@ public final class SVNUtility {
     }
     
 	public static String encodeURL(String url) {
+		if (url == null) {
+			return null;
+		}
 		url = SVNUtility.normalizeURL(url);
 		int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		idx = url.indexOf("/", idx); //$NON-NLS-1$
@@ -684,6 +687,9 @@ public final class SVNUtility {
 	}
 	
 	public static String decodeURL(String url) {
+		if (url == null) {
+			return null;
+		}
 		url = SVNUtility.normalizeURL(url);
 		int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		idx = url.indexOf("/", idx); //$NON-NLS-1$
