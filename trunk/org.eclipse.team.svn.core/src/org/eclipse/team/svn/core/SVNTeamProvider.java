@@ -27,6 +27,8 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
@@ -263,7 +265,12 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 			if (sts != null && sts.length > 0) {
 				this.relocatedTo = this.getProjectURL(location.toString(), sts);
 				if (this.relocatedTo == null) {
-					return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
+					// the last try to avoid problem with the client library not returning URL's sometimes, since it could cause a request to the server, as far as I remember...
+					SVNEntryInfo []info = SVNUtility.info(proxy, new SVNEntryRevisionReference(location.toString()), Depth.EMPTY, new SVNNullProgressMonitor());
+					if (info == null || info.length == 0 || info[0].url == null) {
+						return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
+					}
+					this.relocatedTo = SVNUtility.decodeURL(info[0].url);
 				}
 				if (this.location != null) {
 					this.resource = this.location.asRepositoryContainer(this.relocatedTo, true);
