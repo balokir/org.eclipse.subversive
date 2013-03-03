@@ -8,6 +8,28 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.1.I20130301-1700 [01 March 2013]
+
+Features:
+ * Improvement: add extension point for declaring custom properties (bug 306806)
+ * Set Property dialog should filter/set properties based on resource type (file or folder) (bug 401612)
+ * Display post-commit error messages to the user (bug 354843)
+ * Provide support for post-commit hook's messages (bug 400575)
+ * Improve Team Annotate with useful default revision values (bug 296239)
+ 
+Fixes:
+ * After modifying properties in "Compare properties" editor, Synchronize View isn't refreshed (bug 401619)
+ * NPE when synchronizing workspace (bug 401898)
+ * Connector install dialog does not open when SVN project exists (bug 401596)
+ * Use the PredefinedProperty class in order to define custom properties (bug 401047)
+ * Move revision properties descriptions into the PredefinedPropertySet class (bug 401041)
+ * Move validation regexp into the PredefinedProperty class (bug 401036)
+ * Use standard internationalization code for a property descriptions (bug 401034)
+ * Add post-commit hook's messages support for 'Mark as Merged' and 'Override and Commit' actions (bug 400583)
+ * Improve annotation UI's performance and usability (bug 400558)
+ 
+--------------------------------------------------------------------------------
+
 Version 1.0.0.I20130122-1700 [22 January 2013]
 
 Features:
