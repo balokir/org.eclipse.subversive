@@ -150,7 +150,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	}
 	
 	public SVNPostCommitError [] getPostCommitErrors() {
-		return this.postCommitErrors == null ? null : this.postCommitErrors.toArray(new SVNPostCommitError[this.postCommitErrors.size()]);
+		return this.postCommitErrors == null || this.postCommitErrors.size() == 0 ? null : this.postCommitErrors.toArray(new SVNPostCommitError[this.postCommitErrors.size()]);
 	}
 	
 	public void reportStatus(int severity, String message, Throwable t) {

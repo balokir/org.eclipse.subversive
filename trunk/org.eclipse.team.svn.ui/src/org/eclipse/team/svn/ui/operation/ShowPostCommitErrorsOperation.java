@@ -43,12 +43,14 @@ public class ShowPostCommitErrorsOperation extends AbstractActionOperation {
         	for (SVNPostCommitError error : errors) {
         		tCompleteMessage = tCompleteMessage == null ? error.message : (tCompleteMessage + "\n\n" + error.message); //$NON-NLS-1$
         	}
-        	final String completeMessage = tCompleteMessage;
-            UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    new ShowPostCommitErrorsDialog(UIMonitorUtility.getShell(), completeMessage).open();
-                }
-            });
+        	if (tCompleteMessage != null) {
+            	final String completeMessage = tCompleteMessage;
+                UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        new ShowPostCommitErrorsDialog(UIMonitorUtility.getShell(), completeMessage).open();
+                    }
+                });
+        	}
         }
     }
 
