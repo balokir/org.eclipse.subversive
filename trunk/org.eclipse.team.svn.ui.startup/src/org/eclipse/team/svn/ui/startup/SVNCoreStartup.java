@@ -9,7 +9,7 @@
  *    Alexander Gurov - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui;
+package org.eclipse.team.svn.ui.startup;
 
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.ui.IStartup;
@@ -19,7 +19,7 @@ import org.eclipse.ui.IStartup;
  * 
  * @author Alexander Gurov
  */
-public class SVNUIStartup implements IStartup {
+public class SVNCoreStartup implements IStartup {
 
 	public void earlyStartup() {
 		// touch the core plug-in to trigger its load
