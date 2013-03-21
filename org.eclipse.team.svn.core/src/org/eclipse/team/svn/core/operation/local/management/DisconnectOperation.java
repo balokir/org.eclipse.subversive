@@ -53,7 +53,9 @@ public class DisconnectOperation extends AbstractActionOperation {
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					RepositoryProvider.unmap(current);
+					if (RepositoryProvider.isShared(current)) { // it seems sometimes projects could be unmapped prior to running this code, for example by an outside activity (see bug #403385)
+						RepositoryProvider.unmap(current);
+					}
 					if (DisconnectOperation.this.dropSVNFolders) {
 						FileUtility.removeSVNMetaInformation(current, null);
 					}
