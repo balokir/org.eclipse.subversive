@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.annotate.BuiltInAnnotate;
 import org.eclipse.ui.IWorkbenchPage;
@@ -35,7 +36,10 @@ public class ShowAnnotationAction extends AbstractWorkingCopyAction {
 		IWorkbenchPage page = this.getTargetPage();
 		// could be called by keyboard actions for any resource, or there could be no page to show annotation in
 		if (resource.getType() == IResource.FILE && page != null) {
-			this.runScheduled(new BuiltInAnnotate().getAnnotateOperation(page, (IFile)resource, this.getShell()));
+			IActionOperation op = new BuiltInAnnotate().getAnnotateOperation(page, (IFile)resource, this.getShell());
+			if (op != null) {
+				this.runScheduled(op);
+			}
 		}
 	}
 	
