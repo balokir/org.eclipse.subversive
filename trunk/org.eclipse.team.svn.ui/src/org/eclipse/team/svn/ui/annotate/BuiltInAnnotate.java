@@ -74,11 +74,17 @@ public class BuiltInAnnotate {
 	protected SVNHistoryPage historyPage;
 	
 	public void open(IWorkbenchPage page, IFile resource, Shell parentShell) {
-		UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), this.getAnnotateOperation(page, resource, parentShell));
+		IActionOperation op = this.getAnnotateOperation(page, resource, parentShell);
+		if (op != null) {
+			UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), op);
+		}
 	}
 
 	public void open(IWorkbenchPage page, IRepositoryResource remote, IFile resource, SVNRevisionRange revisions) {
-		UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), this.getAnnotateOperation(page, remote, resource, revisions));
+		IActionOperation op = this.getAnnotateOperation(page, remote, resource, revisions);
+		if (op != null) {
+			UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), op);
+		}
 	}
 
 	public IActionOperation getAnnotateOperation(IWorkbenchPage page, IFile resource, Shell parentShell) {
