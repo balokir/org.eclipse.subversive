@@ -24,7 +24,7 @@ import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoSetChangeSetCollector;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.CommitSetPanel;
@@ -40,7 +40,7 @@ public class SVNChangeSetCapability extends ChangeSetCapability {
 	
 	public static String getProposedComment(IResource []resourcesToCommit) {
 		String retVal = null;
-		ChangeSet []sets = SVNTeamUIPlugin.instance().getModelChangeSetManager().getSets();
+		ChangeSet []sets = SVNTeamPlugin.instance().getModelChangeSetManager().getSets();
 		for (int i = 0; i < sets.length; i++) {
 			if (SVNChangeSetCapability.containsOneOf(sets[i], resourcesToCommit)) {
 				String comment = sets[i].getComment();
@@ -103,7 +103,7 @@ public class SVNChangeSetCapability extends ChangeSetCapability {
 	}
 
 	public ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getModelChangeSetManager();
+		return SVNTeamPlugin.instance().getModelChangeSetManager();
 	}
 	
 	public boolean enableActiveChangeSetsFor(ISynchronizePageConfiguration configuration) {

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -94,7 +95,7 @@ public class CommitActionHelper extends AbstractActionHelper {
 	 * during commit, synchronize or not
 	 */
 	public static boolean isIncludeChangeSets(final String message) {		
-		if (SVNTeamUIPlugin.instance().getModelChangeSetManager().getSets().length == 0)
+		if (SVNTeamPlugin.instance().getModelChangeSetManager().getSets().length == 0)
 			return false;
 		
 		final IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();

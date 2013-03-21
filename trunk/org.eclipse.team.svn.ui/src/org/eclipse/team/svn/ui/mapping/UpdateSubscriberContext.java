@@ -35,6 +35,7 @@ import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -343,7 +344,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 
 		protected ResourceTraversal[] adjustInputTraversals(ResourceTraversal[] traversals) {
 			if (this.isConsultSets()) {
-				return SVNTeamUIPlugin.instance().getModelChangeSetManager().adjustInputTraversals(traversals);
+				return SVNTeamPlugin.instance().getModelChangeSetManager().adjustInputTraversals(traversals);
 			}
 			return super.adjustInputTraversals(traversals);
 		}
