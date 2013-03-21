@@ -27,12 +27,9 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.console.SVNConsole;
@@ -58,8 +55,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 	private URL baseUrl;
 //	private ProblemListener problemListener;
 	
-	private ActiveChangeSetManager activeChangeSetManager;
-
     public SVNTeamUIPlugin() {
         super();
 
@@ -126,8 +121,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 //		Platform.addLogListener(this.problemListener);
 		
-		this.getModelChangeSetManager();
-		
         this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -192,19 +185,8 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 		workspace.removeResourceChangeListener(this.pcListener);
 		
-		if (this.activeChangeSetManager != null) {
-			this.activeChangeSetManager.dispose();
-		}
-
 //		Platform.removeLogListener(this.problemListener);
 		super.stop(context);
-	}
-	
-	public synchronized ActiveChangeSetManager getModelChangeSetManager() {
-		if (this.activeChangeSetManager == null) {
-			this.activeChangeSetManager = new SVNActiveChangeSetCollector(UpdateSubscriber.instance());
-		}
-		return this.activeChangeSetManager;
 	}
 	
 }

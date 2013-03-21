@@ -52,8 +52,8 @@ import org.eclipse.team.internal.ui.mapping.ResourceModelActionProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -521,7 +521,7 @@ public class SVNChangeSetActionProvider extends ResourceModelActionProvider {
 	}
 	
 	protected ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getModelChangeSetManager();
+		return SVNTeamPlugin.instance().getModelChangeSetManager();
 	}
 	
 	private String getLayout() {

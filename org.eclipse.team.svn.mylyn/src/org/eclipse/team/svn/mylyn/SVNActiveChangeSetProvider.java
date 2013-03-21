@@ -15,7 +15,7 @@ import org.eclipse.mylyn.tasks.core.ITask;
 import org.eclipse.mylyn.team.ui.AbstractActiveChangeSetProvider;
 import org.eclipse.mylyn.team.ui.IContextChangeSet;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 
 /**
  * Provides access to SVN ActiveChangeSet's 
@@ -24,7 +24,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  */
 public class SVNActiveChangeSetProvider extends AbstractActiveChangeSetProvider {
 	public ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getModelChangeSetManager();
+		return SVNTeamPlugin.instance().getModelChangeSetManager();
 	}
 	
 	public IContextChangeSet createChangeSet(ITask task) {

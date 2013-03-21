@@ -30,15 +30,18 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.DefaultErrorHandlingFacility;
 import org.eclipse.team.svn.core.extension.crashrecovery.IErrorHandlingFacility;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
+import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.osgi.framework.BundleContext;
@@ -71,6 +74,8 @@ public class SVNTeamPlugin extends Plugin {
 	 */
 	private boolean isLocationsDirty;
 
+	private ActiveChangeSetManager activeChangeSetManager;
+	
 	public SVNTeamPlugin() {
 		super();
 
@@ -225,7 +230,18 @@ public class SVNTeamPlugin extends Plugin {
 			}
 		}
 
+		if (this.activeChangeSetManager != null) {
+			this.activeChangeSetManager.dispose();
+		}
+
 		super.stop(context);
 	}
 
+	public synchronized ActiveChangeSetManager getModelChangeSetManager() {
+		if (this.activeChangeSetManager == null) {
+			this.activeChangeSetManager = new SVNActiveChangeSetCollector(UpdateSubscriber.instance());
+		}
+		return this.activeChangeSetManager;
+	}
+	
 }

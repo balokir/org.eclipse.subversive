@@ -28,6 +28,7 @@ import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -41,7 +42,7 @@ public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 	}
 
 	public String getText(Object element) {
-		if (element instanceof ActiveChangeSet && SVNTeamUIPlugin.instance().getModelChangeSetManager().isDefault((ActiveChangeSet)element)) {
+		if (element instanceof ActiveChangeSet && SVNTeamPlugin.instance().getModelChangeSetManager().isDefault((ActiveChangeSet)element)) {
 			return super.getText(element) + " " + SVNUIMessages.ChangeSet_DefaultDecoration; //$NON-NLS-1$
 		}
 		return super.getText(element);
