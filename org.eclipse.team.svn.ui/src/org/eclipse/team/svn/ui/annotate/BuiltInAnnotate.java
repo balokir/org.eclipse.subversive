@@ -185,6 +185,9 @@ public class BuiltInAnnotate {
 		op.add(prepareRevisions, new IActionOperation[] {annotateOp});
 		IActionOperation attachMessages = new AbstractActionOperation("Operation_BuiltInShowView", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				if (page.getActivePart() == null || page.getActivePart().getSite() == null) {
+					return;
+				}
 				page.getActivePart().getSite().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
 						try {
