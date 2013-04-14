@@ -45,7 +45,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 	
 	public static void doSetKeywords(final IResource []resources) {
 		if (!SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME)) {
-			SetKeywordsAction.queryUser(resources, new IResourceProvider() {
+			SetKeywordsAction.askUser(resources, new IResourceProvider() {
 				public IResource[] getResources() {
 					return resources;
 				}
@@ -58,7 +58,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 			composite.add(new AbstractActionOperation(composite.getId(), composite.getMessagesClass()) {
 				protected void runImpl(final IProgressMonitor monitor) throws Exception {
 					if (!monitor.isCanceled()) {
-						SetKeywordsAction.queryUser(resources, getKeywordsOp, getKeywordsOp);
+						SetKeywordsAction.askUser(resources, getKeywordsOp, getKeywordsOp);
 					}
 				}
 			});
@@ -66,7 +66,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 		}
 	}
 	
-	protected static void queryUser(IResource []resources, IResourceProvider resourceProvider, IPropertyProvider propertyProvider) {
+	protected static void askUser(IResource []resources, IResourceProvider resourceProvider, IPropertyProvider propertyProvider) {
 		final PropertyKeywordEditPanel panel = new PropertyKeywordEditPanel(resources, resourceProvider, propertyProvider);
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {

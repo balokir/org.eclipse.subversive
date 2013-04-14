@@ -1355,6 +1355,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SVNKeywordProperty_DATE_DESCR;
 	public static String SVNKeywordProperty_HEAD_URL_DESCR;
 	public static String SVNKeywordProperty_ID_DESCR;
+	public static String SVNKeywordProperty_HEADER_DESCR;
 	public static String SVNKeywordProperty_REVISION_DESCR;
 	public static String SVNLocalFileRevision_CurrentVersion;
 	public static String SVNView_LinkWith_Label;

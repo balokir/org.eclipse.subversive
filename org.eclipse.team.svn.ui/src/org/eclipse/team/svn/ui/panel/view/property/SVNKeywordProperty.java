@@ -23,27 +23,31 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 public class SVNKeywordProperty {
     
 	// names:
-    public static final String []DATE_NAMES = {"LastChangedDate", "Date"};    
-    public static final String []REVISION_NAMES = {"LastChangedRevision", "Rev"};
-    public static final String []AUTHOR_NAMES = {"LastChangedBy", "Author"};
-    public static final String []HEAD_URL_NAMES = {"HeadURL", "URL"};
-    public static final String []ID_NAMES = {"Id"};
+    public static final String []DATE_NAMES = {"LastChangedDate", "Date"};     //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String []REVISION_NAMES = {"LastChangedRevision", "Rev"};     //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String []AUTHOR_NAMES = {"LastChangedBy", "Author"};     //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String []HEAD_URL_NAMES = {"HeadURL", "URL"};     //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String []ID_NAMES = {"Id"};     //$NON-NLS-1$
+    public static final String []HEADER_NAMES = {"Header"};     //$NON-NLS-1$
     
     // descriptions:
     public static String DATE_DESCR() {
-    	return SVNUIMessages.SVNKeywordProperty_DATE_DESCR;    
+    	return SVNUIMessages.SVNKeywordProperty_DATE_DESCR;
     }
     public static String REVISION_DESCR() {
-    	return SVNUIMessages.SVNKeywordProperty_REVISION_DESCR;    
+    	return SVNUIMessages.SVNKeywordProperty_REVISION_DESCR;
     }
     public static String AUTHOR_DESCR() {
-    	return SVNUIMessages.SVNKeywordProperty_AUTHOR_DESCR;    
+    	return SVNUIMessages.SVNKeywordProperty_AUTHOR_DESCR;
     }
     public static String HEAD_URL_DESCR() {
-    	return SVNUIMessages.SVNKeywordProperty_HEAD_URL_DESCR;    
+    	return SVNUIMessages.SVNKeywordProperty_HEAD_URL_DESCR;
     }
     public static String ID_DESCR() {
-    	return SVNUIMessages.SVNKeywordProperty_ID_DESCR;    
+    	return SVNUIMessages.SVNKeywordProperty_ID_DESCR;
+    }
+    public static String HEADER_DESCR() {
+    	return SVNUIMessages.SVNKeywordProperty_HEADER_DESCR;
     }
     
     // samples:
@@ -52,12 +56,14 @@ public class SVNKeywordProperty {
     public static final String AUTHOR_SAMPLE = "$LastChangedBy: J.M.Wade $"; //$NON-NLS-1$
     public static final String HEAD_URL_SAMPLE = "$HeadURL: http://svn.eclipse.org/community/Subversive/src/ui/PropertyKeywordEditPanel.java $"; //$NON-NLS-1$
     public static final String ID_SAMPLE = "$Id: PropertyKeywordEditPanel.java 7206 2006-08-07 15:40:37 J.M.Wade $"; //$NON-NLS-1$
+    public static final String HEADER_SAMPLE = "$Header: http://svn.example.com/repos/trunk/calc.c 148 2006-07-28 21:30:43Z sally $"; //$NON-NLS-1$
     
     protected boolean dateEnabled;
     protected boolean revisionEnabled;
     protected boolean lastChangedByEnabled;
     protected boolean headURLEnabled;
     protected boolean idEnabled;
+    protected boolean headerEnabled;
 
     public SVNKeywordProperty(String keywordsValue) {
         if (keywordsValue != null) {
@@ -71,6 +77,10 @@ public class SVNKeywordProperty {
 
 	public boolean isIdEnabled() {
 		return this.idEnabled;
+	}
+
+	public boolean isHeaderEnabled() {
+		return this.headerEnabled;
 	}
 
 	public boolean isLastChangedByEnabled() {
@@ -91,6 +101,10 @@ public class SVNKeywordProperty {
 
 	public void setIdEnabled(boolean id) {
 		this.idEnabled = id;
+	}
+
+	public void setHeaderEnabled(boolean header) {
+		this.headerEnabled = header;
 	}
 
 	public void setLastChangedByEnabled(boolean lastChangedBy) {
@@ -121,6 +135,9 @@ public class SVNKeywordProperty {
         }
         if (this.idEnabled) {
         	result = this.addKeyword(result, SVNKeywordProperty.ID_NAMES[0]);
+        }
+        if (this.headerEnabled) {
+        	result = this.addKeyword(result, SVNKeywordProperty.HEADER_NAMES[0]);
         }
         
         return result;
@@ -153,6 +170,9 @@ public class SVNKeywordProperty {
             }
             else if (name.equals(SVNKeywordProperty.ID_NAMES[0])) {
             	this.idEnabled = true;
+            }
+            else if (name.equals(SVNKeywordProperty.HEADER_NAMES[0])) {
+            	this.headerEnabled = true;
             }
         }
 	}
