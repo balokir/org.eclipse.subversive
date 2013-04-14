@@ -541,10 +541,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (rootURL == null) {
 			rootURL = location.getUrl(); // the repository is unavailable, assume the repository root and the location url are the same
 		}
-		if (!SVNUtility.createPathForSVNUrl(rootURL).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
+		if (rootURL == null || // what if someone works with a location which is yet to be initialized?
+			!SVNUtility.createPathForSVNUrl(rootURL).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 			location = this.wrapLocationIfRequired(location, url, isFile);
 		}
-		
 		return !isFile ? (IRepositoryResource)location.asRepositoryContainer(url, false) : location.asRepositoryFile(url, false);
 	}
 	

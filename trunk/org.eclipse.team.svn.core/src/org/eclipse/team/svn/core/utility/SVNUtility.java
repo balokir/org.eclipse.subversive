@@ -1512,7 +1512,7 @@ public final class SVNUtility {
 	 * @return
 	 */
 	public static IPath createPathForSVNUrl(String fullPath) {
-		return new PathForURL(fullPath, true);
+		return fullPath == null ? null : new PathForURL(fullPath, true);
 	}
 	
 	private SVNUtility() {
