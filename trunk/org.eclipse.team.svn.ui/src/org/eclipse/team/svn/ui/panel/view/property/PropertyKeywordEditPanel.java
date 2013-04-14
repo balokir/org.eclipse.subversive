@@ -86,6 +86,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 	protected KeywordTableElement lastChangedByElement;
 	protected KeywordTableElement headUrlElement;
 	protected KeywordTableElement idElement;
+	protected KeywordTableElement headerElement;
 	
 	protected UserInputHistory maskHistory;
 
@@ -135,7 +136,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		column.setText(SVNUIMessages.PropertyKeywordEditPanel_Sample);
 		tlayout.addColumnData(new ColumnWeightData(30, true));
 		
-		KeywordTableElement[] elements = new KeywordTableElement[] {this.dateElement, this.revisionElement, this.lastChangedByElement, this.headUrlElement, this.idElement};
+		KeywordTableElement[] elements = new KeywordTableElement[] {this.dateElement, this.revisionElement, this.lastChangedByElement, this.headUrlElement, this.idElement, this.headerElement};
 		
 		this.checkboxViewer.setContentProvider(new ArrayStructuredContentProvider());
 		
@@ -343,6 +344,9 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
            
 		keyProperty.setIdEnabled(this.idElement.getCurrentState() == KeywordTableElement.SELECTED ? true :
 			(this.idElement.getCurrentState() == KeywordTableElement.DESELECTED ? false : keyProperty.isIdEnabled()));
+        
+		keyProperty.setHeaderEnabled(this.headerElement.getCurrentState() == KeywordTableElement.SELECTED ? true :
+			(this.headerElement.getCurrentState() == KeywordTableElement.DESELECTED ? false : keyProperty.isHeaderEnabled()));
 	}
 	
 	protected void applyCurrentKeywordValuesOnTableElement(KeywordTableElement tableElement, boolean propertyPresent) {
@@ -358,6 +362,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		this.lastChangedByElement = new KeywordTableElement(SVNKeywordProperty.AUTHOR_NAMES[0], SVNKeywordProperty.AUTHOR_DESCR(), SVNKeywordProperty.AUTHOR_SAMPLE, KeywordTableElement.INITIAL);
 		this.headUrlElement = new KeywordTableElement(SVNKeywordProperty.HEAD_URL_NAMES[0], SVNKeywordProperty.HEAD_URL_DESCR(), SVNKeywordProperty.HEAD_URL_SAMPLE, KeywordTableElement.INITIAL);
 		this.idElement = new KeywordTableElement(SVNKeywordProperty.ID_NAMES[0], SVNKeywordProperty.ID_DESCR(), SVNKeywordProperty.ID_SAMPLE, KeywordTableElement.INITIAL);
+		this.headerElement = new KeywordTableElement(SVNKeywordProperty.HEADER_NAMES[0], SVNKeywordProperty.HEADER_DESCR(), SVNKeywordProperty.HEADER_SAMPLE, KeywordTableElement.INITIAL);
 
 		List<IResource> alreadyWithPropertiesList = Arrays.asList(this.alreadyWithProperties);
 		for (int i = 0; i < this.selectedResources.length; i++) {
@@ -373,6 +378,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 	    	this.applyCurrentKeywordValuesOnTableElement(this.lastChangedByElement, keywordPropertyValue.isLastChangedByEnabled());
 	    	this.applyCurrentKeywordValuesOnTableElement(this.headUrlElement, keywordPropertyValue.isHeadUrlEnabled());
 	    	this.applyCurrentKeywordValuesOnTableElement(this.idElement, keywordPropertyValue.isIdEnabled());          
+	    	this.applyCurrentKeywordValuesOnTableElement(this.headerElement, keywordPropertyValue.isHeaderEnabled());          
 		}
 	}
 	      
@@ -431,6 +437,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		   this.lastChangedByElement.setCurrentState(state);
 		   this.headUrlElement.setCurrentState(state);
 		   this.idElement.setCurrentState(state);
+		   this.headerElement.setCurrentState(state);
            this.checkboxViewer.setAllChecked(selected);
            this.checkboxViewer.setAllGrayed(false);
 	   }
