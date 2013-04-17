@@ -191,6 +191,11 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 				SelectPatchFilePage.this.charset = SelectPatchFilePage.this.charsetField.getText();
 			}
 		});
+		this.charsetField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				SelectPatchFilePage.this.charset = SelectPatchFilePage.this.charsetField.getText();
+			}
+		});
 		
 		final Button saveOnFileSystem = new Button(saveTo, SWT.RADIO);
 		saveOnFileSystem.setText(SVNUIMessages.SelectPatchFilePage_SaveInFS);
