@@ -53,6 +53,10 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 		this.showIgnoreAncestry = showIgnoreAncestry;
 	}
 	
+	public String getCharset() {
+		return this.selectFile.getCharset();
+	}
+	
 	public int getRootPoint() {
 		return this.options.getRootPoint();
 	}

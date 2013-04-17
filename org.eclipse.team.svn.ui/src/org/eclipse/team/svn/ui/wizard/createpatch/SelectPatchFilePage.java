@@ -36,6 +36,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -73,9 +74,11 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 	protected Text wsPathField;
 	protected Button browseButton;
 	protected Button browseWSButton;
+	protected Combo charsetField;
 	
 	protected String proposedName;
 	
+	protected String charset;
 	protected String fileName;
 	protected IFile file;
 	protected int writeMode;
@@ -102,6 +105,10 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public String getCharset() {
+		return this.charset;
 	}
 	
 	public boolean isRecursive() {
@@ -158,6 +165,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 					SelectPatchFilePage.this.fileNameField.setEnabled(false);
 					SelectPatchFilePage.this.browseButton.setEnabled(false);
 					SelectPatchFilePage.this.browseWSButton.setEnabled(false);
+					SelectPatchFilePage.this.charsetField.setEnabled(true);
 					try {
 						SelectPatchFilePage.this.fileName = File.createTempFile("patch", ".tmp").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
 					} 
@@ -167,6 +175,20 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 					SelectPatchFilePage.this.writeMode = CreatePatchWizard.WRITE_TO_CLIPBOARD;
 					SelectPatchFilePage.this.validateContent();
 				}
+			}
+		});
+
+		this.charsetField = new Combo(saveTo, SWT.NONE);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.charsetField.setLayoutData(data);
+		String []comboItems = new String[] {System.getProperty("file.encoding"), "UTF-8"}; //$NON-NLS-1$ //$NON-NLS-2$
+		this.charset = comboItems[0];
+		this.charsetField.setItems(comboItems);
+		this.charsetField.select(0);
+		this.charsetField.setVisibleItemCount(comboItems.length);
+		this.charsetField.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SelectPatchFilePage.this.charset = SelectPatchFilePage.this.charsetField.getText();
 			}
 		});
 		
@@ -181,6 +203,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 					SelectPatchFilePage.this.fileNameField.setEnabled(true);
 					SelectPatchFilePage.this.browseButton.setEnabled(true);
 					SelectPatchFilePage.this.browseWSButton.setEnabled(false);
+					SelectPatchFilePage.this.charsetField.setEnabled(false);
 					SelectPatchFilePage.this.fileName = SelectPatchFilePage.this.fileNameField.getText();
 					SelectPatchFilePage.this.writeMode = CreatePatchWizard.WRITE_TO_EXTERNAL_FILE;
 					SelectPatchFilePage.this.validateContent();
@@ -258,6 +281,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 					SelectPatchFilePage.this.fileNameField.setEnabled(false);
 					SelectPatchFilePage.this.browseButton.setEnabled(false);
 					SelectPatchFilePage.this.browseWSButton.setEnabled(true);
+					SelectPatchFilePage.this.charsetField.setEnabled(false);
 					SelectPatchFilePage.this.fileName = SelectPatchFilePage.this.file == null ? null : FileUtility.getWorkingCopyPath(SelectPatchFilePage.this.file);
 					SelectPatchFilePage.this.writeMode = CreatePatchWizard.WRITE_TO_WORKSPACE_FILE;
 					SelectPatchFilePage.this.validateContent();
