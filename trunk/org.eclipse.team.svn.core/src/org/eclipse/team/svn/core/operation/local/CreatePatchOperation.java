@@ -35,10 +35,10 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -68,7 +68,8 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	protected int rootPoint;
 	
 	protected String lineFeed = System.getProperty("line.separator"); //$NON-NLS-1$
-	protected String contentSeparator = this.lineFeed + "===================================================================" + this.lineFeed; //$NON-NLS-1$
+	protected String contentSeparatorLine = "==================================================================="; //$NON-NLS-1$
+	protected String contentSeparator = this.lineFeed + this.contentSeparatorLine + this.lineFeed;
 	protected String indexEntry = "Index: "; //$NON-NLS-1$
 	protected String removeSign = "--- "; //$NON-NLS-1$
 	protected String addSign = "+++ "; //$NON-NLS-1$
@@ -99,8 +100,8 @@ public class CreatePatchOperation extends AbstractActionOperation {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			if (workingCopies.size() > 1 || this.rootPoint == CreatePatchOperation.WORKSPACE) {
 				this.rootPoint = CreatePatchOperation.WORKSPACE;
-				stream.write("### Eclipse Workspace Patch 1.0".getBytes("UTF-8")); //$NON-NLS-1$
-				stream.write(this.lineFeed.getBytes("UTF-8"));
+				stream.write("### Eclipse Workspace Patch 1.0".getBytes());
+				stream.write(this.lineFeed.getBytes());
 			}
 			else if (this.rootPoint == CreatePatchOperation.SELECTION) {
 				this.selection = FileUtility.shrinkChildNodes(this.resources);
@@ -109,9 +110,9 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				Map.Entry entry = (Map.Entry)it.next();
 				IProject project = (IProject)entry.getKey();
 				if (this.rootPoint == CreatePatchOperation.WORKSPACE) {
-					stream.write("#P ".getBytes("UTF-8")); //$NON-NLS-1$
-					stream.write(project.getName().getBytes("UTF-8"));
-					stream.write(this.lineFeed.getBytes("UTF-8"));
+					stream.write("#P ".getBytes());
+					stream.write(project.getName().getBytes());
+					stream.write(this.lineFeed.getBytes());
 				}
 				IResource []resources = ((List<?>)entry.getValue()).toArray(new IResource[0]);
 				for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
@@ -180,23 +181,34 @@ public class CreatePatchOperation extends AbstractActionOperation {
 						finally {
 							try {input.close();} catch (Exception ex) {}
 						}
-						String diff = new String(data, charset);
-						int idx = diff.indexOf(this.contentSeparator);
+						
+						int idx = CreatePatchOperation.findOffset(data, this.contentSeparatorLine.getBytes(), 0);
 						if (idx != -1) {
-							String diffTail = diff.substring(idx);
-							idx = diffTail.indexOf(this.removeSign);
-							int idx1 = diffTail.indexOf('\t', idx);
-							if (idx != -1 && idx1 != -1) {
-								diffTail = diffTail.substring(0, idx + this.removeSign.length()) + fileName + diffTail.substring(idx1);
+							byte []rs = this.removeSign.getBytes();
+							byte []as = this.addSign.getBytes();
+							byte []fn = fileName.getBytes();
+							stream.write(this.indexEntry.getBytes());
+							stream.write(fn);
+							stream.write(this.lineFeed.getBytes());
+							int idx0 = CreatePatchOperation.findOffset(data, rs, idx);
+							int idx1 = CreatePatchOperation.findOffset(data, "\t(".getBytes(), idx0);
+							if (idx0 != -1 && idx1 != -1) {
+								stream.write(data, idx, idx0 - idx + rs.length);
+								stream.write(fn);
+								idx = idx1;
 							}
-							idx = diffTail.indexOf(this.addSign);
-							idx1 = diffTail.indexOf('\t', idx);
-							if (idx != -1 && idx1 != -1) {
-								diffTail = diffTail.substring(0, idx + this.addSign.length()) + fileName + diffTail.substring(idx1);
+							idx0 = CreatePatchOperation.findOffset(data, as, idx);
+							idx1 = CreatePatchOperation.findOffset(data, "\t(".getBytes(), idx0);
+							if (idx0 != -1 && idx1 != -1) {
+								stream.write(data, idx, idx0 - idx + as.length);
+								stream.write(fn);
+								idx = idx1;
 							}
-							diff = this.indexEntry + fileName + diffTail;
+							stream.write(data, idx, data.length - idx);
 						}
-						stream.write(diff.getBytes("UTF-8"));
+						else {
+							stream.write(data);
+						}
 					}
 				}
 				finally {
@@ -207,7 +219,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			else if (this.processUnversioned && !IStateFilter.SF_IGNORED.accept(local)) {
 				int type = FileUtility.getMIMEType(resource);
 				if (this.processBinary || type != Team.BINARY) {
-					stream.write(this.getNewFileDiff(wcPath, fileName, charset).getBytes("UTF-8"));
+					stream.write(this.getNewFileDiff(wcPath, fileName, charset).getBytes(charset));
 				}
 			}
 		}
@@ -282,6 +294,27 @@ public class CreatePatchOperation extends AbstractActionOperation {
 
 	protected String getEmptyNewContentDiff(String fileName) {
 		return this.indexEntry + fileName + this.contentSeparator;
+	}
+	
+	protected static int findOffset(byte []where, byte []what, int offset) {
+		for (int i = offset, m = where.length - what.length; i < m; i++) {
+			if (CreatePatchOperation.match(where, what, i)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	protected static boolean match(byte []where, byte []what, int offset) {
+		if (where.length - offset < what.length) {
+			return false;
+		}
+		for (int i = offset + what.length - 1, j = what.length - 1; i >= offset; i--, j--) {
+			if (where[i] != what[j]) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }

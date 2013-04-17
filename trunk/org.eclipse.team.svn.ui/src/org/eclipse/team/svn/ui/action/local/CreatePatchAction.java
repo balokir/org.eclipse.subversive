@@ -57,7 +57,7 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 						break;
 					}
 					case CreatePatchWizard.WRITE_TO_CLIPBOARD: {
-						op.add(new FileToClipboardOperation(wizard.getFileName()), new IActionOperation[] {mainOp});
+						op.add(new FileToClipboardOperation(wizard.getFileName(), wizard.getCharset(), true), new IActionOperation[] {mainOp});
 						break;
 					}
 				}
