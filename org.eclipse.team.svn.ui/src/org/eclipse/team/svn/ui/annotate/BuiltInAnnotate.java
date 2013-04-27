@@ -93,8 +93,9 @@ public class BuiltInAnnotate {
 		}
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
     	SVNRevision revision = local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision());    	    	
+    	SVNRevision baseRevision = local.getBaseRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getBaseRevision());    	    	
     	IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
-    	remote.setPegRevision(revision); // make sure it is visible
+    	remote.setPegRevision(baseRevision); // make sure it is visible
     	// we should ask annotation only up to the current revision, since for the HEAD one we may receive log messages for the lines that has yet to made their way into the local copy
     	//	so, this will be default value for the top revision, if one wants to force annotate up to HEAD revision that could be easily changed in the dialog
     	remote.setSelectedRevision(revision);
