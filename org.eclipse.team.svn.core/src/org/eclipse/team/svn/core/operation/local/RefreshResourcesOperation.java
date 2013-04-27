@@ -11,15 +11,23 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
+import java.net.URI;
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
+import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
@@ -59,6 +67,40 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 		super("Operation_RefreshResources", SVNMessages.class, provider); //$NON-NLS-1$
 		this.depth = depth;
 		this.refreshType = refreshType;
+	}
+
+	public ISchedulingRule getSchedulingRule() {
+		ISchedulingRule rule = super.getSchedulingRule();
+		if (rule == ResourcesPlugin.getWorkspace().getRoot()) {
+			return rule;
+		}
+		IResource []resources = this.operableData();
+		HashSet<ISchedulingRule> ruleSet = new HashSet<ISchedulingRule>();
+		for (int i = 0; i < resources.length; i++) {
+			ruleSet.add(SVNResourceRuleFactory.INSTANCE.refreshRule(resources[i]));
+		}
+		return new MultiRule(ruleSet.toArray(new ISchedulingRule[ruleSet.size()]));
+	}
+	
+	protected IResource []operableData() {
+		IResource []resources = super.operableData();
+		HashSet<IResource> resourceSet = new HashSet<IResource>();
+		for (int i = 0; i < resources.length; i++) {
+			URI uri = resources[i].getLocationURI();
+			if (uri != null) {
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				for (IResource resource : (resources[i].getType() != IResource.FILE ? root.findContainersForLocationURI(uri) : root.findFilesForLocationURI(uri))) {
+					resourceSet.add(resource);
+				}
+				IPath path = FileUtility.getResourcePath(resources[i]);
+				for (IResource resource : root.getProjects()) {
+					if (path.isPrefixOf(FileUtility.getResourcePath(resource)) && this.depth != IResource.DEPTH_ZERO) {
+						resourceSet.add(resource);
+					}
+				}
+			}
+		}
+		return resourceSet.toArray(new IResource[resourceSet.size()]);
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
