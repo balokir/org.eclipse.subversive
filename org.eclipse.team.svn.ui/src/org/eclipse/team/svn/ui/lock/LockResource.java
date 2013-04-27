@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -223,7 +224,8 @@ public class LockResource implements IAdaptable {
 	public Object getAdapter(Class adapter) {
 		if (this.isFile() && this.fullFileSystemPath != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IFile file = root.getFileForLocation(new Path(this.fullFileSystemPath));			
+			IContainer parent = (IContainer)root.findMember(this.parent.getPath());
+			IFile file = parent.getFile(new Path(this.name));			
 			if (adapter == IResource.class) {
 				return file;
 			} else if (adapter == IRepositoryResource.class && file != null && this.url != null) {
