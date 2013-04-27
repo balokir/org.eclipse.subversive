@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.IContentChangeListener;
 import org.eclipse.compare.IContentChangeNotifier;
@@ -29,6 +28,7 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IEncodedStorage;
@@ -77,6 +77,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IReusableEditor;
@@ -87,7 +88,7 @@ import org.eclipse.ui.IWorkbenchPage;
  * 
  * @author Alexander Gurov
  */
-public abstract class ResourceCompareInput extends CompareEditorInput {
+public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 	protected ResourceCompareViewer viewer;
 	protected BaseCompareNode root;
 	
@@ -118,8 +119,12 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		CompareUI.openCompareEditor(compare);
 	}
 	
+	protected void fireInputChange() {
+		((BaseCompareNode)getCompareResult()).fireChange();
+	}
+
 	public ResourceCompareInput(CompareConfiguration configuration) {
-		super(configuration);
+		super(configuration, UIMonitorUtility.getActivePage());
 	}
 	
 	public void setForceId(String forceId) {
@@ -173,7 +178,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return new ResourceCompareViewer(parent, config);
 	}
 	
-	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	protected ICompareInput prepareCompareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		if (this.root != null) {
 			ResourceElement left = (ResourceElement)this.root.getLeft();
 			ResourceElement ancestor = (ResourceElement)this.root.getAncestor();
@@ -617,6 +622,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected class BaseCompareNode extends DiffNode {
 		public BaseCompareNode(IDiffContainer parent, int kind) {
 			super(parent, kind);
+		}
+		
+		public void fireChange() {
+			super.fireChange();
 		}
 		
 		protected String detectCharset(InputStream stream) throws Exception {
