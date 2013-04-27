@@ -48,15 +48,25 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	
 	protected int depth;
 	protected int refreshType;
+	protected boolean ignoreNestedProjects;
 	
 	public RefreshResourcesOperation(IResource []resources) {
-		this(resources, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES);
+		this(resources, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES, false);
+	}
+	
+	public RefreshResourcesOperation(IResource []resources, boolean ignoreNestedProjects) {
+		this(resources, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES, ignoreNestedProjects);
 	}
 	
 	public RefreshResourcesOperation(IResource []resources, int depth, int refreshType) {
+		this(resources, depth, refreshType, false);
+	}
+
+	public RefreshResourcesOperation(IResource []resources, int depth, int refreshType, boolean ignoreNestedProjects) {
 		super("Operation_RefreshResources", SVNMessages.class, resources); //$NON-NLS-1$
 		this.depth = depth;
 		this.refreshType = refreshType;
+		this.ignoreNestedProjects = ignoreNestedProjects;
 	}
 
 	public RefreshResourcesOperation(IResourceProvider provider) {
@@ -71,7 +81,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 
 	public ISchedulingRule getSchedulingRule() {
 		ISchedulingRule rule = super.getSchedulingRule();
-		if (rule == ResourcesPlugin.getWorkspace().getRoot()) {
+		if (this.ignoreNestedProjects || rule == ResourcesPlugin.getWorkspace().getRoot()) {
 			return rule;
 		}
 		IResource []resources = this.operableData();
@@ -84,6 +94,13 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	
 	protected IResource []operableData() {
 		IResource []resources = super.operableData();
+		if (this.ignoreNestedProjects) {
+			return resources;
+		}
+		return this.mindNestedProject(resources);
+	}
+
+	protected IResource []mindNestedProject(IResource []resources) {
 		HashSet<IResource> resourceSet = new HashSet<IResource>();
 		for (int i = 0; i < resources.length; i++) {
 			URI uri = resources[i].getLocationURI();
@@ -144,6 +161,14 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 			IResource []roots = FileUtility.getPathNodes(resources);
 			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(roots, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.PATH_NODES));
 			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(original, this.depth, ResourceStatesChangedEvent.CHANGED_NODES));
+		}
+		
+		if (this.ignoreNestedProjects) {
+			IResource []withNested = this.mindNestedProject(original);
+			// schedule refresh for nested projects
+			if (withNested.length != original.length) {
+				ProgressMonitorUtility.doTaskScheduledDefault(new RefreshResourcesOperation(this.mindNestedProject(original), this.depth, this.refreshType), true);
+			}
 		}
 	}
 	

@@ -42,7 +42,7 @@ public class SVNTeamModificationValidator extends FileModificationValidator {
 				final Shell shell = context.getShell() == null ? UIMonitorUtility.getShell() : (Shell)context.getShell();
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						retVal[0] = LockProposeUtility.proposeLock(needsLockResources, shell);
+						retVal[0] = LockProposeUtility.proposeLock(needsLockResources, shell, true);
 					}
 				});
 				return retVal[0];

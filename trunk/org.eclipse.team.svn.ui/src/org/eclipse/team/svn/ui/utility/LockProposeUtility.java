@@ -36,8 +36,8 @@ import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
  * @author Sergiy Logvin
  */
 public class LockProposeUtility {
-	public static IStatus proposeLock(final IResource[] resources, Shell shell) {
-		CompositeOperation op = LockProposeUtility.performLockAction(resources, false, shell);
+	public static IStatus proposeLock(final IResource[] resources, Shell shell, boolean fromEditor) {
+		CompositeOperation op = LockProposeUtility.performLockAction(resources, false, shell, fromEditor);
 		if (op != null) {
 			UIMonitorUtility.doTaskBusyWorkspaceModify(op);
 			return op.getStatus();
@@ -72,11 +72,19 @@ public class LockProposeUtility {
 	}
 
 	public static CompositeOperation performLockAction(IResource[] resourcesToProcess, boolean forceLock, Shell shell) {
+		return LockProposeUtility.performLockAction(resourcesToProcess, forceLock, shell, false);
+	}
+	
+	public static CompositeOperation performLockAction(IResource[] resourcesToProcess, boolean forceLock, Shell shell, boolean fromEditor) {
 		LockResource []lockResources = LockResource.getLockResources(resourcesToProcess, false);
-		return LockProposeUtility.performLockAction(lockResources, forceLock, shell);
+		return LockProposeUtility.performLockAction(lockResources, forceLock, shell, fromEditor);
 	}
 
 	public static CompositeOperation performLockAction(LockResource[] lockResources, boolean forceLock, Shell shell) {
+		return LockProposeUtility.performLockAction(lockResources, forceLock, shell, false);
+	}
+	
+	public static CompositeOperation performLockAction(LockResource[] lockResources, boolean forceLock, Shell shell, boolean fromEditor) {
 		LockResourcesPanel panel = new LockResourcesPanel(lockResources, true, forceLock, SVNUIMessages.LocksComposite_LockTitle, SVNUIMessages.LocksComposite_LockDescription, SVNUIMessages.LocksComposite_LockDefaultMessage);
 		DefaultDialog dlg = new DefaultDialog(shell, panel);
 		if (dlg.open() == 0) {			
@@ -85,7 +93,7 @@ public class LockProposeUtility {
 			LockOperation mainOp = new LockOperation(resources, panel.getMessage(), panel.getForce());			    
 			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
-			op.add(new RefreshResourcesOperation(resources));
+			op.add(new RefreshResourcesOperation(resources, fromEditor));
 			return op;
 		}
 		return null;
