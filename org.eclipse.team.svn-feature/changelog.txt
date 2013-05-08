@@ -8,6 +8,28 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.0.1.I20130507-1700 [07 May 2013]
+
+Features:
+ * Add "Header" keyword support for svn:keywords property (bug 404239)
+ 
+Fixes:
+ * Auto lock error with maven hierarchy [ID-X5CXN] (bug 374591)
+ * Compare with base: edits not detected (bug 297717)
+ * Subversive keeps to show incoming changes for files and directories after all incoming changes have been updated (bug 403043)
+ * Sometime annotate fails for files in branches (bug 406726)
+ * "Create Patch" creates patch in UTF-8 (without BOM) irrespective of the file encoding (Windows-1252) (bug 404713)
+ * NPE in SVNRemoteStorage.asRepositoryResource [ID-BYM4U] (bug 404979)
+ * NPE in BuiltInAnnotate [ID-IQ1WJ] (bug 404252)
+ * Enablements of Compare and Replace Actions do not respect ResouceMappings (bug 403200)
+ * Disconnect operation fails when project was unmapped from repository provider prior to disconnect operation [ID-LOU8E] (bug 403385)
+ * NPE in LoggedOperation.setConsoleStream [ID-TM2AH] (bug 403644)
+ * Move ActiveChangeSetManager accessor into the SVN Core plug-in (bug 403980)
+ * Move startup extension into a separate plug-in (bug 403975)
+ * Subversive shows empty post-commit warning window after every commit (bug 402491)
+ 
+--------------------------------------------------------------------------------
+
 Version 1.0.1.I20130301-1700 [01 March 2013]
 
 Features:
