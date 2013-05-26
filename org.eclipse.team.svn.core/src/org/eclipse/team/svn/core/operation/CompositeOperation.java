@@ -43,6 +43,10 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 		this.totalWeight = 0;
 	}
 	
+	public boolean isEmpty() {
+		return this.operations.size() == 0;
+	}
+	
 	public void add(IActionOperation operation) {
 		this.add(operation, null);
 	}

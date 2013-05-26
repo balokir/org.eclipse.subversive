@@ -13,9 +13,12 @@ package org.eclipse.team.svn.ui.panel.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Operation;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Reason;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -23,10 +26,6 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
-import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Operation;
-import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Reason;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -152,60 +151,45 @@ public class EditTreeConflictsHelper {
 	
 	public IActionOperation getOperation(boolean isRemoteResolution, boolean isLocalResolution, boolean markAsMerged) {
 		// FIXME just retest SVN::resolve() function behaviour when SVN 1.7 is available, then decide on removing useless parts if there is any
-		CompositeOperation cmpOp = null;
-		String opName = ""; //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("", SVNUIMessages.class); //$NON-NLS-1$
 		//used as parameter to operations, e.g. update, revert
 		boolean isRecursive = true;
-		if (isLocalResolution) {
-			//resolved
-			cmpOp = new CompositeOperation(opName, SVNUIMessages.class);			
-			IActionOperation resolvedOp = this.getResolvedOperation(isRemoteResolution, isLocalResolution, markAsMerged);			
-			cmpOp.add(resolvedOp);						
-		} else if (isRemoteResolution) {
+		if (isRemoteResolution) {
 			if (this.treeConflict.action == Action.ADD) {
-				cmpOp = this.getRemoteAddOperation(opName, isRecursive);										
+				this.addRemoteAddOperation(op, isRecursive);
 			} else if (this.treeConflict.action == Action.DELETE) {
-				cmpOp = this.getRemoteDeleteOperation(opName);
-			} else if (this.treeConflict.action == Action.MODIFY || this.treeConflict.action == Action.REPLACE) {																
-				cmpOp = this.getRemoteModifyOperation(opName, isRecursive);								
-			}						
+				this.addRemoteDeleteOperation(op);
+			} else if (this.treeConflict.action == Action.MODIFY || this.treeConflict.action == Action.REPLACE) {
+				this.addRemoteModifyOperation(op, isRecursive);								
+			}
 		}
 		
 		//add resolved operation
 		boolean isManual = !isRemoteResolution && !isLocalResolution;
-		if (markAsMerged && (isRemoteResolution && !this.isRemoteOperationResolveTheConflict() || isManual)) {			
-			if (isManual) {
-				cmpOp = new CompositeOperation(opName, SVNUIMessages.class);		
-			}			
-			cmpOp.add(this.getResolvedOperation(isRemoteResolution, isLocalResolution, markAsMerged));
+		if (isLocalResolution || markAsMerged && (isRemoteResolution && !this.isRemoteOperationResolveTheConflict() || isManual)) {
+			op.add(this.getResolvedOperation(isRemoteResolution, isLocalResolution, markAsMerged));
 		}
 		
-		if (cmpOp != null) {
-			//TODO refresh parent ?
-			cmpOp.add(new RefreshResourcesOperation(new IResource[]{this.local.getResource()}));
-		}						
-		return cmpOp;
+		if (op.isEmpty()) {
+			return null;
+		}
+		
+		//TODO refresh parent ?
+		op.add(new RefreshResourcesOperation(new IResource[]{this.local.getResource()}));
+		return op;
 	}
 	
-	protected CompositeOperation getRemoteDeleteOperation(String opName) {
+	protected void addRemoteDeleteOperation(CompositeOperation op) {
 		/* 
 		 * If item doesn't exist locally, i.e. missing or deleted then: resolved
 		 * otherwise: delete + resolved
 		 */
-		CompositeOperation cmpOp = new CompositeOperation(opName, SVNUIMessages.class);				
-		
-		DeleteResourceOperation deleteOp = null;				
-		if (IStateFilter.ST_DELETED != this.local.getStatus() && IStateFilter.ST_MISSING != this.local.getStatus()) {
-			deleteOp = new DeleteResourceOperation(this.local.getResource());
-			cmpOp.add(deleteOp);
+		if (this.local.getResource().exists()) {
+			op.add(new DeleteResourceOperation(this.local.getResource()));
 		}				
-		
-//		IActionOperation resolveOp = this.getResolvedOperation();
-//		cmpOp.add(resolveOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});		
-		return cmpOp;
 	}
 	
-	protected CompositeOperation getRemoteModifyOperation(String opName, boolean isRecursive) {
+	protected void addRemoteModifyOperation(CompositeOperation op, boolean isRecursive) {
 		/*
 		 * For 'update' operation:
 		 * 		revert + update
@@ -215,37 +199,28 @@ public class EditTreeConflictsHelper {
 		 * 		Result: R+
 		 */
 		
-		CompositeOperation cmpOp = null;
 		IResource resource = this.local.getResource();			
 		if (this.treeConflict.operation == Operation.UPDATE || this.treeConflict.operation == Operation.SWITCHED) {
-			cmpOp = new CompositeOperation(opName, SVNUIMessages.class);									
-			
 			IActionOperation resolveOp = new RevertOperation(new IResource[]{resource}, isRecursive);
-			cmpOp.add(resolveOp);						
+			op.add(resolveOp);						
 			
 			SVNRevision rev = this.treeConflict.operation == Operation.UPDATE ? SVNRevision.HEAD : SVNRevision.fromNumber(this.treeConflict.srcRightVersion.pegRevision);
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			UpdateOperation updateOp = new UpdateOperation(new IResource[]{resource}, rev, ignoreExternals);
-			cmpOp.add(updateOp, new IActionOperation[]{resolveOp});	
+			op.add(updateOp, new IActionOperation[]{resolveOp});	
 		} else if (this.treeConflict.operation == Operation.MERGE) {
-			cmpOp = new CompositeOperation(opName, SVNUIMessages.class);			
-			
 			DeleteResourceOperation deleteOp = null;				
 			if (resource.exists()) {
 				deleteOp = new DeleteResourceOperation(resource);
-				cmpOp.add(deleteOp);
+				op.add(deleteOp);
 			}						
 			
 			IActionOperation copyOp = this.getCopyResourceOperation();
-			cmpOp.add(copyOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
-			
-//			IActionOperation resolvedOp = this.getResolvedOperation();
-//			cmpOp.add(resolvedOp, new IActionOperation[]{copyOp});														
+			op.add(copyOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
 		}
-		return cmpOp;
 	}
 	
-	protected CompositeOperation getRemoteAddOperation(String opName, boolean isRecursive) {		
+	protected void addRemoteAddOperation(CompositeOperation op, boolean isRecursive) {		
 		/*
 		 * 'Update' operation: resolved + [delete[ + update
 		 * 'Merge' operation:  resolved + [delete] + copy   
@@ -253,13 +228,11 @@ public class EditTreeConflictsHelper {
 		 * For 'merge' operation we perform a copy
 		 * For 'update' operation we perform update because file already exists in repository		 
 		 */						
-		CompositeOperation cmpOp = new CompositeOperation(opName, SVNUIMessages.class);						
-			
 		DeleteResourceOperation deleteOp = null;
 		//if resource exists on file system we delete it
 		if (this.local.getResource().exists()) {
 			deleteOp = new DeleteResourceOperation(this.local.getResource());
-			cmpOp.add(deleteOp);			
+			op.add(deleteOp);			
 		}
 		
 		IActionOperation updateOp;
@@ -270,12 +243,7 @@ public class EditTreeConflictsHelper {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			updateOp = new UpdateOperation(new IResource[]{this.local.getResource()}, rev, ignoreExternals);				
 		}																		
-		cmpOp.add(updateOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
-		
-//		IActionOperation resolveOp = this.getResolvedOperation();
-//		cmpOp.add(resolveOp, new IActionOperation[]{updateOp});
-		
-		return cmpOp;					
+		op.add(updateOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
 	}
 	
 	protected IActionOperation getCopyResourceOperation() {
