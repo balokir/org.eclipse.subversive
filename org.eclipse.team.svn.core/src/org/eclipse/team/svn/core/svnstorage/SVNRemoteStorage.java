@@ -227,7 +227,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		    	resource = root.getContainerForLocation(location);	    		    	
 		    }
 		    
-		    int changeMask = SVNRemoteStorage.getChangeMask(textKind, propKind, isCopied, isSwitched);
+		    int changeMask = SVNRemoteStorage.getChangeMask(textKind, propKind, isCopied, isSwitched, false);
 		    if (IStateFilter.SF_NOTEXISTS.accept(resource, textStatusStr, changeMask)) {
 				revision = SVNRevision.INVALID_REVISION_NUMBER;
 			}
@@ -241,7 +241,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    	resource = root.getFileForLocation(location);	    		    	
 	    }
 	    
-	    int changeMask = SVNRemoteStorage.getChangeMask(textKind, propKind, isCopied, isSwitched);
+	    int changeMask = SVNRemoteStorage.getChangeMask(textKind, propKind, isCopied, isSwitched, false);
 	    if (IStateFilter.SF_NOTEXISTS.accept(resource, textStatusStr, changeMask)) {
 			revision = SVNRevision.INVALID_REVISION_NUMBER;
 		}			    
@@ -955,8 +955,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
 				if (local == null) {
 					ILocalResource parent = this.getFirstExistingParentLocal(tRes);
-													
+					
+					boolean isSVNExternals = false;
 					if (statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL) {
+						isSVNExternals = true;
 						/*
 						 * Sometimes we can get the situation that resource has status SVNEntryStatus.Kind.EXTERNAL, 
 						 * but it is versioned (and created by external), so we try to retrieve its
@@ -971,10 +973,31 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							continue;	
 						}
 					}																		
+					else if (i == 0 && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl) && tRes.getParent().getType() != IResource.ROOT) {
+						ILocalResource tLocalParent = (ILocalResource)this.localResources.get(tRes.getParent().getFullPath());
+						if (tLocalParent == null || (tLocalParent.getChangeMask() & ILocalResource.IS_SWITCHED) == 0) {
+							if (proxy == null) {
+								proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+							}
+							try {
+								SVNChangeStatus []tStats = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(tRes.getParent()), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+								SVNUtility.reorder(tStats, true);
+								for (SVNChangeStatus st : tStats) {
+									if (st.path.equals(statuses[i].path)) {
+										isSVNExternals = st.textStatus == SVNEntryStatus.Kind.EXTERNAL;
+										break;
+									}
+								}
+							}
+							catch (Exception ex) {
+								// ignore
+							}
+						}
+					}
 					
 					 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
 					boolean forceCopied = parent != null && parent.isCopied();
-					int changeMask = SVNRemoteStorage.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched);
+					int changeMask = SVNRemoteStorage.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched, isSVNExternals);
 					if (statuses[i].wcLock != null) {
 						changeMask |= ILocalResource.IS_LOCKED;
 					}
@@ -1303,13 +1326,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return status;
 	}
 	
-	protected static int getChangeMask(int textStatus, int propKind, boolean isCopied, boolean isSwitched) {
+	protected static int getChangeMask(int textStatus, int propKind, boolean isCopied, boolean isSwitched, boolean isSVNExternals) {
 		int changeMask = ILocalResource.NO_MODIFICATION;
 		if (isCopied) {
 			changeMask |= ILocalResource.IS_COPIED;
 		}
 		if (isSwitched) {
 			changeMask |= ILocalResource.IS_SWITCHED;
+		}
+		if (isSVNExternals) {
+			changeMask |= ILocalResource.IS_SVN_EXTERNALS;
 		}
 		return changeMask;
 	}
