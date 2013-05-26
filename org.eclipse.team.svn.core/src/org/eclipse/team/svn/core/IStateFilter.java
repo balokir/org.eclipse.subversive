@@ -503,6 +503,15 @@ public interface IStateFilter {
 		}
 	};
 	
+	public static final IStateFilter SF_DATA_CONFLICTING = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return state == IStateFilter.ST_CONFLICTING && !this.takeLocal(local, resource).hasTreeConflict();
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
+		}
+	};
+	
 	public static final IStateFilter SF_TREE_CONFLICTING = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.takeLocal(local, resource).hasTreeConflict();
