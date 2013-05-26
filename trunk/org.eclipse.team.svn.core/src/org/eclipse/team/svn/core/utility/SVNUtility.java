@@ -1403,6 +1403,14 @@ public final class SVNUtility {
 			return parts.toArray(new String[0]);
 		}
 		
+		public static String serialize(SVNExternalPropertyData []data) {
+			String retVal = "";
+			for (SVNExternalPropertyData entry : data) {
+				retVal += entry.toString() + "\n";
+			}
+			return retVal;
+		}
+		
 		/**
 		 * Parse external property and return result in raw format, i.e. 
 		 * it doesn't process and encode url, it doesn't parse revisions etc.
@@ -1482,6 +1490,10 @@ public final class SVNUtility {
 		}			
 		
 		public String toString() {
+			String localPath = this.localPath;
+			if (localPath.contains(" ")) { //$NON-NLS-1$
+				localPath = "\"" + localPath + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+			}		
 			StringBuffer res = new StringBuffer();			
 			if (this.isNewFormat) {
 				//Example: -r12 http://svn.example.com/skin-maker@21 third-party/skins/toolkit
@@ -1492,10 +1504,10 @@ public final class SVNUtility {
 				if (this.pegRevision != null) {
 					res.append("@").append(this.pegRevision); //$NON-NLS-1$
 				}
-				res.append("\t").append(this.localPath); //$NON-NLS-1$
+				res.append("\t").append(localPath); //$NON-NLS-1$
 			} else {
 				//Example: third-party/skins -r148 http://svn.example.com/skinproj
-				res.append(this.localPath).append("\t"); //$NON-NLS-1$
+				res.append(localPath).append("\t"); //$NON-NLS-1$
 				if (this.revision != null) {
 					res.append("-r").append(this.revision).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
