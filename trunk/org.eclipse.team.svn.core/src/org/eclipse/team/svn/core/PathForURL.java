@@ -155,7 +155,18 @@ public class PathForURL implements IPath, Cloneable {
 	 */
 	public PathForURL(String fullPath, boolean isSVNUrl) {
 		String devicePart = null;					
-		if (isSVNUrl || WINDOWS) {
+		if (isSVNUrl) {
+			//convert backslash to forward slash
+			fullPath = fullPath.indexOf('\\') == -1 ? fullPath : fullPath.replace('\\', SEPARATOR);
+			//extract device
+			int i = fullPath.indexOf("://");
+			if (i != -1) {
+				//remove leading slash from device part to handle output of URL.getFile()
+				devicePart = fullPath.substring(0, i + 3);
+				fullPath = fullPath.substring(i + 3, fullPath.length());
+			}
+		}
+		else if (WINDOWS) {
 			//convert backslash to forward slash
 			fullPath = fullPath.indexOf('\\') == -1 ? fullPath : fullPath.replace('\\', SEPARATOR);
 			//extract device
