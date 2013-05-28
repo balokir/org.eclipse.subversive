@@ -3,6 +3,6 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.nl1;singleton:=true
-Bundle-Version: 1.0.0.I20120601-1700
+Bundle-Version: 1.1.0.I20130527-1700
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
