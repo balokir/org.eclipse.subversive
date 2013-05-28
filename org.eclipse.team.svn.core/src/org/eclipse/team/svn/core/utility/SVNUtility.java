@@ -402,15 +402,15 @@ public final class SVNUtility {
 	}
 	
 	public static IRepositoryRoot getTrunkLocation(IRepositoryResource resource) {
-		return SVNUtility.getRootLocation(resource, resource.getRepositoryLocation().getTrunkLocation());
+		return SVNUtility.getRootLocation(resource, resource.getRepositoryLocation().getTrunkLocation(), IRepositoryRoot.KIND_TRUNK);
 	}
 	
 	public static IRepositoryRoot getBranchesLocation(IRepositoryResource resource) {
-		return SVNUtility.getRootLocation(resource, resource.getRepositoryLocation().getBranchesLocation());
+		return SVNUtility.getRootLocation(resource, resource.getRepositoryLocation().getBranchesLocation(), IRepositoryRoot.KIND_BRANCHES);
 	}
 	
 	public static IRepositoryRoot getTagsLocation(IRepositoryResource resource) {
-		return SVNUtility.getRootLocation(resource, resource.getRepositoryLocation().getTagsLocation());
+		return SVNUtility.getRootLocation(resource, resource.getRepositoryLocation().getTagsLocation(), IRepositoryRoot.KIND_TAGS);
 	}
 	
 	public static IRepositoryContainer getProposedTrunk(IRepositoryLocation location) {
@@ -1272,7 +1272,7 @@ public final class SVNUtility {
 		return base;
 	}
 	
-	private static IRepositoryRoot getRootLocation(IRepositoryResource resource, String rootName) {
+	private static IRepositoryRoot getRootLocation(IRepositoryResource resource, String rootName, int kind) {
 		IRepositoryLocation location = resource.getRepositoryLocation();
 		IRepositoryRoot root = (IRepositoryRoot)resource.getRoot();
 		if (!location.isStructureEnabled() || root.getName().equals(rootName)) {
@@ -1286,7 +1286,12 @@ public final class SVNUtility {
 		}
 		else if (rootKind == IRepositoryRoot.KIND_LOCATION_ROOT) {
 			IRepositoryRoot tmp = (IRepositoryRoot)parent.getRoot();
-			if (tmp.getKind() == IRepositoryRoot.KIND_ROOT) {
+			if (root.getName().equals(location.getTrunkLocation()) || // the actual reason for bug #385530 
+				root.getName().equals(location.getBranchesLocation()) ||
+				root.getName().equals(location.getTagsLocation())) {
+				retVal = parent.asRepositoryContainer(rootName, false);
+			}
+			else if (tmp.getKind() == IRepositoryRoot.KIND_ROOT) {
 				retVal = root.asRepositoryContainer(rootName, false);
 			}
 			root = tmp;
@@ -1295,9 +1300,9 @@ public final class SVNUtility {
 			IRepositoryResource rootParent = root.getParent();
 			retVal = rootParent.asRepositoryContainer(rootName, false);
 		}
-		if (!(retVal instanceof IRepositoryRoot)) {
+		if (!(retVal instanceof IRepositoryRoot) || ((IRepositoryRoot)retVal).getKind() != kind) {
 			// check for issue conditions (see bug #385530)
-			throw new RuntimeException("Resource " + resource.getUrl() + " rootName " + rootName + " detected root " + String.valueOf(rootKind) + " " + root.getUrl() + " location URL " + location.getUrl()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			throw new RuntimeException("Resource " + resource.getUrl() + " rootName " + rootName + " detected root " + String.valueOf(rootKind) + " " + root.getUrl() + " location URL " + location.getUrl() + " retVal " + retVal.getUrl()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
 		return (IRepositoryRoot)retVal;
 	}
