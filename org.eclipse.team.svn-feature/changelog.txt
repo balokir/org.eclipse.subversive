@@ -8,6 +8,17 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 1.1.0.I20130527-1700 [27 May 2013]
+
+Fixes:
+ * ClassCastException in time of tag operation (bug 409021)
+ * Repository location: "normalize URL" function does not handle file:/// protocol correctly (bug 409234)
+ * Update switches subfolder back to trunk from branch (bug 406580)
+ * "Apply incoming changes" on "deleted/deleted" generates an error (bug 407631)
+ * When there's a tree conflict, "Edit conflicts" is also enabled and does nothing (bug 407633)
+ 
+--------------------------------------------------------------------------------
+
 Version 1.0.1.I20130507-1700 [07 May 2013]
 
 Features:
