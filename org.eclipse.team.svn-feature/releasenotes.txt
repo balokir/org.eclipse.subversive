@@ -5,81 +5,37 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 1.0.1.I20130301-1700 release date: 01 March 2013
+Version 1.1.0.I20130527-1700 release date: 27 May 2013
 
 1. What's New
 
-   The version is 1.0.1 service release. 
+   The version is 1.1.0 release for Eclipse Kepler. 
    
    Changes comparatively to the previous release version are listed below. The full list of 
-   changes you can find in Change Log.   	
+   changes you can find in Change Log.
 		
 	Features:
-	 * Improvement: add extension point for declaring custom properties (bug 306806)
-	 * Set Property dialog should filter/set properties based on resource type (file or folder) (bug 401612)
-	 * Display post-commit error messages to the user (bug 354843)
-	 * Provide support for post-commit hook's messages (bug 400575)
-	 * Improve Team Annotate with useful default revision values (bug 296239)
-	 * Update JavaHL binaries to 1.7.8 (bug 398671)
-	 * Use SVN Kit 1.7.8 (bug 398669)
-	 * Allow to use "Core Configuration Options" extension point (bug 389933)
-	 * SVN Connectors failed to install in Eclipse 64 bit for RCP and RAP Developers [Win64 support]. (bug 376317)
-	 * Enable error logging for SVN lightweight decorator (bug 395971)
-	 * "Clear selection" in the commit dialog unchecks all the items, not only the selected ones (bug 370254)
-	 * Human/Numeric ordering option for branches e tags (bug 390467)
+	 * Add "Header" keyword support for svn:keywords property (bug 404239)
 	 
 	Fixes:
-	 * After modifying properties in "Compare properties" editor, Synchronize View isn't refreshed (bug 401619)
-	 * NPE when synchronizing workspace (bug 401898)
-	 * Connector install dialog does not open when SVN project exists (bug 401596)
-	 * Use the PredefinedProperty class in order to define custom properties (bug 401047)
-	 * Move revision properties descriptions into the PredefinedPropertySet class (bug 401041)
-	 * Move validation regexp into the PredefinedProperty class (bug 401036)
-	 * Use standard internationalization code for a property descriptions (bug 401034)
-	 * Add post-commit hook's messages support for 'Mark as Merged' and 'Override and Commit' actions (bug 400583)
-	 * Improve annotation UI's performance and usability (bug 400558)
-	 * Spelling error in the method name SVNTeamUIPlugin.getModelC(h)angeSetManager (bug 398654)
-	 * Negative revision number exception when all the lines are skipped by SVN annotate [ID-I71M1] (bug 398565)
-	 * several texts are not externalized in preference (bug 398261)
-	 * Being prompted too aggressively to install SVN connectors (bug 319292)
-	 * Charset failure when Applying Patch to a resource (bug 363289)
-	 * Got wrong contents for remote file in Subversive (bug 375633)
-	 * Text selection extremely slow in C++ editor (bug 350306)
-	 * JavaHL connector fails to commit svn:ignore property (bug 395063)
-	 * Some tree conflicts caused by merge won't be shown and won't allow user to commit merged changes (bug 395295)
-	 * Checkout of a java project from Subversion needs to mangled project name (bug 394761)
-	 * Format code on a source directory with some hundreds of files: takes ages [slowed down by SVN change sets] (bug 392979)
-	 * Default change set is not refreshed in the Synchronize View after it is changed (bug 393483)
-	 * Mylyn active change set shouldn't be removed automatically when all its changes were moved to another change set (bug 393481)
-	 * If Mylyn task is active but empty it does not reappear automatically after IDE restart in SVN change-sets (bug 393480)
-	 * Updating an operating system locked file corrupts the project repository (bug 392955)
-	 * ampersand in project name (bug 392049)
-	 * "Upgrade working copy" action is always disabled for SVN Kit 1.7.5 (bug 393431)
-	 * After latest update, icons in synchronize view sometimes not shown (bug 392884)
-	 * Synchronize window showing add icon decoration instead of delete icon for outgoing change Eclipse 4.2 (bug 388445)
-	 * "Edit conflicts" does nothing with a merge conflict caused by properties (bug 390168)
-	 * Property change statuses are shown incorrectly when incoming/outgoing deletion is involved (bug 390171)
-	 * "Workbench has not been created yet" exception after "out of PermGen space" crash (bug 390177)
-	 * "Expand All" is in wrong toolbar group in the "Models" Synchronize View mode (bug 390181)
-	 * When working with SVN 1.7-compatible connectors deleted folders are handled improperly (bug 390851)
-	 * Moved folder's status is shown wrongly when models support is enabled (bug 390858)
-	 * On a repository that is accessed using the file protocol SVN Kit leads to an excessive password prompt (bug 390865)
-	 * Resource '...' does not exist exception in AbstractSVNSubscriber [ID-GZMNK] (bug 388899)
-	 * Shortcut for "Show Properties" overrides the sign "|" in Slovenian keyboard scheme [CTRL+ALT+W -> CTRL+ALT+T] (bug 390005)
-	 * Error when trying to modify a file with the property "svn:needs-lock" in the JSP editor (bug 377013)
-	 * Show a user friendly error message if the merge/update/switch caused an unresolved conflict over the .project file [ID-UOAA9] (bug 365867)
-	 * Wrong error message text spelling [when resources refresh fails] (bug 391575)
-	 * Inaccurate preference names and documentation regarding "freeze svn:externals" feature (bug 387324)
-	 * Edit conflict can not find -right.r file with the SVN 1.7-compatible connectors (bug 383183)
-	 * "Check Out As" shouldn't delete an empty project folder, since folder creation later may be impossible due to security restrictions (bug 321810)
-	 * [Subversive] - svn:externals syntax check too strict (bug 316114)
-	 * Branch/Tag/Copy dialogs should notify about possible ways of "/" character usage (bug 382311)
-	 * Refresh on location/root nodes in SVN Repositories View shows multiple credential dialogs (bug 385690)
-	 * Unchecked "Save password" repository location option shouldn't prevent user name from being saved (bug 385890)
-	 * Using svn+ssh:// repositories with private key authentication causes subversive to popup ssh login dialog two times for every repository operation. (bug 239871)
-	 * NPE in FreezeExternalsOperation [ID-IP4PU] (bug 385818)
-	 * NPEs in Override and Commit in models mode [ID-BOO7P] (bug 372098)
-	 * ClassCastException in time of branch/tag operation [ID-M43MD] (bug 385530)
+	 * ClassCastException in time of tag operation (bug 409021)
+	 * Repository location: "normalize URL" function does not handle file:/// protocol correctly (bug 409234)
+	 * Update switches subfolder back to trunk from branch (bug 406580)
+	 * "Apply incoming changes" on "deleted/deleted" generates an error (bug 407631)
+	 * When there's a tree conflict, "Edit conflicts" is also enabled and does nothing (bug 407633)
+	 * Auto lock error with maven hierarchy [ID-X5CXN] (bug 374591)
+	 * Compare with base: edits not detected (bug 297717)
+	 * Subversive keeps to show incoming changes for files and directories after all incoming changes have been updated (bug 403043)
+	 * Sometime annotate fails for files in branches (bug 406726)
+	 * "Create Patch" creates patch in UTF-8 (without BOM) irrespective of the file encoding (Windows-1252) (bug 404713)
+	 * NPE in SVNRemoteStorage.asRepositoryResource [ID-BYM4U] (bug 404979)
+	 * NPE in BuiltInAnnotate [ID-IQ1WJ] (bug 404252)
+	 * Enablements of Compare and Replace Actions do not respect ResouceMappings (bug 403200)
+	 * Disconnect operation fails when project was unmapped from repository provider prior to disconnect operation [ID-LOU8E] (bug 403385)
+	 * NPE in LoggedOperation.setConsoleStream [ID-TM2AH] (bug 403644)
+	 * Move ActiveChangeSetManager accessor into the SVN Core plug-in (bug 403980)
+	 * Move startup extension into a separate plug-in (bug 403975)
+	 * Subversive shows empty post-commit warning window after every commit (bug 402491)
 	
 	
 2. Information
@@ -95,7 +51,7 @@ Version 1.0.1.I20130301-1700 release date: 01 March 2013
    
    Subversive supports 
     Subversion version 1.4-1.6 with SVN Kit 1.3.8 and JavaHL 1.6.15,
-    Subversion version 1.7 with SVN Kit 1.7.8 and JavaHL 1.7.8, 
+    Subversion version 1.7 with SVN Kit 1.7.8 and JavaHL 1.7.9, 
 
 2.2 Known issues
 
