@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.core"
       label="%featureName"
-      version="1.1.0.I20130527-1700"
+      version="1.1.0.I20130619-1700"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn.core">
    <install-handler/>
@@ -16,8 +16,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/1.0/headless-update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/1.0/headless-update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/1.1/headless-update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/1.1/headless-update-site/"/>
    </url>
 
    <requires>

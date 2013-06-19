@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.source"
       label="%featureName"
-      version="1.1.0.I20130527-1700"
+      version="1.1.0.I20130619-1700"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
 
@@ -15,28 +15,28 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/1.0/update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/1.0/update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/1.1/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/1.1/update-site/"/>
    </url>
 
    <includes
          id="org.eclipse.team.svn.sources"
-         version="1.1.0.I20130527-1700"/>
+         version="1.1.0.I20130619-1700"/>
 
    <includes
          id="org.eclipse.team.svn.nl1.sources"
-         version="1.1.0.I20130527-1700"/>
+         version="1.1.0.I20130619-1700"/>
 
    <includes
          id="org.eclipse.team.svn.resource.ignore.rules.jdt.source"
-         version="1.1.0.I20130527-1700"/>
+         version="1.1.0.I20130619-1700"/>
 
    <includes
          id="org.eclipse.team.svn.mylyn.source"
-         version="1.1.0.I20130527-1700"/>
+         version="1.1.0.I20130619-1700"/>
 
    <includes
          id="org.eclipse.team.svn.revision.graph.source"
-         version="1.1.0.I20130527-1700"/>
+         version="1.1.0.I20130619-1700"/>
 
 </feature>
