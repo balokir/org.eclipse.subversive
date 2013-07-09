@@ -1052,7 +1052,7 @@ public final class SVNUtility {
 		if (root.exists()) {
 			File svnMeta = root.isDirectory() ? root : root.getParentFile();
 			svnMeta = new File(svnMeta.getAbsolutePath() + "/" + SVNUtility.getSVNFolderName()); //$NON-NLS-1$
-			if (svnMeta.exists()) {
+			if (svnMeta.exists() || !SVNUtility.isPriorToSVN17()) {
 				try {
 					//NOTE WARNING! JavaHL always tries to access repository when revision is specified, even if the specified revision one of two local kinds: WORKING or BASE.
 					//	so, just do not specify any revisions!
