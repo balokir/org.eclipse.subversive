@@ -269,7 +269,8 @@ public class UILoggedOperation extends LoggedOperation {
     	}
     	
     	if (status.getException() instanceof SVNConnectorCancelException ||
-    		status.getException() instanceof ActivityCancelledException) {
+    		status.getException() instanceof ActivityCancelledException ||
+    		status.getException() instanceof OperationCanceledException) {
     		return SVNUIMessages.UILoggedOperation_Cancelled;
     	}
     	
