@@ -12,11 +12,13 @@
 package org.eclipse.team.svn.core.operation.local.refactor;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.utility.FileUtility;
 
@@ -46,9 +48,17 @@ public class CopyResourceOperation extends AbstractActionOperation {
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.source.copy(this.destination.getFullPath(), true, monitor);
-		if (this.skipSVNMeta) {
-			FileUtility.removeSVNMetaInformation(this.destination, monitor);
+		try {
+			this.source.copy(this.destination.getFullPath(), true, monitor);
+			if (this.skipSVNMeta) {
+				FileUtility.removeSVNMetaInformation(this.destination, monitor);
+			}
+		}
+		catch (CoreException ex) {
+			if (!this.destination.isSynchronized(IResource.DEPTH_ZERO)) { // resource exists on disk, but not in sync with eclipse: exception shouldn't be reported
+				throw new ActivityCancelledException(ex);
+			}
+			throw ex;
 		}
 	}
 	
