@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
@@ -86,7 +87,8 @@ public abstract class AbstractActionOperation implements IActionOperation {
 				for (int i = 0; i < children.length; i++) {
 					Throwable exception = children[i].getException();
 					if (exception instanceof SVNConnectorCancelException || 
-						exception instanceof ActivityCancelledException) {
+						exception instanceof ActivityCancelledException ||
+						exception instanceof OperationCanceledException) {
 						hasCanceledException = true;
 						break;
 					}
@@ -169,7 +171,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	public void reportStatus(int severity, String message, Throwable t) {
 		String msg = message != null ? message : this.getShortErrorMessage(t);
 		if (severity == IStatus.ERROR) {
-			if (t instanceof SVNConnectorCancelException || t instanceof ActivityCancelledException) {
+			if (t instanceof SVNConnectorCancelException || t instanceof ActivityCancelledException || t instanceof OperationCanceledException) {
 				this.writeCancelledToConsole();
 			}
 			else {

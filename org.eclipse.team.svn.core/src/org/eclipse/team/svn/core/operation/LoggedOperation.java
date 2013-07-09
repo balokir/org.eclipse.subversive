@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
@@ -100,7 +101,7 @@ public class LoggedOperation implements IActionOperation {
 	protected void handleError(IStatus errorStatus) {
 		if (!errorStatus.isMultiStatus()) {
 			Throwable ex = errorStatus.getException();
-			if (!(ex instanceof SVNConnectorCancelException) && !(ex instanceof ActivityCancelledException)) {
+			if (!(ex instanceof SVNConnectorCancelException) && !(ex instanceof ActivityCancelledException) && !(ex instanceof OperationCanceledException)) {
 				LoggedOperation.logError(errorStatus);
 			}
 			return;
@@ -110,7 +111,7 @@ public class LoggedOperation implements IActionOperation {
 		ArrayList <IStatus>statusesWithoutCancel = new ArrayList<IStatus>(); 
         for (int i = 0; i < children.length; i++) {
             Throwable exception = children[i].getException();
-        	if (!(exception instanceof SVNConnectorCancelException) && !(exception instanceof ActivityCancelledException)) {
+        	if (!(exception instanceof SVNConnectorCancelException) && !(exception instanceof ActivityCancelledException) && !(exception instanceof OperationCanceledException)) {
         		statusesWithoutCancel.add(children[i]);
             }
         }
