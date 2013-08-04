@@ -181,7 +181,8 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		this.charsetField = new Combo(saveTo, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.charsetField.setLayoutData(data);
-		String []comboItems = new String[] {System.getProperty("file.encoding"), "UTF-8"}; //$NON-NLS-1$ //$NON-NLS-2$
+		String sysEnc = System.getProperty("file.encoding"); //$NON-NLS-1$
+		String []comboItems = "UTF-8".equalsIgnoreCase(sysEnc) ? new String[] {sysEnc} :  new String[] {sysEnc, "UTF-8"}; //$NON-NLS-1$ //$NON-NLS-2$
 		this.charset = comboItems[0];
 		this.charsetField.setItems(comboItems);
 		this.charsetField.select(0);
