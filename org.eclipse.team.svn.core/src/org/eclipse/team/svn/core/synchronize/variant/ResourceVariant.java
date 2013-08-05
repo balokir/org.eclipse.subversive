@@ -16,6 +16,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -64,14 +65,22 @@ public abstract class ResourceVariant extends CachedResourceVariant {
 	}
 	
 	public String getContentIdentifier() {
-	    if (this.local.isCopied()) {
+	    long revision = this.local.getRevision();
+	    if (revision == SVNRevision.INVALID_REVISION_NUMBER && (IStateFilter.SF_ONREPOSITORY.accept(this.local) || this.local.isCopied())) {
 			SVNEntryInfo []st = SVNUtility.info(new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.local.getResource())));
-	    	return st != null ? String.valueOf(st[0].copyFromRevision) : SVNMessages.ResourceVariant_unversioned;
+			if (st != null && st.length > 0) {
+				revision = this.local.isCopied() ? st[0].copyFromRevision : st[0].lastChangedRevision;
+			}
 	    }
-	    if (this.isNotOnRepository()) {
-	        return SVNMessages.ResourceVariant_unversioned;
+	    if (revision == SVNRevision.INVALID_REVISION_NUMBER) {
+		    if (this.isNotOnRepository()) {
+		        return SVNMessages.ResourceVariant_unversioned;
+		    }
+		    if (IStateFilter.SF_DELETED.accept(this.local)) {
+		    	return SVNMessages.ResourceVariant_deleted;
+		    }
 	    }
-		return String.valueOf(this.local.getRevision()); 
+		return String.valueOf(revision); 
 	}
 
     protected boolean isNotOnRepository() {
