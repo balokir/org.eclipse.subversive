@@ -167,7 +167,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 			IResource []withNested = this.mindNestedProject(original);
 			// schedule refresh for nested projects
 			if (withNested.length != original.length) {
-				ProgressMonitorUtility.doTaskScheduledDefault(new RefreshResourcesOperation(this.mindNestedProject(original), this.depth, this.refreshType), true);
+				ProgressMonitorUtility.doTaskScheduledDefault(new RefreshResourcesOperation(withNested, this.depth, this.refreshType), true);
 			}
 		}
 	}
