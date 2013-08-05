@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -38,12 +39,11 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class SVNLocalResourceRevision extends FileRevision {
 	protected ILocalResource local;
-	protected boolean onServer;
 	protected SVNRevision rev;
 
 	public SVNLocalResourceRevision(ILocalResource local, SVNRevision rev) {
 		this.local = local;
-		this.onServer = IStateFilter.SF_ONREPOSITORY.accept(this.local);
+		this.rev = rev;
 	}
 
 	public URI getURI() {
@@ -51,7 +51,7 @@ public class SVNLocalResourceRevision extends FileRevision {
 	}
 
 	public long getTimestamp() {
-		return !this.onServer ? -1 : this.local.getLastCommitDate();
+		return !IStateFilter.SF_ONREPOSITORY.accept(this.local) ? -1 : this.local.getLastCommitDate();
 	}
 
 	public boolean exists() {
@@ -59,7 +59,14 @@ public class SVNLocalResourceRevision extends FileRevision {
 	}
 
 	public String getContentIdentifier() {
-		return !this.onServer ? null : String.valueOf(this.local.getRevision());
+		if (IStateFilter.SF_UNVERSIONED.accept(this.local)) {
+			return SVNMessages.ResourceVariant_unversioned;
+		}
+		long revision = this.local.getRevision();
+		if (IStateFilter.SF_DELETED.accept(this.local) && revision == SVNRevision.INVALID_REVISION_NUMBER) {
+			return SVNMessages.ResourceVariant_deleted;
+		}
+		return String.valueOf(revision);
 	}
 
 	public String getAuthor() {
@@ -85,11 +92,11 @@ public class SVNLocalResourceRevision extends FileRevision {
 	}
 
 	public boolean isPropertyMissing() {
-		return this.onServer;
+		return IStateFilter.SF_ONREPOSITORY.accept(this.local);
 	}
 
 	public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
-		if (!this.onServer) {
+		if (!IStateFilter.SF_ONREPOSITORY.accept(this.local)) {
 			return this;
 		}
 		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource());
