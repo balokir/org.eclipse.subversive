@@ -532,6 +532,9 @@ public class SVNMessages extends BaseMessages {
 	public static String UpdateSubscriber_Name;	
 	public static String CommitOperation_3;
 	
+	public static String ResourceVariant_unversioned;
+	public static String ResourceVariant_deleted;
+	
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNMessages.class);
