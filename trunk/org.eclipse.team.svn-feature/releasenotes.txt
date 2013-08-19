@@ -5,37 +5,27 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 1.1.0.I20130527-1700 release date: 27 May 2013
+Version 1.1.1.I20130816-1700 release date: 16 August 2013
 
 1. What's New
 
-   The version is 1.1.0 release for Eclipse Kepler. 
+   The version is 1.1.1 service release. 
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
-	Features:
-	 * Add "Header" keyword support for svn:keywords property (bug 404239)
-	 
 	Fixes:
-	 * ClassCastException in time of tag operation (bug 409021)
-	 * Repository location: "normalize URL" function does not handle file:/// protocol correctly (bug 409234)
-	 * Update switches subfolder back to trunk from branch (bug 406580)
-	 * "Apply incoming changes" on "deleted/deleted" generates an error (bug 407631)
-	 * When there's a tree conflict, "Edit conflicts" is also enabled and does nothing (bug 407633)
-	 * Auto lock error with maven hierarchy [ID-X5CXN] (bug 374591)
-	 * Compare with base: edits not detected (bug 297717)
-	 * Subversive keeps to show incoming changes for files and directories after all incoming changes have been updated (bug 403043)
-	 * Sometime annotate fails for files in branches (bug 406726)
-	 * "Create Patch" creates patch in UTF-8 (without BOM) irrespective of the file encoding (Windows-1252) (bug 404713)
-	 * NPE in SVNRemoteStorage.asRepositoryResource [ID-BYM4U] (bug 404979)
-	 * NPE in BuiltInAnnotate [ID-IQ1WJ] (bug 404252)
-	 * Enablements of Compare and Replace Actions do not respect ResouceMappings (bug 403200)
-	 * Disconnect operation fails when project was unmapped from repository provider prior to disconnect operation [ID-LOU8E] (bug 403385)
-	 * NPE in LoggedOperation.setConsoleStream [ID-TM2AH] (bug 403644)
-	 * Move ActiveChangeSetManager accessor into the SVN Core plug-in (bug 403980)
-	 * Move startup extension into a separate plug-in (bug 403975)
-	 * Subversive shows empty post-commit warning window after every commit (bug 402491)
+	 * JavaHL Win64 connector isn't shown by the discovery feature (bug 411957)
+	 * JavaHL Win32 connector is shown on Win64 platform by the discovery feature (bug 411958)
+	 * SVNUtility.getSVNInfo() isn't compatible with SVN 1.7 [ID-KOSUR] (bug 412253)
+	 * Copying should be cancelled without getting an error report when destination resource exists on disk but not in sync with workspace [ID-IDGZI] (bug 411480)
+	 * OperationCanceledException isn't handled properly (bug 412609)
+	 * "Create Patch" wizards show the UTF-8 encoding twice current platform uses UTF-8 by default (bug 414386)
+	 * "Create patch" wizard should include each resource into the patch file just once when nested projects are used (bug 414388)
+	 * Base revision's content is empty for a file deleted under the SVN 1.7.x client (bug 414400)
+	 * "unversioned" string in the ResourceVariant class is not internationalized (bug 414401)
+	 * Deleted file's revision is shown incorrectly with SVN 1.7.x client (bug 414406)
+	 * Include SVN Kit 1.7.10 version (bug 414897)
 	
 	
 2. Information
@@ -51,7 +41,7 @@ Version 1.1.0.I20130527-1700 release date: 27 May 2013
    
    Subversive supports 
     Subversion version 1.4-1.6 with SVN Kit 1.3.8 and JavaHL 1.6.15,
-    Subversion version 1.7 with SVN Kit 1.7.8 and JavaHL 1.7.9, 
+    Subversion version 1.7 with SVN Kit 1.7.10 and JavaHL 1.7.9, 
 
 2.2 Known issues
 
