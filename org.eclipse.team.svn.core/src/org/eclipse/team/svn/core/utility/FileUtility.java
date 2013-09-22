@@ -324,6 +324,10 @@ public final class FileUtility {
 	}
 	
 	public static void visitNodes(IResource resource, IResourceVisitor visitor, int depth, boolean useCache) throws Exception {
+		FileUtility.visitNodes(resource, visitor, depth, useCache, false);
+	}
+	
+	public static void visitNodes(IResource resource, IResourceVisitor visitor, int depth, boolean useCache, boolean useAlphabeticalOrder) throws Exception {
 		//don't visit ignored resources
 		if (FileUtility.isIgnored(resource)) {
 			return;
@@ -337,9 +341,12 @@ public final class FileUtility {
 			
 			IContainer container = (IContainer)resource;
 			IResource []children = useCache ? SVNRemoteStorage.instance().getRegisteredChildren(container) : FileUtility.resourceMembers(container, true);
+			if (useAlphabeticalOrder) {
+				FileUtility.reorder(children, true);
+			}
 			int nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
 			for (int i = 0; i < children.length; i++) {
-				FileUtility.visitNodes(children[i], visitor, nextDepth, useCache);
+				FileUtility.visitNodes(children[i], visitor, nextDepth, useCache, useAlphabeticalOrder);
 			}
 		}
 	}
