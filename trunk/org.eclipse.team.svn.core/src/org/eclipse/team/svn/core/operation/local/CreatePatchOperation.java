@@ -115,6 +115,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 					stream.write(this.lineFeed.getBytes());
 				}
 				IResource []resources = ((List<?>)entry.getValue()).toArray(new IResource[0]);
+				FileUtility.reorder(resources, true);
 				for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 					if (resources[i] instanceof IFile) {
 						this.addFileDiff(stream, (IFile)resources[i], monitor);
@@ -127,7 +128,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 								}
 								return true;
 							}
-						}, IResource.DEPTH_INFINITE);
+						}, IResource.DEPTH_INFINITE, true, true);
 					}
 				}
 			}
