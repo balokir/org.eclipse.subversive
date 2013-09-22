@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -69,7 +68,6 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 	protected Button useDefaultLocationButton;
 	protected Combo workingSetNameCombo;
 	protected Text locationField;
-	protected boolean sinceEclipse_3_2;
 
 	public ProjectLocationSelectionPage(boolean multiple, ProjectsSelectionPage projectsSelectionPage) {
 		super(ProjectLocationSelectionPage.class.getName(), 
@@ -79,14 +77,6 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		ProjectLocationSelectionPage.DEFAULT_WORKING_SET = SVNUIMessages.ProjectLocationSelectionPage_DefaultWS;
 		
 		this.setDescription(multiple ? SVNUIMessages.ProjectLocationSelectionPage_Description_Multi : SVNUIMessages.ProjectLocationSelectionPage_Description_Single);
-		String framework = System.getProperties().getProperty("osgi.framework.version"); //$NON-NLS-1$
-		try {
-			int version = Integer.parseInt(PatternProvider.replaceAll(framework, "\\.", "").substring(0, 2)); //$NON-NLS-1$ //$NON-NLS-2$
-			this.sinceEclipse_3_2 = version >= 32;
-		}
-		catch (NumberFormatException e) {
-			this.sinceEclipse_3_2 = false;
-		}
 		
 		this.location = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		this.projectsSelectionPage = projectsSelectionPage;
@@ -102,11 +92,9 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 	}
 	
 	public void setUseDefaultLocation(boolean defaultLocation) {
-		if (!this.sinceEclipse_3_2) {
-			this.useDefaultLocationButton.setSelection(defaultLocation);
-			this.useDefaultLocationButton.setEnabled(defaultLocation);
-			this.refreshControls();
-		}
+		this.useDefaultLocationButton.setSelection(defaultLocation);
+		this.useDefaultLocationButton.setEnabled(defaultLocation);
+		this.refreshControls();
 	}
 
 	protected Composite createControlImpl(Composite parent) {
@@ -154,7 +142,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		this.locationField.setText(this.location);
 		this.locationField.setEnabled(false);
 		CompositeVerifier verifier = new CompositeVerifier();
-		verifier.add(new ProjectLocationSelectionPage.LocationVerifier(this.projectsSelectionPage, this.defaultLocation, this.sinceEclipse_3_2, this.useDefaultLocationButton));
+		verifier.add(new ProjectLocationSelectionPage.LocationVerifier(this.projectsSelectionPage, this.defaultLocation, this.useDefaultLocationButton));
 		verifier.add(new AbstractVerifierProxy(new ExistingResourceVerifier(SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier, false)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return !ProjectLocationSelectionPage.this.useDefaultLocationButton.getSelection();
@@ -240,25 +228,17 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		
 		protected String defaultLocation;
 		protected ProjectsSelectionPage projectsSelectionPage;
-		protected boolean sinceEclipse_3_2;
 		protected Button useDefaultLocationButton;
 		
-		public LocationVerifier(ProjectsSelectionPage projectsSelectionPage, String defaultLocation, boolean sinceEclipse3_2, Button useDefaultLocationButton) {
+		public LocationVerifier(ProjectsSelectionPage projectsSelectionPage, String defaultLocation, Button useDefaultLocationButton) {
 			this.defaultLocation = defaultLocation;
 			this.projectsSelectionPage = projectsSelectionPage;
-			this.sinceEclipse_3_2 = sinceEclipse3_2;
 			this.useDefaultLocationButton = useDefaultLocationButton;
 		}
 
 		protected String getErrorMessage(Control input) {
-			boolean respectHierarchy = (this.projectsSelectionPage != null && this.projectsSelectionPage.isRespectHierarchy());
 			String parent = this.projectsSelectionPage != null && this.projectsSelectionPage.projects != null ? SVNUtility.getResourceParent(this.projectsSelectionPage.projects[0]) : ""; //$NON-NLS-1$
 			String inputLocation = this.useDefaultLocationButton.getSelection() ? this.defaultLocation : FileUtility.formatPath(this.getText(input));
-			if (inputLocation.startsWith(this.defaultLocation) && !this.sinceEclipse_3_2) {
-				if (respectHierarchy || inputLocation.length() > this.defaultLocation.length()) {
-					return SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier_Error_Eclipse32;
-				}
-			}
 			IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {
 				IPath location = projects[i].getLocation();

@@ -1046,7 +1046,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ProjectLocationSelectionPage_Description_Single;
 	public static String ProjectLocationSelectionPage_Location;
 	public static String ProjectLocationSelectionPage_Location_Verifier;
-	public static String ProjectLocationSelectionPage_Location_Verifier_Error_Eclipse32;
 	public static String ProjectLocationSelectionPage_Location_Verifier_Error_ExistingProject;
 	public static String ProjectLocationSelectionPage_SelectWS;
 	public static String ProjectLocationSelectionPage_Title;
