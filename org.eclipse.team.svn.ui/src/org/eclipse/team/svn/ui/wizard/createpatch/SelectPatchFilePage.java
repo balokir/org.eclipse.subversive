@@ -100,25 +100,27 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		this.proposedName = proposedName + ".patch"; //$NON-NLS-1$
 		this.writeMode = CreatePatchWizard.WRITE_TO_CLIPBOARD;
 		// filter out nested project's resources if there are more than 1 entry for the physical resource
-		LinkedHashMap<IResource, Boolean> resourceSet = new LinkedHashMap<IResource, Boolean>();
-		for (IResource resource : roots) {
-			resourceSet.put(resource, Boolean.FALSE);
-		}
-		for (IResource resource : roots) {
-			IPath path = FileUtility.getResourcePath(resource);
-			for (IResource checkAgainst : roots) {
-				if (resource != checkAgainst && path.isPrefixOf(FileUtility.getResourcePath(checkAgainst))) {
-					resourceSet.put(checkAgainst, Boolean.TRUE);
+		if (roots != null) {
+			LinkedHashMap<IResource, Boolean> resourceSet = new LinkedHashMap<IResource, Boolean>();
+			for (IResource resource : roots) {
+				resourceSet.put(resource, Boolean.FALSE);
+			}
+			for (IResource resource : roots) {
+				IPath path = FileUtility.getResourcePath(resource);
+				for (IResource checkAgainst : roots) {
+					if (resource != checkAgainst && path.isPrefixOf(FileUtility.getResourcePath(checkAgainst))) {
+						resourceSet.put(checkAgainst, Boolean.TRUE);
+					}
 				}
 			}
-		}
-		ArrayList<IResource> filteredRoots = new ArrayList<IResource>();
-		for (Map.Entry<IResource, Boolean> entry : resourceSet.entrySet()) {
-			if (!entry.getValue().booleanValue()) {
-				filteredRoots.add(entry.getKey());
+			ArrayList<IResource> filteredRoots = new ArrayList<IResource>();
+			for (Map.Entry<IResource, Boolean> entry : resourceSet.entrySet()) {
+				if (!entry.getValue().booleanValue()) {
+					filteredRoots.add(entry.getKey());
+				}
 			}
+			this.roots = filteredRoots.toArray(new IResource[filteredRoots.size()]);
 		}
-		this.roots = filteredRoots.toArray(new IResource[filteredRoots.size()]);
 		try {
 			File tmp = File.createTempFile("patch", "tmp"); //$NON-NLS-1$ //$NON-NLS-2$
 			tmp.delete();
