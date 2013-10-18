@@ -83,6 +83,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean notSelectMissingResources;
 	protected boolean useSubversionExternalsBehaviour;
 	protected boolean showSelectedResourcesInSyncPane;
+	protected boolean treatReplacementAsEdit;
 	protected String svnConnector;
 	protected ISVNConnectorFactory []factories;
 	protected boolean useJavaHLMerge;
@@ -117,6 +118,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button btnResourceNotSelectionMissing;
 	protected Button btnResourceSelectionExternal;
 	protected Button btnResourceSelectionPresentation;
+	protected Button btnResourceSelectionTreatAsEdit;
 	protected Button checkoutUsingDotProjectNameButton;
 	protected Button checkoutRespectProjectStructureButton;
 	protected Button branchTagConsiderStructureButton;
@@ -162,6 +164,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME, this.notSelectMissingResources);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME, this.useSubversionExternalsBehaviour);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME, this.showSelectedResourcesInSyncPane);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME, this.treatReplacementAsEdit);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME, this.enableAutoShare);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME, this.computeKeywordsValues);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME, this.caseInsensitiveSorting);
@@ -206,6 +209,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.notSelectMissingResources = SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME_DEFAULT;
 		this.useSubversionExternalsBehaviour = SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT;
 		this.showSelectedResourcesInSyncPane = SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_DEFAULT;
+		this.treatReplacementAsEdit = SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_DEFAULT;
 		
 		this.useJavaHLMerge = SVNTeamPreferences.MERGE_USE_JAVAHL_DEFAULT;
 		this.includeMergedRevisions = SVNTeamPreferences.MERGE_INCLUDE_MERGED_DEFAULT;
@@ -253,6 +257,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.notSelectMissingResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME);
 		this.useSubversionExternalsBehaviour = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME);
 		this.showSelectedResourcesInSyncPane = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME);
+		this.treatReplacementAsEdit = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME);
 		this.enableAutoShare = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME);
 		this.computeKeywordsValues = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME);
 		this.caseInsensitiveSorting = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
@@ -300,6 +305,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.btnResourceNotSelectionMissing.setSelection(this.notSelectMissingResources);
 		this.btnResourceSelectionExternal.setSelection(this.useSubversionExternalsBehaviour);
 		this.btnResourceSelectionPresentation.setSelection(this.showSelectedResourcesInSyncPane);
+		this.btnResourceSelectionTreatAsEdit.setSelection(this.treatReplacementAsEdit);
 		
 		List<ISVNConnectorFactory> factoriesList = Arrays.asList(this.factories);
 		this.svnConnectorField.select(factoriesList.indexOf(CoreExtensionsManager.instance().getSVNConnectorFactory(this.svnConnector)));
@@ -513,6 +519,16 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.btnResourceSelectionPresentation.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.showSelectedResourcesInSyncPane = SVNTeamPreferencesPage.this.btnResourceSelectionPresentation.getSelection();
+			}
+		});
+		
+		this.btnResourceSelectionTreatAsEdit = new Button(group, SWT.CHECK);
+		data = new GridData();
+		this.btnResourceSelectionTreatAsEdit.setLayoutData(data);
+		this.btnResourceSelectionTreatAsEdit.setText(SVNUIMessages.MainPreferencePage_resourceSelectionTreatAsEdit);
+		this.btnResourceSelectionTreatAsEdit.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamPreferencesPage.this.treatReplacementAsEdit = SVNTeamPreferencesPage.this.btnResourceSelectionTreatAsEdit.getSelection();
 			}
 		});
 		
