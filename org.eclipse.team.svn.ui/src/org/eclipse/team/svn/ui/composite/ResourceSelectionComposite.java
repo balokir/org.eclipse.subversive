@@ -157,7 +157,7 @@ public class ResourceSelectionComposite extends Composite {
 		this.allowTreatAsEditsColumn = allowTreatAsEditColumn;
 		this.showCheckBoxesAndButtons = showCheckBoxesAndButtons;
 		this.selectedResources = this.resources = resources;
-		if (SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME)) {
+		if (this.allowTreatAsEditsColumn && SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME)) {
 			for (IResource resource : resources) {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 				if (IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
