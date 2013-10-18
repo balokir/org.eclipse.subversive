@@ -31,6 +31,7 @@ import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
+import org.eclipse.team.svn.ui.operation.TreatAsEditsOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -100,22 +101,22 @@ public class CommitActionUtility {
 		return this.allResources;
 	}
 	
-	public CompositeOperation getCompositeCommitOperation(IResource []selectedResources, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
-		return this.getNonRecursiveImpl(selectedResources, message, keepLocks, shell, part);
+	public CompositeOperation getCompositeCommitOperation(IResource []selectedResources, IResource []treatAsEdits, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
+		return this.getNonRecursiveImpl(selectedResources, treatAsEdits, message, keepLocks, shell, part);
 	}
 	
 	/*
 	 * We separate commit on recursive and not recursive because of performance reasons, i.e. recursive
 	 * commit works significantly faster.
 	 */
-	public CompositeOperation getCompositeCommitOperation(IResource []selectedResources, IResource []notSelectedResources, String message, boolean keepLocks, Shell shell, IWorkbenchPart part, boolean tryRecursive) {
+	public CompositeOperation getCompositeCommitOperation(IResource []selectedResources, IResource []notSelectedResources, IResource []treatAsEdits, String message, boolean keepLocks, Shell shell, IWorkbenchPart part, boolean tryRecursive) {
 		return 
 			this.canBeRecursiveCommit && tryRecursive ? 
-			this.getRecursiveImpl(selectedResources, notSelectedResources, message, keepLocks, shell, part) :
-			this.getNonRecursiveImpl(selectedResources, message, keepLocks, shell, part);
+			this.getRecursiveImpl(selectedResources, notSelectedResources, treatAsEdits, message, keepLocks, shell, part) :
+			this.getNonRecursiveImpl(selectedResources, treatAsEdits, message, keepLocks, shell, part);
 	}
 
-	protected CompositeOperation getRecursiveImpl(IResource []selectedResources, IResource []notSelectedResources, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
+	protected CompositeOperation getRecursiveImpl(IResource []selectedResources, IResource []notSelectedResources, IResource []treatAsEdits, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
 		IResource []notSelectedNew = FileUtility.getResourcesRecursive(notSelectedResources, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO);
 		boolean allowsRecursiveAdd = true;
 		for (int i = 0; i < notSelectedNew.length; i++) {
@@ -130,6 +131,10 @@ public class CommitActionUtility {
 		CommitOperation mainOp = new CommitOperation(notSelectedResources.length == 0 ? this.selector.getSelectedResources() : selectedResources, message, allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length, keepLocks);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+		
+		if (treatAsEdits != null && treatAsEdits.length > 0) {
+			op.add(new TreatAsEditsOperation(treatAsEdits));
+		}
 		
 		if (allowsRecursiveAdd) {
 			if (this.newNonRecursive.size() > 0) {
@@ -157,10 +162,14 @@ public class CommitActionUtility {
 		return op;
 	}
 	
-	protected CompositeOperation getNonRecursiveImpl(IResource []selectedResources, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
+	protected CompositeOperation getNonRecursiveImpl(IResource []selectedResources, IResource []treatAsEdits, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
 		CommitOperation mainOp = new CommitOperation(selectedResources, message, false, keepLocks);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+		
+		if (treatAsEdits != null && treatAsEdits.length > 0) {
+			op.add(new TreatAsEditsOperation(treatAsEdits));
+		}
 		
 		IResource []newResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO);
 		if (newResources.length > 0) {

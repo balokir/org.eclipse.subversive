@@ -160,6 +160,10 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
     	}
 	}
 
+	public IResource[] getTreatAsEdits() {
+		return this.paneParticipantHelper.isParticipantPane() ? new IResource[0] : this.resourceSelection.getTreatAsEdits();
+	}
+
 	public boolean isFreezeExternals() {
 		return this.freezeExternals;
 	}
@@ -327,7 +331,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	}
 	
 	protected void createResourceSelectionCompositeControls(Composite parent) {
-		this.resourceSelection = new ResourceSelectionComposite(parent, SWT.NONE, this.newResources, true);
+		this.resourceSelection = new ResourceSelectionComposite(parent, SWT.NONE, this.newResources, true, true);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		this.resourceSelection.setLayoutData(data);
 		this.resourceSelection.addResourcesSelectionChangedListener(new IResourceSelectionChangeListener() {

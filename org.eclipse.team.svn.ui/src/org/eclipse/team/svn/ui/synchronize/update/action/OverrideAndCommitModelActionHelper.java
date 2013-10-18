@@ -39,6 +39,7 @@ import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.ShowPostCommitErrorsOperation;
+import org.eclipse.team.svn.ui.operation.TreatAsEditsOperation;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractActionHelper;
@@ -71,6 +72,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 		String msg = null;
 		boolean keepLocks = false;
 		final IResource [][]resources = new IResource[1][];
+		IResource []treatAsEdits = null;
 
 		IResource []changedResources = this.getSyncInfoSelector().getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
 		IResource []overrideResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), changedResources);
@@ -83,6 +85,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 			if (commitDialog.open() != 0) {
 				return null;
 			}
+			treatAsEdits = commitPanel.getTreatAsEdits();
 			resources[0] = commitPanel.getSelectedResources().length == 0 ? null : commitPanel.getSelectedResources();
 			msg = commitDialog.getMessage();
 			keepLocks = commitPanel.getKeepLocks();
@@ -93,6 +96,10 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 		}
 		
 		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndCommit", SVNUIMessages.class); //$NON-NLS-1$
+		
+		if (treatAsEdits != null && treatAsEdits.length > 0) {
+			op.add(new TreatAsEditsOperation(treatAsEdits));
+		}
 
 		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg, keepLocks);
 		op.add(mergeOp);

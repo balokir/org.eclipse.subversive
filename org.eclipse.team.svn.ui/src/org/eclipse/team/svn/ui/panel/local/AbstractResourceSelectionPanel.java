@@ -62,6 +62,10 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
     	return this.selectionComposite.getNotSelectedResources();    	
 	}
 
+	public IResource[] getTreatAsEdits() {
+		return this.paneParticipantHelper.isParticipantPane() ? new IResource[0] : this.selectionComposite.getTreatAsEdits();
+	}
+
     public Point getPrefferedSizeImpl() {
         return new Point(600, SWT.DEFAULT);
     }
@@ -71,7 +75,7 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
     		this.paneParticipantHelper.init(this.createPaneParticipant());
     		this.createPaneControls(parent);
     	} else {
-        	this.selectionComposite = new ResourceSelectionComposite(parent, SWT.NONE, this.resources, false, this.userSelectedResources);
+        	this.selectionComposite = new ResourceSelectionComposite(parent, SWT.NONE, this.resources, false, this.userSelectedResources, false);
     		GridData data = new GridData(GridData.FILL_BOTH);
     		data.heightHint = 210;
     		this.selectionComposite.setLayoutData(data);

@@ -263,7 +263,7 @@ public class CommitPanel extends CommentPanel implements IModifiableCommentDialo
     }		
 	
 	protected void createResourceSelectionCompositeControls() {		
-		this.selectionComposite = new ResourceSelectionComposite(this.sForm, SWT.NONE, this.resources, true, this.userSelectedResources);
+		this.selectionComposite = new ResourceSelectionComposite(this.sForm, SWT.NONE, this.resources, true, this.userSelectedResources, true);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 175;
 		this.selectionComposite.setLayoutData(data);
@@ -754,6 +754,10 @@ public class CommitPanel extends CommentPanel implements IModifiableCommentDialo
 		}		
     }
     
+	public IResource[] getTreatAsEdits() {
+		return this.paneParticipantHelper.isParticipantPane() ? new IResource[0] : this.selectionComposite.getTreatAsEdits();
+	}
+
     public IResource []getNotSelectedResources() {
     	if (this.paneParticipantHelper.isParticipantPane()) {    		
     		return this.paneParticipantHelper.getNotSelectedResources();
