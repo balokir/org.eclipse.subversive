@@ -157,6 +157,14 @@ public class ResourceSelectionComposite extends Composite {
 		this.allowTreatAsEditsColumn = allowTreatAsEditColumn;
 		this.showCheckBoxesAndButtons = showCheckBoxesAndButtons;
 		this.selectedResources = this.resources = resources;
+		if (SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME)) {
+			for (IResource resource : resources) {
+				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+				if (IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
+					this.treatAsEdit.add(resource);
+				}				
+			}
+		}
 		this.notSelectedResources = new IResource[0];
 		this.selectionChangedListeners = new ArrayList();
 		this.deselectNewl = selectAll;
@@ -393,6 +401,7 @@ public class ResourceSelectionComposite extends Composite {
 						else {
 							button = new Button((Composite)cell.getViewerRow().getControl(), SWT.CHECK);
 							button.setData(resource);
+							button.setSelection(ResourceSelectionComposite.this.treatAsEdit.contains(resource));
 							button.setBackground(cell.getBackground());
 							button.addSelectionListener(new SelectionAdapter() {
 								public void widgetSelected(SelectionEvent e) {

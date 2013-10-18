@@ -55,6 +55,7 @@ public final class SVNTeamPreferences {
 	public static final String BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME = "resourceSelection.dontSelectMissing"; //$NON-NLS-1$
 	public static final String BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME = "resourceSelection.treatExternalAsLocal"; //$NON-NLS-1$
 	public static final String BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME = "resourceSelection.showResourcesInSyncPane"; //$NON-NLS-1$
+	public static final String BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME = "resourceSelection.treatAsEdit"; //$NON-NLS-1$
 	public static final String BEHAVIOUR_ENABLE_AUTO_SHARE_NAME = "share.enableAuto"; //$NON-NLS-1$
 	public static final String BEHAVIOUR_COMPUTE_KEYWORDS_NAME = "keywords.computeValues"; //$NON-NLS-1$
 	public static final String BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME = "sorting.case.insensitive";		 //$NON-NLS-1$	
@@ -65,6 +66,7 @@ public final class SVNTeamPreferences {
 	public static final boolean BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT = true;
 	public static final boolean BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT = true;
 	public static final boolean BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_DEFAULT = false;
+	public static final boolean BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_DEFAULT = true;
 	public static final boolean BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT = true;
 	public static final boolean BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME_DEFAULT = true;
 	public static final boolean BEHAVIOUR_IGNORE_EXTERNALS_DEFAULT = false;
@@ -500,6 +502,7 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME), SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME), SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
@@ -561,6 +564,7 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME), SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_NAME), SVNTeamPreferences.BEHAVIOUR_TREAT_REPLACEMENT_AS_EDIT_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
