@@ -55,7 +55,7 @@ public class CommitAction extends AbstractRecursiveTeamAction {
 			if (commitPanel.getResourcesChanged()) {
 				commitUtility.initialize(this);
 			}
-			CompositeOperation op = commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), commitPanel.getNotSelectedResources(), commitDialog.getMessage(), commitPanel.getKeepLocks(), this.getShell(), this.getTargetPart(), true);			
+			CompositeOperation op = commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), commitPanel.getNotSelectedResources(), commitPanel.getTreatAsEdits(), commitDialog.getMessage(), commitPanel.getKeepLocks(), this.getShell(), this.getTargetPart(), true);			
 			this.runScheduled(op);
 		}
 	}

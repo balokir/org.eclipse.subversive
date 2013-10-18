@@ -950,6 +950,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_GetBranchesTags;
 	public static String Operation_GetBranchesTags_Id;
 	public static String Operation_GetBranchesTags_Error;
+	public static String Operation_TreatAsEdits;
+	public static String Operation_TreatAsEdits_Id;
+	public static String Operation_TreatAsEdits_Error;
 	
 	public static String OptionsActionGroup_ShowInfoContiguous;
 	public static String OverrideResourcesPanel_Affected;
@@ -1298,6 +1301,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ResourceCompareInput_Title2;
 	public static String ResourceCompareInput_Title3;
 	public static String ResourceSelectionComposite_Content;
+	public static String ResourceSelectionComposite_TreatAsEdit;
 	public static String ResourceSelectionComposite_Info;
 	public static String ResourceSelectionComposite_InvalidResource;
 	public static String ResourceSelectionComposite_Properties;

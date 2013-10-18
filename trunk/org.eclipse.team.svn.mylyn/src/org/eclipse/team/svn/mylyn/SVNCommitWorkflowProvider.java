@@ -65,7 +65,7 @@ public class SVNCommitWorkflowProvider /*extends AbstractCommitWorkflowProvider*
 			IResource []selectedResources = commitPanel.getSelectedResources();
 			IWorkbenchWindow window = SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow();
 			IWorkbenchPart part = window == null ? null : window.getPartService().getActivePart();
-			CompositeOperation op = commitUtility.getCompositeCommitOperation(selectedResources, commitDialog.getMessage(), commitPanel.getKeepLocks(), shell, part);
+			CompositeOperation op = commitUtility.getCompositeCommitOperation(selectedResources, commitPanel.getTreatAsEdits(), commitDialog.getMessage(), commitPanel.getKeepLocks(), shell, part);
 			UIMonitorUtility.doTaskScheduledActive(op);
 		}
 	}

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -38,8 +39,11 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -105,6 +109,8 @@ public class ResourceSelectionComposite extends Composite {
 
 	protected static final int COLUMN_PROPSTATUS = 3;
 
+	protected static final int COLUMN_TREAT_AS_EDIT = 4;
+
 	protected CheckboxTableViewer tableViewer;
 
 	protected ISelectionChangedListener selectionListener;
@@ -114,6 +120,9 @@ public class ResourceSelectionComposite extends Composite {
 	protected IResource[] selectedResources;
 
 	protected IResource[] notSelectedResources;
+	
+	protected HashMap<IResource, Button> treatAsEditButtons = new HashMap();
+	protected HashSet<IResource> treatAsEdit = new HashSet();
 
 	protected List selectionChangedListeners;
 
@@ -129,21 +138,23 @@ public class ResourceSelectionComposite extends Composite {
 	protected Label lblSelectedResourcesNumber;
 	
 	protected boolean showCheckBoxesAndButtons;
+	protected boolean allowTreatAsEditsColumn;
 
-	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll) {
-		this(parent, style, resources, selectAll, null);
+	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, boolean allowTreatAsEditColumn) {
+		this(parent, style, resources, selectAll, null, allowTreatAsEditColumn);
 	}
 
-	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, boolean showCheckBoxesAndButtons) {
-		this(parent, style, resources, selectAll, null, showCheckBoxesAndButtons);
+	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, boolean allowTreatAsEditColumn, boolean showCheckBoxesAndButtons) {
+		this(parent, style, resources, selectAll, null, allowTreatAsEditColumn , showCheckBoxesAndButtons);
 	}
 		 
-	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, IResource[] userSelectedResources) {
-		this(parent, style, resources, selectAll, userSelectedResources, true);
+	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, IResource[] userSelectedResources, boolean allowTreatAsEditColumn) {
+		this(parent, style, resources, selectAll, userSelectedResources, allowTreatAsEditColumn, true);
 	}
 		 	
-	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, IResource[] userSelectedResources, boolean showCheckBoxesAndButtons) {
+	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, IResource[] userSelectedResources, boolean allowTreatAsEditColumn, boolean showCheckBoxesAndButtons) {
 		super(parent, style);
+		this.allowTreatAsEditsColumn = allowTreatAsEditColumn;
 		this.showCheckBoxesAndButtons = showCheckBoxesAndButtons;
 		this.selectedResources = this.resources = resources;
 		this.notSelectedResources = new IResource[0];
@@ -163,6 +174,9 @@ public class ResourceSelectionComposite extends Composite {
 	}
 
 	public void dispose() {
+		for (Button button : this.treatAsEditButtons.values()) {
+			button.dispose();
+		}
     	for (Image img : this.images.values()) {
     		img.dispose();
     	}
@@ -175,6 +189,10 @@ public class ResourceSelectionComposite extends Composite {
 
 	public IResource[] getNotSelectedResources() {
 		return this.notSelectedResources;
+	}
+	
+	public IResource[] getTreatAsEdits() {
+		return (IResource [])this.treatAsEdit.toArray(new IResource[this.treatAsEdit.size()]);
 	}
 
 	public List getCurrentSelection() {
@@ -224,7 +242,7 @@ public class ResourceSelectionComposite extends Composite {
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNUIMessages.ResourceSelectionComposite_Resource);
-		layout.addColumnData(new ColumnWeightData(56, true));
+		layout.addColumnData(new ColumnWeightData(44, true));
 		col.addSelectionListener(comparator);
 
 		// status
@@ -243,6 +261,14 @@ public class ResourceSelectionComposite extends Composite {
 		layout.addColumnData(new ColumnWeightData(12, true));
 		if (this.cacheEnabled) {
 			col.addSelectionListener(comparator);
+		}
+
+		TableColumn treatAsEdit = null;
+		if (this.allowTreatAsEditsColumn) {
+			treatAsEdit = col = new TableColumn(table, SWT.NONE);
+			col.setResizable(false);
+			col.setText(SVNUIMessages.ResourceSelectionComposite_TreatAsEdit);
+			layout.addColumnData(new ColumnWeightData(12, true));
 		}
 
 		// adding comparator and selection default sorting column and direction
@@ -350,6 +376,46 @@ public class ResourceSelectionComposite extends Composite {
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		});
+		
+		if (this.allowTreatAsEditsColumn) {
+			// the order is important otherwise the common label provider overrides this one
+			TableViewerColumn cbColumn = new TableViewerColumn(this.tableViewer, treatAsEdit);
+			cbColumn.setLabelProvider(new ColumnLabelProvider() {
+				public void update(ViewerCell cell) {
+					IResource resource = (IResource)cell.getElement();
+					ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+					if (IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
+						TableItem item = (TableItem)cell.getItem();
+						Button button;
+						if (ResourceSelectionComposite.this.treatAsEditButtons.containsKey(cell.getElement())) {
+							button = ResourceSelectionComposite.this.treatAsEditButtons.get(cell.getElement());
+						}
+						else {
+							button = new Button((Composite)cell.getViewerRow().getControl(), SWT.CHECK);
+							button.setData(resource);
+							button.setBackground(cell.getBackground());
+							button.addSelectionListener(new SelectionAdapter() {
+								public void widgetSelected(SelectionEvent e) {
+									if (((Button)e.getSource()).getSelection()) {
+										ResourceSelectionComposite.this.treatAsEdit.add((IResource)((Button)e.getSource()).getData());
+									}
+									else {
+										ResourceSelectionComposite.this.treatAsEdit.remove((IResource)((Button)e.getSource()).getData());
+									}
+									ResourceSelectionComposite.this.getTableViewer().refresh(((Button)e.getSource()).getData());
+								}
+							});
+							ResourceSelectionComposite.this.treatAsEditButtons.put(resource, button);
+						}
+						TableEditor editor = new TableEditor(item.getParent());
+						editor.grabHorizontal = true;
+						editor.grabVertical = true;
+						editor.setEditor(button, item, cell.getColumnIndex());
+						editor.layout();
+					}
+				}
+			});
+		}
 
 		this.tableViewer.setContentProvider(new ArrayStructuredContentProvider());
 
@@ -470,7 +536,7 @@ public class ResourceSelectionComposite extends Composite {
 	protected String contentStatusAsString(ILocalResource local) {				
 		String status = ""; //$NON-NLS-1$
 		if (!IStateFilter.ST_NORMAL.equals(local.getTextStatus())) {
-			status = SVNUtility.getStatusText(local.getTextStatus());			
+			status = SVNUtility.getStatusText(this.treatAsEdit.contains(local.getResource()) ? IStateFilter.ST_MODIFIED : local.getTextStatus());			
 			if (local.isCopied()) {
 				status += " (+)"; //$NON-NLS-1$
 			}

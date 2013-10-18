@@ -87,7 +87,7 @@ public class CommitActionHelper extends AbstractActionHelper {
 			return null;
 		}
 		
-		return commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), configuration.getSite().getShell(), configuration.getSite().getPart());
+		return commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), commitPanel.getTreatAsEdits(), dialog.getMessage(), commitPanel.getKeepLocks(), configuration.getSite().getShell(), configuration.getSite().getPart());
 	}
 	
 	/**

@@ -396,7 +396,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 				public void run() {
 					ICommitDialog commitDialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(ShareProjectWizard.this.getShell(), commitUtility.getAllResourcesSet(), commitPanel);
 			        if (commitDialog.open() == 0) {
-						commitOp[0] = commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), commitPanel.getNotSelectedResources(), commitDialog.getMessage(), commitPanel.getKeepLocks(), ShareProjectWizard.this.getShell(), UIMonitorUtility.getActivePart(), true);
+						commitOp[0] = commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), commitPanel.getNotSelectedResources(), commitPanel.getTreatAsEdits(), commitDialog.getMessage(), commitPanel.getKeepLocks(), ShareProjectWizard.this.getShell(), UIMonitorUtility.getActivePart(), true);
 					}
 				}
 	        });
