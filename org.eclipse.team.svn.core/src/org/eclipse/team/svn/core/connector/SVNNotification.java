@@ -122,11 +122,6 @@ public class SVNNotification {
 		public static final int _UNNKNOWN_COMMAND = -1;
 
 		/**
-		 * Post-commit hook failure.
-		 */
-		public static final int _POSTCOMMIT_FAILURE = -10;
-
-		/**
 		 * Adding a path to revision control.
 		 */
 		public static final int ADD = 0;
@@ -483,11 +478,46 @@ public class SVNNotification {
 		 */
 		public static final int SKIP_CONFLICTED = 68;
 
+		/**
+		 * @since 1.8 The lock on a file was removed during update.
+		 */
+		public static final int UPDATE_BROKEN_LOCK = 69;
+
+		/**
+		 * @since 1.8 Operation failed because a node is obstructed.
+		 */
+		public static final int FAILED_OBSTRUCTED = 70;
+
+		/**
+		 * @since 1.8 Conflict resolver is starting.
+		 */
+		public static final int CONFLICT_RESOLVER_STARTING = 71;
+
+		/**
+		 * @since 1.8 Conflict resolver is done.
+		 */
+		public static final int CONFLICT_RESOLVER_DONE = 72;
+
+		/**
+		 * @since 1.8 Operation left local modifications.
+		 */
+		public static final int LEFT_LOCAL_MODIFICATIONS = 73;
+
+		/**
+		 * @since 1.8 A copy from a foreign repository has started.
+		 */
+		public static final int FOREIGN_COPY_BEGIN = 74;
+
+		/**
+		 * @since 1.8 A move in the working copy has been broken.
+		 */
+		public static final int MOVE_BROKEN = 75;
+
 		/*
 		 * Sometime native JavaHL client returns -1 as action (for example when file is replaced in branch then merged into trunk)...
 		 */
 		public static boolean isKnownAction(int action) {
-			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.SKIP_CONFLICTED /*68*/;
+			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.MOVE_BROKEN /*75*/;
 		}
 		
 		/**
@@ -501,7 +531,8 @@ public class SVNNotification {
 				"changelist moved", "failed external", "update started", "update skip obstruction", "update skip working only", "update skip access denied", "update external removed",
 				"update shadowed add", "update shadowed update", "update shadowed delete", "merge record info", "upgraded path", "merge record info begin", "Merge elide info", 
 				"patch", "patch applied hunk", "patch rejected hunk", "patch hunk already applied", "commit copied", "commit copied replaced", "url redirect", "path nonexistent",
-				"exclude", "failed conflict", "failed missing", "failed out of date", "failed no parent", "failed by lock", "failed forbidden by server"};
+				"exclude", "failed conflict", "failed missing", "failed out of date", "failed no parent", "failed by lock", "failed forbidden by server",
+				"broken lock removed", "failed by obstruction", "conflict resolver starting", "conflict resolver done", "conflict resolver done", "foreign copy begin", "move broken"};
 	}
 
 	/**

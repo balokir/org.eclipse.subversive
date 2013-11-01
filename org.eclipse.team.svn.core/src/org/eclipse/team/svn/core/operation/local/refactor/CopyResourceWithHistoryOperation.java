@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -63,7 +64,7 @@ public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
         ISVNConnector proxy = location.acquireSVNProxy();
         try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + FileUtility.normalizePath(FileUtility.getWorkingCopyPath(this.source)) + "\" \"" + FileUtility.getWorkingCopyPath(this.destination) + "\"\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			proxy.copy(new String[] {FileUtility.getWorkingCopyPath(this.source)}, FileUtility.getWorkingCopyPath(this.destination), SVNRevision.WORKING, new SVNProgressMonitor(this, monitor, null));
+			proxy.copyLocal(new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.source), null, SVNRevision.WORKING)}, FileUtility.getWorkingCopyPath(this.destination), ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 		    location.releaseSVNProxy(proxy);

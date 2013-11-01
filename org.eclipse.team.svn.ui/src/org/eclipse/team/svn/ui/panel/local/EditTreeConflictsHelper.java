@@ -22,7 +22,6 @@ import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Reason;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
-import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -249,9 +248,8 @@ public class EditTreeConflictsHelper {
 	protected IActionOperation getCopyResourceOperation() {
 		String url = this.getSrcUrl(false);
 		long pegRev = this.treeConflict.srcRightVersion.pegRevision;
-		boolean isFolder = this.treeConflict.nodeKind == SVNEntry.Kind.DIR;		
 		
-		return new CopyRemoteResourcesToWcOperation(new SVNEntryReference(url, SVNRevision.fromNumber(pegRev)), isFolder, this.local.getResource());
+		return new CopyRemoteResourcesToWcOperation(new SVNEntryReference(url, SVNRevision.fromNumber(pegRev)), this.local.getResource());
 	}
 	
 	protected IActionOperation getResolvedOperation(boolean isRemoteResolution, boolean isLocalResolution, boolean markAsMerged) {

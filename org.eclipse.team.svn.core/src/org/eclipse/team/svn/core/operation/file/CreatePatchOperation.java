@@ -54,9 +54,9 @@ public class CreatePatchOperation extends AbstractFileOperation {
 			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
 			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
 			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
-			proxy.diff(
+			proxy.diffTwo(
 				new SVNEntryRevisionReference(path, null, SVNRevision.BASE), new SVNEntryRevisionReference(path, null, SVNRevision.WORKING), this.useRelativePath ? path : null, this.fileName, 
-				Depth.infinityOrFiles(this.recurse), options, null, new SVNProgressMonitor(this, monitor, null));
+				Depth.infinityOrFiles(this.recurse), options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			remote.getRepositoryLocation().releaseSVNProxy(proxy);

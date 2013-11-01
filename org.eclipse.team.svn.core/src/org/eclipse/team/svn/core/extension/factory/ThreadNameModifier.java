@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.connector.ISVNImportFilterCallback;
 import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
@@ -102,70 +103,90 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public long []commit(String []path, String message, String[] changelistNames, int depth, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void commit(String []path, String message, String[] changelistNames, int depth, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.commit(path, this.processSVNLogProperty(message), changelistNames, depth, options, revProps, monitor);
+			this.connector.commit(path, this.processSVNLogProperty(message), changelistNames, depth, options, revProps, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void copy(String[] srcPaths, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void copyLocal(SVNEntryRevisionReference[] srcPaths, String destPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.copy(srcPaths, destPath, revision, monitor);
+			this.connector.copyLocal(srcPaths, destPath, options, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void copy(SVNEntryRevisionReference []srcPaths, String destPath, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void copyRemote(SVNEntryRevisionReference []srcPaths, String destPath, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.copy(srcPaths, destPath, this.processSVNLogProperty(message), options, revProps, monitor);
+			this.connector.copyRemote(srcPaths, destPath, this.processSVNLogProperty(message), options, revProps, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, String outFileName, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diffTwo(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, OutputStream stream, int depth, long options, String[] changelistNames, long outputOptions, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.diff(reference1, reference2, relativeToDir, outFileName, depth, options, changelistNames, monitor);
+			this.connector.diffTwo(reference1, reference2, relativeToDir, stream, depth, options, changelistNames, outputOptions, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String relativeToDir, String outFileName, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diff(SVNEntryReference reference, SVNRevisionRange revision1, String relativeToDir, String fileName, int depth, long options, String[] changelistNames, long outputOptions, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.diff(reference, revision1, revision2, relativeToDir, outFileName, depth, options, changelistNames, monitor);
+			this.connector.diff(reference, revision1, relativeToDir, fileName, depth, options, changelistNames, outputOptions, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, String[] changelistNames, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diffTwo(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, String fileName, int depth, long options, String[] changelistNames, long outputOptions, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.diffStatus(reference1, reference2, depth, options, changelistNames, cb, monitor);
+			this.connector.diffTwo(reference1, reference2, relativeToDir, fileName, depth, options, changelistNames, outputOptions, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, long options, String[] changelistNames, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diff(SVNEntryReference reference, SVNRevisionRange revision1, String relativeToDir, OutputStream stream, int depth, long options, String[] changelistNames, long outputOptions, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.diffStatus(reference, revision1, revision2, depth, options, changelistNames, cb, monitor);
+			this.connector.diff(reference, revision1, relativeToDir, stream, depth, options, changelistNames, outputOptions, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+
+	public void diffStatusTwo(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, String[] changelistNames, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.diffStatusTwo(reference1, reference2, depth, options, changelistNames, cb, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+
+	public void diffStatus(SVNEntryReference reference, SVNRevisionRange revision1, int depth, long options, String[] changelistNames, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.diffStatus(reference, revision1, depth, options, changelistNames, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -182,30 +203,30 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public long doExport(SVNEntryRevisionReference fromReference, String destPath, String nativeEOL, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public long exportTo(SVNEntryRevisionReference fromReference, String destPath, String nativeEOL, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.doExport(fromReference, destPath, nativeEOL, depth, options, monitor);
+			return this.connector.exportTo(fromReference, destPath, nativeEOL, depth, options, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void doImport(String path, String url, String message, int depth, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void importTo(String path, String url, String message, int depth, long options, Map revProps, ISVNImportFilterCallback filter, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.doImport(path, url, this.processSVNLogProperty(message), depth, options, revProps, monitor);
+			this.connector.importTo(path, url, this.processSVNLogProperty(message), depth, options, revProps, filter, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public long doSwitch(String path, SVNEntryRevisionReference toReference, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public long switchTo(String path, SVNEntryRevisionReference toReference, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.doSwitch(path, toReference, depth, options, monitor);
+			return this.connector.switchTo(path, toReference, depth, options, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -272,10 +293,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void listEntries(SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.list(reference, depth, direntFields, options, cb, monitor);
+			this.connector.listEntries(reference, depth, direntFields, options, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -292,20 +313,20 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void logEntries(SVNEntryReference reference, SVNRevisionRange []revisionRanges, String[] revProps, long limit, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void listHistoryLog(SVNEntryReference reference, SVNRevisionRange []revisionRanges, String[] revProps, long limit, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.logEntries(reference, revisionRanges, revProps, limit, options, cb, monitor);
+			this.connector.listHistoryLog(reference, revisionRanges, revProps, limit, options, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void mergeTwo(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.merge(reference1, reference2, localPath, depth, options, monitor);
+			this.connector.mergeTwo(reference1, reference2, localPath, depth, options, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -402,20 +423,20 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void move(String[] srcPaths, String dstPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void moveLocal(String[] srcPaths, String dstPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.move(srcPaths, dstPath, options, monitor);
+			this.connector.moveLocal(srcPaths, dstPath, options, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void move(SVNEntryReference[]srcPaths, String dstPath, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void moveRemote(String[] srcPaths, String dstPath, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.move(srcPaths, dstPath, this.processSVNLogProperty(message), options, revProps, monitor);
+			this.connector.moveRemote(srcPaths, dstPath, this.processSVNLogProperty(message), options, revProps, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -442,36 +463,36 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public SVNProperty getProperty(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public SVNProperty getProperty(SVNEntryRevisionReference reference, String name, String[] changeLists, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.getProperty(reference, name, monitor);
+			return this.connector.getProperty(reference, name, changeLists, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void removeProperty(String []path, String name, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void setPropertyLocal(String []path, SVNProperty property, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.removeProperty(path, name, depth, options, changelistNames, monitor);
+			this.connector.setPropertyLocal(path, property, depth, options, changelistNames, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void setProperty(String []path, SVNProperty property, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void setPropertyRemote(SVNEntryReference reference, SVNProperty property, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.setProperty(path, property, depth, options, changelistNames, monitor);
+			this.connector.setPropertyRemote(reference, property, message, options, revProps, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
-
+	
 	public void relocate(String from, String to, String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
@@ -482,10 +503,20 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void remove(String []path, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void removeLocal(String []path, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.remove(path, this.processSVNLogProperty(message), options, revProps, monitor);
+			this.connector.removeLocal(path, options, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+
+	public void removeRemote(String []path, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.removeRemote(path, this.processSVNLogProperty(message), options, revProps, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -652,10 +683,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void getMergeInfoLog(int logKind, SVNEntryReference reference, SVNEntryReference mergeSourceReference, String[] revProps, int depth, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void listMergeInfoLog(int logKind, SVNEntryReference reference, SVNEntryReference mergeSourceReference, SVNRevisionRange mergeSourceRange, String[] revProps, int depth, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.getMergeInfoLog(logKind, reference, mergeSourceReference, revProps, depth, options, cb, monitor);
+			this.connector.listMergeInfoLog(logKind, reference, mergeSourceReference, mergeSourceRange, revProps, depth, options, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -682,20 +713,20 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void info(SVNEntryRevisionReference reference, int depth, String[] changelistNames, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void getInfo(SVNEntryRevisionReference reference, int depth, String[] changelistNames, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.info(reference, depth, changelistNames, cb, monitor);
+			this.connector.getInfo(reference, depth, changelistNames, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void getProperties(SVNEntryRevisionReference reference, int depth, String[] changelistNames, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void listProperties(SVNEntryRevisionReference reference, int depth, String[] changelistNames, long options, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.getProperties(reference, depth, changelistNames, callback, monitor);
+			this.connector.listProperties(reference, depth, changelistNames, options, callback, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -732,6 +763,16 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
+	public ISVNConflictResolutionCallback getConflictResolver() {
+		String oldName = this.overrideThreadName();
+		try {
+			return this.connector.getConflictResolver();
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+
 	public String[] suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
@@ -742,10 +783,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public SVNProperty []getRevisionProperties(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public SVNProperty []listRevisionProperties(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.getRevisionProperties(reference, monitor);
+			return this.connector.listRevisionProperties(reference, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -822,4 +863,5 @@ public class ThreadNameModifier implements ISVNConnector {
 	protected String processSVNLogProperty(String str) {
 		return str != null ? str.replaceAll("\r\n|\r", "\n") : null;
 	}
+
 }

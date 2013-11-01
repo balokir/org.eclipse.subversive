@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.connector;
 
+
 /**
  * Progress monitor interface
  * 
@@ -53,6 +54,8 @@ public interface ISVNProgressMonitor {
 	}
 
 	public void progress(int current, int total, ItemState state);
+	
+	public void commitStatus(SVNCommitStatus status);
 
 	public boolean isActivityCancelled();
 }

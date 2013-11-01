@@ -73,7 +73,7 @@ public class ConcatenateProperyDataOperation extends AbstractActionOperation imp
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		SVNProperty existingProperty;
 		try {
-			existingProperty = proxy.getProperty(new SVNEntryRevisionReference(wcPath), this.propertyName, new SVNProgressMonitor(this, monitor, null));
+			existingProperty = proxy.getProperty(new SVNEntryRevisionReference(wcPath), this.propertyName, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

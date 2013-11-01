@@ -69,7 +69,7 @@ public class BranchTagOperation extends AbstractWorkingCopyOperation {
 					public void run(IProgressMonitor monitor) throws Exception {
 						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + wcPath + "\" \"" + destinationUrl + "\" -r " + SVNRevision.WORKING + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(BranchTagOperation.this.destination.getRepositoryLocation().getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 						SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(wcPath, SVNRevision.WORKING, SVNRevision.WORKING)};
-						proxy.copy(src, destinationUrl, BranchTagOperation.this.message, ISVNConnector.Options.INCLUDE_PARENTS, null, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
+						proxy.copyRemote(src, destinationUrl, BranchTagOperation.this.message, ISVNConnector.Options.INCLUDE_PARENTS, null, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);
 				

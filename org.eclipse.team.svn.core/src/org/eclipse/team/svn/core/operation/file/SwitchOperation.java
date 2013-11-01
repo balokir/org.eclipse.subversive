@@ -49,7 +49,7 @@ public class SwitchOperation extends AbstractFileConflictDetectionOperation {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.ignoreExternals) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		try {
 			long options = this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE; 
-			proxy.doSwitch(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), Depth.infinityOrFiles(true), options, new ConflictDetectionProgressMonitor(this, monitor, null));
+			proxy.switchTo(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), Depth.infinityOrFiles(true), options, new ConflictDetectionProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

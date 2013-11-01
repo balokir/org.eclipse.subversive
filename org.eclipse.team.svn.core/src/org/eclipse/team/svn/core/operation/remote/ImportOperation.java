@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNImportFilterCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -36,12 +37,18 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 	protected String message;
 	protected int depth;
 	protected RevisionPair []revisionPair;
+	protected ISVNImportFilterCallback filter;
 	
 	public ImportOperation(IRepositoryResource resource, String path, String message, int depth) {
+		this(resource, path, message, depth, null);
+	}
+	
+	public ImportOperation(IRepositoryResource resource, String path, String message, int depth, ISVNImportFilterCallback filter) {
 		super("Operation_Import", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.path = path;
 		this.message = message;
 		this.depth = depth;
+		this.filter = filter;
 	}
 	
 	public RevisionPair []getRevisions() {
@@ -66,7 +73,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + FileUtility.normalizePath(this.path) + "\" \"" + SVNUtility.getDepthArg(this.depth, false) + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			proxy.doImport(this.path, SVNUtility.encodeURL(resource.getUrl()), this.message, this.depth, ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, null, new SVNProgressMonitor(this, monitor, null));
+			proxy.importTo(this.path, SVNUtility.encodeURL(resource.getUrl()), this.message, this.depth, ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, null, filter, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			SVNUtility.removeSVNNotifyListener(proxy, notify);

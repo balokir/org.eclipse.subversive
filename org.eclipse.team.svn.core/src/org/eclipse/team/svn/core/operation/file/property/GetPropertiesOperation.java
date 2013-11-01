@@ -54,7 +54,7 @@ public class GetPropertiesOperation extends AbstractFileOperation {
 		IRepositoryLocation location = remote.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
-			this.properties = SVNUtility.properties(proxy, new SVNEntryRevisionReference(file.getAbsolutePath(), null, this.revision), new SVNProgressMonitor(this, monitor, null));
+			this.properties = SVNUtility.properties(proxy, new SVNEntryRevisionReference(file.getAbsolutePath(), null, this.revision), ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -65,7 +66,7 @@ public class RemovePropertyOperation extends AbstractFileOperation {
 					    final String name = RemovePropertyOperation.this.names[i];
 					    RemovePropertyOperation.this.protectStep(new IUnprotectedOperation() {
 			                public void run(IProgressMonitor monitor) throws Exception {
-			        			proxy.removeProperty(new String[] {current.getAbsolutePath()}, name, RemovePropertyOperation.this.isRecursive ? Depth.INFINITY : Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(RemovePropertyOperation.this, monitor, null));
+			        			proxy.setPropertyLocal(new String[] {current.getAbsolutePath()}, new SVNProperty(name), RemovePropertyOperation.this.isRecursive ? Depth.INFINITY : Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(RemovePropertyOperation.this, monitor, null));
 			                }
 			            }, monitor, RemovePropertyOperation.this.names.length);
 					}

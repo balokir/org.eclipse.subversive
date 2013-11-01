@@ -52,7 +52,6 @@ public class UDiffGenerateOperation extends AbstractActionOperation {
 			String wcPath = FileUtility.getWorkingCopyPath(this.local.getResource());
 			SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING);			
 			SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(this.remote);					
-			String outFileName = this.diffFile;			
 						
 			String projectPath = FileUtility.getWorkingCopyPath(this.local.getResource().getProject());
 			String relativeToDir = projectPath;
@@ -69,7 +68,7 @@ public class UDiffGenerateOperation extends AbstractActionOperation {
 					//+ "@" + refNext.pegRevision + "\""
 					+ FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$
 			
-			proxy.diff(refPrev, refNext, relativeToDir, outFileName, depth, options, changelistNames, new SVNProgressMonitor(this, monitor, null));			
+			proxy.diffTwo(refPrev, refNext, relativeToDir, this.diffFile, depth, options, changelistNames, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));			
 		} finally {
 			location.releaseSVNProxy(proxy);
 		}

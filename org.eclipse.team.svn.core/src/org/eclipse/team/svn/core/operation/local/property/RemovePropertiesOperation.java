@@ -78,7 +78,7 @@ public class RemovePropertiesOperation extends AbstractWorkingCopyOperation {
 		    final SVNProperty current = this.data[i];
 		    this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
-        			proxy.removeProperty(new String[] {wcPath}, current.name, RemovePropertiesOperation.this.isRecursive ? Depth.INFINITY : Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(RemovePropertiesOperation.this, monitor, null));
+        			proxy.setPropertyLocal(new String[] {wcPath}, new SVNProperty(current.name), RemovePropertiesOperation.this.isRecursive ? Depth.INFINITY : Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(RemovePropertiesOperation.this, monitor, null));
                 }
             }, monitor, this.data.length);
 		}

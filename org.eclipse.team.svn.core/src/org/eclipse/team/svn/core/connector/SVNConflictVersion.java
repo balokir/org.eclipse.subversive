@@ -25,6 +25,10 @@ package org.eclipse.team.svn.core.connector;
 public class SVNConflictVersion {
 
     public final String reposURL;
+    /**
+     * @since 1.8
+     */
+    public final String reposUUID;
     public final long pegRevision;
     public final String pathInRepos;
 
@@ -34,7 +38,15 @@ public class SVNConflictVersion {
     public final int nodeKind;
     
     public SVNConflictVersion(String reposURL, long pegRevision, String pathInRepos, int nodeKind) {
+    	this(reposURL, null, pegRevision, pathInRepos, nodeKind);
+    }
+    
+    /**
+     * @since 1.8
+     */
+    public SVNConflictVersion(String reposURL, String reposUUID, long pegRevision, String pathInRepos, int nodeKind) {
     	this.reposURL = reposURL;
+    	this.reposUUID = reposUUID;
     	this.pegRevision = pegRevision;
     	this.pathInRepos = pathInRepos;
     	this.nodeKind = nodeKind;

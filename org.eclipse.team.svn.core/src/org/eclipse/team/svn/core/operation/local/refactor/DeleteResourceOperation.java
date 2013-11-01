@@ -98,7 +98,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 				if (this.keepLocal && CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
 					options |= ISVNConnector.Options.KEEP_LOCAL;
 				}
-				proxy.remove(wcPaths, "", options, null, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
+				proxy.removeLocal(wcPaths, options, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
 			}
 			finally {
 			    location.releaseSVNProxy(proxy);

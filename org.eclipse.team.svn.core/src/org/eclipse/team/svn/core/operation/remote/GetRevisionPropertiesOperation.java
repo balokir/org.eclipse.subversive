@@ -57,7 +57,7 @@ public class GetRevisionPropertiesOperation extends AbstractActionOperation impl
 		SVNEntryRevisionReference reference = new SVNEntryRevisionReference(this.location.getUrl(), this.revision, this.revision);
 		ISVNConnector proxy = this.location.acquireSVNProxy();
 		try {
-			this.revProperties = proxy.getRevisionProperties(reference, new SVNProgressMonitor(this, monitor, null));
+			this.revProperties = proxy.listRevisionProperties(reference, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			this.location.releaseSVNProxy(proxy);

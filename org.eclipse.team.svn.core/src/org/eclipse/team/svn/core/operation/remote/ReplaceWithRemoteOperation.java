@@ -69,7 +69,7 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 			if (this.ignoreExternals) {
 				options |= ISVNConnector.Options.IGNORE_EXTERNALS;
 			}
-			proxy.doExport(entryRef, path, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
+			proxy.exportTo(entryRef, path, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
 			//perform replacement
 			if (this.toReplace instanceof IFile) {
 				FileUtility.copyFile(new File(toReplacePath), new File(path), monitor);
@@ -103,7 +103,7 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 				pathsToDelete.add(pathForReplacement + "/" + currentToReplace); //$NON-NLS-1$
 			}
 		}
-		connectorProxy.remove(pathsToDelete.toArray(new String [0]), "", ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
+		connectorProxy.removeRemote(pathsToDelete.toArray(new String [0]), "", ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
 		for (Iterator<String> it = sourceChildren.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			String currentFromSource = it.next();
 			File toReplace =  new File(pathForReplacement + "/" + currentFromSource); //$NON-NLS-1$

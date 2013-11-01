@@ -44,6 +44,12 @@ public class SVNEntry {
 		 * The entry kind is unknown
 		 */
 		public static final int UNKNOWN = 3;
+
+		/**
+		 * The entry kind is a symbolic link
+		 * @since 1.8
+		 */
+		public static final int SYMLINK = 4;
 	}
 
 	/**

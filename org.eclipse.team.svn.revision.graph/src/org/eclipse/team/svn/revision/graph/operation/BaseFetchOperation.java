@@ -82,7 +82,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 		
 		while (true) {																										
 			try {
-				proxy.logEntries(
+				proxy.listHistoryLog(
 						SVNUtility.getEntryReference(this.resource.getRepositoryLocation().getRepositoryRoot()),
 						new SVNRevisionRange[] {new SVNRevisionRange(this.getEndSkippedRevision(), this.getStartSkippedRevision())},
 						this.revProps,

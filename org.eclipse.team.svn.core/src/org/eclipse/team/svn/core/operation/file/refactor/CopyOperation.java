@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -75,7 +76,7 @@ public class CopyOperation extends AbstractFileOperation {
 						CopyOperation.this.nonSVNCopy(current, monitor);
 					}
 					else {
-						proxy.copy(new String[] {current.getAbsolutePath()}, checked.getAbsolutePath(), SVNRevision.WORKING, new SVNProgressMonitor(CopyOperation.this, monitor, null));
+						proxy.copyLocal(new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(current.getAbsolutePath(), null, SVNRevision.WORKING)}, checked.getAbsolutePath(), ISVNConnector.Options.NONE, new SVNProgressMonitor(CopyOperation.this, monitor, null));
 					}
 				}
 			}, monitor, files.length);

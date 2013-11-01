@@ -16,7 +16,6 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
-import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
@@ -63,7 +62,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + resource.getUrl() + "\" \"" + newUrl + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			proxy.move(new SVNEntryReference[] {SVNUtility.getEntryReference(resource)}, SVNUtility.encodeURL(newUrl), this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, null, new SVNProgressMonitor(this, monitor, null));
+			proxy.moveRemote(new String[] {SVNUtility.encodeURL(resource.getUrl())}, SVNUtility.encodeURL(newUrl), this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			SVNUtility.removeSVNNotifyListener(proxy, notify);

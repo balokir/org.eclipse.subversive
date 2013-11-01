@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.connector;
 
+
 /**
  * Property data call-back interface
  * 
@@ -21,13 +22,22 @@ package org.eclipse.team.svn.core.connector;
  * @author Alexander Gurov
  */
 public interface ISVNPropertyCallback {
+	public static class Pair {
+		public final String path;
+		public final SVNProperty []data;
+		
+		public Pair(String path, SVNProperty []data) {
+			this.path = path;
+			this.data = data;
+		}
+	}
 	/**
 	 * This method will be called by the connector library for each found entry
 	 * 
-	 * @param path
-	 *            the entry path
-	 * @param data
-	 *            the properties on the path
+	 * @param personalProps
+	 *            the pair of a path and property set belonging to the entry itself
+	 * @param inheritedProps
+	 *            the list of properties that were inherited from the parent nodes
 	 */
-	public void next(String path, SVNProperty[] data);
+	public void next(Pair personalProps, Pair []inheritedProps);
 }
