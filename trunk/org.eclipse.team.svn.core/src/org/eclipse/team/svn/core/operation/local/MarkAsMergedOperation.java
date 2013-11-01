@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.connector.SVNCommitStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IPostCommitErrorsProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.SVNPostCommitError;
 import org.eclipse.team.svn.core.operation.local.change.FolderChange;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
@@ -54,7 +54,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
     protected IResource []committables = new IResource[0];
     protected IResource []withDifferentNodeKind = new IResource[0];
     protected boolean ignoreExternals;
-	protected ArrayList<SVNPostCommitError> postCommitErrors;
+	protected ArrayList<SVNCommitStatus> postCommitErrors;
     
 	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean ignoreExternals) {
 		this(resources, override, overrideMessage, false, ignoreExternals);
@@ -88,8 +88,8 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	    return this.withDifferentNodeKind;
 	}
 	
-	public SVNPostCommitError [] getPostCommitErrors() {
-		return this.postCommitErrors == null ? null : this.postCommitErrors.toArray(new SVNPostCommitError[this.postCommitErrors.size()]);
+	public SVNCommitStatus [] getPostCommitErrors() {
+		return this.postCommitErrors == null ? null : this.postCommitErrors.toArray(new SVNCommitStatus[this.postCommitErrors.size()]);
 	}
 	
 	public void doOperation(IActionOperation op, IProgressMonitor monitor) {
@@ -100,7 +100,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		IResource []resources = FileUtility.shrinkChildNodesWithSwitched(this.operableData());
 		final ArrayList<IResource> committables = new ArrayList<IResource>();
 		final ArrayList<IResource> withDifferentNodeKind = new ArrayList<IResource>();
-		this.postCommitErrors = new ArrayList<SVNPostCommitError>();
+		this.postCommitErrors = new ArrayList<SVNCommitStatus>();
 
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final IResource current = resources[i];
@@ -180,7 +180,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 			    if (new File(wcPath).exists()) {
 			    	CommitOperation op = new CommitOperation(new IResource[] {local.getResource()}, this.overrideMessage, true, this.keepLocks);
 			    	this.doOperation(op, monitor);
-			    	SVNPostCommitError []errors = op.getPostCommitErrors();
+			    	SVNCommitStatus []errors = op.getPostCommitErrors();
 			    	if (errors != null) {
 			    		this.postCommitErrors.addAll(Arrays.asList(errors));
 			    	}

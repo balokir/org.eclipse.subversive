@@ -169,8 +169,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 				
 				try {
-					proxy.diff(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, 
-							tmp.getAbsolutePath(), Depth.EMPTY, options, null, new SVNProgressMonitor(this, monitor, null));
+					proxy.diffTwo(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, tmp.getAbsolutePath(), Depth.EMPTY, options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 					
 					int len = (int)tmp.length();
 					if (len > 0) {

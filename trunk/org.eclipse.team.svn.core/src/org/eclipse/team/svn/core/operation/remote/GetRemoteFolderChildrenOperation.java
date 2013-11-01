@@ -85,7 +85,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 			IRepositoryLocation location = this.parent.getRepositoryLocation();
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
-				SVNProperty data = proxy.getProperty(SVNUtility.getEntryRevisionReference(this.parent), BuiltIn.EXTERNALS, new SVNProgressMonitor(this, monitor, null));
+				SVNProperty data = proxy.getProperty(SVNUtility.getEntryRevisionReference(this.parent), BuiltIn.EXTERNALS, null, new SVNProgressMonitor(this, monitor, null));
 				if (data != null) {
 					//Map externals;
 					try {

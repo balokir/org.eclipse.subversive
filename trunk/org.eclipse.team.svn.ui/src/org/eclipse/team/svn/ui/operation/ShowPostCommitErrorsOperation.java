@@ -12,9 +12,9 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNCommitStatus;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IPostCommitErrorsProvider;
-import org.eclipse.team.svn.core.operation.SVNPostCommitError;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.ShowPostCommitErrorsDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -37,10 +37,10 @@ public class ShowPostCommitErrorsOperation extends AbstractActionOperation {
 	}
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
-    	SVNPostCommitError []errors = this.provider.getPostCommitErrors();
+    	SVNCommitStatus []errors = this.provider.getPostCommitErrors();
         if (errors != null) {
         	String tCompleteMessage = null;
-        	for (SVNPostCommitError error : errors) {
+        	for (SVNCommitStatus error : errors) {
         		tCompleteMessage = tCompleteMessage == null ? error.message : (tCompleteMessage + "\n\n" + error.message); //$NON-NLS-1$
         	}
         	if (tCompleteMessage != null) {

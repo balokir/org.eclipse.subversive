@@ -97,7 +97,7 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 			final SVNProperty property = properties[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-                	proxy.setProperty(new String[] {wcPath}, property, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetMultiPropertiesOperation.this, monitor, null));
+                	proxy.setPropertyLocal(new String[] {wcPath}, property, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetMultiPropertiesOperation.this, monitor, null));
 				}
 			}, monitor, properties.length);
 		}

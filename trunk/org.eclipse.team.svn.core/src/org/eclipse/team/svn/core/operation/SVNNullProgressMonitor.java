@@ -11,7 +11,11 @@
 
 package org.eclipse.team.svn.core.operation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNCommitStatus;
 
 /**
  * Empty implementation of the IProgressMonitor interface
@@ -19,6 +23,20 @@ import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
  * @author Alexander Gurov
  */
 public class SVNNullProgressMonitor implements ISVNProgressMonitor {
+	protected ArrayList<SVNCommitStatus> commitStatuses = new ArrayList<SVNCommitStatus>();
+	
+	public Collection<SVNCommitStatus> getCommitStatuses() {
+		return this.commitStatuses;
+	}
+
+	public Collection<SVNCommitStatus> getPostCommitErrors() {
+		ArrayList<SVNCommitStatus> retVal = new ArrayList<SVNCommitStatus>();
+		for (SVNCommitStatus status : this.commitStatuses) {
+			retVal.add(status);
+		}
+		return retVal;
+	}
+
 	public void progress(int current, int total, ItemState state) {
 
 	}
@@ -27,4 +45,8 @@ public class SVNNullProgressMonitor implements ISVNProgressMonitor {
 		return false;
 	}
 
+	public void commitStatus(SVNCommitStatus status) {
+		this.commitStatuses.add(status);
+	}
+	
 }

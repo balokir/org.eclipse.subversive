@@ -110,6 +110,18 @@ public class SVNProperty {
 	 * 
 	 * @param name
 	 *            the property name
+	 */
+	public SVNProperty(String name) {
+		this.name = name;
+		this.value = null; 
+		this.binValue = null;
+	}
+
+	/**
+	 * The {@link SVNProperty} instance could be initialized only once because all fields are final
+	 * 
+	 * @param name
+	 *            the property name
 	 * @param value
 	 *            the value of the textual property
 	 */

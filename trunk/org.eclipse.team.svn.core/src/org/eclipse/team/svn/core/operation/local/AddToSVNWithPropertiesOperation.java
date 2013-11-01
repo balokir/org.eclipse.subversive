@@ -85,7 +85,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 		String path = FileUtility.getWorkingCopyPath(resource);
 		SVNProperty[] properties = CoreExtensionsManager.instance().getOptionProvider().getAutomaticProperties(resource.getName());
 		for (int pCount = 0; pCount < properties.length; pCount++) {
-			proxy.setProperty(new String[] {path}, new SVNProperty(properties[pCount].name, properties[pCount].value), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
+			proxy.setPropertyLocal(new String[] {path}, new SVNProperty(properties[pCount].name, properties[pCount].value), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		if (resource.getType() == IResource.FILE) {
 			this.processFile(resource, proxy, monitor);
@@ -95,13 +95,13 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 	protected void processFile(IResource resource, ISVNConnector proxy, IProgressMonitor monitor) throws SVNConnectorException {
 		String path = FileUtility.getWorkingCopyPath(resource);
 		int type = FileUtility.getMIMEType(resource);
-		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(path), BuiltIn.MIME_TYPE, new SVNProgressMonitor(this, monitor, null));
+		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(path), BuiltIn.MIME_TYPE, null, new SVNProgressMonitor(this, monitor, null));
 		if (data == null) {
 			if (type == Team.BINARY) {
-				proxy.setProperty(new String[] {path}, new SVNProperty(BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
+				proxy.setPropertyLocal(new String[] {path}, new SVNProperty(BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 			}
 			else if (this.doMarkTextFiles && type == Team.TEXT) {
-				proxy.setProperty(new String[] {path}, new SVNProperty(BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
+				proxy.setPropertyLocal(new String[] {path}, new SVNProperty(BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 	}

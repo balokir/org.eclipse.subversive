@@ -31,15 +31,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNNotification;
+import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
-import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -393,10 +393,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		final StringBuffer buf = new StringBuffer();
 		buf.append(SVNUIMessages.MergePanel_Preview_Header_Text);
 		buf.append(SVNUIMessages.MergePanel_Preview_Header_Line);
-		mergeOp.setExternalMonitor(new ISVNProgressMonitor() {
-			public boolean isActivityCancelled() {
-				return false;
-			}
+		mergeOp.setExternalMonitor(new SVNNullProgressMonitor() {
 			public void progress(int current, int total, ItemState state) {
 				buf.append("<b>"); //$NON-NLS-1$
 				switch (state.action) {

@@ -64,7 +64,7 @@ public class ExportOperation extends AbstractRepositoryOperation {
 					if (ExportOperation.this.ignoreExternals) {
 						options |= ISVNConnector.Options.IGNORE_EXTERNALS;
 					}
-					proxy.doExport(entryRef, path, null, ExportOperation.this.depth, options, new SVNProgressMonitor(ExportOperation.this, monitor, null));
+					proxy.exportTo(entryRef, path, null, ExportOperation.this.depth, options, new SVNProgressMonitor(ExportOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);
 			

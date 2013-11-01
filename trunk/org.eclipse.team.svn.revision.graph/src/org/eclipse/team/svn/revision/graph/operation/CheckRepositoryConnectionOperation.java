@@ -106,7 +106,7 @@ public class CheckRepositoryConnectionOperation extends AbstractActionOperation 
 		IRepositoryLocation location = this.resource.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {				
-			proxy.logEntries(
+			proxy.listHistoryLog(
 					SVNUtility.getEntryReference(location.getRepositoryRoot()), 
 					new SVNRevisionRange[] {new SVNRevisionRange(this.lastRepositoryRevision, this.lastRepositoryRevision)},
 					new String[0], 

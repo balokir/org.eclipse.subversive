@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.core.operation;
 
+import org.eclipse.team.svn.core.connector.SVNCommitStatus;
+
 
 /**
  * This interface allows to return all the post-commit hook's errors
@@ -18,5 +20,5 @@ package org.eclipse.team.svn.core.operation;
  * @author Alexander Gurov
  */
 public interface IPostCommitErrorsProvider {
-	public SVNPostCommitError []getPostCommitErrors();
+	public SVNCommitStatus []getPostCommitErrors();
 }

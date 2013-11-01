@@ -87,7 +87,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void removeFromParentIgnore(ISVNConnector proxy, String parentPath, String name) throws Exception {
-		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, new SVNNullProgressMonitor());
+		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, null, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value; //$NON-NLS-1$
 		
 		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true); //$NON-NLS-1$
@@ -104,14 +104,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 			}
 		}
 		
-		if (ignoreValue.length() > 0)
-		{
-			proxy.setProperty(new String[] {parentPath}, new SVNProperty(BuiltIn.IGNORE, ignoreValue), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
-		}
-		else
-		{
-			proxy.removeProperty(new String[] {parentPath}, BuiltIn.IGNORE, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
-		}
+		proxy.setPropertyLocal(new String[] {parentPath}, new SVNProperty(BuiltIn.IGNORE, ignoreValue.length() > 0 ? ignoreValue : null), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 	}
 	
 	protected void doAdd(IResource current, ISVNConnector proxy, IProgressMonitor monitor) throws Exception {

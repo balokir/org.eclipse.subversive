@@ -100,9 +100,27 @@ public class SVNConflictDescriptor {
 		
 	    /**
          * Object is already added or schedule-add.
-         * @since New in 1.6.
+         * @since 1.6
          */
         public static final int ADDED = 5;
+		
+	    /**
+         * Object is already replaced.
+         * @since 1.7
+         */
+        public static final int REPLACED = 6;
+		
+	    /**
+         * Object is moved away.
+         * @since 1.8
+         */
+        public static final int MOVED_AWAY = 7;
+		
+	    /**
+         * Object is moved here.
+         * @since 1.8
+         */
+        public static final int MOVED_HERE = 8;
 	}
 
 	public static class Operation {

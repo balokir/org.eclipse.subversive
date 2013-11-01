@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNCommitStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorUnresolvedConflictException;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -30,7 +31,6 @@ import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IPostCommitErrorsProvider;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.SVNPostCommitError;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -46,7 +46,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 	protected boolean keepLocks;
 	protected String message;
 	protected ArrayList<RevisionPair> revisionsPairs;
-	protected ArrayList<SVNPostCommitError> postCommitErrors;
+	protected ArrayList<SVNCommitStatus> postCommitErrors;
 	
 	protected String []paths;
 
@@ -68,13 +68,13 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 		return this.revisionsPairs == null ? null : this.revisionsPairs.toArray(new RevisionPair[this.revisionsPairs.size()]);
 	}
 	
-	public SVNPostCommitError [] getPostCommitErrors() {
-		return this.postCommitErrors == null ? null : this.postCommitErrors.toArray(new SVNPostCommitError[this.postCommitErrors.size()]);
+	public SVNCommitStatus [] getPostCommitErrors() {
+		return this.postCommitErrors == null ? null : this.postCommitErrors.toArray(new SVNCommitStatus[this.postCommitErrors.size()]);
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		this.revisionsPairs = new ArrayList<RevisionPair>();
-		this.postCommitErrors = new ArrayList<SVNPostCommitError>();
+		this.postCommitErrors = new ArrayList<SVNCommitStatus>();
 		File []files = this.operableData();
 
 		this.defineInitialResourceSet(files);
@@ -122,15 +122,16 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				SVNProgressMonitor svnMonitor = new SVNProgressMonitor(CommitOperation.this, monitor, null);
-				long revisionNumbers[] = proxy.commit(
+				proxy.commit(
 				    CommitOperation.this.paths, 
 					CommitOperation.this.message, 
 					null,
 					Depth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
 					null, svnMonitor);
-				if (revisionNumbers.length > 0 && revisionNumbers[0] != SVNRevision.INVALID_REVISION_NUMBER) {
-					CommitOperation.this.revisionsPairs.add(new RevisionPair(revisionNumbers[0], CommitOperation.this.paths, location));	
-					String message = SVNMessages.format(SVNMessages.Console_CommittedRevision, new String[] {String.valueOf(revisionNumbers[0])});
+				SVNCommitStatus status = svnMonitor.getCommitStatuses().isEmpty() ? null : svnMonitor.getCommitStatuses().iterator().next();
+				if (status != null && status.revision != SVNRevision.INVALID_REVISION_NUMBER) {
+					CommitOperation.this.revisionsPairs.add(new RevisionPair(status.revision, CommitOperation.this.paths, location));	
+					String message = SVNMessages.format(SVNMessages.Console_CommittedRevision, new String[] {String.valueOf(status.revision)});
 					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 				if (svnMonitor.getPostCommitErrors() != null) {

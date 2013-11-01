@@ -907,7 +907,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					}
 					final SVNConflictDescriptor [][]treeConflicts = new SVNConflictDescriptor[1][];
 					try {
-						proxy.info(new SVNEntryRevisionReference(statuses[i].path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+						proxy.getInfo(new SVNEntryRevisionReference(statuses[i].path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
 								treeConflicts[0] = info.treeConflicts;
 							}

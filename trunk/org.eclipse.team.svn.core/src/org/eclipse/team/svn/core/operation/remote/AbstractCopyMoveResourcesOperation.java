@@ -51,9 +51,11 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		this.revisionsPairs = new ArrayList<RevisionPair>();
 		IRepositoryResource []selectedResources = this.operableData();
-		final SVNEntryRevisionReference []refs = new SVNEntryRevisionReference[selectedResources.length]; 
+		final SVNEntryRevisionReference []refs = new SVNEntryRevisionReference[selectedResources.length];
+		String []paths = new String[selectedResources.length];
 		for (int i = 0; i < selectedResources.length; i++) {
 			refs[i] = SVNUtility.getEntryRevisionReference(selectedResources[i]);
+			paths[i] = refs[i].path;
 		}
 		final IRepositoryLocation location = selectedResources[0].getRepositoryLocation();
 		final String dstUrl = this.destinationResource.getUrl() + (this.resName != null && this.resName.length() > 0 ? "/" + this.resName : (selectedResources.length > 1 ? "" : "/" + selectedResources[0].getName())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -75,7 +77,7 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 		//NOTE JavaHL is crashed when empty folder is copied independently from MAKE_PARENTS option
 		SVNUtility.addSVNNotifyListener(proxy, notify);	
 		try {
-			this.runCopyMove(proxy, refs, SVNUtility.encodeURL(dstUrl), monitor);
+			this.runCopyMove(proxy, refs, paths, SVNUtility.encodeURL(dstUrl), monitor);
 		}
 		finally {
 			SVNUtility.removeSVNNotifyListener(proxy, notify);
@@ -84,5 +86,5 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 	}
 
 	protected abstract String []getRevisionPaths(String srcUrl, String dstUrl);
-	protected abstract void runCopyMove(ISVNConnector proxy, SVNEntryRevisionReference [] source, String destinationUrl, IProgressMonitor monitor) throws Exception;
+	protected abstract void runCopyMove(ISVNConnector proxy, SVNEntryRevisionReference [] source, String[] sourcePaths, String destinationUrl, IProgressMonitor monitor) throws Exception;
 }

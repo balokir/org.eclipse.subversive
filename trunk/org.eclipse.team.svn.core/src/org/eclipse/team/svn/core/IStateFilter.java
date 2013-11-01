@@ -599,7 +599,7 @@ public interface IStateFilter {
 					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 					ISVNConnector proxy = location.acquireSVNProxy();
 					try {
-						propData[0] = SVNUtility.properties(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE), new SVNProgressMonitor(this, monitor, null));
+						propData[0] = SVNUtility.properties(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE), ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 					}
 					finally {
 						location.releaseSVNProxy(proxy);

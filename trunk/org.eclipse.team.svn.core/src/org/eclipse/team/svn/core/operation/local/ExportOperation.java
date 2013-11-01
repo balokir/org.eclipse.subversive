@@ -68,7 +68,7 @@ public class ExportOperation extends AbstractWorkingCopyOperation {
 					if (ExportOperation.this.ignoreExternals) {
 						options |= ISVNConnector.Options.IGNORE_EXTERNALS;
 					}
-					proxy.doExport(new SVNEntryRevisionReference(wcPath, null, ExportOperation.this.revision), targetPath, null, Depth.INFINITY, options, new SVNProgressMonitor(ExportOperation.this, monitor, null));
+					proxy.exportTo(new SVNEntryRevisionReference(wcPath, null, ExportOperation.this.revision), targetPath, null, Depth.INFINITY, options, new SVNProgressMonitor(ExportOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);
 			

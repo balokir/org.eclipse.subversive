@@ -109,7 +109,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 				if (this.ignoreExternals) {
 					options |= ISVNConnector.Options.IGNORE_EXTERNALS;
 				}
-				proxy.doExport(SVNUtility.getEntryRevisionReference(remote), wcPath, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
+				proxy.exportTo(SVNUtility.getEntryRevisionReference(remote), wcPath, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -106,7 +107,7 @@ public class FromDifferenceRepositoryResourceProviderOperation extends AbstractR
 		ProgressMonitorUtility.setTaskInfo(monitor, this, SVNMessages.Progress_Running);
 		try {
 			if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
-				SVNUtility.diffStatus(proxy, statusesList, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null, false));
+				SVNUtility.diffStatus(proxy, statusesList, refPrev, new SVNRevisionRange(refPrev.revision, refNext.revision), Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null, false));
 			}
 			else {
 				SVNUtility.diffStatus(proxy, statusesList, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null, false));

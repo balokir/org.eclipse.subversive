@@ -81,7 +81,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 				final SVNChangeStatus svnChangeStatus = it.next();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						proxy.info(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
 								svnChangeStatus.treeConflicts = info.treeConflicts;
 							}

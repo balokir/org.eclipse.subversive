@@ -90,7 +90,7 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 					long options = SwitchOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
 					options |= SwitchOperation.this.isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE;
 					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(SwitchOperation.this.ignoreExternals) + SVNUtility.getDepthArg(SwitchOperation.this.depth, SwitchOperation.this.isStickyDepth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					proxy.doSwitch(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
+					proxy.switchTo(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
 							options, new ConflictDetectionProgressMonitor(SwitchOperation.this, monitor, null));
 					
 					if (resource instanceof IProject) {

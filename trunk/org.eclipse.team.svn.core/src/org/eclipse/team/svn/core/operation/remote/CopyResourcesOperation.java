@@ -34,13 +34,13 @@ public class CopyResourcesOperation extends AbstractCopyMoveResourcesOperation {
 		return new String [] {dstUrl};
 	}
 
-	protected void runCopyMove(ISVNConnector proxy, SVNEntryRevisionReference[] source, String destinationUrl, IProgressMonitor monitor) throws Exception {
+	protected void runCopyMove(ISVNConnector proxy, SVNEntryRevisionReference[] source, String[] sourcePaths, String destinationUrl, IProgressMonitor monitor) throws Exception {
 		//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -r " + current.getSelectedRevision() + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 		long options = ISVNConnector.CommandMasks.COPY_SERVER;
 		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
 			options &= ~ISVNConnector.Options.INTERPRET_AS_CHILD /*do not use SVN 1.5 options*/;
 		}
-		proxy.copy(source, destinationUrl, this.message, options, null, new SVNProgressMonitor(this, monitor, null));
+		proxy.copyRemote(source, destinationUrl, this.message, options, null, new SVNProgressMonitor(this, monitor, null));
 	}
 	
 }
