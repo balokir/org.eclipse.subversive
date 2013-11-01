@@ -48,7 +48,6 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
 	protected IResource [] affectedResource;
 
 	protected IResourceStatesListener resourceStatesListener;
-	protected boolean allowTreatAsEditColumn;
 	
 	protected static final String []MESSAGES = new String[] {
 		"OverrideResourcesPanel_Description_Commit", //$NON-NLS-1$
@@ -62,7 +61,6 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
 	
     public OverrideResourcesPanel(IResource[] resources, IResource[] userSelectedResources, int msgId, IResource [] affectedResources) {
         super(resources, userSelectedResources, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
-        this.allowTreatAsEditColumn = msgId == OverrideResourcesPanel.MSG_COMMIT;
         this.dialogTitle = SVNUIMessages.OverrideResourcesPanel_Title;
         this.dialogDescription = SVNUIMessages.getString(OverrideResourcesPanel.MESSAGES[msgId]);
         boolean isParticipantPane = this.paneParticipantHelper.isParticipantPane();
@@ -90,7 +88,7 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
 		description.setLayoutData(data);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 100;
-		ResourceSelectionComposite affectedResourcesComposite = new ResourceSelectionComposite(parent, SWT.NONE, this.affectedResource, false, this.allowTreatAsEditColumn, false);
+		ResourceSelectionComposite affectedResourcesComposite = new ResourceSelectionComposite(parent, SWT.NONE, this.affectedResource, false, false);
 		affectedResourcesComposite.setLayoutData(data);
 		this.attachTo(affectedResourcesComposite, new AbstractVerifier() {
 			protected String getErrorMessage(Control input) {
