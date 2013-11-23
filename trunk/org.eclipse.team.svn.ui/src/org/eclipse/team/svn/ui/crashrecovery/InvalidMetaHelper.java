@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
@@ -73,9 +73,9 @@ public class InvalidMetaHelper implements IResolutionHelper {
 
 	protected boolean isValid(ISVNConnectorFactory factory, String path) {
 		try {
-			ISVNConnector proxy = factory.newInstance();
+			ISVNConnector proxy = factory.createConnector();
 			try {
-				SVNChangeStatus []st = SVNUtility.status(proxy, path, Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+				SVNChangeStatus []st = SVNUtility.status(proxy, path, SVNDepth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
 				return st != null && st.length > 0;
 			}
 			finally {

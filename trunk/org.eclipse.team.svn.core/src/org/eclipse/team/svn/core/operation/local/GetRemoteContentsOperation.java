@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -109,7 +109,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 				if (this.ignoreExternals) {
 					options |= ISVNConnector.Options.IGNORE_EXTERNALS;
 				}
-				proxy.exportTo(SVNUtility.getEntryRevisionReference(remote), wcPath, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
+				proxy.exportTo(SVNUtility.getEntryRevisionReference(remote), wcPath, null, SVNDepth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

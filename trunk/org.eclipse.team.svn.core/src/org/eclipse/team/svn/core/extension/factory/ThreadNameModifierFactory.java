@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.extension.factory;
 
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNManager;
 
 /**
  * Wraps real factories in order to produce wrapped SVN connectors.
@@ -53,8 +54,12 @@ public class ThreadNameModifierFactory implements ISVNConnectorFactory {
 		return this.factory.getSVNAPIVersion();
 	}
 
-	public ISVNConnector newInstance() {
-		return new ThreadNameModifier(this.factory.newInstance());
+	public ISVNConnector createConnector() {
+		return new ThreadNameModifier(this.factory.createConnector());
+	}
+
+	public ISVNManager createManager() {
+		return this.factory.createManager();
 	}
 
 }

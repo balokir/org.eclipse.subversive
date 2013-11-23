@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -39,7 +40,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class UpdateOperation extends AbstractFileConflictDetectionOperation implements IFileProvider {
 	protected SVNRevision selectedRevision;
 	protected boolean ignoreExternals;
-	protected int depth = ISVNConnector.Depth.INFINITY;
+	protected int depth = SVNDepth.INFINITY;
 	protected boolean isStickyDepth;
 	protected String updateDepthPath;
 	

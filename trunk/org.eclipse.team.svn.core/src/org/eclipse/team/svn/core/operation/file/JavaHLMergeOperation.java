@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -54,7 +54,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 		try {
 			proxy.mergeTwo(
 				SVNUtility.getEntryRevisionReference(this.from1), SVNUtility.getEntryRevisionReference(this.from2),
-				file.getAbsolutePath(), Depth.INFINITY, this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+				file.getAbsolutePath(), SVNDepth.INFINITY, this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			if (this.notify != null) {

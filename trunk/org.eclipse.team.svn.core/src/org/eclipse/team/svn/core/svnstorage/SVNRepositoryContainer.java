@@ -15,12 +15,12 @@ import java.io.Serializable;
 
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntry.Fields;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -76,7 +76,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 			
 			ISVNConnector proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
-				children = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.IMMEDIATES, Fields.ALL, ISVNConnector.Options.FETCH_LOCKS, new SVNNullProgressMonitor());
+				children = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), SVNDepth.IMMEDIATES, Fields.ALL, ISVNConnector.Options.FETCH_LOCKS, new SVNNullProgressMonitor());
 			}
 			finally {
 			    this.getRepositoryLocation().releaseSVNProxy(proxy);
@@ -106,7 +106,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 	
 	protected void getRevisionImpl(ISVNConnector proxy) throws SVNConnectorException {
 		SVNEntryRevisionReference reference = SVNUtility.getEntryRevisionReference(this);
-		SVNEntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
+		SVNEntryInfo []infos = SVNUtility.info(proxy, reference, SVNDepth.EMPTY, new SVNNullProgressMonitor());
 		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != SVNRevision.INVALID_REVISION_NUMBER) {
 			this.lastRevision = SVNRevision.fromNumber(infos[0].lastChangedRevision);
 			SVNProperty []data = SVNUtility.properties(proxy, reference, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());

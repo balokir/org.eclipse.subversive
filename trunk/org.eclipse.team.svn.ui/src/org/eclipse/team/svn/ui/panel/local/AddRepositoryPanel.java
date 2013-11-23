@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNManager;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -127,7 +127,7 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 	}
 	
 	public String getRepositoryType() {
-		return this.fsfsButton.getSelection() ? ISVNConnector.REPOSITORY_FSTYPE_FSFS : ISVNConnector.REPOSITORY_FSTYPE_BDB;
+		return this.fsfsButton.getSelection() ? ISVNManager.REPOSITORY_FSTYPE_FSFS : ISVNManager.REPOSITORY_FSTYPE_BDB;
 	}
 	
 	public boolean isCreateRepositoryLocation() {
@@ -147,21 +147,21 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 		
 		AbstractActionOperation mainOp = new AbstractActionOperation("Operation_CreateRepository", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				ISVNConnector proxy = location.acquireSVNProxy();				
+				ISVNManager proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createManager();
 				try {					
 					StringBuffer msg = new StringBuffer();
 					msg.append("svnadmin create").append(" ");  //$NON-NLS-1$ //$NON-NLS-2$
 					msg.append("--fs-type ").append(repositoryType).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-					if (ISVNConnector.REPOSITORY_FSTYPE_BDB.equals(repositoryType)) {
+					if (ISVNManager.REPOSITORY_FSTYPE_BDB.equals(repositoryType)) {
 						msg.append("--bdb-txn-nosync").append(" "); //$NON-NLS-1$ //$NON-NLS-2$
 						msg.append("--bdb-log-keep").append(" ");	 //$NON-NLS-1$ //$NON-NLS-2$
 					}					
 					msg.append("\"").append(FileUtility.normalizePath(repositoryPath)).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 					msg.append("\n"); //$NON-NLS-1$
 					this.writeToConsole(IConsoleStream.LEVEL_CMD, msg.toString());
-					proxy.createRepository(repositoryPath, repositoryType, new SVNProgressMonitor(this, monitor, null));
+					proxy.create(repositoryPath, repositoryType, null, ISVNManager.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 				} finally {
-					location.releaseSVNProxy(proxy);
+					proxy.dispose();
 				}
 			}			
 		};

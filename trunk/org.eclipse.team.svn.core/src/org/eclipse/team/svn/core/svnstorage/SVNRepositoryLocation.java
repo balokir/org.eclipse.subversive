@@ -33,10 +33,10 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -767,7 +767,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		final String []retVal = new String[2];
 		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_FetchRepositoryRoot", SVNMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-			    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+			    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 				proxy.setCredentialsCacheEnabled(false);
 				SVNUtility.configureProxy(proxy, location);
 				
@@ -785,7 +785,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				SVNEntryInfo []infos = null;
 				String url = location.getUrl();
 				try {
-				    infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(SVNUtility.encodeURL(url), SVNRevision.HEAD, SVNRevision.HEAD), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+				    infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(SVNUtility.encodeURL(url), SVNRevision.HEAD, SVNRevision.HEAD), SVNDepth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				}
 				finally {
 					proxy.dispose();
@@ -842,7 +842,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	protected ISVNConnector newProxyInstance() {
 		IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
-	    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+	    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 	    
 		proxy.setCredentialsCacheEnabled(false);
 		proxy.setSSLCertificateCacheEnabled(true);

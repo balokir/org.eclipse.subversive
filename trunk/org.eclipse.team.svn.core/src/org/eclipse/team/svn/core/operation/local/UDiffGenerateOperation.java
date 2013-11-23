@@ -14,9 +14,9 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -56,7 +56,7 @@ public class UDiffGenerateOperation extends AbstractActionOperation {
 			String projectPath = FileUtility.getWorkingCopyPath(this.local.getResource().getProject());
 			String relativeToDir = projectPath;
 								
-			int depth = Depth.INFINITY;							
+			int depth = SVNDepth.INFINITY;							
 			long options = ISVNConnector.Options.NONE;
 			//ISVNConnector.Options.IGNORE_ANCESTRY;					
 			String[] changelistNames = new String[0];

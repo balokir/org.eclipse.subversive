@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutOperation;
@@ -97,7 +97,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 							public void run() {
 								boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-								IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(UIMonitorUtility.getShell(), toCheckout.toArray(new IRepositoryResource[toCheckout.size()]), null, false, null, Depth.INFINITY, ignoreExternals);
+								IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(UIMonitorUtility.getShell(), toCheckout.toArray(new IRepositoryResource[toCheckout.size()]), null, false, null, SVNDepth.INFINITY, ignoreExternals);
 								if (op != null) {
 									UIMonitorUtility.doTaskScheduledWorkspaceModify(op);
 								}
@@ -112,7 +112,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 		}
 		else {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), resources, null, false, null, Depth.INFINITY, ignoreExternals);
+			IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), resources, null, false, null, SVNDepth.INFINITY, ignoreExternals);
 			if (op != null) {
 				this.runScheduled(op);
 			}

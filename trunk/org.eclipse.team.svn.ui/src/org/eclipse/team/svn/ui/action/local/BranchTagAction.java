@@ -20,7 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -216,7 +216,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
-				SwitchOperation switchOp = new SwitchOperation(resources, mainOp, Depth.INFINITY, false, ignoreExternals);
+				SwitchOperation switchOp = new SwitchOperation(resources, mainOp, SVNDepth.INFINITY, false, ignoreExternals);
 			    op.add(switchOp, new IActionOperation[] {mainOp});
 				op.add(new RestoreProjectMetaOperation(saveOp));
 				op.add(new RefreshResourcesOperation(resources));

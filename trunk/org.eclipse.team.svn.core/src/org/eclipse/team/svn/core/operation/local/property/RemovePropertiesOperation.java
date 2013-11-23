@@ -15,8 +15,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
@@ -78,7 +78,7 @@ public class RemovePropertiesOperation extends AbstractWorkingCopyOperation {
 		    final SVNProperty current = this.data[i];
 		    this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
-        			proxy.setPropertyLocal(new String[] {wcPath}, new SVNProperty(current.name), RemovePropertiesOperation.this.isRecursive ? Depth.INFINITY : Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(RemovePropertiesOperation.this, monitor, null));
+        			proxy.setPropertyLocal(new String[] {wcPath}, new SVNProperty(current.name), RemovePropertiesOperation.this.isRecursive ? SVNDepth.INFINITY : SVNDepth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(RemovePropertiesOperation.this, monitor, null));
                 }
             }, monitor, this.data.length);
 		}

@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -76,7 +76,7 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 						proxy.importTo(path, 
 								SVNUtility.encodeURL(url), 
 								CreateFileOperation.this.message, 
-								Depth.FILES,
+								SVNDepth.FILES,
 								ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, 
 								null, null, new SVNProgressMonitor(CreateFileOperation.this, monitor, null));		
 					}}, monitor, this.fileNames.length);

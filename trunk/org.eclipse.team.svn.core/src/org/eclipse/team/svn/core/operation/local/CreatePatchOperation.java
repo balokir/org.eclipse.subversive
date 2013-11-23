@@ -35,8 +35,8 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -169,7 +169,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 				
 				try {
-					proxy.diffTwo(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, tmp.getAbsolutePath(), Depth.EMPTY, options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+					proxy.diffTwo(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, tmp.getAbsolutePath(), SVNDepth.EMPTY, options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 					
 					int len = (int)tmp.length();
 					if (len > 0) {

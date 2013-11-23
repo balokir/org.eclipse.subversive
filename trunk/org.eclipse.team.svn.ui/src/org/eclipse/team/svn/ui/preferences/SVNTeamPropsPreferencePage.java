@@ -725,7 +725,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	public String findConfigFile(String dialogTitle) {
-		ISVNConnector connector = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector connector = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		String cfgDir;
 		try {
 			cfgDir = connector.getConfigDirectory();

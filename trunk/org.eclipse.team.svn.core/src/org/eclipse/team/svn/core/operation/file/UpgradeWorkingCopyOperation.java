@@ -41,7 +41,7 @@ public class UpgradeWorkingCopyOperation extends AbstractFileOperation {
 		
 		files = FileUtility.shrinkChildNodes(files, false);
 
-		final ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		final ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
 			for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 				final File current = files[i];

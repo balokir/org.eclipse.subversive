@@ -47,13 +47,13 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
@@ -520,7 +520,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			//detect if resource is a file or directory
-			SVNEntryInfo[] entriesInfo = SVNUtility.info(proxy, reference, Depth.EMPTY, monitor);
+			SVNEntryInfo[] entriesInfo = SVNUtility.info(proxy, reference, SVNDepth.EMPTY, monitor);
 			if (entriesInfo.length > 0) {
 				SVNEntryInfo info = entriesInfo[0];
 				if (info.kind == Kind.FILE) {
@@ -858,9 +858,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected SVNChangeStatus []getStatuses(String path) throws Exception {
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
-			SVNChangeStatus []statuses = SVNUtility.status(proxy, path, Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new SVNNullProgressMonitor());
+			SVNChangeStatus []statuses = SVNUtility.status(proxy, path, SVNDepth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new SVNNullProgressMonitor());
 			SVNUtility.reorder(statuses, true);
 			return statuses;
 		}
@@ -903,11 +903,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				//	So, in order to solve the problem we should recognize the node as conflicting and allow to perform "revert" or "mark as merged" for it.  
 				if (statuses[i].hasConflict && statuses[i].treeConflicts == null || nodeKind == SVNEntry.Kind.NONE) {
 					if (proxy == null) {
-						proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+						proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 					}
 					final SVNConflictDescriptor [][]treeConflicts = new SVNConflictDescriptor[1][];
 					try {
-						proxy.getInfo(new SVNEntryRevisionReference(statuses[i].path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+						proxy.getInfo(new SVNEntryRevisionReference(statuses[i].path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
 								treeConflicts[0] = info.treeConflicts;
 							}
@@ -977,10 +977,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						ILocalResource tLocalParent = (ILocalResource)this.localResources.get(tRes.getParent().getFullPath());
 						if (tLocalParent == null || (tLocalParent.getChangeMask() & ILocalResource.IS_SWITCHED) == 0) {
 							if (proxy == null) {
-								proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+								proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 							}
 							try {
-								SVNChangeStatus []tStats = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(tRes.getParent()), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+								SVNChangeStatus []tStats = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(tRes.getParent()), SVNDepth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
 								SVNUtility.reorder(tStats, true);
 								for (SVNChangeStatus st : tStats) {
 									if (st.path.equals(statuses[i].path)) {

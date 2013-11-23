@@ -20,8 +20,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
@@ -98,7 +98,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 			op.add(saveOp);
 			IResource []conflicting = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_CONFLICTING, IResource.DEPTH_ZERO);
 			if (conflicting.length > 0) {
-				op.add(new MarkResolvedOperation(conflicting, SVNConflictResolution.CHOOSE_LOCAL_FULL, ISVNConnector.Depth.INFINITY));
+				op.add(new MarkResolvedOperation(conflicting, SVNConflictResolution.CHOOSE_LOCAL_FULL, SVNDepth.INFINITY));
 			}
 			op.add(mainOp);
 			op.add(new RestoreProjectMetaOperation(saveOp));

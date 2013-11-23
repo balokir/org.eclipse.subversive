@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -111,7 +111,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		SVNChangeStatus []status;
 		
 		try {
-			status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
+			status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), SVNDepth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

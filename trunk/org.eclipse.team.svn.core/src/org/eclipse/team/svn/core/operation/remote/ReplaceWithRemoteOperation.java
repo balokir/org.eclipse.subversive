@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -69,7 +69,7 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 			if (this.ignoreExternals) {
 				options |= ISVNConnector.Options.IGNORE_EXTERNALS;
 			}
-			proxy.exportTo(entryRef, path, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
+			proxy.exportTo(entryRef, path, null, SVNDepth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
 			//perform replacement
 			if (this.toReplace instanceof IFile) {
 				FileUtility.copyFile(new File(toReplacePath), new File(path), monitor);

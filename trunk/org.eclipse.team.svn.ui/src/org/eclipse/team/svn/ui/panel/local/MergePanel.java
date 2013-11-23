@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -362,7 +362,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	}
 	
 	public int getDepth() {
-		return this.mode == MergePanel.MODE_1URL ? this.depthSelectorSimple.getDepth() : (this.mode == MergePanel.MODE_2URL ? this.depthSelector.getDepth() : ISVNConnector.Depth.UNKNOWN);
+		return this.mode == MergePanel.MODE_1URL ? this.depthSelectorSimple.getDepth() : (this.mode == MergePanel.MODE_2URL ? this.depthSelector.getDepth() : SVNDepth.UNKNOWN);
 	}
 	
 	protected void showDetails() {
@@ -410,7 +410,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 						break;
 					}
 					default: {
-						if (SVNNotification.PerformedAction.isKnownAction(state.action)) {
+						if (SVNNotification.PerformedAction.isActionKnown(state.action)) {
 							buf.append(PerformedAction.actionNames[state.action]);
 						}
 						else {

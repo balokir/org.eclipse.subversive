@@ -275,7 +275,7 @@ public class CoreExtensionsManager {
 	
 	private void validateClient(ISVNConnectorFactory connector) {
 		try {
-			connector.newInstance().dispose();
+			connector.createConnector().dispose();
 			this.validConnectors.add(connector.getId());
 		}
 		catch (Throwable ex) {

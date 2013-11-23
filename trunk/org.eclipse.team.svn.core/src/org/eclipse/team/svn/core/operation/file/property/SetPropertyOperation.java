@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -74,7 +74,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 					    final SVNProperty property = SetPropertyOperation.this.propertyData[i];
 					    SetPropertyOperation.this.protectStep(new IUnprotectedOperation() {
 	                        public void run(IProgressMonitor monitor) throws Exception {
-	        					proxy.setPropertyLocal(new String[] {current.getAbsolutePath()}, property, Depth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
+	        					proxy.setPropertyLocal(new String[] {current.getAbsolutePath()}, property, SVNDepth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
 	                        }
 	                    }, monitor, SetPropertyOperation.this.propertyData.length);
 					}

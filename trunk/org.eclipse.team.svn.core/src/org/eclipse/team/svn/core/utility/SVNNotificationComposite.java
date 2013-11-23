@@ -19,14 +19,14 @@ import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 
 /**
- * Notify composite listener
+ * SVN notification listener composite
  * 
  * @author Alexander Gurov
  */
-public class Notify2Composite implements ISVNNotificationCallback {
+public class SVNNotificationComposite implements ISVNNotificationCallback {
 	protected ISVNNotificationCallback []listeners;
 
-	public Notify2Composite() {
+	public SVNNotificationComposite() {
 		this.listeners = new ISVNNotificationCallback[0];
 	}
 	

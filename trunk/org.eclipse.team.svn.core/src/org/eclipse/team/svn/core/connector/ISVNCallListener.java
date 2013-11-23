@@ -91,9 +91,25 @@ public interface ISVNCallListener {
 	public final String LIST_REVISION_PROPERTIES = "listRevisionProperties";
 	public final String GET_REVISION_PROPERTY = "getRevisionProperty";
 	public final String SET_REVISION_PROPERTY = "setRevisionProperty";
-	public final String CREATE_REPOSITORY = "createRepository";
 	public final String UPGRADE = "upgrade";
 	public final String PATCH = "patch";
+
+	public final String CREATE = "createRepository";
+	public final String DELTIFY = "deltify";
+	public final String HOT_COPY = "hotCopy";
+	public final String DUMP = "dump";
+	public final String LIST_DB_LOGS = "listDBLogs";
+	public final String LOAD = "load";
+	public final String LIST_TRANSACTIONS = "listTransactions";
+	public final String RECOVER = "recover";
+	public final String FREEZE = "freeze";
+	public final String REMOVE_TRANSACTIONS = "removeTransaction";
+	public final String SET_REPOSITORY_REVISION_PROPERTY = "setReppositoryRevisionProperty";
+	public final String VERIFY = "verify";
+	public final String LIST_LOCKS = "listLocks";
+	public final String REMOVE_LOCKS = "removeLocks";
+	public final String REPOSITORY_UPGRADE = "repositoryUpgrade";
+	public final String PACK = "pack";
 	
 	/**
 	 * Allows to modify parameters before call (for example, you can wrap progress monitor in order to intercept progress notifications)

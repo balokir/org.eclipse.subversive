@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.extension.factory;
 
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNManager;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 
 /**
@@ -109,7 +110,10 @@ public interface ISVNConnectorFactory {
 	}
 	
 	public static final ISVNConnectorFactory EMPTY = new ISVNConnectorFactory() {
-		public ISVNConnector newInstance() {
+		public ISVNConnector createConnector() {
+			throw new UnreportableException(this.getName());
+		}
+		public ISVNManager createManager() {
 			throw new UnreportableException(this.getName());
 		}
 		public int getSupportedFeatures() {
@@ -139,7 +143,13 @@ public interface ISVNConnectorFactory {
 	 * Makes new SVN Client Library instance
 	 * @return SVN Client Library instance
 	 */
-	public ISVNConnector newInstance();
+	public ISVNConnector createConnector();
+	
+	/**
+	 * Makes new SVN Client Library instance
+	 * @return SVN Client Library instance
+	 */
+	public ISVNManager createManager();
 	
 	/**
 	 * Returns unique SVN Client library plug-in id

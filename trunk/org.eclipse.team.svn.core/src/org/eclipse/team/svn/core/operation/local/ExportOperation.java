@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -68,7 +68,7 @@ public class ExportOperation extends AbstractWorkingCopyOperation {
 					if (ExportOperation.this.ignoreExternals) {
 						options |= ISVNConnector.Options.IGNORE_EXTERNALS;
 					}
-					proxy.exportTo(new SVNEntryRevisionReference(wcPath, null, ExportOperation.this.revision), targetPath, null, Depth.INFINITY, options, new SVNProgressMonitor(ExportOperation.this, monitor, null));
+					proxy.exportTo(new SVNEntryRevisionReference(wcPath, null, ExportOperation.this.revision), targetPath, null, SVNDepth.INFINITY, options, new SVNProgressMonitor(ExportOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);
 			
