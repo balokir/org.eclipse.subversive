@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -384,6 +385,15 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     	
     	public UpdateStatusOperation(IResource []resources, int depth) {
     		super("Operation_UpdateStatus", SVNMessages.class); //$NON-NLS-1$
+    		ArrayList<IResource> tResources = new ArrayList<IResource>();
+    		for (IResource resource : resources) {
+    			if (resource.getType() == IResource.ROOT) {
+    				tResources.addAll(Arrays.asList(((IWorkspaceRoot)resource).getProjects()));
+    			}
+    			else {
+    				tResources.add(resource);
+    			}
+    		}
     		this.resources = resources;
     		this.depth = depth;
     	}
