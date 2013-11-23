@@ -561,11 +561,14 @@ public final class FileUtility {
 		}
 	}
 	
-	public static void copyFile(File to, File what, IProgressMonitor monitor) throws Exception {
-		FileUtility.copyFile(to, what, FileUtility.COPY_OVERRIDE_EXISTING_FILES, monitor);
+	public static boolean copyFile(File to, File what, IProgressMonitor monitor) throws Exception {
+		return FileUtility.copyFile(to, what, FileUtility.COPY_OVERRIDE_EXISTING_FILES, monitor);
 	}
 	
-	public static void copyFile(File to, File what, int options, IProgressMonitor monitor) throws Exception {
+	public static boolean copyFile(File to, File what, int options, IProgressMonitor monitor) throws Exception {
+		if (!what.exists()) {
+			return false;
+		}
 		if (to.exists() && to.isDirectory()) {
 			to = new File(to.getAbsolutePath() + "/" + what.getName()); //$NON-NLS-1$
 		}
@@ -584,6 +587,7 @@ public final class FileUtility {
 				while ((loaded = input.read(buf)) > 0 && !monitor.isCanceled()) {
 					output.write(buf, 0, loaded);
 				}
+				return true;
 			}
 			finally {
 				if (output != null) {
@@ -594,6 +598,7 @@ public final class FileUtility {
 				}
 			}
 		}
+		return false;
 	}
 	
 	public static void removeSVNMetaInformation(IResource root, IProgressMonitor monitor) throws CoreException {
