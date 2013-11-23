@@ -66,8 +66,7 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 				if (temporaryStorage != null && temporaryStorage.exists()) {
 					delete(temporaryStorage);
 				}
-				temporaryStorage = File.createTempFile(RemoteBundleDiscoveryStrategy.class.getSimpleName(), ".tmp"); //$NON-NLS-1$
-				temporaryStorage.delete();
+				temporaryStorage = SVNTeamPlugin.instance().getTemporaryFile(null, "rbds.tmp"); //$NON-NLS-1$
 				if (!temporaryStorage.mkdirs()) {
 					throw new IOException();
 				}
