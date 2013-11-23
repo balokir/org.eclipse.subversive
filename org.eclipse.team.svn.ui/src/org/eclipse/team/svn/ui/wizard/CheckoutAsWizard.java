@@ -37,8 +37,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -130,8 +130,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 
 	public int getCheckoutRecure() {
-		return this.singleMode ? (this.methodSelectionPage == null ? Depth.INFINITY : this.methodSelectionPage.getRecureDepth()) :
-			this.multipleMethodPage == null ? Depth.INFINITY : this.multipleMethodPage.getRecureDepth();
+		return this.singleMode ? (this.methodSelectionPage == null ? SVNDepth.INFINITY : this.methodSelectionPage.getRecureDepth()) :
+			this.multipleMethodPage == null ? SVNDepth.INFINITY : this.multipleMethodPage.getRecureDepth();
 	}
 
 	public String getProjectName() {

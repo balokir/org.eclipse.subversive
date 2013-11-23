@@ -67,12 +67,12 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
@@ -750,7 +750,7 @@ public class HistoryActionManager {
 			if (path != null) {
 				IRepositoryResource resource = this.traceResourceToRevision((SVNLogEntry)item.getEntity());
 				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(new IRepositoryResource[] {resource}, path, Depth.INFINITY, ignoreExternals));
+		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(new IRepositoryResource[] {resource}, path, SVNDepth.INFINITY, ignoreExternals));
 		    }
 		}
 	}
@@ -1431,7 +1431,7 @@ public class HistoryActionManager {
 		String path = fileDialog.open();
 		if (path != null) {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			ExportOperation mainOp = new ExportOperation(provider, path, Depth.INFINITY, ignoreExternals);
+			ExportOperation mainOp = new ExportOperation(provider, path, SVNDepth.INFINITY, ignoreExternals);
 			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(preOp);
 			op.add(mainOp, new IActionOperation[] {preOp});
@@ -1671,7 +1671,7 @@ public class HistoryActionManager {
 			IRepositoryLocation location = HistoryActionManager.this.view.getRepositoryResource().getRepositoryLocation();
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
-				SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(SVNUtility.encodeURL(resourceUrl), revision, revision), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+				SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(SVNUtility.encodeURL(resourceUrl), revision, revision), SVNDepth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				if (infos == null || infos.length == 0) {
 					return;
 				}

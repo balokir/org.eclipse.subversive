@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -42,7 +43,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UpdateOperation extends AbstractConflictDetectionOperation implements IResourceProvider {
 	protected SVNRevision selectedRevision;
-	protected int depth = ISVNConnector.Depth.INFINITY;
+	protected int depth = SVNDepth.INFINITY;
 	protected boolean isStickyDepth;
 	protected String updateDepthPath;
 	protected boolean ignoreExternals;
@@ -93,7 +94,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 			Map.Entry entry = (Map.Entry)it.next();
 			final IRepositoryLocation location = storage.getRepositoryLocation((IProject)entry.getKey());
 			IResource []wcResources = (IResource [])((List)entry.getValue()).toArray(new IResource[0]);
-			if (this.depth == ISVNConnector.Depth.INFINITY || this.depth == ISVNConnector.Depth.UNKNOWN) {
+			if (this.depth == SVNDepth.INFINITY || this.depth == SVNDepth.UNKNOWN) {
 			    wcResources = FileUtility.shrinkChildNodes(wcResources);
 			}
 			else {

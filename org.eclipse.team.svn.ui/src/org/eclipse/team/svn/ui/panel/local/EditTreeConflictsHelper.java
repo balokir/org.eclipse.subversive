@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.panel.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Operation;
@@ -22,6 +21,7 @@ import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Reason;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -259,7 +259,7 @@ public class EditTreeConflictsHelper {
 		//  so, for now Subversive code will just resolve conflicts and the only call SVN API resolve() function to mark it as merged
 		//  which means the only acceptable option is SVNConflictResolution.CHOOSE_MERGED
 		int resolution = SVNConflictResolution.CHOOSE_MERGED;
-		return new MarkResolvedOperation(new IResource[] {this.local.getResource()}, resolution, ISVNConnector.Depth.INFINITY);		
+		return new MarkResolvedOperation(new IResource[] {this.local.getResource()}, resolution, SVNDepth.INFINITY);		
 	}
 	
 	public IRepositoryResource getRepositoryResourceForHistory(boolean isLeft) {
@@ -282,7 +282,7 @@ public class EditTreeConflictsHelper {
 				IRepositoryResource rr = SVNUtility.asRepositoryResource(url, true);
 				location = rr.getRepositoryLocation();
 				proxy = location.acquireSVNProxy();				
-				SVNUtility.info(proxy, ref, Depth.EMPTY, new SVNNullProgressMonitor());
+				SVNUtility.info(proxy, ref, SVNDepth.EMPTY, new SVNNullProgressMonitor());
 				break;
 			} catch (SVNConnectorException e) {
 				if (repos.equals(url)) {

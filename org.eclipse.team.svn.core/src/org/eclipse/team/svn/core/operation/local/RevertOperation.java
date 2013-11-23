@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -62,7 +62,7 @@ public class RevertOperation extends AbstractWorkingCopyOperation {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.revert(wcPath, 
-								 Depth.infinityOrEmpty(RevertOperation.this.doRecursiveRevert), 
+								 SVNDepth.infinityOrEmpty(RevertOperation.this.doRecursiveRevert), 
 								 null, new SVNProgressMonitor(RevertOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);

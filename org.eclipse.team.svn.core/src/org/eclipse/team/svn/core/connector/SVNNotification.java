@@ -50,7 +50,7 @@ public class SVNNotification {
 		 */
 		public static final int UNLOCKED = 4;
 
-		public static boolean isKnownStatus(int status) {
+		public static boolean isStatusKnown(int status) {
 			return status >= NodeLock.INAPPLICABLE /*0*/ && status <= NodeLock.UNLOCKED /*4*/;
 		}
 	}
@@ -99,7 +99,7 @@ public class SVNNotification {
 		 */
 		public static final int CONFLICTED = 7;
 
-		public static boolean isKnownStatus(int status) {
+		public static boolean isStatusKnown(int status) {
 			return status >= NodeStatus.INAPPLICABLE /*0*/ && status <= NodeStatus.CONFLICTED /*7*/;
 		}
 		
@@ -516,7 +516,7 @@ public class SVNNotification {
 		/*
 		 * Sometime native JavaHL client returns -1 as action (for example when file is replaced in branch then merged into trunk)...
 		 */
-		public static boolean isKnownAction(int action) {
+		public static boolean isActionKnown(int action) {
 			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.MOVE_BROKEN /*75*/;
 		}
 		

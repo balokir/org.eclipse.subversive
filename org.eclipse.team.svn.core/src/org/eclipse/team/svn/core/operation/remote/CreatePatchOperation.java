@@ -14,8 +14,8 @@ package org.eclipse.team.svn.core.operation.remote;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -62,13 +62,13 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff -r " + ref1.revision + ":" + ref2.revision + " \"" + first.getUrl() + "@" + ref1.pegRevision + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
-				proxy.diff(ref1, new SVNRevisionRange(ref1.revision, ref2.revision), null, this.fileName, this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, 
+				proxy.diff(ref1, new SVNRevisionRange(ref1.revision, ref2.revision), null, this.fileName, this.recurse ? SVNDepth.INFINITY : SVNDepth.IMMEDIATES, 
 						options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 			}
 			else {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 				proxy.diffTwo(ref1, ref2, null, this.fileName, 
-						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+						this.recurse ? SVNDepth.INFINITY : SVNDepth.IMMEDIATES, options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

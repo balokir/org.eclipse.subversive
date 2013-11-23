@@ -47,7 +47,6 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
@@ -58,6 +57,7 @@ import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNPropertyCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
@@ -137,7 +137,7 @@ public final class SVNUtility {
 			final String path = FileUtility.getWorkingCopyPath(resource);
 			SVNEntryInfo []st = null;
 			try {
-				st = SVNUtility.info(proxy, new SVNEntryRevisionReference(path), ISVNConnector.Depth.EMPTY, new SVNNullProgressMonitor());
+				st = SVNUtility.info(proxy, new SVNEntryRevisionReference(path), SVNDepth.EMPTY, new SVNNullProgressMonitor());
 			}
 			catch (SVNConnectorException ex) {
 				return null;
@@ -285,7 +285,7 @@ public final class SVNUtility {
 	
 	public static SVNProperty []properties(ISVNConnector proxy, SVNEntryRevisionReference reference, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final SVNProperty[][] retVal = new SVNProperty[1][];
-		proxy.listProperties(reference, Depth.EMPTY, null, options, new ISVNPropertyCallback() {
+		proxy.listProperties(reference, SVNDepth.EMPTY, null, options, new ISVNPropertyCallback() {
 			public void next(Pair personalProps, Pair []inheritedProps) {
 				ArrayList<SVNProperty> props = new ArrayList<SVNProperty>();
 				Collections.addAll(props, personalProps.data);
@@ -309,7 +309,7 @@ public final class SVNUtility {
 		for (Iterator<SVNChangeStatus> it = statuses.iterator(); it.hasNext() && !monitor.isActivityCancelled(); ) {
 			final SVNChangeStatus svnChangeStatus = it.next();
 			if (svnChangeStatus.hasConflict && svnChangeStatus.treeConflicts == null) {
-				proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+				proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 					public void next(SVNEntryInfo info) {
 						svnChangeStatus.treeConflicts = info.treeConflicts;
 					}
@@ -367,9 +367,9 @@ public final class SVNUtility {
 	}
 	
 	public static SVNEntryInfo []info(SVNEntryRevisionReference reference) {
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
-			return SVNUtility.info(proxy, reference, ISVNConnector.Depth.EMPTY, new SVNNullProgressMonitor());
+			return SVNUtility.info(proxy, reference, SVNDepth.EMPTY, new SVNNullProgressMonitor());
 		}
 		catch (Exception ex) {
 			return null;
@@ -577,15 +577,15 @@ public final class SVNUtility {
 	}
 
 	public synchronized static void addSVNNotifyListener(ISVNConnector proxy, ISVNNotificationCallback listener) {
-		Notify2Composite composite = (Notify2Composite)proxy.getNotificationCallback();
+		SVNNotificationComposite composite = (SVNNotificationComposite)proxy.getNotificationCallback();
 		if (composite == null) {
-			proxy.setNotificationCallback(composite = new Notify2Composite());
+			proxy.setNotificationCallback(composite = new SVNNotificationComposite());
 		}
 		composite.add(listener);
 	}
 
 	public synchronized static void removeSVNNotifyListener(ISVNConnector proxy, ISVNNotificationCallback listener) {
-		Notify2Composite composite = (Notify2Composite)proxy.getNotificationCallback();
+		SVNNotificationComposite composite = (SVNNotificationComposite)proxy.getNotificationCallback();
 		if (composite != null) {
 			composite.remove(listener);
 		}
@@ -811,7 +811,7 @@ public final class SVNUtility {
 	public static Exception validateRepositoryLocation(IRepositoryLocation location) {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
-			proxy.listEntries(new SVNEntryRevisionReference(SVNUtility.encodeURL(location.getUrl()), null, null), Depth.EMPTY, SVNEntry.Fields.NONE, ISVNConnector.Options.NONE, new ISVNEntryCallback() {
+			proxy.listEntries(new SVNEntryRevisionReference(SVNUtility.encodeURL(location.getUrl()), null, null), SVNDepth.EMPTY, SVNEntry.Fields.NONE, ISVNConnector.Options.NONE, new ISVNEntryCallback() {
 				public void next(SVNEntry entry) {
 				}
 			}, new SVNNullProgressMonitor());
@@ -892,9 +892,9 @@ public final class SVNUtility {
 		if (SVNUtility.isPriorToSVN17() && !checkedPath.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
 			return null;
 		}
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
-			SVNChangeStatus []st = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+			SVNChangeStatus []st = SVNUtility.status(proxy, location.toString(), SVNDepth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
 			if (st != null && st.length > 0) {
 				SVNUtility.reorder(st, true);
 				return st[0].url == null ? null : st[0];
@@ -911,7 +911,7 @@ public final class SVNUtility {
 	
 	public static String getPropertyForNotConnected(IResource root, String propertyName) {
 		String location = FileUtility.getWorkingCopyPath(root);
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
 			SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(location, null, SVNRevision.WORKING), propertyName, null, new SVNNullProgressMonitor());
 			return data == null ? null : data.value;
@@ -947,7 +947,7 @@ public final class SVNUtility {
 	public static Map<IProject, List<IResource>> splitWorkingCopies(IResource []resources) {
 		Map<IProject, List<IResource>> wc2Resources = new HashMap<IProject, List<IResource>>();
 
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
 			Map<File, IProject> roots = new HashMap<File, IProject>();
 			for (int i = 0; i < resources.length; i++) {
@@ -977,7 +977,7 @@ public final class SVNUtility {
 	public static Map splitWorkingCopies(File []files) {
 		Map wc2Resources = new HashMap();
 		
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
 			Map<File, SVNEntryInfo> file2info = new HashMap<File, SVNEntryInfo>();
 			for (int i = 0; i < files.length; i++) {
@@ -1045,7 +1045,7 @@ public final class SVNUtility {
 	}
 	
 	public static SVNEntryInfo getSVNInfo(File root) {
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
 			return SVNUtility.getSVNInfo(root, proxy);
 		}
@@ -1062,7 +1062,7 @@ public final class SVNUtility {
 				try {
 					//NOTE WARNING! JavaHL always tries to access repository when revision is specified, even if the specified revision one of two local kinds: WORKING or BASE.
 					//	so, just do not specify any revisions!
-					SVNEntryInfo []st = SVNUtility.info(proxy, new SVNEntryRevisionReference(root.getAbsolutePath()), Depth.EMPTY, new SVNNullProgressMonitor());
+					SVNEntryInfo []st = SVNUtility.info(proxy, new SVNEntryRevisionReference(root.getAbsolutePath()), SVNDepth.EMPTY, new SVNNullProgressMonitor());
 					return st != null && st.length != 0 ? st[0] : null;
 				}
 				catch (Exception ex) {
@@ -1208,14 +1208,14 @@ public final class SVNUtility {
 			fromDate = (SVNRevision.Date)first;
 		}
 		else {
-			SVNEntryInfo []entryInfo = SVNUtility.info(proxy, referenceFirst, Depth.UNKNOWN, new SVNNullProgressMonitor());
+			SVNEntryInfo []entryInfo = SVNUtility.info(proxy, referenceFirst, SVNDepth.UNKNOWN, new SVNNullProgressMonitor());
 			fromDate = SVNRevision.fromDate(entryInfo[0].lastChangedDate);
 		}
 		if (second.getKind() == SVNRevision.Kind.DATE) {
 			toDate = (SVNRevision.Date)second;
 		}
 		else {
-			SVNEntryInfo []entryInfo = SVNUtility.info(proxy, referenceSecond, Depth.UNKNOWN, new SVNNullProgressMonitor());
+			SVNEntryInfo []entryInfo = SVNUtility.info(proxy, referenceSecond, SVNDepth.UNKNOWN, new SVNNullProgressMonitor());
 			toDate = SVNRevision.fromDate(entryInfo[0].lastChangedDate);
 		}
 		return fromDate.getDate() > toDate.getDate() ? 1 : (fromDate.getDate() == toDate.getDate() ? 0 : -1);
@@ -1333,19 +1333,19 @@ public final class SVNUtility {
 	
 	public static String getDepthArg(int depth, boolean isStickyDepth) {
 		String depthArg = isStickyDepth ? " --set-depth " : " --depth "; //$NON-NLS-1$
-		if (depth == Depth.EMPTY) {
+		if (depth == SVNDepth.EMPTY) {
 			return depthArg + "empty "; //$NON-NLS-1$
 		}
-		if (depth == Depth.INFINITY) {
+		if (depth == SVNDepth.INFINITY) {
 			return depthArg + "infinity" ; //$NON-NLS-1$
 		}
-		if (depth == Depth.IMMEDIATES) {
+		if (depth == SVNDepth.IMMEDIATES) {
 			return depthArg + "immediates "; //$NON-NLS-1$
 		}
-		if (depth == Depth.UNKNOWN) {
+		if (depth == SVNDepth.UNKNOWN) {
 			return ""; //$NON-NLS-1$
 		}
-		if (depth == Depth.EXCLUDE) {
+		if (depth == SVNDepth.EXCLUDE) {
 			return depthArg + "exclude "; //$NON-NLS-1$
 		}
 		return depthArg + "files "; //$NON-NLS-1$

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -47,7 +48,7 @@ public class ScanLocksOperation extends AbstractActionOperation {
 	protected Map<IResource, List<LockResource>> lockResources = new HashMap<IResource, List<LockResource>>();
 	
 	public ScanLocksOperation(IResource[] resources) {
-		this(resources, ISVNConnector.Depth.INFINITY);
+		this(resources, SVNDepth.INFINITY);
 	}
 	
 	public ScanLocksOperation(IResource[] resources, int depth) {

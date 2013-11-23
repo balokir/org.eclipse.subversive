@@ -67,7 +67,7 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 		// check if this resource is placed in working copy
 		File wcRoot = file;
 		SVNEntryInfo info = null;
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
 			while (info == null) {
 				if (wcRoot == null) {

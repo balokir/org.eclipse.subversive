@@ -16,7 +16,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -84,7 +84,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 	}
 	
 	public static CompositeOperation getUpdateOperation(IResource []updateSet, SVNRevision selectedRevision) {
-		return UpdateAction.getUpdateOperation(updateSet, selectedRevision, ISVNConnector.Depth.INFINITY, false, null);
+		return UpdateAction.getUpdateOperation(updateSet, selectedRevision, SVNDepth.INFINITY, false, null);
 	}
 	
 	public static CompositeOperation getUpdateOperation(IResource []updateSet, SVNRevision selectedRevision, int depth, boolean isStickyDepth, String updateDepthPath) {

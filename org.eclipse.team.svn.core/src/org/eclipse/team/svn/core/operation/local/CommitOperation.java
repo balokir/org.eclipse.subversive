@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNCommitStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorUnresolvedConflictException;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -131,7 +131,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 				    CommitOperation.this.paths, 
 					CommitOperation.this.message, 
 					null,
-					Depth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
+					SVNDepth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
 					null, svnMonitor);
 				SVNCommitStatus status = svnMonitor.getCommitStatuses().isEmpty() ? null : svnMonitor.getCommitStatuses().iterator().next();
 				if (status != null && status.revision != SVNRevision.INVALID_REVISION_NUMBER) {

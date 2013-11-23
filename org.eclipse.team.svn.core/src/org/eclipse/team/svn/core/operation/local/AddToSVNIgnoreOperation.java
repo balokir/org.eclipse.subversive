@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -104,7 +104,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 			}
 		}
 		ignoreValue = AddToSVNIgnoreOperation.addMask(ignoreValue, mask);
-		proxy.setPropertyLocal(new String[] {path}, new SVNProperty(BuiltIn.IGNORE, ignoreValue), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
+		proxy.setPropertyLocal(new String[] {path}, new SVNProperty(BuiltIn.IGNORE, ignoreValue), SVNDepth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 	}
 	
 	protected static String addMask(String ignore, String mask) {

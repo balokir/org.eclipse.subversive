@@ -28,7 +28,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -98,7 +98,7 @@ public class FileReplaceListener implements IResourceChangeListener {
 							proxy.streamFileContent(new SVNEntryRevisionReference(originalFile.getAbsolutePath(), null, SVNRevision.BASE), 8192, oStream, new SVNProgressMonitor(this, monitor, null));
 							if (this.equals(originalFile, tmpFile)) {
 								originalFile.delete();
-								proxy.revert(originalFile.getAbsolutePath(), Depth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
+								proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
 							}
 						}
 						finally {

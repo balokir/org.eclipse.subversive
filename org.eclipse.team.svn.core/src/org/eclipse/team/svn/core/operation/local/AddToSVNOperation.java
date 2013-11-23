@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -104,7 +104,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 			}
 		}
 		
-		proxy.setPropertyLocal(new String[] {parentPath}, new SVNProperty(BuiltIn.IGNORE, ignoreValue.length() > 0 ? ignoreValue : null), Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
+		proxy.setPropertyLocal(new String[] {parentPath}, new SVNProperty(BuiltIn.IGNORE, ignoreValue.length() > 0 ? ignoreValue : null), SVNDepth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 	}
 	
 	protected void doAdd(IResource current, ISVNConnector proxy, IProgressMonitor monitor) throws Exception {
@@ -117,7 +117,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 			AddToSVNOperation.removeFromParentIgnore(proxy, FileUtility.getWorkingCopyPath(parent), current.getName());
 		}
 		
-		proxy.add(wcPath, Depth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), ISVNConnector.Options.FORCE | ISVNConnector.Options.INCLUDE_PARENTS, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
+		proxy.add(wcPath, SVNDepth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), ISVNConnector.Options.FORCE | ISVNConnector.Options.INCLUDE_PARENTS, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
 	}
 	
 }

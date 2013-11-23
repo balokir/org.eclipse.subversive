@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.tests.core;
 
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutAsOperation;
@@ -26,10 +26,10 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public abstract class CheckoutOperationTest extends AbstractOperationTestCase {
 	protected IActionOperation getOperation() {
 	    IRepositoryResource trunk = SVNUtility.getProposedTrunk(this.getLocation());
-	    CheckoutAsOperation mainOp = new CheckoutAsOperation(this.getFirstProject().getName(), trunk.asRepositoryContainer(this.getFirstProject().getName(), false), Depth.INFINITY, true);
+	    CheckoutAsOperation mainOp = new CheckoutAsOperation(this.getFirstProject().getName(), trunk.asRepositoryContainer(this.getFirstProject().getName(), false), SVNDepth.INFINITY, true);
 	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 	    op.add(mainOp);
-	    op.add(new CheckoutAsOperation(this.getSecondProject().getName(), trunk.asRepositoryContainer(this.getSecondProject().getName(), false), Depth.INFINITY, true));
+	    op.add(new CheckoutAsOperation(this.getSecondProject().getName(), trunk.asRepositoryContainer(this.getSecondProject().getName(), false), SVNDepth.INFINITY, true));
 		return op;
 	}
 	

@@ -25,10 +25,10 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -112,7 +112,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, null, new ISVNEntryStatusCallback() {
+				proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, null, new ISVNEntryStatusCallback() {
 					public void next(SVNChangeStatus status) {
 						localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
 					}
@@ -143,10 +143,10 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 					SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(diffPair[0]);
 					SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(diffPair[1]);
 					if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
-						SVNUtility.diffStatus(proxy, remoteChanges, refPrev, new SVNRevisionRange(refPrev.revision, refNext.revision), Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
+						SVNUtility.diffStatus(proxy, remoteChanges, refPrev, new SVNRevisionRange(refPrev.revision, refNext.revision), SVNDepth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
 					}
 					else {
-						SVNUtility.diffStatus(proxy, remoteChanges, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
+						SVNUtility.diffStatus(proxy, remoteChanges, refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
 					}
 				}
 			}, monitor, 100, 5);

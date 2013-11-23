@@ -26,7 +26,7 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -131,7 +131,7 @@ public class ShareOperation extends AbstractFileOperation {
 						IRepositoryContainer remote = (IRepositoryContainer)entry.getValue();
 						File local = (File)entry.getKey();
 						long options = ShareOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE; 
-						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), local.getAbsolutePath(), Depth.EMPTY, options, new SVNProgressMonitor(ShareOperation.this, monitor, null));
+						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), local.getAbsolutePath(), SVNDepth.EMPTY, options, new SVNProgressMonitor(ShareOperation.this, monitor, null));
 					}
 				}, monitor, local2remote.size());
 			}

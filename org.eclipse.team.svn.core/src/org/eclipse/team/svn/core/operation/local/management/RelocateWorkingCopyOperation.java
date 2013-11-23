@@ -27,7 +27,7 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -91,7 +91,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 								String oldRoot = SVNUtility.getOldRoot(url, children);
 								if (oldRoot != null) {
 									RelocateWorkingCopyOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + oldRoot + "\" \"" + rootUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(RelocateWorkingCopyOperation.this.location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-									proxy.relocate(oldRoot, rootUrl, path, Depth.INFINITY, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
+									proxy.relocate(oldRoot, rootUrl, path, SVNDepth.INFINITY, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
 									//XXX: provider.relocateResource();
 									provider.switchResource(RelocateWorkingCopyOperation.this.location.asRepositoryContainer(rootUrl + url.substring(oldRoot.length()), false));
 									RelocateWorkingCopyOperation.this.resources.add(current);

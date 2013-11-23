@@ -16,7 +16,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -60,7 +60,7 @@ public class RevertOperation extends AbstractFileOperation {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn revert \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (this.recursive ? " -R" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.revert(current.getAbsolutePath(), Depth.infinityOrEmpty(RevertOperation.this.recursive), null, new SVNProgressMonitor(RevertOperation.this, monitor, null));
+					proxy.revert(current.getAbsolutePath(), SVNDepth.infinityOrEmpty(RevertOperation.this.recursive), null, new SVNProgressMonitor(RevertOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			location.releaseSVNProxy(proxy);

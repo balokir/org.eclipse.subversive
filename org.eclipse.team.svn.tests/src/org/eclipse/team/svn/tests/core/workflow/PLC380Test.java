@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
 import org.eclipse.team.svn.core.operation.local.CommitOperation;
@@ -55,7 +55,7 @@ public class PLC380Test extends TestWorkflow {
                         new AddToSVNOperation(forAddition).run(monitor);
                         IResource []forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
                         new CommitOperation(forCommit, "test PLC380", false).run(monitor);
-                        new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getSecondProject().getName(), false), Depth.INFINITY, true).run(monitor);                        
+                        new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getSecondProject().getName(), false), SVNDepth.INFINITY, true).run(monitor);                        
                         try {
                             fos = new FileOutputStream (getFirstProject().getLocation().toString() + "/123");
                             fos.write("".getBytes());                             

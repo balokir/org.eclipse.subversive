@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -59,7 +59,7 @@ public class MarkResolvedOperation extends AbstractFileOperation {
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.resolve(current.getAbsolutePath(), SVNConflictResolution.CHOOSE_MERGED, Depth.infinityOrEmpty(MarkResolvedOperation.this.recursive), new SVNProgressMonitor(MarkResolvedOperation.this, monitor, null));
+					proxy.resolve(current.getAbsolutePath(), SVNConflictResolution.CHOOSE_MERGED, SVNDepth.infinityOrEmpty(MarkResolvedOperation.this.recursive), new SVNProgressMonitor(MarkResolvedOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			

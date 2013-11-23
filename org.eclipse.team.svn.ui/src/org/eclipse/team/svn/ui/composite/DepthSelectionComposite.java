@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -90,10 +90,10 @@ public class DepthSelectionComposite extends Composite {
 		
 		if (useWorkingCopyDepth && this.svn15compatible) {
 			this.useWorkingCopyDepth = true;
-			this.depth = this.isStickyDepth ? Depth.INFINITY : Depth.UNKNOWN;
+			this.depth = this.isStickyDepth ? SVNDepth.INFINITY : SVNDepth.UNKNOWN;
 		} else {
 			this.useWorkingCopyDepth = false;
-			this.depth = Depth.INFINITY;			
+			this.depth = SVNDepth.INFINITY;			
 		}
 		
 		this.createControls();
@@ -179,22 +179,22 @@ public class DepthSelectionComposite extends Composite {
 			
 			public void widgetSelected(SelectionEvent e) {
 				if (((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(infinity)) {
-					DepthSelectionComposite.this.depth = Depth.INFINITY;
+					DepthSelectionComposite.this.depth = SVNDepth.INFINITY;
 				}
 				else if(((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(immediates)) {
-					DepthSelectionComposite.this.depth = Depth.IMMEDIATES;
+					DepthSelectionComposite.this.depth = SVNDepth.IMMEDIATES;
 				}
 				else if(((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(files)) {
-					DepthSelectionComposite.this.depth = Depth.FILES;
+					DepthSelectionComposite.this.depth = SVNDepth.FILES;
 				}
 				else if (((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(DepthSelectionComposite.unknown)){
-					DepthSelectionComposite.this.depth = Depth.UNKNOWN;
+					DepthSelectionComposite.this.depth = SVNDepth.UNKNOWN;
 				}
 				else if (((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(exclude)){
-					DepthSelectionComposite.this.depth = Depth.EXCLUDE;
+					DepthSelectionComposite.this.depth = SVNDepth.EXCLUDE;
 				}
 				else {
-					DepthSelectionComposite.this.depth = Depth.EMPTY;
+					DepthSelectionComposite.this.depth = SVNDepth.EMPTY;
 				}
 			}			
 		});
@@ -223,19 +223,19 @@ public class DepthSelectionComposite extends Composite {
 	protected void setDepthComboValue() {
 		String strDepth;
 		switch (this.depth) {
-			case Depth.INFINITY:
+			case SVNDepth.INFINITY:
 				strDepth = infinity;
 			break;
-			case Depth.IMMEDIATES:
+			case SVNDepth.IMMEDIATES:
 				strDepth = immediates;
 			break;
-			case Depth.FILES:
+			case SVNDepth.FILES:
 				strDepth = files;
 			break;
-			case Depth.UNKNOWN:
+			case SVNDepth.UNKNOWN:
 				strDepth = unknown;
 			break;
-			case Depth.EXCLUDE:
+			case SVNDepth.EXCLUDE:
 				strDepth = exclude;
 			break;
 			default:

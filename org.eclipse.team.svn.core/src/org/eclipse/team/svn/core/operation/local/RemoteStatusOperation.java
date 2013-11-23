@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -163,7 +163,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 					remote.getRevision(); // For some reason SVN Kit does not reports anything if the resource were removed on the server side. Then we'll force it!
 					proxy.status(
 							FileUtility.getWorkingCopyPath(current), 
-							Depth.UNKNOWN, ISVNConnector.Options.SERVER_SIDE, null, cb, 
+							SVNDepth.UNKNOWN, ISVNConnector.Options.SERVER_SIDE, null, cb, 
 							new SVNProgressMonitor(RemoteStatusOperation.this, monitor, null, false));
 				}
 			}, monitor, resources.length);
@@ -173,7 +173,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 				final SVNChangeStatus svnChangeStatus = it.next();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
 								svnChangeStatus.treeConflicts = info.treeConflicts;
 							}

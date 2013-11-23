@@ -19,10 +19,10 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -81,7 +81,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 				final SVNChangeStatus svnChangeStatus = it.next();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), ISVNConnector.Depth.EMPTY, null, new ISVNEntryInfoCallback() {
+						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
 								svnChangeStatus.treeConflicts = info.treeConflicts;
 							}
@@ -100,7 +100,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 			public void run(IProgressMonitor monitor) throws Exception {
 				proxy.status(
 						current.getAbsolutePath(), 
-						Depth.infinityOrImmediates(AbstractStatusOperation.this.recursive), AbstractStatusOperation.this.isRemote() ? ISVNConnector.Options.SERVER_SIDE : ISVNConnector.Options.NONE, null, cb, 
+						SVNDepth.infinityOrImmediates(AbstractStatusOperation.this.recursive), AbstractStatusOperation.this.isRemote() ? ISVNConnector.Options.SERVER_SIDE : ISVNConnector.Options.NONE, null, cb, 
 						new SVNProgressMonitor(AbstractStatusOperation.this, monitor, null, false));
 			}
 		}, monitor, tasks);

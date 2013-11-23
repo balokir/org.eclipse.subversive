@@ -51,8 +51,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -388,7 +388,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			ISVNConnector proxy = this.location.acquireSVNProxy();
 			try {
-				proxy.setPropertyLocal(new String[] {this.reference.path}, new SVNProperty(this.propToSet.name, this.propToSet.value), Depth.EMPTY, ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null));
+				proxy.setPropertyLocal(new String[] {this.reference.path}, new SVNProperty(this.propToSet.name, this.propToSet.value), SVNDepth.EMPTY, ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
 				this.location.releaseSVNProxy(proxy);
@@ -436,7 +436,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 			try {
 				this.properties = SVNUtility.properties(proxy, this.reference, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));				
 				if (this.usePropsRej) {
-					SVNChangeStatus []status = SVNUtility.status(proxy, this.reference.path, Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
+					SVNChangeStatus []status = SVNUtility.status(proxy, this.reference.path, SVNDepth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 					if (status.length > 0 && status[0].propStatus == SVNEntryStatus.Kind.CONFLICTED && 
 						status[0].treeConflicts != null && status[0].treeConflicts.length > 0 && status[0].treeConflicts[0].remotePath != null) {
 						File rejFile = new File(status[0].treeConflicts[0].remotePath);

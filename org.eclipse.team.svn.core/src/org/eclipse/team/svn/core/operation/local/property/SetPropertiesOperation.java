@@ -15,8 +15,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -92,7 +92,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 		    final SVNProperty current = properties[i];
 		    this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
-					proxy.setPropertyLocal(new String[] {wcPath}, current, Depth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
+					proxy.setPropertyLocal(new String[] {wcPath}, current, SVNDepth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
                 }
             }, monitor, properties.length);
 		}

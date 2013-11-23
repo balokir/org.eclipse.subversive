@@ -16,7 +16,7 @@ import java.io.File;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
@@ -51,7 +51,7 @@ public class TreatAsEditsOperation extends AbstractWorkingCopyOperation {
 				final ISVNConnector proxy = location.acquireSVNProxy();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						proxy.revert(originalFile.getAbsolutePath(), Depth.EMPTY, null, new SVNProgressMonitor(TreatAsEditsOperation.this, monitor, null));
+						proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(TreatAsEditsOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);
 				location.releaseSVNProxy(proxy);

@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
@@ -259,14 +259,14 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		if (SVNUtility.isPriorToSVN17() && !location.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
 			return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
 		}
-		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
-			SVNChangeStatus []sts = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+			SVNChangeStatus []sts = SVNUtility.status(proxy, location.toString(), SVNDepth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
 			if (sts != null && sts.length > 0) {
 				this.relocatedTo = this.getProjectURL(location.toString(), sts);
 				if (this.relocatedTo == null) {
 					// the last try to avoid problem with the client library not returning URL's sometimes, since it could cause a request to the server, as far as I remember...
-					SVNEntryInfo []info = SVNUtility.info(proxy, new SVNEntryRevisionReference(location.toString()), Depth.EMPTY, new SVNNullProgressMonitor());
+					SVNEntryInfo []info = SVNUtility.info(proxy, new SVNEntryRevisionReference(location.toString()), SVNDepth.EMPTY, new SVNNullProgressMonitor());
 					if (info == null || info.length == 0 || info[0].url == null) {
 						return ErrorDescription.CANNOT_READ_PROJECT_METAINFORMATION;
 					}

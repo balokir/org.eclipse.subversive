@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutAsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -71,7 +71,7 @@ public class DefaultProjectSetHandler implements IProjectSetHandler {
 				project.exists() ? 
 				FileUtility.getResourcePath(project).removeLastSegments(1).toString() : 
 				Platform.getLocation().toString();
-			CheckoutAsOperation mainOp = new CheckoutAsOperation(project.getName(), resource, projectLocation, Depth.INFINITY, false);
+			CheckoutAsOperation mainOp = new CheckoutAsOperation(project.getName(), resource, projectLocation, SVNDepth.INFINITY, false);
 			op.add(mainOp);
 			return mainOp.getProject();
 		}

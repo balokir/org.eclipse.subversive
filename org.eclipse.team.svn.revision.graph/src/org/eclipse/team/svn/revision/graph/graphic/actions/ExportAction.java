@@ -11,7 +11,7 @@
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.remote.ExportOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -50,7 +50,7 @@ public class ExportAction extends BaseRevisionGraphAction {
 		if (path != null) {
 			IRepositoryResource resource = BaseRevisionGraphAction.convertToResource(this.getSelectedEditPart());
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			ExportOperation op = new ExportOperation(new IRepositoryResource[]{resource}, path, Depth.INFINITY, ignoreExternals);						
+			ExportOperation op = new ExportOperation(new IRepositoryResource[]{resource}, path, SVNDepth.INFINITY, ignoreExternals);						
 			this.runOperation(op);	
 		}							
 	}

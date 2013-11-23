@@ -22,8 +22,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -275,7 +275,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		SVNEntryInfo []infos = null;
 		try {
-		    infos = SVNUtility.info(proxy, SVNUtility.getEntryRevisionReference(location.getRoot()), Depth.EMPTY, new SVNNullProgressMonitor());
+		    infos = SVNUtility.info(proxy, SVNUtility.getEntryRevisionReference(location.getRoot()), SVNDepth.EMPTY, new SVNNullProgressMonitor());
 		}
 		catch (Exception ex) {
 			return null;

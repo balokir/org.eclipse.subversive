@@ -24,58 +24,6 @@ import java.util.Map;
  * @author Alexander Gurov
  */
 public interface ISVNConnector {
-	/**
-	 * Repository or working copy traversal depths enumeration
-	 */
-	public static class Depth {
-		/**
-		 * Depth undetermined or ignored.
-		 */
-		public static final int UNKNOWN = -2;
-
-		/**
-		 * Exclude (i.e, don't descend into) directory D.
-		 */
-		public static final int EXCLUDE = -1;
-
-		/**
-		 * Just the named file or folder without entries.
-		 */
-		public static final int EMPTY = 0;
-
-		/**
-		 * The folder and child files.
-		 */
-		public static final int FILES = 1;
-
-		/**
-		 * The folder and all direct child entries.
-		 */
-		public static final int IMMEDIATES = 2;
-
-		/**
-		 * The folder and all descendants at any depth.
-		 */
-		public static final int INFINITY = 3;
-
-		public static final int infinityOrEmpty(boolean recurse) {
-			return (recurse ? Depth.INFINITY : Depth.EMPTY);
-		}
-
-		public static final int infinityOrFiles(boolean recurse) {
-			return (recurse ? Depth.INFINITY : Depth.FILES);
-		}
-
-		public static final int infinityOrImmediates(boolean recurse) {
-			return (recurse ? Depth.INFINITY : Depth.IMMEDIATES);
-		}
-		
-		public static final int unknownOrFiles(boolean recurse) {
-			return (recurse ? Depth.UNKNOWN : Depth.FILES);
-		}
-
-	}
-	
 	public static final String []EMPTY_LOG_ENTRY_PROPS = new String []{};
 
 	public static final String []DEFAULT_LOG_ENTRY_PROPS = new String []{ SVNProperty.BuiltIn.REV_LOG, SVNProperty.BuiltIn.REV_DATE, SVNProperty.BuiltIn.REV_AUTHOR };
@@ -344,16 +292,6 @@ public interface ISVNConnector {
 		public static final long SET_REVISION_PROPERTY = Options.FORCE;
 	}
 
-	/** 
-	 * constant identifying the "bdb"  repository type 
-	 */
-    public final static String REPOSITORY_FSTYPE_BDB = "bdb";
-	/** 
-	 * constant identifying the "fsfs"  repository type 
-	 */
-    public final static String REPOSITORY_FSTYPE_FSFS = "fsfs";
-    
-    
 	public void addCallListener(ISVNCallListener listener);
 	
 	public void removeCallListener(ISVNCallListener listener);
@@ -528,8 +466,6 @@ public interface ISVNConnector {
 	public SVNProperty getRevisionProperty(SVNEntryReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void setRevisionProperty(SVNEntryReference reference, SVNProperty property, String originalValue, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	
-	public void createRepository(String repositoryPath, String repositoryType, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	
 	public void upgrade(String path, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	

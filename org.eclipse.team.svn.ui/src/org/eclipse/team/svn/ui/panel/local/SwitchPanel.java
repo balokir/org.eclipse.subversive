@@ -15,7 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
@@ -55,7 +55,7 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
     
     public int getDepth() {
     	if (this.depthSelector == null) {
-    		return Depth.INFINITY;
+    		return SVNDepth.INFINITY;
     	}
     	return this.depthSelector.getDepth();
     }

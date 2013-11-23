@@ -17,7 +17,7 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -61,7 +61,7 @@ public class InfoOperation extends AbstractActionOperation {
             try {
 //    			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn info \"" + this.local.getWorkingCopyPath() + "\"\n");
             	String path = FileUtility.getWorkingCopyPath(this.resource);
-                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(path), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(path), SVNDepth.EMPTY, new SVNProgressMonitor(this, monitor, null));
                 if (infos != null && infos.length > 0) {
                     this.info = infos[0];
                 }	
