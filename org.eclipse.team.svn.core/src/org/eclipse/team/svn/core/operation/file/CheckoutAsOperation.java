@@ -29,15 +29,19 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class CheckoutAsOperation extends AbstractFileOperation {
 	protected IRepositoryResource resource;
-	protected int recureDepth;
-	protected boolean ignoreExternals;
+	protected int depth;
+	protected long options;
 	protected boolean override;
 
-	public CheckoutAsOperation(File to, IRepositoryResource resource, int recureDepth, boolean ignoreExternals, boolean override) {
+	public CheckoutAsOperation(File to, IRepositoryResource resource, int depth, boolean ignoreExternals, boolean override) {
+		this(to, resource, depth, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, override);
+	}
+
+	public CheckoutAsOperation(File to, IRepositoryResource resource, int depth, long options, boolean override) {
 		super("Operation_CheckoutAsFile", SVNMessages.class, new File[] {to}); //$NON-NLS-1$
 		this.resource = resource;
-		this.recureDepth = recureDepth;
-		this.ignoreExternals = ignoreExternals;
+		this.depth = depth;
+		this.options = options & ISVNConnector.CommandMasks.CHECKOUT;
 		this.override = override;
 	}
 
@@ -59,12 +63,7 @@ public class CheckoutAsOperation extends AbstractFileOperation {
 		try {
 			String path = to.getAbsolutePath();
 			//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " --ignore-externals \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-			proxy.checkout(
-					SVNUtility.getEntryRevisionReference(this.resource), 
-					path, 
-					this.recureDepth, 
-					this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, 
-					new SVNProgressMonitor(this, monitor, null));
+			proxy.checkout(SVNUtility.getEntryRevisionReference(this.resource), path, this.depth, this.options, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

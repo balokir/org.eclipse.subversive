@@ -40,18 +40,26 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class LockOperation extends AbstractWorkingCopyOperation {
 	protected String message;
-	protected boolean force;
+	protected long options;
 
 	public LockOperation(IResource []resources, String message, boolean force) {
-		super("Operation_Lock", SVNMessages.class, resources); //$NON-NLS-1$
-		this.message = message;
-		this.force = force;
+		this(resources, message, force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE);
 	}
 
 	public LockOperation(IResourceProvider provider, String message, boolean force) {
+		this(provider, message, force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE);
+	}
+
+	public LockOperation(IResource []resources, String message, long options) {
+		super("Operation_Lock", SVNMessages.class, resources); //$NON-NLS-1$
+		this.message = message;
+		this.options = options & ISVNConnector.CommandMasks.LOCK;
+	}
+
+	public LockOperation(IResourceProvider provider, String message, long options) {
 		super("Operation_Lock", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
-		this.force = force;
+		this.options = options & ISVNConnector.CommandMasks.LOCK;
 	}
 
     protected void runImpl(final IProgressMonitor monitor) throws Exception {
@@ -70,7 +78,7 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (LockOperation.this.force ? " --force" : "") + " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, ((LockOperation.this.options & ISVNConnector.Options.FORCE) != 0 ? " --force" : "") + " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				}
 			});
 			
@@ -102,11 +110,7 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 					
 					SVNUtility.addSVNNotifyListener(proxy, listener);					
 					try {
-						proxy.lock(
-								paths, 
-								LockOperation.this.message, 
-								LockOperation.this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE, 
-								new SVNProgressMonitor(LockOperation.this, monitor, null));	
+						proxy.lock(paths, LockOperation.this.message, LockOperation.this.options, new SVNProgressMonitor(LockOperation.this, monitor, null));	
 					} finally {
 						SVNUtility.removeSVNNotifyListener(proxy, listener);
 					}
@@ -123,7 +127,7 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 				SVNNotification problem = iter.next();
 				res.append(problem.errMsg);
 				if (iter.hasNext()) {
-					res.append("\n\n");
+					res.append("\n\n"); //$NON-NLS-1$
 				}
 			}
 			throw new UnreportableException(res.toString());

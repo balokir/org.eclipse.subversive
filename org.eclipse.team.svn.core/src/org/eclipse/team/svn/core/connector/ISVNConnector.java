@@ -206,6 +206,11 @@ public interface ISVNConnector {
 	
 	public static class DiffOptions {
 		/**
+		 * No options specified for the SVN command.
+		 */
+		public static final long NONE = 0;
+
+		/**
 		 * @since 1.8 Ignore difference in whitespace completely.
 		 */
 		public static final long IGNORE_WHITESPACE = 0x00000001;

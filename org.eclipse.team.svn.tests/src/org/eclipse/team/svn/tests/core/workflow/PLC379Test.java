@@ -58,7 +58,7 @@ public class PLC379Test  extends TestWorkflow {
                         IResource []forAddition = new IResource[] {getFirstProject().getFile("123")};
                         new AddToSVNOperation(forAddition).run(monitor);
                         IResource []forCommit = new IResource[] {getFirstProject().getFile("123")};
-                        new CommitOperation(forCommit, "PLC379Test", false).run(monitor); 
+                        new CommitOperation(forCommit, "PLC379Test", false, false).run(monitor); 
                                                 
                         try {
                             fos = new FileOutputStream (ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getLocation().toString() + "/123");

@@ -62,9 +62,9 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	protected IResource []selection;
 	protected String fileName;
 	protected boolean recurse;
-	protected boolean ignoreDeleted;
-	protected boolean processBinary;
 	protected boolean processUnversioned;
+	protected long options;
+	protected long diffOptions;
 	protected int rootPoint;
 	
 	protected String lineFeed = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -83,14 +83,21 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	}
 	
 	public CreatePatchOperation(IResource []resources, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean processUnversioned, int rootPoint) {
+		this(resources, fileName, recurse, processUnversioned, 
+			ISVNConnector.Options.IGNORE_ANCESTRY | 
+			(ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE) | 
+			(processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE), rootPoint, ISVNConnector.DiffOptions.NONE);
+	}
+
+	public CreatePatchOperation(IResource []resources, String fileName, boolean recurse, boolean processUnversioned, long options, int rootPoint, long diffOptions) {
 		super("Operation_CreatePatchLocal", SVNMessages.class); //$NON-NLS-1$
 		this.resources = resources;
 		this.fileName = fileName;
 		this.recurse = recurse;
-		this.ignoreDeleted = ignoreDeleted;
-		this.processBinary = processBinary;
 		this.processUnversioned = processUnversioned;
+		this.options = options & ISVNConnector.CommandMasks.DIFF;
 		this.rootPoint = rootPoint;
+		this.diffOptions = diffOptions;
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
@@ -164,12 +171,8 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				
 				IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 				ISVNConnector proxy = location.acquireSVNProxy();
-				long options = ISVNConnector.Options.IGNORE_ANCESTRY;
-				options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
-				options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
-				
 				try {
-					proxy.diffTwo(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, tmp.getAbsolutePath(), SVNDepth.EMPTY, options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+					proxy.diffTwo(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, tmp.getAbsolutePath(), SVNDepth.EMPTY, this.options, null, this.diffOptions, new SVNProgressMonitor(this, monitor, null));
 					
 					int len = (int)tmp.length();
 					if (len > 0) {
@@ -218,7 +221,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			}
 			else if (this.processUnversioned && !IStateFilter.SF_IGNORED.accept(local)) {
 				int type = FileUtility.getMIMEType(resource);
-				if (this.processBinary || type != Team.BINARY) {
+				if ((this.options & ISVNConnector.Options.FORCE) != 0 || type != Team.BINARY) {
 					stream.write(this.getNewFileDiff(wcPath, fileName, charset).getBytes(charset));
 				}
 			}

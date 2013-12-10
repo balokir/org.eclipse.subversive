@@ -42,12 +42,12 @@ public class PLC366Test extends TestWorkflow {
                         IResource []forAddition = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_NEW);
                         new AddToSVNOperation(forAddition).run(monitor);
                         IResource []forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
-                        new CommitOperation(forCommit, "test PLC366", false).run(monitor);
+                        new CommitOperation(forCommit, "test PLC366", false, false).run(monitor);
                         IResource source = getSecondProject().getFile("site.xml");
                         IResource destination = getSecondProject().getFile("web/site.xml");
                         new CopyResourceOperation (source, destination).run(monitor);
                         new AddToSVNIgnoreOperation(new IResource [] {destination}, IRemoteStorage.IGNORE_NAME, "").run(monitor);
-                        new CommitOperation(new IResource[] {getSecondProject().getFolder("web")}, "test PLC366", false).run(monitor);                       
+                        new CommitOperation(new IResource[] {getSecondProject().getFolder("web")}, "test PLC366", false, false).run(monitor);                       
                     }
                 };
             }

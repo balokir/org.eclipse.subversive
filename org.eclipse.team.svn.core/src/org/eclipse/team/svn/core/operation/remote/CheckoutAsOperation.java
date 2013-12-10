@@ -53,23 +53,27 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	protected IRepositoryResource resource;
 	protected String projectLocation;
 	protected List<IProject> overlappingProjects;
-	protected int recureDepth;
-	protected boolean ignoreExternals;
+	protected int depth;
+	protected long options;
 	protected RestoreProjectMetaOperation restoreOp;
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, int recureDepth, boolean ignoreExternals) {
-		this(projectName, resource, Platform.getLocation().toString(), recureDepth, ignoreExternals);
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, int depth, boolean ignoreExternals) {
+		this(projectName, resource, Platform.getLocation().toString(), depth, ignoreExternals);
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
-		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recureDepth, ignoreExternals); //$NON-NLS-1$
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, int depth, boolean ignoreExternals) {
+		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), depth, ignoreExternals); //$NON-NLS-1$
 	}
 	
 	public int getOperationWeight() {
 		return 19;
 	}
+
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int depth, boolean ignoreExternals) {
+		this(projectName, resource, projectLocation, depth, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE);
+	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int recureDepth, boolean ignoreExternals) {
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int depth, long options) {
 		super("Operation_CheckOutAs", SVNMessages.class); //$NON-NLS-1$
 		projectName = FileUtility.formatResourceName(projectName);
 		if (FileUtility.isCaseInsensitiveOS()) {
@@ -87,8 +91,8 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		}
 		this.resource = resource;
 		this.projectLocation = projectLocation;
-		this.recureDepth = recureDepth;
-		this.ignoreExternals = ignoreExternals;
+		this.depth = depth;
+		this.options = options & ISVNConnector.CommandMasks.CHECKOUT;
 		this.overlappingProjects = new ArrayList<IProject>();
 		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {			
@@ -165,12 +169,12 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = destination.toString();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.ignoreExternals) + SVNUtility.getDepthArg(this.recureDepth, false) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.options) + SVNUtility.getDepthArg(this.depth, ISVNConnector.Options.NONE) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			proxy.checkout(
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 
-					this.recureDepth, 
-					this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, 
+					this.depth, 
+					this.options, 
 					new SVNProgressMonitor(this, monitor, this.project.getFullPath()));
 		}
 		finally {

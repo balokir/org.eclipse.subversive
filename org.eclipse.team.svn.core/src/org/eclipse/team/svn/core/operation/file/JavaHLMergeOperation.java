@@ -31,14 +31,18 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class JavaHLMergeOperation extends AbstractFileOperation {
 	protected IRepositoryResource from1;
 	protected IRepositoryResource from2;
-	protected boolean dryRun;
+	protected long options;
 	protected ISVNNotificationCallback notify;
 	
 	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, boolean dryRun, ISVNNotificationCallback notify) {
+		this(localTo, from1, from2, dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE, notify);
+	}
+
+	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, long options, ISVNNotificationCallback notify) {
 		super("Operation_JavaHLMergeFile", SVNMessages.class, new File[] {localTo}); //$NON-NLS-1$
 		this.from1 = from1;
 		this.from2 = from2;
-		this.dryRun = dryRun;
+		this.options = options & ISVNConnector.CommandMasks.MERGE;
 		this.notify = notify;
 	}
 
@@ -54,7 +58,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 		try {
 			proxy.mergeTwo(
 				SVNUtility.getEntryRevisionReference(this.from1), SVNUtility.getEntryRevisionReference(this.from2),
-				file.getAbsolutePath(), SVNDepth.INFINITY, this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+				file.getAbsolutePath(), SVNDepth.INFINITY, this.options, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			if (this.notify != null) {

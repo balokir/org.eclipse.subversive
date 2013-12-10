@@ -39,26 +39,38 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UpdateOperation extends AbstractFileConflictDetectionOperation implements IFileProvider {
 	protected SVNRevision selectedRevision;
-	protected boolean ignoreExternals;
-	protected int depth = SVNDepth.INFINITY;
-	protected boolean isStickyDepth;
+	protected long options;
+	protected int depth;
 	protected String updateDepthPath;
 	
 	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean ignoreExternals) {
-		super("Operation_UpdateFile", SVNMessages.class, files); //$NON-NLS-1$
-		this.selectedRevision = selectedRevision;
-		this.ignoreExternals = ignoreExternals;
+		this(files, selectedRevision, SVNDepth.INFINITY, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, null);
 	}
 
 	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean ignoreExternals) {
+		this(provider, selectedRevision, SVNDepth.INFINITY, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, null);
+	}
+
+	public UpdateOperation(File []files, SVNRevision selectedRevision, int depth, long options, String updateDepthPath) {
+		super("Operation_UpdateFile", SVNMessages.class, files); //$NON-NLS-1$
+		this.selectedRevision = selectedRevision;
+		this.options = options & ISVNConnector.CommandMasks.UPDATE;
+		this.depth = depth;
+		this.updateDepthPath = updateDepthPath;
+	}
+
+	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, int depth, long options, String updateDepthPath) {
 		super("Operation_UpdateFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.selectedRevision = selectedRevision;
-		this.ignoreExternals = ignoreExternals;
+		this.options = options & ISVNConnector.CommandMasks.UPDATE;
+		this.depth = depth;
+		this.updateDepthPath = updateDepthPath;
 	}
 
 	public void setDepthOptions(int depth, boolean isStickyDepth, String updateDepthPath) {
 		this.depth = depth;
-		this.isStickyDepth = isStickyDepth;
+		this.options &= ~ISVNConnector.Options.DEPTH_IS_STICKY;
+		this.options |= isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE;
 		this.updateDepthPath = updateDepthPath;
 	}
 	
@@ -82,7 +94,7 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 			final String []paths = FileUtility.asPathArray((File [])((List)entry.getValue()).toArray(new File[0]));
 
 			//append update depth path
-			if (this.isStickyDepth && this.updateDepthPath != null &&  paths.length == 1) {
+			if ((UpdateOperation.this.options & ISVNConnector.Options.DEPTH_IS_STICKY) != 0 && this.updateDepthPath != null &&  paths.length == 1) {
 				String newPath = paths[0] + "/" + this.updateDepthPath;
 				newPath = FileUtility.normalizePath(newPath);
 				paths[0] = newPath;
@@ -94,16 +106,14 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getDepthArg(UpdateOperation.this.depth, UpdateOperation.this.isStickyDepth) + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getDepthArg(UpdateOperation.this.depth, UpdateOperation.this.options) + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.options) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			});
 			
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					long options = UpdateOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
-					options |= UpdateOperation.this.isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE;
-					proxy.update(paths, UpdateOperation.this.selectedRevision, UpdateOperation.this.depth, options, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
+					proxy.update(paths, UpdateOperation.this.selectedRevision, UpdateOperation.this.depth, UpdateOperation.this.options, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());
 			

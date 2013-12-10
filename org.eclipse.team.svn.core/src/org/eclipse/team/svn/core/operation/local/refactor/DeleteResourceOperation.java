@@ -26,8 +26,6 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
@@ -44,7 +42,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class DeleteResourceOperation extends AbstractActionOperation {
 	protected IResource[] resources;
-	protected boolean keepLocal;
+	protected long options;
 
 	public DeleteResourceOperation(IResource resource) {
 		this(new IResource[]{resource}, false);
@@ -59,9 +57,13 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 	}
 	
 	public DeleteResourceOperation(IResource[] resources, boolean keepLocal) {
+		this(resources, ISVNConnector.Options.FORCE | (keepLocal ? ISVNConnector.Options.KEEP_LOCAL : ISVNConnector.Options.NONE));
+	}
+
+	public DeleteResourceOperation(IResource[] resources, long options) {
 		super("Operation_DeleteLocal", SVNMessages.class); //$NON-NLS-1$
 		this.resources = resources;
-		this.keepLocal = keepLocal;
+		this.options = options;
 	}
 
 	public ISchedulingRule getSchedulingRule() {
@@ -94,11 +96,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
 				//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete " + printedPath + " --force\n");
-				long options = ISVNConnector.Options.FORCE;
-				if (this.keepLocal && CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
-					options |= ISVNConnector.Options.KEEP_LOCAL;
-				}
-				proxy.removeLocal(wcPaths, options, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
+				proxy.removeLocal(wcPaths, this.options, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
 			}
 			finally {
 			    location.releaseSVNProxy(proxy);

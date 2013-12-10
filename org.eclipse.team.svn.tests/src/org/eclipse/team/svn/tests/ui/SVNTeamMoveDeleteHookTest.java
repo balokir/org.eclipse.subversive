@@ -129,7 +129,7 @@ public class SVNTeamMoveDeleteHookTest extends TestWorkflow {
         sourceFolder.mkdir();
         IFolder []commitedFolder = new IFolder[] {this.getFirstProject().getFolder("commitedFolder")};
         new AddToSVNOperation(commitedFolder).run(new NullProgressMonitor());
-        new CommitOperation(commitedFolder, "", false).run(new NullProgressMonitor());
+        new CommitOperation(commitedFolder, "", false, false).run(new NullProgressMonitor());
         SVNRemoteStorage.instance().refreshLocalResources(commitedFolder, IResource.DEPTH_INFINITE);
         commitedFolder[0].refreshLocal(IResource.DEPTH_INFINITE, null);
         IFolder destination = this.getFirstProject().getFolder("src/testFolder");        
@@ -143,7 +143,7 @@ public class SVNTeamMoveDeleteHookTest extends TestWorkflow {
         sourceFolder.mkdir();
         commitedFolder = new IFolder[] {this.getFirstProject().getFolder("commitedFolder2")};
         new AddToSVNOperation(commitedFolder).run(new NullProgressMonitor());
-        new CommitOperation(commitedFolder, "", false).run(new NullProgressMonitor());
+        new CommitOperation(commitedFolder, "", false, false).run(new NullProgressMonitor());
         SVNRemoteStorage.instance().refreshLocalResources(commitedFolder, IResource.DEPTH_INFINITE);
         commitedFolder[0].refreshLocal(IResource.DEPTH_INFINITE, null);
         File unversionedFolder = new File(this.getFirstProject().getLocation().toString() + "/destinationFolder");
