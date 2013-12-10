@@ -530,11 +530,13 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 								ArrayList<SVNProperty> props = new ArrayList<SVNProperty>();
 								props.addAll(this.propsAdd);
 								props.addAll(this.propsChange);
-								for (int i = 0; i < this.properties.length; i++) {
-									if (this.findProperty(this.properties[i].name, this.propsDel) == null &&
-										this.findProperty(this.properties[i].name, this.propsChange) == null &&
-										this.findProperty(this.properties[i].name, this.propsAdd) == null) {
-										props.add(this.properties[i]);
+								if (this.properties != null) {
+									for (int i = 0; i < this.properties.length; i++) {
+										if (this.findProperty(this.properties[i].name, this.propsDel) == null &&
+											this.findProperty(this.properties[i].name, this.propsChange) == null &&
+											this.findProperty(this.properties[i].name, this.propsAdd) == null) {
+											props.add(this.properties[i]);
+										}
 									}
 								}
 								this.properties = props.toArray(new SVNProperty[props.size()]);
