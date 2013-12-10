@@ -42,8 +42,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class CommitOperation extends AbstractFileConflictDetectionOperation implements IRevisionProvider, IPostCommitErrorsProvider {
-	protected boolean recursive;
-	protected boolean keepLocks;
+	protected int depth;
+	protected long options;
 	protected String message;
 	protected ArrayList<RevisionPair> revisionsPairs;
 	protected ArrayList<SVNCommitStatus> postCommitErrors;
@@ -51,17 +51,25 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 	protected String []paths;
 
 	public CommitOperation(File []files, String message, boolean recursive, boolean keepLocks) {
-		super("Operation_CommitFile", SVNMessages.class, files); //$NON-NLS-1$
-		this.message = message;
-		this.recursive = recursive;
-		this.keepLocks = keepLocks;
+		this(files, message, SVNDepth.infinityOrEmpty(recursive), keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE);
 	}
 
 	public CommitOperation(IFileProvider provider, String message, boolean recursive, boolean keepLocks) {
+		this(provider, message, SVNDepth.infinityOrEmpty(recursive), keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE);
+	}
+
+	public CommitOperation(File []files, String message, int depth, long options) {
+		super("Operation_CommitFile", SVNMessages.class, files); //$NON-NLS-1$
+		this.message = message;
+		this.depth = depth;
+		this.options = options & ISVNConnector.CommandMasks.COMMIT;
+	}
+
+	public CommitOperation(IFileProvider provider, String message, int depth, long options) {
 		super("Operation_CommitFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
-		this.recursive = recursive;
-		this.keepLocks = keepLocks;
+		this.depth = depth;
+		this.options = options & ISVNConnector.CommandMasks.COMMIT;
 	}
 
 	public RevisionPair[] getRevisions() {
@@ -79,7 +87,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 
 		this.defineInitialResourceSet(files);
 
-		if (this.recursive) {
+		if (this.depth == SVNDepth.INFINITY) {
 		    files = FileUtility.shrinkChildNodes(files, false);
 		}
 		else {
@@ -114,7 +122,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 				for (int i = 0; i < CommitOperation.this.paths.length && !monitor.isCanceled(); i++) {
 					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + CommitOperation.this.paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (CommitOperation.this.recursive ? "" : " -N") + (CommitOperation.this.keepLocks ? " --no-unlock" : "") + " -m \"" + CommitOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (CommitOperation.this.depth == SVNDepth.INFINITY ? "" : " -N") + ((CommitOperation.this.options & ISVNConnector.Options.KEEP_LOCKS) != 0 ? " --no-unlock" : "") + " -m \"" + CommitOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			}
 		});
 		
@@ -126,7 +134,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 				    CommitOperation.this.paths, 
 					CommitOperation.this.message, 
 					null,
-					SVNDepth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
+					CommitOperation.this.depth, CommitOperation.this.options, 
 					null, svnMonitor);
 				SVNCommitStatus status = svnMonitor.getCommitStatuses().isEmpty() ? null : svnMonitor.getCommitStatuses().iterator().next();
 				if (status != null && status.revision != SVNRevision.INVALID_REVISION_NUMBER) {

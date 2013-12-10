@@ -50,14 +50,14 @@ public class PLC375Test extends TestWorkflow {
                             fos.close();
                         }
                         IResource []forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
-                        new CommitOperation(forCommit, "test PLC375", false).run(monitor);
+                        new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
                         FileUtility.deleteRecursive(getSecondProject().getFile("123").getLocation().toFile());
                         forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ANY_CHANGE);
-                        new CommitOperation(forCommit, "test PLC375", false).run(monitor);
+                        new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
                         File dir = new File(getSecondProject().getLocation().toString() + "/123");
                         dir.mkdir();
                         forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
-                        new CommitOperation(forCommit, "test PLC375", false).run(monitor);
+                        new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
                     }
                 };
             }

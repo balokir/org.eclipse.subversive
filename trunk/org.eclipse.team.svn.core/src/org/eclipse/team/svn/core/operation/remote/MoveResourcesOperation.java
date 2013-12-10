@@ -15,8 +15,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
@@ -36,11 +34,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 
 	protected void runCopyMove(ISVNConnector proxy, SVNEntryRevisionReference[] source, String[] sourcePaths, String destinationUrl, IProgressMonitor monitor) throws Exception {
 		//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-		long options = ISVNConnector.CommandMasks.COPY_SERVER;
-		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
-			options &= ~ISVNConnector.Options.INTERPRET_AS_CHILD /*do not use SVN 1.5 options*/;
-		}
-		proxy.moveRemote(sourcePaths, destinationUrl, this.message, options, null, new SVNProgressMonitor(this, monitor, null));
+		proxy.moveRemote(sourcePaths, destinationUrl, this.message, ISVNConnector.CommandMasks.COPY_SERVER, null, new SVNProgressMonitor(this, monitor, null));
 	}
 
 }

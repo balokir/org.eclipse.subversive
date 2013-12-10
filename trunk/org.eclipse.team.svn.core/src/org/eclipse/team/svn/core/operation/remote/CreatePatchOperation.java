@@ -32,21 +32,26 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class CreatePatchOperation extends AbstractRepositoryOperation {
 	protected String fileName;
 	protected boolean recurse;
-	protected boolean ignoreDeleted;
-	protected boolean processBinary;
-	protected boolean ignoreAncestry;
+	protected long options;
+	protected long diffOptions;
 
 	public CreatePatchOperation(IRepositoryResource first, IRepositoryResource second, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary) {
 		this(first, second, fileName, recurse, ignoreDeleted, processBinary, true);
 	}
 	
 	public CreatePatchOperation(IRepositoryResource first, IRepositoryResource second, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean ignoreAncestry) {
+		this(first, second, fileName, recurse, 
+			(ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE) | 
+			(processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE) | 
+			(ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE), ISVNConnector.DiffOptions.NONE);
+	}
+
+	public CreatePatchOperation(IRepositoryResource first, IRepositoryResource second, String fileName, boolean recurse, long options, long diffOptions) {
 		super("Operation_CreatePatchRemote", SVNMessages.class, new IRepositoryResource[] {first, second}); //$NON-NLS-1$
 		this.fileName = fileName;
 		this.recurse = recurse;
-		this.ignoreDeleted = ignoreDeleted;
-		this.processBinary = processBinary;
-		this.ignoreAncestry = ignoreAncestry;
+		this.options = options & ISVNConnector.CommandMasks.DIFF;
+		this.diffOptions = diffOptions;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -57,18 +62,15 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 		try {
 			SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(first);
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(second);
-			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
-			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
-			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff -r " + ref1.revision + ":" + ref2.revision + " \"" + first.getUrl() + "@" + ref1.pegRevision + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff -r " + ref1.revision + ":" + ref2.revision + " \"" + first.getUrl() + "@" + ref1.pegRevision + "\"" + (this.recurse ? "" : " -N") + ((this.options & ISVNConnector.Options.SKIP_DELETED) != 0 ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 				proxy.diff(ref1, new SVNRevisionRange(ref1.revision, ref2.revision), null, this.fileName, this.recurse ? SVNDepth.INFINITY : SVNDepth.IMMEDIATES, 
-						options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+						this.options, null, this.diffOptions, new SVNProgressMonitor(this, monitor, null));
 			}
 			else {
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + ((this.options & ISVNConnector.Options.SKIP_DELETED) != 0 ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 				proxy.diffTwo(ref1, ref2, null, this.fileName, 
-						this.recurse ? SVNDepth.INFINITY : SVNDepth.IMMEDIATES, options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+						this.recurse ? SVNDepth.INFINITY : SVNDepth.IMMEDIATES, this.options, null, this.diffOptions, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

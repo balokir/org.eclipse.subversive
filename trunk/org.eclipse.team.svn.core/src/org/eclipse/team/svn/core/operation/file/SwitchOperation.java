@@ -33,12 +33,16 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class SwitchOperation extends AbstractFileConflictDetectionOperation {
 	protected IRepositoryResource destination;
-	protected boolean ignoreExternals;
+	protected long options;
 	
 	public SwitchOperation(File file, IRepositoryResource destination, boolean ignoreExternals) {
+		this(file, destination, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE);
+	}
+
+	public SwitchOperation(File file, IRepositoryResource destination, long options) {
 		super("Operation_SwitchFile", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 		this.destination = destination;
-		this.ignoreExternals = ignoreExternals;
+		this.options = options & ISVNConnector.CommandMasks.SWITCH;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -46,10 +50,9 @@ public class SwitchOperation extends AbstractFileConflictDetectionOperation {
 		
 		IRepositoryLocation location = this.destination.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
-		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.ignoreExternals) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.options) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		try {
-			long options = this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE; 
-			proxy.switchTo(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), SVNDepth.infinityOrFiles(true), options, new ConflictDetectionProgressMonitor(this, monitor, null));
+			proxy.switchTo(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), SVNDepth.infinityOrFiles(true), this.options, new ConflictDetectionProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

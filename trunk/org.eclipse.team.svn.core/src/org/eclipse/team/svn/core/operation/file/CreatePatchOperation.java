@@ -30,18 +30,24 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  */
 public class CreatePatchOperation extends AbstractFileOperation {
 	protected String fileName;
-	protected boolean recurse;
-	protected boolean ignoreDeleted;
-	protected boolean processBinary;
 	protected boolean useRelativePath;
+	protected int depth;
+	protected long options;
+	protected long diffOptions;
 
 	public CreatePatchOperation(File file, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean useRelativePath) {
+		this(file, fileName, SVNDepth.infinityOrFiles(recurse), 
+			(ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE) |
+			(processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE), useRelativePath, ISVNConnector.DiffOptions.NONE);
+	}
+
+	public CreatePatchOperation(File file, String fileName, int depth, long options, boolean useRelativePath, long diffOptions) {
 		super("Operation_CreatePatchFile", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 		this.fileName = fileName;
-		this.recurse = recurse;
-		this.ignoreDeleted = ignoreDeleted;
-		this.processBinary = processBinary;
+		this.depth = depth;
+		this.options = options | ISVNConnector.Options.IGNORE_ANCESTRY;
 		this.useRelativePath = useRelativePath;
+		this.diffOptions = diffOptions;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -49,14 +55,11 @@ public class CreatePatchOperation extends AbstractFileOperation {
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
 		ISVNConnector proxy = remote.getRepositoryLocation().acquireSVNProxy();
 		try {
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.depth == SVNDepth.INFINITY ? "" : " -N") + ((this.options & ISVNConnector.Options.SKIP_DELETED) != 0 ? " --no-diff-deleted" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			String path = file.getAbsolutePath();
-			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
-			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
-			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 			proxy.diffTwo(
-				new SVNEntryRevisionReference(path, null, SVNRevision.BASE), new SVNEntryRevisionReference(path, null, SVNRevision.WORKING), this.useRelativePath ? path : null, this.fileName, 
-				SVNDepth.infinityOrFiles(this.recurse), options, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+				new SVNEntryRevisionReference(path, null, SVNRevision.BASE), new SVNEntryRevisionReference(path, null, SVNRevision.WORKING), 
+				this.useRelativePath ? path : null, this.fileName, this.depth, this.options, null, this.diffOptions, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			remote.getRepositoryLocation().releaseSVNProxy(proxy);

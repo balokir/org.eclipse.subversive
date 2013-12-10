@@ -55,7 +55,7 @@ public class PLC378Test extends TestWorkflow {
                         IResource []forAddition = new IResource[] {getFirstProject().getFile("testFile")};
                         new AddToSVNOperation(forAddition).run(monitor);
                         IResource []forCommit = new IResource[] {getFirstProject().getFile("testFile")};
-                        new CommitOperation(forCommit, "PLC378Test", false).run(monitor); 
+                        new CommitOperation(forCommit, "PLC378Test", false, false).run(monitor); 
                                                 
                         try {
                             fos = new FileOutputStream (getSecondProject().getLocation().toString() + "/testFile");
@@ -67,7 +67,7 @@ public class PLC378Test extends TestWorkflow {
                         forAddition = new IResource[] {getSecondProject().getFile("testFile")};
                         new AddToSVNOperation(forAddition).run(monitor);
                         forCommit = new IResource[] {getSecondProject().getFile("testFile")};
-                        new CommitOperation(forCommit, "PLC378Test", false).run(monitor);
+                        new CommitOperation(forCommit, "PLC378Test", false, false).run(monitor);
                         IResource []forUpdate = new IResource[] {getSecondProject().getFile("testFile")};
                         new UpdateOperation(forUpdate, true).run(monitor);                        
                     }

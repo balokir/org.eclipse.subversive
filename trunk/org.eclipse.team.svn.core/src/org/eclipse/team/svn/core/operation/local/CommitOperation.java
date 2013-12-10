@@ -46,8 +46,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class CommitOperation extends AbstractConflictDetectionOperation implements IRevisionProvider, IPostCommitErrorsProvider {
-	protected boolean recursive;
-	protected boolean keepLocks;
+	protected int depth;
+	protected long options;
 	protected String message;
 	protected ArrayList<RevisionPair> revisionsPairs;
 	protected ArrayList<SVNCommitStatus> postCommitErrors;
@@ -55,27 +55,27 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	protected String []paths;
 
 	public CommitOperation(IResource []resources, String message, boolean recursive, boolean keepLocks) {
+		this(resources, message, SVNDepth.infinityOrEmpty(recursive), keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE);
+	}
+	
+	public CommitOperation(IResourceProvider provider, String message, boolean recursive, boolean keepLocks) {
+		this(provider, message, SVNDepth.infinityOrEmpty(recursive), keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE);
+	}
+	
+	public CommitOperation(IResource []resources, String message, int depth, long options) {
 		super("Operation_Commit", SVNMessages.class, resources); //$NON-NLS-1$
 		this.message = message;
-		this.recursive = recursive;
-		this.keepLocks = keepLocks;
+		this.depth = depth;
+		this.options = options & ISVNConnector.CommandMasks.COMMIT;
 	}
 	
-	public CommitOperation(IResource []resources, String message, boolean recursive) {
-		this(resources, message, recursive, false);
-	}
-
-	public CommitOperation(IResourceProvider provider, String message, boolean recursive, boolean keepLocks) {
+	public CommitOperation(IResourceProvider provider, String message, int depth, long options) {
 		super("Operation_Commit", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
-		this.recursive = recursive;
-		this.keepLocks = keepLocks;
+		this.depth = depth;
+		this.options = options & ISVNConnector.CommandMasks.COMMIT;
 	}
 	
-	public CommitOperation(IResourceProvider provider, String message, boolean recursive) {
-		this(provider, message, recursive, false);
-	}
-
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		this.revisionsPairs = new ArrayList<RevisionPair>();
 		this.postCommitErrors = new ArrayList<SVNCommitStatus>();
@@ -83,7 +83,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 		
 		this.defineInitialResourceSet(resources);
 
-		if (this.recursive) {
+		if (this.depth == SVNDepth.INFINITY) {
 		    resources = FileUtility.shrinkChildNodesWithSwitched(resources);
 		}
 		else {
@@ -119,7 +119,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 				for (int i = 0; i < CommitOperation.this.paths.length && !monitor.isCanceled(); i++) {
 					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + CommitOperation.this.paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (CommitOperation.this.recursive ? "" : " -N") + (CommitOperation.this.keepLocks ? " --no-unlock" : "") + " -m \"" + CommitOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (CommitOperation.this.depth == SVNDepth.INFINITY ? "" : " -N") + ((CommitOperation.this.options & ISVNConnector.Options.KEEP_LOCKS) != 0 ? " --no-unlock" : "") + " -m \"" + CommitOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			}
 		});
 		
@@ -131,7 +131,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 				    CommitOperation.this.paths, 
 					CommitOperation.this.message, 
 					null,
-					SVNDepth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
+					CommitOperation.this.depth, CommitOperation.this.options, 
 					null, svnMonitor);
 				SVNCommitStatus status = svnMonitor.getCommitStatuses().isEmpty() ? null : svnMonitor.getCommitStatuses().iterator().next();
 				if (status != null && status.revision != SVNRevision.INVALID_REVISION_NUMBER) {

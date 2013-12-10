@@ -32,33 +32,34 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	protected SVNLogEntry []msg;
-	protected boolean stopOnCopy;
-	protected boolean discoverPaths;
 	protected SVNRevision startRevision;
 	protected SVNRevision endRevision;
 	protected long limit;
-	protected boolean includeMerged;
 	protected boolean isRetryIfMergeInfoNotSupported;
+	protected long options;
 	
 	public GetLogMessagesOperation(IRepositoryResource resource) {
 		this(resource, false);
 	}
 	
 	public GetLogMessagesOperation(IRepositoryResource resource, boolean stopOnCopy) {
+		this(resource, ISVNConnector.Options.DISCOVER_PATHS | (stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE));
+	}
+	
+	public GetLogMessagesOperation(IRepositoryResource resource, long options) {
 		super("Operation_GetLogMessages", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
-		this.stopOnCopy = stopOnCopy;
-		this.includeMerged = false;
-		this.discoverPaths = true;
+		this.options = options & ISVNConnector.CommandMasks.LIST_HISTORY_LOG;
 		this.limit = 0;
 		this.endRevision = SVNRevision.fromNumber(0); 
 	}
 	
 	public boolean getIncludeMerged() {
-		return this.includeMerged;
+		return (this.options & ISVNConnector.Options.INCLUDE_MERGED_REVISIONS) != 0;
 	}
 	
 	public void setIncludeMerged(boolean includeMerged) {
-		this.includeMerged = includeMerged;
+		this.options &= ~ISVNConnector.Options.INCLUDE_MERGED_REVISIONS;
+		this.options |= includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
 	}
 	
 	public void setRetryIfMergeInfoNotSupported(boolean isRetryIfMergeInfoNotSupported) {
@@ -66,19 +67,21 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	}
 	
 	public boolean getStopOnCopy() {
-		return this.stopOnCopy;
+		return (this.options & ISVNConnector.Options.STOP_ON_COPY) != 0;
 	}
 	
 	public void setStopOnCopy(boolean stopOnCopy) {
-		this.stopOnCopy = stopOnCopy;
+		this.options &= ~ISVNConnector.Options.STOP_ON_COPY;
+		this.options |= stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
 	}
 	
 	public boolean getDiscoverPaths() {
-		return this.discoverPaths;
+		return (this.options & ISVNConnector.Options.DISCOVER_PATHS) != 0;
 	}
 
 	public void setDiscoverPaths(boolean discoverPaths) {
-		this.discoverPaths = discoverPaths;
+		this.options &= ~ISVNConnector.Options.DISCOVER_PATHS;
+		this.options |= discoverPaths ? ISVNConnector.Options.DISCOVER_PATHS : ISVNConnector.Options.NONE;
 	}
 	
 	public long getLimit() {
@@ -106,22 +109,17 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
-			long options = this.discoverPaths ? ISVNConnector.Options.DISCOVER_PATHS : ISVNConnector.Options.NONE;
-			options |= this.stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
-			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
-			
 			try {
-				this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
+				this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, this.options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
 			} catch (SVNConnectorException ex) {
 				/*
 				 * If SVN server doesn't support merged revisions, then we re-call without this option
 				 */
 				if (this.isRetryIfMergeInfoNotSupported && 
 					ex.getErrorId() == SVNErrorCodes.unsupportedFeature && 
-					(options & Options.INCLUDE_MERGED_REVISIONS) != 0) {
-					
-					options &= ~Options.INCLUDE_MERGED_REVISIONS;  
-					this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
+					(this.options & Options.INCLUDE_MERGED_REVISIONS) != 0) {
+					this.options &= ~Options.INCLUDE_MERGED_REVISIONS;  
+					this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, this.options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
 				} else {
 					throw ex;
 				}

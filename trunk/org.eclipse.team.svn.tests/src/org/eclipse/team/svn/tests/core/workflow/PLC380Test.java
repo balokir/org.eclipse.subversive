@@ -54,7 +54,7 @@ public class PLC380Test extends TestWorkflow {
                         IResource []forAddition = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_NEW);
                         new AddToSVNOperation(forAddition).run(monitor);
                         IResource []forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
-                        new CommitOperation(forCommit, "test PLC380", false).run(monitor);
+                        new CommitOperation(forCommit, "test PLC380", false, false).run(monitor);
                         new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getSecondProject().getName(), false), SVNDepth.INFINITY, true).run(monitor);                        
                         try {
                             fos = new FileOutputStream (getFirstProject().getLocation().toString() + "/123");
@@ -63,7 +63,7 @@ public class PLC380Test extends TestWorkflow {
                         finally {
                             fos.close();
                         }
-                        new CommitOperation(new IResource[] {getFirstProject().getFile("123")}, "test PLC380", false).run(monitor);
+                        new CommitOperation(new IResource[] {getFirstProject().getFile("123")}, "test PLC380", false, false).run(monitor);
                         new UpdateOperation(new IResource[] {ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getFile("123")}, true).run(monitor);                        
                     }
                 };

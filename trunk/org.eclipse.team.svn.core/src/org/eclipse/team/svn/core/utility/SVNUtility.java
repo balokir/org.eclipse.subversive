@@ -1331,8 +1331,8 @@ public final class SVNUtility {
 		return operatedProjects.toArray(new IProject[0]);
 	}
 	
-	public static String getDepthArg(int depth, boolean isStickyDepth) {
-		String depthArg = isStickyDepth ? " --set-depth " : " --depth "; //$NON-NLS-1$
+	public static String getDepthArg(int depth, long options) {
+		String depthArg = (options & ISVNConnector.Options.DEPTH_IS_STICKY) != 0 ? " --set-depth " : " --depth "; //$NON-NLS-1$
 		if (depth == SVNDepth.EMPTY) {
 			return depthArg + "empty "; //$NON-NLS-1$
 		}
@@ -1351,8 +1351,8 @@ public final class SVNUtility {
 		return depthArg + "files "; //$NON-NLS-1$
 	}
 	
-	public static String getIgnoreExternalsArg(boolean ignoreExternals) {
-		return ignoreExternals ? " --ignore-externals" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+	public static String getIgnoreExternalsArg(long options) {
+		return (options & ISVNConnector.Options.IGNORE_EXTERNALS) != 0 ? " --ignore-externals" : ""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

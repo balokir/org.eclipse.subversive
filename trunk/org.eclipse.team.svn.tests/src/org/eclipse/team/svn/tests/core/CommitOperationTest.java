@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 public abstract class CommitOperationTest extends AbstractOperationTestCase {
 	protected IActionOperation getOperation() {
 	    IResource []scheduledForCommit = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_ADDED);
-		return new CommitOperation(scheduledForCommit, "test commit", true);
+		return new CommitOperation(scheduledForCommit, "test commit", true, false);
 	}
 
 }
