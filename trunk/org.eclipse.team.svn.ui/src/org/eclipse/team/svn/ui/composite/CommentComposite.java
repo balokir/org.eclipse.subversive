@@ -219,7 +219,11 @@ public class CommentComposite extends Composite {
 		this.text = SpellcheckedTextProvider.getTextWidget(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP, data, this.maxLogWidth);
 		this.text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
-				if (e.character == SWT.TAB) {
+	        	if (!SVNTeamPreferences.getCommentTemplatesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_USE_SHIFT_ENTER_NAME) &&
+	        		(e.stateMask & SWT.SHIFT) != 0 && e.detail == SWT.TRAVERSE_RETURN) {
+		       		e.doit = false;
+	        	}
+	        	else if (e.character == SWT.TAB) {
 					// no TABs are accepted as a text part
 					e.doit = true;
 				}
