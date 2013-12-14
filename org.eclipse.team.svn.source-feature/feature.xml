@@ -28,19 +28,15 @@
          version="2.0.0.I20131101-1700"/>
 
    <includes
-         id="org.eclipse.team.svn.resource.ignore.rules.jdt.source"
+         id="org.eclipse.team.svn.resource.ignore.rules.jdt.sources"
          version="2.0.0.I20131101-1700"/>
 
    <includes
-         id="org.eclipse.team.svn.mylyn.source"
+         id="org.eclipse.team.svn.mylyn.sources"
          version="2.0.0.I20131101-1700"/>
 
    <includes
-         id="org.eclipse.team.svn.revision.graph.source"
-         version="2.0.0.I20131101-1700"/>
-
-   <includes
-         id="org.eclipse.team.svn.ui.startup.source"
+         id="org.eclipse.team.svn.revision.graph.sources"
          version="2.0.0.I20131101-1700"/>
 
 </feature>
