@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
+import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -39,41 +40,39 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public class OpenInExternalCompareEditorModelAction extends AbstractSynchronizeLogicalModelAction {
 
-	protected ExternalProgramParameters externalProgramParams;
-	
 	public OpenInExternalCompareEditorModelAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
 
 	protected IActionOperation getOperation() {
 		IActionOperation op = null;
-		if (this.externalProgramParams != null) {
-			IResource resource = this.getSelectedResource();				
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);							
-			op = new ExternalCompareOperation(local, remote, new DefaultExternalProgramParametersProvider(this.externalProgramParams));				
-		}					
+		
+		IResource resource = this.getSelectedResource();				
+		DiffViewerSettings diffSettings = SVNTeamDiffViewerPage.loadDiffViewerSettings();
+		DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(resource, diffSettings, true);
+		detectCompareHelper.execute(new NullProgressMonitor());
+		ExternalProgramParameters externalProgramParams = detectCompareHelper.getExternalProgramParameters();
+		
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);							
+		if (externalProgramParams != null) {
+			op = new ExternalCompareOperation(local, remote, new DefaultExternalProgramParametersProvider(externalProgramParams));				
+		}
+		else {
+			op = new CompareResourcesOperation(local, remote, false, true);
+		}
 		return op;
-	}		
-	
-	protected boolean updateSelection(IStructuredSelection selection) {			
-		if (super.updateSelection(selection) && selection.size() == 1) {
-			IResource resource = this.getSelectedResource();				
-			DiffViewerSettings diffSettings = SVNTeamDiffViewerPage.loadDiffViewerSettings();
-			DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(resource, diffSettings, true);
-			detectCompareHelper.execute(new NullProgressMonitor());
-			this.externalProgramParams = detectCompareHelper.getExternalProgramParameters();
-			if (this.externalProgramParams != null) {
-				return true;
-			}				
-		}			
-		return false;
 	}
 	
+	protected boolean isEnabledForSelection(IStructuredSelection selection) {
+		return selection.size() == 1 && super.isEnabledForSelection(selection);
+	}
+
 	public FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {
-				return CompareWithWorkingCopyAction.COMPARE_FILTER.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+				ILocalResource local = ((AbstractSVNSyncInfo)info).getLocalResource();
+				return local.getResource().getType() == IResource.FILE && CompareWithWorkingCopyAction.COMPARE_FILTER.accept(local);
 			}
 		};
 	}
