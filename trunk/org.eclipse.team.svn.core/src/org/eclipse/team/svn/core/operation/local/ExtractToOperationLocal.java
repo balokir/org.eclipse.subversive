@@ -84,11 +84,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 					FileUtility.deleteRecursive(operatingDirectory);
 				}
 			}
-			else if (current instanceof IContainer) {
-				monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_Folders, new String [] {FileUtility.getWorkingCopyPath(current)}));
-				operatingDirectory.mkdirs();
-			}
-			else {
+			else if (!IStateFilter.SF_NOTMODIFIED.accept(localResource)) {
 				if (previousPref != null) {
 					File parent = operatingDirectory.getParentFile();
 					if (parent != null) {
@@ -98,7 +94,9 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 					}
 				}
 				monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_LocalFile, new String [] {FileUtility.getWorkingCopyPath(current)}));
-				FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES, null, monitor);
+				if (localResource.getResource().getType() == IResource.FILE || IStateFilter.SF_ADDED.accept(localResource)) {
+					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES | FileUtility.COPY_IGNORE_EXISTING_FOLDERS, null, monitor);
+				}
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
 		}
