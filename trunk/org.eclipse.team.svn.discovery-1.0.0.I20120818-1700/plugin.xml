@@ -43,18 +43,36 @@
                   
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on SVN Kit library (SVN/1.7.9 SVNKit/1.7.10 r9848_v20130716_1623). Compatible with SVN 1.7.x. Pure Java. Supported platforms: All."
+            description="SVN connector based on SVN Kit library (SVN/1.7.11 SVNKit/1.7.11 r9959_v20130906_1728). Compatible with SVN 1.7.x. Pure Java. Supported platforms: All."
             groupId="org.eclipse.team.svn.discovery-svnkit"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit17"
             kind="task"
             license="TMate Open Source License"
-            name="SVN Kit 1.7.10"
+            name="SVN Kit 1.7.11"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/3.0/kepler-site/">
          <icon image32="images/Polarion.png">
          </icon>
          <overview
                summary="SVN Kit connector for the Eclipse Subversive. Compatible with SVN 1.7.x only. SVNKit is written in Java and does not require any additional binaries or native applications. It is portable and there is no need for OS specific code."
+               url="http://svnkit.com/">
+         </overview>
+      </connectorDescriptor>                            
+                  
+      <connectorDescriptor
+            categoryId="org.eclipse.team.svn.discovery.svn.connectors"
+            description="SVN connector based on SVN Kit library (SVN/1.8.1 SVNKit/1.8.3 (http://svnkit.com/) r10145_v20140121_0111). Compatible with SVN 1.8.x. Pure Java. Supported platforms: All."
+            groupId="org.eclipse.team.svn.discovery-svnkit"
+            id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit18"
+            kind="task"
+            license="TMate Open Source License"
+            name="SVN Kit 1.8.3"
+            provider="Polarion"
+            siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/3.0/kepler-site/">
+         <icon image32="images/Polarion.png">
+         </icon>
+         <overview
+               summary="SVN Kit connector for the Eclipse Subversive. Compatible with SVN 1.7.x-1.8.x only. SVNKit is written in Java and does not require any additional binaries or native applications. It is portable and there is no need for OS specific code."
                url="http://svnkit.com/">
          </overview>
       </connectorDescriptor>                            
@@ -154,6 +172,66 @@
          </icon>
          <overview
                summary="JavaHL connector for the Eclipse Subversive. Compatible with SVN 1.7.x only. You also need to manually install Subversion, including the JavaHL library, for your platform. JavaHL is a part of the Subversion project. Specifically, it is the Java language binding for the Subversion API."
+               url="http://subversion.apache.org/">
+         </overview>
+      </connectorDescriptor>
+      
+      
+      <!-- JavaHL 1.8 -->
+
+      <connectorDescriptor
+            categoryId="org.eclipse.team.svn.discovery.svn.connectors"
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.8.5 r1542147). Compatible with SVN 1.7.x-1.8.x. Included binaries: for Windows 32-bit platform only."
+            groupId="org.eclipse.team.svn.discovery-javahl"
+            id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl18.win32,org.polarion.eclipse.team.svn.connector.javahl18"
+            kind="task"
+            license="Apache Software License 1.1"
+            name="Native JavaHL 1.8.5 (32-bit Eclipse for Windows)"
+            provider="Polarion"
+            siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/3.0/kepler-site/"
+            platformFilter="(&amp; (osgi.os=win32) (osgi.arch=x86))">
+       <icon image32="images/Polarion.png">
+         </icon>
+         <overview
+               summary="JavaHL connector for the Eclipse Subversive. Compatible with SVN 1.7.x-1.8.x only. JavaHL is a part of the Subversion project. Specifically, it is the Java language binding for the Subversion API."
+               url="http://subversion.apache.org/">
+         </overview>
+      </connectorDescriptor>
+
+      <connectorDescriptor
+            categoryId="org.eclipse.team.svn.discovery.svn.connectors"
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.8.5 r1542147). Compatible with SVN 1.7.x-1.8.x. Included binaries: for Windows 64-bit platform only."
+            groupId="org.eclipse.team.svn.discovery-javahl"
+            id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl18.win64,org.polarion.eclipse.team.svn.connector.javahl18"
+            kind="task"
+            license="Apache Software License 1.1"
+            name="Native JavaHL 1.8.5 (64-bit Eclipse for Windows)"
+            provider="Polarion"
+            siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/3.0/kepler-site/"
+            platformFilter="(&amp; (osgi.os=win32) (osgi.arch=x86_64))">
+       <icon image32="images/Polarion.png">
+         </icon>
+         <overview
+               summary="JavaHL connector for the Eclipse Subversive. Compatible with SVN 1.7.x-1.8.x only. JavaHL is a part of the Subversion project. Specifically, it is the Java language binding for the Subversion API."
+               url="http://subversion.apache.org/">
+         </overview>
+      </connectorDescriptor>
+      
+    <connectorDescriptor
+            categoryId="org.eclipse.team.svn.discovery.svn.connectors"
+            description="SVN connector based on JavaHL. Compatible with SVN 1.7.x-1.8.x. You also need to manually install Subversion, including the JavaHL library, for your platform."
+            groupId="org.eclipse.team.svn.discovery-javahl"
+            id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl18"
+            kind="task"
+            license="Apache Software License 1.1"
+            name="JavaHL 1.8.x"
+            provider="Polarion"
+            siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/4.0/kepler-site/"
+            platformFilter="(!(osgi.os=win32))">
+       <icon image32="images/Polarion.png">
+         </icon>
+         <overview
+               summary="JavaHL connector for the Eclipse Subversive. Compatible with SVN 1.7.x-1.8.x only. You also need to manually install Subversion, including the JavaHL library, for your platform. JavaHL is a part of the Subversion project. Specifically, it is the Java language binding for the Subversion API."
                url="http://subversion.apache.org/">
          </overview>
       </connectorDescriptor>
