@@ -30,6 +30,7 @@ import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.history.SVNFileHistoryProvider;
@@ -248,7 +249,26 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	public static boolean requiresUpgrade(IProject project) {
 		IPath location = FileUtility.getResourcePath(project);
 		location = location.append(SVNUtility.getSVNFolderName());
-		return !SVNUtility.isPriorToSVN17() && location.toFile().exists() && !location.append("pristine").toFile().exists();
+		if (SVNUtility.isPriorToSVN17())
+		{
+			return false;
+		}
+		if (location.toFile().exists() && !location.append("pristine").toFile().exists())
+		{
+			return true;
+		}
+		IRepositoryLocation rLocation = SVNRemoteStorage.instance().getRepositoryLocation(project);
+		ISVNConnector proxy = rLocation.acquireSVNProxy();
+		try {
+			SVNUtility.properties(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(project), null, SVNRevision.WORKING), ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
+		} 
+		catch (SVNConnectorException e) {
+			return e.getErrorId() == SVNErrorCodes.wcOldFormat;
+		}
+		finally {
+			rLocation.releaseSVNProxy(proxy);
+		}
+		return false;
 	}
 	
 	protected int uploadRepositoryResource() {
