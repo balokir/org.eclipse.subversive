@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -42,9 +43,9 @@ import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.SVNSynchronizationResourceMappingContext;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
@@ -67,6 +68,10 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
     	return this.getFilteredResources().length > 0;
     }
     
+	protected ResourceMappingContext getResourceMappingContext() {
+		return new SVNSynchronizationResourceMappingContext(this.getSynchronizationContext());
+	}
+	
     protected void createSyncInfoSelector() {
 		this.syncInfoSelector = new IResourceSelector() {
 			public IResource []getSelectedResources() {
