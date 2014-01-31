@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -40,7 +41,7 @@ public class GetPropertiesOperation extends AbstractActionOperation implements I
 	protected SVNRevision revision;
 	
 	public GetPropertiesOperation(IResource resource) {
-		this(resource, SVNRevision.WORKING);
+		this(resource, IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(resource)) ? SVNRevision.BASE : SVNRevision.WORKING);
 	}
 	
 	public GetPropertiesOperation(IResource resource, SVNRevision revision) {
