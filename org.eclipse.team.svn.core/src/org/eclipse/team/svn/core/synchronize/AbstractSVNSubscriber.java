@@ -157,7 +157,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 				local = new ResourceDiff(info.getLocal(), kind, 0, before, after);
 			}
 			else {// For folders, we don't need file states
-				local = new ResourceDiff(info.getLocal(), kind);
+				local = new ResourceDiff(info.getLocal(), kind, 0, null, null); // using this type of constructor instead of shorthand notation, since we don't want assertion in case of obstructed resources of different kinds
 			}
 		}		
 		ITwoWayDiff remote = null;
