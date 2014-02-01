@@ -56,7 +56,7 @@ public abstract class FileUtilityTest extends AbstractOperationTestCase {
 				cntr[0] = 0;
 				FileUtility.visitNodes(prj1, new IResourceVisitor() {
 					public boolean visit(IResource resource) throws CoreException {
-						if (FileUtility.isSVNInternals(resource)) {
+						if (FileUtility.isSVNInternals(resource) || FileUtility.isIgnored(resource)) {
 							return false;
 						}
 						cntr[0]++;
@@ -65,7 +65,7 @@ public abstract class FileUtilityTest extends AbstractOperationTestCase {
 				}, IResource.DEPTH_INFINITE);
 				FileUtility.visitNodes(prj2, new IResourceVisitor() {
 					public boolean visit(IResource resource) throws CoreException {
-						if (FileUtility.isSVNInternals(resource)) {
+						if (FileUtility.isSVNInternals(resource) || FileUtility.isIgnored(resource)) {
 							return false;
 						}
 						cntr[0]++;

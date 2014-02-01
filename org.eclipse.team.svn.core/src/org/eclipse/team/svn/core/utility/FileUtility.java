@@ -328,11 +328,6 @@ public final class FileUtility {
 	}
 	
 	public static void visitNodes(IResource resource, IResourceVisitor visitor, int depth, boolean useCache, boolean useAlphabeticalOrder) throws Exception {
-		//don't visit ignored resources
-		if (FileUtility.isIgnored(resource)) {
-			return;
-		}
-		
 		boolean stepInside = visitor.visit(resource);
 		if (stepInside &&
 			resource instanceof IContainer && 
@@ -610,7 +605,7 @@ public final class FileUtility {
 					toRemove.add(resource);
 					return false;
 				}
-				return true;
+				return !FileUtility.isIgnored(resource);
 			}
 		}, 
 		IResource.DEPTH_INFINITE, 

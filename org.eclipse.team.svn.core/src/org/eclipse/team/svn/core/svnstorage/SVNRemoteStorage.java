@@ -414,6 +414,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	public ILocalResource asLocalResource(IResource resource) {
+		return this.asLocalResourceImpl(resource, true);
+	}
+	
+	protected ILocalResource asLocalResourceImpl(IResource resource, boolean recurse) {
 		// null resource and workspace root shouldn't be provided
 		if (resource == null || resource.getProject() == null || !resource.getProject().isAccessible()) {
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
@@ -424,7 +428,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				local = (ILocalResource)this.localResources.get(resource.getFullPath());
 				if (local == null) {
 					try {
-						local = this.loadLocalResourcesSubTree(resource, true);
+						local = this.loadLocalResourcesSubTree(resource, recurse);
 					} 
 					catch (RuntimeException ex) {
 						throw ex;
@@ -650,7 +654,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		IResource parent = resource.getParent();
 		boolean parentExists = parent != null && parent.isAccessible();
 		if (parentExists && !isLinked) {
-			ILocalResource parentLocal = this.getFirstExistingParentLocal(resource);
+			ILocalResource parentLocal = this.asLocalResourceImpl(parent, false);
 			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal) ||
 				IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(parentLocal)) {
 			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, recurse);
@@ -874,7 +878,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				// no way to read statuses, return some fake for now...
 				return new SVNChangeStatus[] {new SVNChangeStatus(path, "", SVNEntry.Kind.DIR, 0, 0, 0, "", SVNEntryStatus.Kind.MODIFIED, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL, false, false, false, null, null, 0, 0, SVNEntry.Kind.DIR, "", false, false, null, null)};
 			}
-			if (cwe.getErrorId() != SVNErrorCodes.wcNotDirectory) {
+			if (cwe.getErrorId() != SVNErrorCodes.wcNotDirectory && cwe.getErrorId() != SVNErrorCodes.wcPathNotFound) { // check if there is just nothing to report, since who knows what node's statuses were asked this time around...
 				throw cwe;
 			}
 			return new SVNChangeStatus[0];
