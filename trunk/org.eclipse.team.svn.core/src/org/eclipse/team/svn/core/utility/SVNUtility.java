@@ -1127,7 +1127,7 @@ public final class SVNUtility {
 	
 	public static int getNodeKind(String path, int kind, boolean ignoreNone) {
 		File f = new File(path);
-		if (f.exists()) {
+		if ((kind == Kind.NONE || kind == Kind.UNKNOWN) && f.exists()) {
 			return f.isDirectory() ? Kind.DIR : Kind.FILE;
 		}
 		else if (kind == Kind.DIR) {
