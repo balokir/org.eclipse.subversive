@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Operation;
+import org.eclipse.team.svn.core.connector.SVNConflictVersion;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -122,7 +124,9 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		
 		label = new Label(composite, SWT.NULL);
 		label.setLayoutData(new GridData());
-		label.setText(SVNUIMessages.format(SVNUIMessages.EditTreeConflictsPanel_revision, String.valueOf(this.local.getTreeConflictDescriptor().srcLeftVersion.pegRevision)));
+		SVNConflictVersion cVersionLeft = this.local.getTreeConflictDescriptor().srcLeftVersion;
+		SVNConflictVersion cVersionRight = this.local.getTreeConflictDescriptor().srcRightVersion;
+		label.setText(SVNUIMessages.format(SVNUIMessages.EditTreeConflictsPanel_revision, String.valueOf(cVersionLeft != null ? cVersionLeft.pegRevision : SVNRevision.INVALID_REVISION_NUMBER)));
 		
 		if (this.local.getTreeConflictDescriptor().operation == Operation.MERGE || this.local.getTreeConflictDescriptor().operation == Operation.SWITCHED) {
 			Link leftLink = new Link(composite, SWT.NULL); 
@@ -146,7 +150,7 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		
 		label = new Label(composite, SWT.NULL);
 		label.setLayoutData(new GridData());
-		label.setText(SVNUIMessages.format(SVNUIMessages.EditTreeConflictsPanel_revision, String.valueOf(this.local.getTreeConflictDescriptor().srcRightVersion.pegRevision)));
+		label.setText(SVNUIMessages.format(SVNUIMessages.EditTreeConflictsPanel_revision, String.valueOf(cVersionRight != null ? cVersionRight.pegRevision : SVNRevision.INVALID_REVISION_NUMBER)));
 		
 		Link rightLink = new Link(composite, SWT.NULL); 
 		rightLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -162,7 +166,8 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		boolean stopOnCopy = true;				
 		IRepositoryResource rr = this.helper.getRepositoryResourceForHistory(isLeft);
 		
-		long currentRevision = this.local.getTreeConflictDescriptor().srcRightVersion.pegRevision;
+		SVNConflictVersion cVersionRight = this.local.getTreeConflictDescriptor().srcRightVersion;
+		long currentRevision = cVersionRight != null ? cVersionRight.pegRevision : SVNRevision.INVALID_REVISION_NUMBER;
 		GetLogMessagesOperation msgsOp = SelectRevisionPanel.getMsgsOp(rr, stopOnCopy);
 		
 		if (!UIMonitorUtility.doTaskNowDefault(UIMonitorUtility.getShell(), msgsOp, true).isCancelled() && msgsOp.getExecutionState() == IActionOperation.OK) {		
