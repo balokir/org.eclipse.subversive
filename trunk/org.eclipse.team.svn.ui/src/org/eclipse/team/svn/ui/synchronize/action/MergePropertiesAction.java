@@ -52,13 +52,16 @@ public class MergePropertiesAction extends AbstractSynchronizeModelAction {
 			if (element instanceof SyncInfoModelElement) {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
 				ILocalResource incoming;
+				IResourceChange ancestor;
 				if (syncInfo instanceof IMergeSyncInfo) {
 					//used in Merge view
 					incoming = ((IMergeSyncInfo) syncInfo).getRemoteResource();
+					ancestor = ((IMergeSyncInfo) syncInfo).getBaseResource();
 				} else {
 					incoming = syncInfo.getRemoteChangeResource();	
+					ancestor = (IResourceChange)syncInfo.getBaseChangeResource();
 				}
-				if (!(incoming instanceof IResourceChange)) {
+				if (!(incoming instanceof IResourceChange) || ancestor == null) {
 					return false;
 				}
 				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming) & IStateFilter.ST_DELETED != incoming.getStatus();				
