@@ -1038,6 +1038,8 @@ public final class SVNUtility {
 		}
 		
 		if (oldInfo == null) {
+			SVNUtility.getSVNInfo(oldRoot, proxy, true); //check for real reason 
+			// throw a generic exception otherwise 
 			String errMessage = SVNMessages.formatErrorString("Error_NonSVNPath", new String[] {oldRoot.getAbsolutePath()}); //$NON-NLS-1$
 			throw new RuntimeException(errMessage);
 		}
@@ -1053,12 +1055,16 @@ public final class SVNUtility {
 			proxy.dispose();
 		}
 	}
-	
+
 	public static SVNEntryInfo getSVNInfo(File root, ISVNConnector proxy) {
+		return SVNUtility.getSVNInfo(root, proxy, false);
+	}
+	
+	public static SVNEntryInfo getSVNInfo(File root, ISVNConnector proxy, boolean reportException) {
 		if (root.exists()) {
 			File svnMeta = root.isDirectory() ? root : root.getParentFile();
 			svnMeta = new File(svnMeta.getAbsolutePath() + "/" + SVNUtility.getSVNFolderName()); //$NON-NLS-1$
-			if (svnMeta.exists() || !SVNUtility.isPriorToSVN17()) {
+			if (!SVNUtility.isPriorToSVN17() || svnMeta.exists()) {
 				try {
 					//NOTE WARNING! JavaHL always tries to access repository when revision is specified, even if the specified revision one of two local kinds: WORKING or BASE.
 					//	so, just do not specify any revisions!
@@ -1066,7 +1072,9 @@ public final class SVNUtility {
 					return st != null && st.length != 0 ? st[0] : null;
 				}
 				catch (Exception ex) {
-					return null;
+					if (reportException) {
+						throw new RuntimeException(ex);
+					}
 				}
 			}
 		}
