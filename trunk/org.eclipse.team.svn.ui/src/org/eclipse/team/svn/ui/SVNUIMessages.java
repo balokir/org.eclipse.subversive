@@ -343,6 +343,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CredentialsComposite_Password;
 	public static String CredentialsComposite_SavePassword;
 	public static String CredentialsComposite_User;
+	public static String CustomPropsPreferencePage_ignoreMaskValidation;
 	public static String CustomPropsPreferencePage_columnHeaderPropName;
 	public static String CustomPropsPreferencePage_columnHeaderRegexp;
 	public static String CustomPropsPreferencePage_description;

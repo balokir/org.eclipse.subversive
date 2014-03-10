@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Sergiy Logvin
  */
 public class PredefinedPropertySet implements IPredefinedPropertySet {
-	private Map<String, PredefinedProperty> properties = null;
+	private Map<String, PredefinedProperty> properties = new LinkedHashMap<String, PredefinedProperty>();
 	
 	public List<PredefinedProperty> getPredefinedProperties() {
 		return new ArrayList<PredefinedProperty>(this.getPropertiesMap().values());
@@ -55,20 +55,16 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 	}
 	
 	public void registerProperty(PredefinedProperty property) {
-		this.getPropertiesMap().put(property.name, property);
+		this.properties.put(property.name, property);
 	}
 	
 	protected synchronized Map<String, PredefinedProperty> getPropertiesMap() {
-		if (this.properties == null) {
-			this.properties = new LinkedHashMap<String, PredefinedProperty>();
-			this.init();
-		}
+		this.init();
 		return this.properties;
 	}
 	
 	protected void init()
 	{
-		
 	}
 	
 }

@@ -302,6 +302,9 @@ public final class SVNTeamPreferences {
 	public static final String CUSTOM_PROPERTIES_LIST_NAME = "customproperties"; //$NON-NLS-1$
 	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	
+	public static final String IGNORE_MASK_VALIDATION_ENABLED_NAME = "ignore.validation"; //$NON-NLS-1$
+	public static final boolean IGNORE_MASK_VALIDATION_ENABLED_DEFAULT = true;
+	
 	public static final String DIFF_VIEWER_BASE = "preference.diffViewer."; //$NON-NLS-1$		
 	public static final String DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS = "resources.specific.parameters"; //$NON-NLS-1$
 	
@@ -364,6 +367,7 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultCustomPropertiesValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_NAME), SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_DEFAULT);
 	}
 	
 	public static void setDefaultDiffViewerValues(IPreferenceStore store) {
@@ -519,6 +523,7 @@ public final class SVNTeamPreferences {
 	
 	public static void resetToDefaultCustomPropsValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_NAME), SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_DEFAULT);
 	}
 	
 	public static void resetToDefaultPropertiesValues(IPreferenceStore store) {
