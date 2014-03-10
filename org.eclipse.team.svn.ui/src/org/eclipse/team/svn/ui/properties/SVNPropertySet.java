@@ -13,7 +13,9 @@ package org.eclipse.team.svn.ui.properties;
 
 import org.eclipse.team.svn.core.extension.properties.PredefinedProperty;
 import org.eclipse.team.svn.core.extension.properties.PredefinedPropertySet;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * SVN properties specification
@@ -27,7 +29,12 @@ public class SVNPropertySet extends PredefinedPropertySet {
 		this.registerProperty(new PredefinedProperty("svn:eol-style", SVNUIMessages.Property_SVN_EOL, "", "((native)|(LF)|(CR)|(CRLF))", PredefinedProperty.TYPE_FILE));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		this.registerProperty(new PredefinedProperty("svn:executable", SVNUIMessages.Property_SVN_Executable, "", null, PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$
 		this.registerProperty(new PredefinedProperty("svn:externals", SVNUIMessages.Property_SVN_Externals, "", null, PredefinedProperty.TYPE_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$
-		this.registerProperty(new PredefinedProperty("svn:ignore", SVNUIMessages.Property_SVN_Ignore, "", "([^\\\\/\\:])+", PredefinedProperty.TYPE_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (SVNTeamPreferences.getPropertiesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_NAME)) {
+			this.registerProperty(new PredefinedProperty("svn:ignore", SVNUIMessages.Property_SVN_Ignore, "", "([^\\\\/\\:])+", PredefinedProperty.TYPE_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		else {
+			this.registerProperty(new PredefinedProperty("svn:ignore", SVNUIMessages.Property_SVN_Ignore, "", null, PredefinedProperty.TYPE_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		this.registerProperty(new PredefinedProperty("svn:keywords", SVNUIMessages.Property_SVN_Keywords, "", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedRevision)|(LastChangedBy)|(URL)|(\\s))+", PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		this.registerProperty(new PredefinedProperty("svn:mime-type", SVNUIMessages.Property_SVN_Mimetype, "", null, PredefinedProperty.TYPE_FILE)); //$NON-NLS-1$ //$NON-NLS-2$
 		this.registerProperty(new PredefinedProperty("svn:mergeinfo", SVNUIMessages.Property_SVN_Mergeinfo, "")); //$NON-NLS-1$ //$NON-NLS-2$

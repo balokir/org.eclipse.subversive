@@ -84,8 +84,10 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	protected String autoPropsValue;
 	protected String customPropsValue;
 	protected boolean forceTextMIME;
+	protected boolean ignoreMaskValidation;
 	
 	protected Button forceTextMIMEButton;
+	protected Button ignoreMaskValidationButton;
 	protected TableViewer custompropTableViewer;
 	protected Button custompropBtnAdd;
 	protected Button custompropBtnEdit;
@@ -136,23 +138,27 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		this.customPropsValue = FileUtility.encodeArrayToString(props);
 		SVNTeamPreferences.setCustomPropertiesList(store, SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME, this.customPropsValue);
 		SVNTeamPreferences.setPropertiesBoolean(store, SVNTeamPreferences.FORCE_TEXT_MIME_NAME, this.forceTextMIME);
+		SVNTeamPreferences.setPropertiesBoolean(store, SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_NAME, this.ignoreMaskValidation);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
 		this.autoPropsValue = SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT;
 		this.customPropsValue = SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_DEFAULT;
 		this.forceTextMIME = SVNTeamPreferences.FORCE_TEXT_MIME_DEFAULT;
+		this.ignoreMaskValidation = SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
 		this.autoPropsValue = SVNTeamPreferences.getAutoPropertiesList(store, SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME);
 		this.customPropsValue = SVNTeamPreferences.getCustomPropertiesList(store, SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME);
 		this.forceTextMIME = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.FORCE_TEXT_MIME_NAME);
+		this.ignoreMaskValidation = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.IGNORE_MASK_VALIDATION_ENABLED_NAME);
 	}
 	
 	protected void initializeControls() {
 		this.removeAllProperties();
 		this.forceTextMIMEButton.setSelection(this.forceTextMIME);
+		this.ignoreMaskValidationButton.setSelection(this.ignoreMaskValidation);
 		this.populateAutopropTable(SVNTeamPropsPreferencePage.loadAutoProperties(this.autoPropsValue));
 		this.populateCustompropTable(SVNTeamPropsPreferencePage.loadCustomProperties(this.customPropsValue));
 	}
@@ -539,6 +545,17 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		composite.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(data);
+		
+		this.ignoreMaskValidationButton = new Button(composite, SWT.CHECK);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		this.ignoreMaskValidationButton.setLayoutData(data);
+		this.ignoreMaskValidationButton.setText(SVNUIMessages.CustomPropsPreferencePage_ignoreMaskValidation);
+		this.ignoreMaskValidationButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent (Event event) {
+				SVNTeamPropsPreferencePage.this.ignoreMaskValidation = SVNTeamPropsPreferencePage.this.ignoreMaskValidationButton.getSelection();
+			}
+		});
 		
 		this.createCustompropTable(composite);
 		this.createCustompropButtons(composite);
