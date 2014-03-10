@@ -8,6 +8,24 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 2.0.0.I20140309-1700 [09 March 2014]
+
+Features:
+ * Allow freeform in SVN:IGNORE (bug 427577)
+
+Fixes:
+ * Improve bug reporting code in SVNUtility.getWCRoot [ID-PH38V] (bug 428141)
+ * NullPointerException in "Merge properties" (bug 428253)
+ * NPE in EditTreeConflictsPanel [ID-LZRIO] (bug 425263)
+ * Ignored files shown as outgoing additions (bug 392750)
+ * There're unnecessary accesses to the file system while loading information on versioned resources (bug 427184)
+ * There is an exception in Synchronize View when handling an obstructed resource of unexpected kind (dir instead of file) (bug 427183)
+ * GetPropertiesOperation fails for deleted resource with SVN Kit 1.8.3 connector (bug 427093)
+ * SVN 1.7 working copy format detection fails with SVN 1.8.3 connector (bug 427092)
+ * Cannot commit package deletion (greyed out) (bug 426706)
+ 
+--------------------------------------------------------------------------------
+
 Version 2.0.0.I20131101-1700 [01 November 2013]
 
 Features:
