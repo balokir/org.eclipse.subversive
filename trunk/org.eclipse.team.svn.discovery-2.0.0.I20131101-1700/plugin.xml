@@ -43,12 +43,12 @@
                   
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on SVN Kit library (SVN/1.7.11 SVNKit/1.7.11 r9959_v20130906_1728). Compatible with SVN 1.7.x. Pure Java. Supported platforms: All."
+            description="SVN connector based on SVN Kit library (SVN/1.7.11 SVNKit/1.7.12 r10214_v20140227_2223). Compatible with SVN 1.7.x. Pure Java. Supported platforms: All."
             groupId="org.eclipse.team.svn.discovery-svnkit"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit17"
             kind="task"
             license="TMate Open Source License"
-            name="SVN Kit 1.7.11"
+            name="SVN Kit 1.7.12"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/4.0/update-site/">
          <icon image32="images/Polarion.png">
@@ -61,12 +61,12 @@
                   
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on SVN Kit library (SVN/1.8.1 SVNKit/1.8.3 (http://svnkit.com/) r10145_v20140121_0111). Compatible with SVN 1.8.x. Pure Java. Supported platforms: All."
+            description="SVN connector based on SVN Kit library (SVN/1.8.1 SVNKit/1.8.4 r10218_v20140302_1242). Compatible with SVN 1.8.x. Pure Java. Supported platforms: All."
             groupId="org.eclipse.team.svn.discovery-svnkit"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit18"
             kind="task"
             license="TMate Open Source License"
-            name="SVN Kit 1.8.3"
+            name="SVN Kit 1.8.4"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/4.0/update-site/">
          <icon image32="images/Polarion.png">
