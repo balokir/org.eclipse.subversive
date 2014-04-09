@@ -79,6 +79,9 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					IProject project = change.getProject();
+					if (!project.isAccessible()) {
+						return;
+					}
 					IResource []members = project.members();
 					for (int i = 0; i < members.length && !monitor.isCanceled(); i++) {
 						if (SaveProjectMetaOperation.this.shouldBeSaved(members[i])) {
