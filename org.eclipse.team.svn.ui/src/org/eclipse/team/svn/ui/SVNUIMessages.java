@@ -1838,6 +1838,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String DepthSelectionComposite_RepositoryPanelMessage;
 	public static String DepthSelectionComposite_UpdateDepth;
 	
+	public static String SVNScmUrlImportWizardPage_Title;
+	public static String SVNScmUrlImportWizardPage_Description;
+	public static String SVNScmUrlImportWizardPage_ImportVersion;
+	public static String SVNScmUrlImportWizardPage_ImportHEAD;
+	public static String SVNScmUrlImportWizardPage_Counter;
+		
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNUIMessages.class);

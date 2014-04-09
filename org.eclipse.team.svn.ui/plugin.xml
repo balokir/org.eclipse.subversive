@@ -2459,5 +2459,12 @@
             icon="icons/objects/changeset.gif"
             modelProviderId="org.eclipse.team.svn.core.svnChangeSetModel"/>
    </extension>
+   <extension
+         point="org.eclipse.team.ui.scmUrlImportPages">
+      <scmUrlImportPage
+            importer="org.eclipse.team.svn.core.importer"
+            page="org.eclipse.team.svn.ui.SVNScmUrlImportWizardPage">
+      </scmUrlImportPage>
+   </extension>
 
  </plugin>

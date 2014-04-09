@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Igor Burilo - Initial API and implementation
+ *    Michael (msa) - Eclipse-SourceReferences support
  *******************************************************************************/
 
 package org.eclipse.team.svn.core;
@@ -78,7 +79,11 @@ public class SubclipseProjectSetHandler implements IProjectSetHandler {
 	}
 	
 	public String asReference(IProject project) throws TeamException {
-		throw new RuntimeException("Unsupported operation");
+		throw new RuntimeException("Unsupported operation"); //$NON-NLS-1$
+	}
+	
+	public String asReference(String resourceUrl, String projectName) {
+		throw new RuntimeException("Unsupported operation"); //$NON-NLS-1$
 	}
 
 	public boolean accept(String referenceString) {

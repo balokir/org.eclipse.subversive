@@ -15,6 +15,7 @@
       <repository
             typeClass="org.eclipse.team.svn.core.SVNTeamProviderType"
             class="org.eclipse.team.svn.core.SVNTeamProvider"
+            fileSystemScheme="svn"
             canImportId="org.tigris.subversion.subclipse.core.svnnature"
             id="org.eclipse.team.svn.core.svnnature"/>
    </extension>
@@ -73,6 +74,17 @@
             id="org.eclipse.team.svn.core.svnmeta"
             name="SVN meta-information filter">
       </filterMatcher>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.bundleImporters">
+      <importer
+            id="org.eclipse.team.svn.core.importer"
+            name="SVN SCM URL importer"
+            repository="org.eclipse.team.svn.core.svnnature">
+         <supports
+               prefix="scm:svn:">
+         </supports>
+      </importer>
    </extension>
 
 </plugin>
