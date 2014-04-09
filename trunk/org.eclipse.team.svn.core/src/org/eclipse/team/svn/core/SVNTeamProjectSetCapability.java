@@ -7,14 +7,18 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Michael (msa) - Eclipse-SourceReferences support
  *******************************************************************************/
 
 package org.eclipse.team.svn.core;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -36,6 +40,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class SVNTeamProjectSetCapability extends ProjectSetCapability {	
 
+	private static final Pattern SINGLE_SCHEME_URL_PATTERN = Pattern.compile("^.*:(\\w[\\w+-_]*://.*)$"); //$NON-NLS-1$
+	
 	public SVNTeamProjectSetCapability() {
 		super();
 	}
@@ -53,6 +59,19 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 		finally {
 			monitor.done();
 		}
+	}
+	
+	public String asReference(URI uri, String projectName) {
+		String resourceUrl = SVNTeamProjectSetCapability.getSingleSchemeUrl(uri);
+		return SVNTeamProjectSetCapability.DEFAULT_HANDLER.asReference(resourceUrl, projectName);
+	}
+	
+	/**
+	 * remove everything before the final scheme part, e.g.: {@code scm:svn:http://xyz -> http://xyz}
+	 */
+	public static String getSingleSchemeUrl(URI uri) {
+		Matcher m = SVNTeamProjectSetCapability.SINGLE_SCHEME_URL_PATTERN.matcher(uri.toString());
+		return m.replaceAll("$1"); //$NON-NLS-1$
 	}
 	
 	public IProject[] addToWorkspace(String []referenceStrings, ProjectSetSerializationContext context, IProgressMonitor monitor) throws TeamException {

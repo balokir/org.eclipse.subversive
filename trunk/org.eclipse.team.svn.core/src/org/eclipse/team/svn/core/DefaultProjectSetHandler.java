@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Igor Burilo - Initial API and implementation
+ *    Michael (msa) - Eclipse-SourceReferences support
  *******************************************************************************/
 
 package org.eclipse.team.svn.core;
@@ -57,6 +58,13 @@ public class DefaultProjectSetHandler implements IProjectSetHandler {
 		
 		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location, LocationReferenceTypeEnum.WITHOUT_REVISION_COMMENTS); //$NON-NLS-1$
 		
+		return fullReference;
+	}
+	
+	public String asReference(String resourceUrl, String projectName) {
+		String fullReference = DefaultProjectSetHandler.PLUGIN_INFORMATION;
+		fullReference += "," + resourceUrl; //$NON-NLS-1$
+		fullReference += "," + projectName; //$NON-NLS-1$
 		return fullReference;
 	}
 	
