@@ -247,6 +247,10 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	public static boolean requiresUpgrade(IProject project) {
+		RepositoryProvider provider = RepositoryProvider.getProvider(project);
+		if (provider == null || !SVNTeamPlugin.NATURE_ID.equals(provider.getID())) {
+			return false;
+		}
 		IPath location = FileUtility.getResourcePath(project);
 		location = location.append(SVNUtility.getSVNFolderName());
 		if (SVNUtility.isPriorToSVN17())
