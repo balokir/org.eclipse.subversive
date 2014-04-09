@@ -51,7 +51,6 @@ import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -140,8 +139,7 @@ public final class FileUtility {
 	public static IPath getResourcePath(IResource resource) {
 		IPath location = resource.getLocation();
 		if (location == null) {
-			String errMessage = SVNMessages.formatErrorString("Error_InaccessibleResource_2", new String[] {resource.getFullPath().toString()}); //$NON-NLS-1$
-			throw new UnreportableException(errMessage);
+			location = resource.getProject().getLocation().append(resource.getFullPath()); // virtual resource
 		}
 		return location;
 	}
