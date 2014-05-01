@@ -55,6 +55,10 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
 		    operableParents = panel.getSelectedResources();
 		}
 	    
+		if (resources.length == 0) { // check bug 433287: is there a need to rework enablement/processing interaction due to possible asynchrony?
+			return;
+		}
+		
 		IgnoreMethodPanel panel = new IgnoreMethodPanel(resources);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
