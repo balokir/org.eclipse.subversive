@@ -8,6 +8,21 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 2.0.0.I20140501-1700 [01 May 2014]
+
+Features:
+ * Add support for Eclipse-SourceReferences header (bug 315011)
+   + special thanks to Michael Schaufelberger
+
+Fixes:
+ * Subversive crashes ID-PPJQ5 (bug 432930)
+ * ArrayOutOfBoundsException in IgnoreMethodPanel [ID-MFS28] (bug 433287)
+ * ResourceException in SaveProjectMetaOperation [ID-IE0RW] (bug 432177)
+ * Subversive produces unnecessary SVN error log entries for eclipse projects. (bug 431237)
+ * A virtual folder in project will cause "The resource is inaccessible" (bug 430349)
+ 
+--------------------------------------------------------------------------------
+
 Version 2.0.0.I20140309-1700 [09 March 2014]
 
 Features:
