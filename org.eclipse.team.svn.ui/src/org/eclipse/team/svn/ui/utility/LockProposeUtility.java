@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -42,7 +43,8 @@ public class LockProposeUtility {
 			UIMonitorUtility.doTaskBusyWorkspaceModify(op);
 			return op.getStatus();
 		}				
-		return Status.CANCEL_STATUS;
+		String msg = SVNUIMessages.format(SVNUIMessages.ErrorCancelPanel_Description_Cancelled, SVNUIMessages.LocksComposite_LockTitle);
+		return new Status(Status.CANCEL, SVNTeamPlugin.NATURE_ID, IStatus.CANCEL, msg, null);
 	}
 
 	public static IResource[] asResources(LockResource[] lockResources) {
