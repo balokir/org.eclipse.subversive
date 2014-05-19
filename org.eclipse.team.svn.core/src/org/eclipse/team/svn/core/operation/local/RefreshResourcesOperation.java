@@ -184,7 +184,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 			resource.refreshLocal(depth, monitor);
 		}
 		catch (CoreException ex) {
-			if (ex.getStatus() != null && ex.getStatus().toString().indexOf("(.project)") != -1) {
+			if (ex.getStatus() != null && ex.getStatus().toString().indexOf("(.project)") != -1) { //$NON-NLS-1$
 				throw new UnreportableException(SVNMessages.Operation_RefreshResources_DamagedProjectFile);
 			}
 			throw ex;

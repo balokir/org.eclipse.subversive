@@ -14,6 +14,8 @@ package org.eclipse.team.svn.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -22,15 +24,20 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.console.SVNConsoleFactory;
@@ -54,6 +61,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 	private ProjectCloseListener pcListener;
 	private URL baseUrl;
 //	private ProblemListener problemListener;
+	private Timer timer;
 	
     public SVNTeamUIPlugin() {
         super();
@@ -62,6 +70,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
         
         this.pcListener = new ProjectCloseListener();
 //        this.problemListener = new ProblemListener();
+        this.timer = new Timer();
     }
     
     public static SVNTeamUIPlugin instance() {
@@ -141,6 +150,19 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 			//run discovery connectors
 			this.discoveryConnectors();	
 		}
+		
+		this.timer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache", SVNMessages.class) { //$NON-NLS-1$
+					public ISchedulingRule getSchedulingRule() {
+						return null;
+					}
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						SVNRemoteStorage.instance().checkForExternalChanges();
+					}
+				}, false).setPriority(Job.DECORATE);
+			}
+		}, 1000, 1000);
 	}
 	
 	protected boolean isConnectorsRequired() {
@@ -179,6 +201,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public void stop(BundleContext context) throws Exception {
+		this.timer.cancel();
 		SVNConsoleFactory.destroyConsole();
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
