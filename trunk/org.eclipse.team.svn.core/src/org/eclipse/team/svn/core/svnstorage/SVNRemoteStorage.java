@@ -133,6 +133,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
 	protected LinkedList fetchQueue;
 	
+	protected long lastMonitorTime;
+	protected Map<IResource, File> changeMonitorMap;
+	
 	protected ISchedulingRule notifyLock = new ISchedulingRule() {
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -141,6 +144,26 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			return rule == this;
 		}
 	};
+	
+	public void resetExternalChangesMonitor() {
+		this.lastMonitorTime = System.currentTimeMillis();
+	}
+	
+	public void checkForExternalChanges() {
+		long lastMonitorTime = this.lastMonitorTime;
+		ArrayList<IResource> changed = new ArrayList<IResource>();
+		for (Map.Entry<IResource, File> entry : this.changeMonitorMap.entrySet()) {
+			if (entry.getValue().lastModified() > lastMonitorTime) {
+				changed.add(entry.getKey());
+			}
+		}
+		if (changed.size() > 0) {
+			IResource []resources = changed.toArray(new IResource[changed.size()]);
+			SVNRemoteStorage.instance().refreshLocalResources(resources, IResource.DEPTH_INFINITE);
+			this.fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(resources, IResource.DEPTH_INFINITE, ResourceStatesChangedEvent.CHANGED_NODES));
+		}
+		this.resetExternalChangesMonitor();
+	}
 
 	public static SVNRemoteStorage instance() {
 		return SVNRemoteStorage.instance;
@@ -1186,6 +1209,13 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    this.writeChild(current, textStatus, changeMask);
 		
 		this.localResources.put(current.getFullPath(), local);
+		
+		if (current.getType() == IResource.PROJECT && !this.changeMonitorMap.containsKey(current)) {
+			File wcDB = new File(FileUtility.getResourcePath(current).append(SVNUtility.getSVNFolderName()).append("wc.db").toString()); //$NON-NLS-1$
+			if (wcDB.exists()) {
+				this.changeMonitorMap.put(current, wcDB);
+			}
+		}
 
 		return local;
 	}
@@ -1352,6 +1382,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		this.externalsLocations = new HashMap();
 		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
 		this.fetchQueue = new LinkedList();
+		this.lastMonitorTime = System.currentTimeMillis();
+		this.changeMonitorMap = new HashMap<IResource, File>();
 	}
 
 	private static final IStateFilter SF_NONSVN = new IStateFilter.AbstractStateFilter() {
