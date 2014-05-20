@@ -8,6 +8,15 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 2.0.0.I20140519-1700 [19 May 2014]
+
+Fixes:
+ * If performing changes via external program, Subversive does not show actual status (bug 430056)
+ * Delete file from SVN not work always (bug 434944)
+ * Java Refactoring + SVN: Selecting "Cancel" in resource locking dialog leads to empty error dialog (bug 433208)
+ 
+--------------------------------------------------------------------------------
+
 Version 2.0.0.I20140501-1700 [01 May 2014]
 
 Features:
