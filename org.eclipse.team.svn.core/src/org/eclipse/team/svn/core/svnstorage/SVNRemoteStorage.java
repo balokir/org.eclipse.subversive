@@ -152,7 +152,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public void checkForExternalChanges() {
 		long lastMonitorTime = this.lastMonitorTime;
 		ArrayList<IResource> changed = new ArrayList<IResource>();
-		for (Map.Entry<IResource, File> entry : this.changeMonitorMap.entrySet()) {
+		for (Object item : this.changeMonitorMap.entrySet().toArray()) {
+			Map.Entry<IResource, File> entry = (Map.Entry<IResource, File>)item;
 			if (entry.getValue().lastModified() > lastMonitorTime) {
 				changed.add(entry.getKey());
 			}
