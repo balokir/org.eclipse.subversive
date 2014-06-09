@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.mylyn"
       label="%featureName"
-      version="2.0.0.I20140501-1700"
+      version="2.0.0.I20140609-1700"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -47,7 +47,7 @@
          id="org.eclipse.team.svn.mylyn"
          download-size="20"
          install-size="20"
-         version="2.0.0.I20140501-1700"
+         version="2.0.0.I20140609-1700"
          unpack="false"/>
 
 </feature>
