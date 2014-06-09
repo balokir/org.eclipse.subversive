@@ -117,6 +117,18 @@ public interface ISVNCallListener {
 	 * @param parameters the call parameters
 	 */
 	public void asked(String methodName, Map<String, Object> parameters);
+	/**
+	 * The method is called if SVN call was completed successfully.
+	 * @param methodName the called method name
+	 * @param parameters the call parameters
+	 * @param returnValue the return value if any, null otherwise
+	 */
 	public void succeeded(String methodName, Map<String, Object> parameters, Object returnValue);
+	/**
+	 * The method is called if there was a failure while calling SVN.
+	 * @param methodName the called method name
+	 * @param parameters the call parameters
+	 * @param exception the failure reason
+	 */
 	public void failed(String methodName, Map<String, Object> parameters, SVNConnectorException exception);
 }
