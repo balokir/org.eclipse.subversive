@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.resource.ignore.rules.jdt"
       label="%featureName"
-      version="2.0.0.I20140501-1700"
+      version="2.0.0.I20140609-1700"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
 
@@ -30,7 +30,7 @@
          id="org.eclipse.team.svn.resource.ignore.rules.jdt"
          download-size="7"
          install-size="7"
-         version="2.0.0.I20140501-1700"
+         version="2.0.0.I20140609-1700"
          unpack="false"/>
 
 </feature>

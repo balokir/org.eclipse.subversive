@@ -8,6 +8,17 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 2.0.0.I20140609-1700 [09 June 2014]
+
+Features:
+ * Document SVN API calls (bug 417770)
+ 
+Fixes:
+ * Refreshing a folder shared with SVN should force Subversive to refresh its state, even if the .svn folder is outside that folder (bug 435601)
+ * Update SVN Cache locks the work space (bug 436727)
+ 
+--------------------------------------------------------------------------------
+
 Version 2.0.0.I20140519-1700 [19 May 2014]
 
 Fixes:
