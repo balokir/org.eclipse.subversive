@@ -1,0 +1,56 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 1.1.4.I20140624-1700 release date: 24 June 2014
+
+1. What's New
+
+   The version is 1.1.4 service release. 
+   
+   Changes comparatively to the previous release version are listed below. The full list of 
+   changes you can find in Change Log.
+		
+	Features:
+	 * Document SVN API calls (bug 417770)
+	 * Add support for Eclipse-SourceReferences header (bug 315011)
+	   + special thanks to Michael Schaufelberger
+	 * Allow freeform in SVN:IGNORE (bug 427577)
+	
+	Fixes:
+	 * Refreshing a folder shared with SVN should force Subversive to refresh its state, even if the .svn folder is outside that folder (bug 435601)
+	 * Update SVN Cache locks the work space (bug 436727)
+	 * If performing changes via external program, Subversive does not show actual status (bug 430056)
+	 * Delete file from SVN not work always (bug 434944)
+	 * Java Refactoring + SVN: Selecting "Cancel" in resource locking dialog leads to empty error dialog (bug 433208)
+	 * Subversive crashes ID-PPJQ5 (bug 432930)
+	 * ArrayOutOfBoundsException in IgnoreMethodPanel [ID-MFS28] (bug 433287)
+	 * ResourceException in SaveProjectMetaOperation [ID-IE0RW] (bug 432177)
+	 * Subversive produces unnecessary SVN error log entries for eclipse projects. (bug 431237)
+	 * A virtual folder in project will cause "The resource is inaccessible" (bug 430349)
+	 * Improve bug reporting code in SVNUtility.getWCRoot [ID-PH38V] (bug 428141)
+	 * NullPointerException in "Merge properties" (bug 428253)
+	
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
+    * 3.6
+    * 3.7
+    * 3.8
+    * 4.2
+    * 4.3
+   
+   Subversive supports 
+    Subversion version 1.4-1.6 with SVN Kit 1.3.8 and JavaHL 1.6.15,
+    Subversion version 1.7 with SVN Kit 1.7.11 and JavaHL 1.7.9, 
+    Subversion version 1.8 with SVN Kit 1.8.3 and JavaHL 1.8.5
+
+2.2 Known issues
+
+	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.3.x/1.7.x connector]
