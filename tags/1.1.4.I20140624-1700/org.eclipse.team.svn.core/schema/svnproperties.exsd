@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.team.svn.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.team.svn.core" id="svnproperties" name="SVN Properties"/>
+      </appInfo>
+      <documentation>
+         List of predefined SVN properties that will be used by property editors.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="svnproperty" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="svnpropertyset" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="svnproperty">
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="defaultValue" minOccurs="0" maxOccurs="1"/>
+            <element ref="validationRegexp" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The property name.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" use="default" value="common">
+            <annotation>
+               <documentation>
+                  Specifies a resource type this property could be applied to. &quot;common&quot; properties will be applied to both: files and folders.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="file">
+                  </enumeration>
+                  <enumeration value="folder">
+                  </enumeration>
+                  <enumeration value="common">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="group" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Specifies if this is a &quot;group&quot; property or not. By default the property won&apos;t be recognized as a &quot;group&quot; one. &quot;group&quot; properties won&apos;t not to a file nor to a folder.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="revision" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Specifies if this is a revision property or not. By default the property won&apos;t be recognized as a revision-related one.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            The property&apos;s description.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="defaultValue" type="string">
+      <annotation>
+         <documentation>
+            The property&apos;s default value.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="validationRegexp" type="string">
+      <annotation>
+         <documentation>
+            The property&apos;s validation regexp.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="svnpropertyset">
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Must implement org.eclipse.team.svn.core.extension.properties.IPredefinedPropertySet, typically extends org.eclipse.team.svn.ui.extension.factory.PredefinedPropertySet
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.team.svn.ui.extension.factory.PredefinedPropertySet"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>
