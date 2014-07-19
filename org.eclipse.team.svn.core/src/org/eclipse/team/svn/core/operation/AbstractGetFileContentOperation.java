@@ -59,6 +59,10 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 				if (AbstractGetFileContentOperation.this.tmpFile == null) {
 					AbstractGetFileContentOperation.this.tmpFile = AbstractGetFileContentOperation.this.createTempFile();
 				}
+				File parent = AbstractGetFileContentOperation.this.tmpFile.getParentFile();
+				if (parent != null && !parent.exists()) {
+					parent.mkdirs();
+				}
 				FileOutputStream stream = new FileOutputStream(AbstractGetFileContentOperation.this.tmpFile);
 				try {
 					stream.write(data);
