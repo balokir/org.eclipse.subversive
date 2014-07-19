@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
@@ -63,6 +64,14 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  */
 public final class FileUtility {
 	public static final IResource []NO_CHILDREN = new IResource[0];
+	private static IPath ALWAYS_IGNORED_PATH = null;
+	
+	public static IPath getAlwaysIgnoredPath() {
+		if (FileUtility.ALWAYS_IGNORED_PATH == null) {
+			FileUtility.ALWAYS_IGNORED_PATH = new Path(SVNUtility.getSVNFolderName());
+		}
+		return FileUtility.ALWAYS_IGNORED_PATH;
+	}
 	
 	public static int getMIMEType(IResource resource) {
 		int type = Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension()); //$NON-NLS-1$
@@ -139,9 +148,12 @@ public final class FileUtility {
 	public static IPath getResourcePath(IResource resource) {
 		IPath location = resource.getLocation();
 		if (location == null) {
-			location = resource.getProject().getLocation().append(resource.getFullPath()); // virtual resource
+			IPath projectLocation = resource.getProject().getLocation();
+			if (projectLocation != null) { // there're virtual projects too. See bug #437623
+				location = projectLocation.append(resource.getFullPath()); // virtual resource
+			}
 		}
-		return location;
+		return location != null ? location : FileUtility.getAlwaysIgnoredPath(); // never return null
 	}
 	
 	@SuppressWarnings("unchecked")
