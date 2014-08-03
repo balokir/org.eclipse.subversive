@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Create patch operation implementation
@@ -101,7 +101,14 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		Map<?, ?> workingCopies = SVNUtility.splitWorkingCopies(this.resources);
+		Map<IProject, List<IResource>> workingCopies = new HashMap<IProject, List<IResource>>();//SVNUtility.splitWorkingCopies(this.resources);
+		for (IResource res : this.resources) {
+			List<IResource> list = workingCopies.get(res.getProject());
+			if (list == null) {
+				workingCopies.put(res.getProject(), list = new ArrayList<IResource>());
+			}
+			list.add(res);
+		}
 		final FileOutputStream stream = new FileOutputStream(this.fileName);
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
