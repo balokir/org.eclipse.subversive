@@ -43,12 +43,12 @@
                   
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on SVN Kit library (SVN/1.8.1 SVNKit/1.8.5 r10237_v20140319_1934). Compatible with SVN 1.8.x. Pure Java. Supported platforms: All."
+            description="SVN connector based on SVN Kit library (SVN/1.8.1 SVNKit/1.8.6 r10298_v20140730_2254). Compatible with SVN 1.8.x. Pure Java. Supported platforms: All."
             groupId="org.eclipse.team.svn.discovery-svnkit"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit18"
             kind="task"
             license="TMate Open Source License"
-            name="SVN Kit 1.8.5"
+            name="SVN Kit 1.8.6"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/4.0/luna-site/">
          <icon image32="images/Polarion.png">
