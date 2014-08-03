@@ -11,11 +11,13 @@
 
 package org.eclipse.team.svn.ui.wizard;
 
+import java.util.HashSet;
+
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.wizard.createpatch.PatchOptionsPage;
 import org.eclipse.team.svn.ui.wizard.createpatch.SelectPatchFilePage;
@@ -104,7 +106,11 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (this.roots != null) {
-			this.options.setMultiSelect(SVNUtility.splitWorkingCopies(this.getSelection()).size() > 1);
+			HashSet<IProject> projects = new HashSet<IProject>();
+			for (IResource resource : this.getSelection()) {
+				projects.add(resource.getProject());
+			}
+			this.options.setMultiSelect(projects.size() > 1);
 		}
 		return super.getNextPage(page);
 	}
