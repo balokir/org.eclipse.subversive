@@ -159,8 +159,6 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(current);
-					remote.getRevision(); // For some reason SVN Kit does not reports anything if the resource were removed on the server side. Then we'll force it!
 					proxy.status(
 							FileUtility.getWorkingCopyPath(current), 
 							SVNDepth.UNKNOWN, ISVNConnector.Options.SERVER_SIDE, null, cb, 
