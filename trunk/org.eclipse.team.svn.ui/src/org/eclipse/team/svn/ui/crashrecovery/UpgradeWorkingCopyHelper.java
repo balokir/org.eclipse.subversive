@@ -37,7 +37,7 @@ public class UpgradeWorkingCopyHelper implements IResolutionHelper {
 					String title = SVNUIMessages.format(SVNUIMessages.UpgradeWorkingCopyDialog_Title, new String[] {project.getName()});
 					MessageDialog dlg = new MessageDialog(UIMonitorUtility.getShell(), title, null, SVNUIMessages.UpgradeWorkingCopyDialog_Message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
 					if (dlg.open() == 0) {
-						UIMonitorUtility.doTaskNowWorkspaceModify(UIMonitorUtility.getShell(), new UpgradeWorkingCopyOperation(new IResource[] {project}), false);
+						UIMonitorUtility.doTaskNowDefault(UIMonitorUtility.getShell(), new UpgradeWorkingCopyOperation(new IResource[] {project}), false);
 						solved[0] = true;
 					}
 				}
