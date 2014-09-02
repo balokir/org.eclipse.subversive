@@ -169,7 +169,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = destination.toString();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.options) + SVNUtility.getDepthArg(this.depth, ISVNConnector.Options.NONE) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + ISVNConnector.Options.asCommandLine(this.options) + SVNUtility.getDepthArg(this.depth, ISVNConnector.Options.NONE) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			proxy.checkout(
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 

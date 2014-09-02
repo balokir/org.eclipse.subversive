@@ -56,7 +56,7 @@ public class ExportOperation extends AbstractRepositoryOperation {
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			final String path = this.path + "/" + resources[i].getName(); //$NON-NLS-1$
 			final SVNEntryRevisionReference entryRef = SVNUtility.getEntryRevisionReference(resources[i]);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resources[i].getUrl() + "@" + resources[i].getPegRevision() + "\" -r " + resources[i].getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE) + " \"" + FileUtility.normalizePath(path) + "\"" + SVNUtility.getDepthArg(ExportOperation.this.depth, ISVNConnector.Options.NONE) + " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resources[i].getUrl() + "@" + resources[i].getPegRevision() + "\" -r " + resources[i].getSelectedRevision() + " \"" + FileUtility.normalizePath(path) + "\"" + SVNUtility.getDepthArg(ExportOperation.this.depth, ISVNConnector.Options.NONE) + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE | (this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE)) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {

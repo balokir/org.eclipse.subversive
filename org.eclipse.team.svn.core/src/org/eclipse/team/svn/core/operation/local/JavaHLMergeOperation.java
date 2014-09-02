@@ -140,7 +140,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			if (changes.length() > 0) {
 				changes = " -c " + changes; //$NON-NLS-1$
 			}
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge" + changes + ranges + " \"" + from.getUrl() + "@" + from.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth, ISVNConnector.Options.NONE) + ((this.options & ISVNConnector.Options.SIMULATE) != 0 ? " --dry-run" : "") + ((this.options & ISVNConnector.Options.IGNORE_ANCESTRY) != 0 ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge" + changes + ranges + " \"" + from.getUrl() + "@" + from.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth, ISVNConnector.Options.NONE) + ISVNConnector.Options.asCommandLine(this.options) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			proxy.merge(ref1, this.revisions, wcPath, this.depth, this.options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
@@ -156,7 +156,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(from1);
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth, ISVNConnector.Options.NONE) + ((this.options & ISVNConnector.Options.SIMULATE) != 0 ? " --dry-run" : "") + ((this.options & ISVNConnector.Options.IGNORE_ANCESTRY) != 0 ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth, ISVNConnector.Options.NONE) + ISVNConnector.Options.asCommandLine(this.options) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			proxy.mergeTwo(ref1, ref2, wcPath, this.depth, this.options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
@@ -171,7 +171,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 		try {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			SVNEntryReference ref1 = SVNUtility.getEntryReference(from1);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge --reintegrate \"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + ((this.options & ISVNConnector.Options.SIMULATE) != 0 ? " --dry-run" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge --reintegrate \"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + ISVNConnector.Options.asCommandLine(this.options) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			proxy.mergeReintegrate(ref1, wcPath, this.options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {

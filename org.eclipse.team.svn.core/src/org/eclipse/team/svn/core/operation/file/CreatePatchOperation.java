@@ -55,7 +55,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
 		ISVNConnector proxy = remote.getRepositoryLocation().acquireSVNProxy();
 		try {
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.depth == SVNDepth.INFINITY ? "" : " -N") + ((this.options & ISVNConnector.Options.SKIP_DELETED) != 0 ? " --no-diff-deleted" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.depth == SVNDepth.INFINITY ? "" : " -N") + ISVNConnector.Options.asCommandLine(this.options) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			String path = file.getAbsolutePath();
 			proxy.diffTwo(
 				new SVNEntryRevisionReference(path, null, SVNRevision.BASE), new SVNEntryRevisionReference(path, null, SVNRevision.WORKING), 

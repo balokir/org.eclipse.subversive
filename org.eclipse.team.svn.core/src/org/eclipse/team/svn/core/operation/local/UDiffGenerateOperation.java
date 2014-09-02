@@ -66,6 +66,7 @@ public class UDiffGenerateOperation extends AbstractActionOperation {
 					+ refNext.revision
 					+ " \"" + wcPath + "\"" //$NON-NLS-1$ //$NON-NLS-2$
 					//+ "@" + refNext.pegRevision + "\""
+					+ ISVNConnector.Options.asCommandLine(options)
 					+ FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$
 			
 			proxy.diffTwo(refPrev, refNext, relativeToDir, this.diffFile, depth, options, changelistNames, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));			

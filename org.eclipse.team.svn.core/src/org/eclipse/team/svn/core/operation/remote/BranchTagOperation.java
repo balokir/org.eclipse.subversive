@@ -73,7 +73,7 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 				
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + current.getUrl() + "\" \"" + BranchTagOperation.this.destinationUrl + "\" -r " + current.getSelectedRevision() + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + current.getUrl() + "\" \"" + BranchTagOperation.this.destinationUrl + "\" -r " + current.getSelectedRevision() + " -m \"" + BranchTagOperation.this.message + "\"" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.INTERPRET_AS_CHILD) + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 						SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(SVNUtility.encodeURL(current.getUrl()), current.getPegRevision(), current.getSelectedRevision())};
 						proxy.copyRemote(src, url2, BranchTagOperation.this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, null, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}

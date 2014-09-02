@@ -72,7 +72,7 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 					public void run(IProgressMonitor monitor) throws Exception {
 						String path = FileUtility.normalizePath(CreateFileOperation.this.path + "/" + currentFile[0]); //$NON-NLS-1$
 						String url = resource.getUrl() + "/" + currentFile[0]; //$NON-NLS-1$
-						CreateFileOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + path + "\" \"" + url + "\" -m \"" + CreateFileOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + " -N\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+						CreateFileOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + path + "\" \"" + url + "\" -m \"" + CreateFileOperation.this.message + "\"" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES) + FileUtility.getUsernameParam(location.getUsername()) + " -N\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 						proxy.importTo(path, 
 								SVNUtility.encodeURL(url), 
 								CreateFileOperation.this.message, 

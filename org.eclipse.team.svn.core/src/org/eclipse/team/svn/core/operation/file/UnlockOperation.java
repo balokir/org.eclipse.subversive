@@ -60,7 +60,7 @@ public class UnlockOperation extends AbstractFileOperation {
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock"); //$NON-NLS-1$
+					UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE)); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}

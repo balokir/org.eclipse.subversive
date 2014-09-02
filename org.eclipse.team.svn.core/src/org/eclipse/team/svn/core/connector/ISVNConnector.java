@@ -178,9 +178,15 @@ public interface ISVNConnector {
 		public static final long METADATA_ONLY = 0x8000000;
 
 		/**
+		 * FIXME remove this entry! it is an error!
 		 * @since 1.8 Use copy and delete without move tracking when a srcPath is mixed-revision, if false return an error when a srcPath is mixed-revision.
 		 */
 		public static final long DISALLOW_MIXED_REVISIONS = 0x10000000;
+
+		/**
+		 * @since 1.8 Use copy and delete without move tracking when a srcPath is mixed-revision, if false return an error when a srcPath is mixed-revision.
+		 */
+		public static final long ALLOW_MIXED_REVISIONS = 0x10000000;
 
 		/**
 		 * TODO check IGNORE_ANCESTRY! - compatibility with earlier versions
@@ -206,15 +212,11 @@ public interface ISVNConnector {
 		public static String asCommandLine(long options) {
 			StringBuffer retVal = new StringBuffer();
 			for (int i = 0; i < Options.optionNames.length; i++) {
-				String option = "";
 				if ((options & 1l) != 0) {
-					option = Options.optionNames[i];
-				}
-				else if (Options.optionNames[i].charAt(0) == '!') {
-					option = Options.optionNames[i].substring(1);
-				}
-				if (retVal.indexOf(option) == -1) {
-					retVal.append(option);
+					String option = Options.optionNames[i];
+					if (retVal.indexOf(option) == -1) {
+						retVal.append(option);
+					}
 				}
 				options >>= 1;
 			}
@@ -226,7 +228,7 @@ public interface ISVNConnector {
 			" -u", " -v", " --no-ignore", " --ignore-ancestry", " --dry-run", " --record-only", " -- force", 
 			" --no-diff-deleted", ""/*DEPTH_IS_STICKY*/, ""/*INTERPRET_AS_CHILD*/, " --keep-local", " --stop-on-copy", " -v", " -g", 
 			" --force", " -v", " --show-copies-as-adds", " --reverse-diff", " --ignore-whitespace", ""/*REMOVE_TEMPORARY_FILES*/, 
-			" --no-auto-props", "", "! --allow-mixed-revisions", " --ignore-ancestry", " --ignore-properties", 
+			" --no-auto-props", "", " --allow-mixed-revisions", " --ignore-ancestry", " --ignore-properties", 
 			" --properties-only", " --show-inherited-props"};
 	}
 	
@@ -313,7 +315,7 @@ public interface ISVNConnector {
 
 		public static final long MKDIR = Options.INCLUDE_PARENTS;
 
-		public static final long MOVE_LOCAL = Options.FORCE | Options.DISALLOW_MIXED_REVISIONS | Options.METADATA_ONLY;
+		public static final long MOVE_LOCAL = Options.FORCE | Options.ALLOW_MIXED_REVISIONS | Options.METADATA_ONLY;
 
 		public static final long MOVE_SERVER = Options.FORCE | Options.INTERPRET_AS_CHILD | Options.INCLUDE_PARENTS;
 

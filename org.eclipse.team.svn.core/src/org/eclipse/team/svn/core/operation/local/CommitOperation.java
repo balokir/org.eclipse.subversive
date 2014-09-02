@@ -115,7 +115,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 		
 		this.complexWriteToConsole(new Runnable() {
 			public void run() {
-				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn commit"); //$NON-NLS-1$
+				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn commit" + ISVNConnector.Options.asCommandLine(CommitOperation.this.options)); //$NON-NLS-1$
 				for (int i = 0; i < CommitOperation.this.paths.length && !monitor.isCanceled(); i++) {
 					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + CommitOperation.this.paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				}

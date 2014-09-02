@@ -1340,6 +1340,7 @@ public final class SVNUtility {
 	}
 	
 	public static String getDepthArg(int depth, long options) {
+		//TODO move into SVNDepth
 		String depthArg = (options & ISVNConnector.Options.DEPTH_IS_STICKY) != 0 ? " --set-depth " : " --depth "; //$NON-NLS-1$
 		if (depth == SVNDepth.EMPTY) {
 			return depthArg + "empty "; //$NON-NLS-1$
@@ -1360,7 +1361,8 @@ public final class SVNUtility {
 	}
 	
 	public static String getIgnoreExternalsArg(long options) {
-		return (options & ISVNConnector.Options.IGNORE_EXTERNALS) != 0 ? " --ignore-externals" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		//TODO remove later
+		return ISVNConnector.Options.asCommandLine(options);
 	}
 
 	/**

@@ -108,7 +108,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 				if (!directory.exists()) {
 					directory.mkdirs();
 				}
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.options) + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + ISVNConnector.Options.asCommandLine(this.options) + " \"" + wcPath + "\" " + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 				proxy.exportTo(SVNUtility.getEntryRevisionReference(remote), wcPath, null, SVNDepth.INFINITY, this.options, new SVNProgressMonitor(this, monitor, null));
 			}
 		}

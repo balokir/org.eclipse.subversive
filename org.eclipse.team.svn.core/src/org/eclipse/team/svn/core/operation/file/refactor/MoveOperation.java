@@ -81,7 +81,7 @@ public class MoveOperation extends AbstractFileOperation {
 						ProgressMonitorUtility.doTaskExternal(new DeleteOperation(new File[] {current}), monitor);
 					}
 					else {
-						proxy.moveLocal(new String[] {current.getAbsolutePath()}, checked.getAbsolutePath(), ISVNConnector.Options.FORCE, new SVNProgressMonitor(MoveOperation.this, monitor, null));
+						proxy.moveLocal(new String[] {current.getAbsolutePath()}, checked.getAbsolutePath(), ISVNConnector.Options.FORCE | ISVNConnector.Options.ALLOW_MIXED_REVISIONS, new SVNProgressMonitor(MoveOperation.this, monitor, null));
 					}
 				}
 			}, monitor, files.length);
