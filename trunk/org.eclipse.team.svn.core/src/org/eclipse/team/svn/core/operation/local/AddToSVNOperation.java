@@ -109,8 +109,8 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	
 	protected void doAdd(IResource current, ISVNConnector proxy, IProgressMonitor monitor) throws Exception {
 		String wcPath = FileUtility.getWorkingCopyPath(current);
-
-		AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(wcPath) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		
+		AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(wcPath) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE | ISVNConnector.Options.INCLUDE_PARENTS) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		
 		IResource parent = current.getParent();
 		if (parent != null) {

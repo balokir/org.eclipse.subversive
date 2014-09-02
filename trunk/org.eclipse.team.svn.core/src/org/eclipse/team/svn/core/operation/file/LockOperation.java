@@ -74,7 +74,7 @@ public class LockOperation extends AbstractFileOperation {
 			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock"); //$NON-NLS-1$
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock" + ISVNConnector.Options.asCommandLine(LockOperation.this.options)); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}

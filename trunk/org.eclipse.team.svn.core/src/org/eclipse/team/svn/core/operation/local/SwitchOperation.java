@@ -96,7 +96,7 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
-					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(SwitchOperation.this.options) + SVNUtility.getDepthArg(SwitchOperation.this.depth, SwitchOperation.this.options) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + ISVNConnector.Options.asCommandLine(SwitchOperation.this.options) + SVNUtility.getDepthArg(SwitchOperation.this.depth, SwitchOperation.this.options) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					proxy.switchTo(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
 							SwitchOperation.this.options, new ConflictDetectionProgressMonitor(SwitchOperation.this, monitor, null));
 					

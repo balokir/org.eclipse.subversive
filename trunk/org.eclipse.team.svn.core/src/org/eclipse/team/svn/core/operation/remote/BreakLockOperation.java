@@ -49,7 +49,7 @@ public class BreakLockOperation extends AbstractRepositoryOperation {
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock"); //$NON-NLS-1$
+					BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE)); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(paths[i]) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}

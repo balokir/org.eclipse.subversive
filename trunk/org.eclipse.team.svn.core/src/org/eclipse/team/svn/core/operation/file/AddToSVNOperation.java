@@ -56,7 +56,7 @@ public class AddToSVNOperation extends AbstractFileOperation {
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE | ISVNConnector.Options.INCLUDE_PARENTS) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					
 					File parent = current.getParentFile();
 					if (parent != null) {

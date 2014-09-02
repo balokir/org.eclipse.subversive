@@ -74,11 +74,11 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock"); //$NON-NLS-1$
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock" + ISVNConnector.Options.asCommandLine(LockOperation.this.options)); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, ((LockOperation.this.options & ISVNConnector.Options.FORCE) != 0 ? " --force" : "") + " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			});
 			

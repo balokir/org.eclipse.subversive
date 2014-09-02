@@ -61,7 +61,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 		};
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + resource.getUrl() + "\" \"" + newUrl + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + resource.getUrl() + "\" \"" + newUrl + "\" -m \"" + this.message + "\"" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.INTERPRET_AS_CHILD) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			proxy.moveRemote(new String[] {SVNUtility.encodeURL(resource.getUrl())}, SVNUtility.encodeURL(newUrl), this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

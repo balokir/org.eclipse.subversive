@@ -56,7 +56,7 @@ public class DeleteOperation extends AbstractFileOperation {
 				final ISVNConnector proxy = location.acquireSVNProxy();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						DeleteOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\" --force\n"); //$NON-NLS-1$ //$NON-NLS-2$
+						DeleteOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 						proxy.removeLocal(new String[] {current.getAbsolutePath()}, ISVNConnector.Options.FORCE, new SVNProgressMonitor(DeleteOperation.this, monitor, null)); //$NON-NLS-1$
 					}
 				}, monitor, files.length);

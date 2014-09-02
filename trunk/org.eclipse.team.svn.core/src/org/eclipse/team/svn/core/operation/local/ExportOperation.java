@@ -26,7 +26,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Export local resources
@@ -71,7 +70,7 @@ public class ExportOperation extends AbstractWorkingCopyOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String wcPath = FileUtility.getWorkingCopyPath(current);
 					String targetPath = ExportOperation.this.path + "/" + current.getName(); //$NON-NLS-1$
-					ExportOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + wcPath + "\" -r " + ExportOperation.this.revision.toString() + SVNUtility.getIgnoreExternalsArg(ExportOperation.this.options) + " \"" + FileUtility.normalizePath(targetPath) + "\" --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					ExportOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + wcPath + "\" -r " + ExportOperation.this.revision.toString() + ISVNConnector.Options.asCommandLine(ExportOperation.this.options) + " \"" + FileUtility.normalizePath(targetPath) + "\" " + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					proxy.exportTo(new SVNEntryRevisionReference(wcPath, null, ExportOperation.this.revision), targetPath, null, SVNDepth.INFINITY, ExportOperation.this.options, new SVNProgressMonitor(ExportOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);

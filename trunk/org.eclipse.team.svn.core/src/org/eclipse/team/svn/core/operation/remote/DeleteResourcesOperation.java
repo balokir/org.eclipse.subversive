@@ -57,7 +57,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete"); //$NON-NLS-1$
+					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE)); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(paths[i]) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
