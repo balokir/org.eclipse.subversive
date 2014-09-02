@@ -202,6 +202,32 @@ public interface ISVNConnector {
 		 * @since 1.8 Inherit properties.
 		 */
 		public static final long INHERIT_PROPERTIES = 0x100000000L;
+		
+		public static String asCommandLine(long options) {
+			StringBuffer retVal = new StringBuffer();
+			for (int i = 0; i < Options.optionNames.length; i++) {
+				String option = "";
+				if ((options & 1l) != 0) {
+					option = Options.optionNames[i];
+				}
+				else if (Options.optionNames[i].charAt(0) == '!') {
+					option = Options.optionNames[i].substring(1);
+				}
+				if (retVal.indexOf(option) == -1) {
+					retVal.append(option);
+				}
+				options >>= 1;
+			}
+			return retVal.toString();
+		}
+		
+		private static final String[] optionNames = { 
+			" --ignore-externals", " --force", " --force", " --parents", " --no-unlock", " --keep-changelists", 
+			" -u", " -v", " --no-ignore", " --ignore-ancestry", " --dry-run", " --record-only", " -- force", 
+			" --no-diff-deleted", ""/*DEPTH_IS_STICKY*/, ""/*INTERPRET_AS_CHILD*/, " --keep-local", " --stop-on-copy", " -v", " -g", 
+			" --force", " -v", " --show-copies-as-adds", " --reverse-diff", " --ignore-whitespace", ""/*REMOVE_TEMPORARY_FILES*/, 
+			" --no-auto-props", "", "! --allow-mixed-revisions", " --ignore-ancestry", " --ignore-properties", 
+			" --properties-only", " --show-inherited-props"};
 	}
 	
 	public static class DiffOptions {
@@ -230,6 +256,23 @@ public interface ISVNConnector {
 		 * @since 1.8 Use extended GIT's format for patch files.
 		 */
 		public static final long GIT_FORMAT = 0x00000010;
+		
+		public static String asCommandLine(long options) {
+			StringBuffer retVal = new StringBuffer();
+			for (int i = 0; i < DiffOptions.optionNames.length; i++) {
+				if ((options & 1l) != 0) {
+					retVal.append(DiffOptions.optionNames[i]);
+				}
+				options >>= 1;
+			}
+			if (retVal.length() > 0) {
+				retVal.insert(0, " -x");
+			}
+			return retVal.toString();
+		}
+		
+		private static final String[] optionNames = { 
+			" --ignore-all-space", " --ignore-space-change", " --ignore-eol-style", " --show-c-function", " --git"};
 	}
 
 	/**
@@ -295,6 +338,8 @@ public interface ISVNConnector {
 		public static final long SET_PROPERTY_REMOTE = Options.FORCE;
 
 		public static final long SET_REVISION_PROPERTY = Options.FORCE;
+		
+		public static final long PATCH = Options.IGNORE_WHITESPACE | Options.REVERSE | Options.SIMULATE | Options.REMOVE_TEMPORARY_FILES;
 	}
 
 	/**
