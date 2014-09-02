@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -90,12 +91,14 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation((IResource)entry.getKey());
 			IResource[] resources = ((List<?>)entry.getValue()).toArray(new IResource[((List<?>)entry.getValue()).size()]);
 			String[] wcPaths = new String[resources.length];
+			String printedPath = "";
 			for (int i = 0; i < resources.length; i++) {
 				wcPaths[i] = FileUtility.getWorkingCopyPath(resources[i]);
+				printedPath += " \"" + wcPaths[i] + "\"";
 			}
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
-				//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete " + printedPath + " --force\n");
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete " + printedPath + ISVNConnector.Options.asCommandLine(this.options) + "\n");
 				proxy.removeLocal(wcPaths, this.options, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
 			}
 			finally {

@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -63,8 +64,7 @@ public class MoveResourceOperation extends AbstractActionOperation {
 		String srcPath = FileUtility.getWorkingCopyPath(this.source);
 		String dstPath = FileUtility.getWorkingCopyPath(this.destination);
 		try {
-			// FIXME JavaSVN does not provide any statuses in time of extended API move
-//			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + FileUtility.normalizePath(localSource.getWorkingCopyPath()) + "\" \"" + FileUtility.normalizePath(localDestination.getWorkingCopyPath()) + "\" --force\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + FileUtility.normalizePath(srcPath) + "\" \"" + FileUtility.normalizePath(dstPath) + "\"" + ISVNConnector.Options.asCommandLine(ISVNConnector.Options.FORCE | ISVNConnector.Options.ALLOW_MIXED_REVISIONS) + " \n");
 			proxy.moveLocal(new String[] {srcPath}, dstPath, ISVNConnector.Options.FORCE | ISVNConnector.Options.ALLOW_MIXED_REVISIONS, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
