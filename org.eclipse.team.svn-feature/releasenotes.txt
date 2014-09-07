@@ -5,55 +5,28 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 2.0.0.I20140609-1700 release date: 09 June 2014
+Version 2.0.1.I20140907-1700 release date: 07 September 2014
 
 1. What's New
 
-   The version is 2.0.0 release, that includes major SVN integration API changes. 
+   The version is 2.0.1 service release. 
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
 	Features:
-	 * Document SVN API calls (bug 417770)
-	 * Add support for Eclipse-SourceReferences header (bug 315011)
-	   + special thanks to Michael Schaufelberger
-	 * Allow freeform in SVN:IGNORE (bug 427577)
-	 * Update SVN operations framework in order to support SVN 1.8 API (bug 423701)
-	 * Provide access to SVN repository management API (bug 417769)
-	 * Introduce SVN 1.8 API support (bug 417768)
-	 * "Treat replacement as edit" should be true by default and should be represented in preferences (bug 419850)
-
+	 * Refactor Log should be written into console (bug 211245)
+	 * Update all SVN operations console output (bug 443135)
+	 * Add API to convert SVN command options into command-line counterparts (bug 443132)
+	 
 	Fixes:
-	 * Update SVN Cache locks the work space (bug 436727)
-	 * Refreshing a folder shared with SVN should force Subversive to refresh its state, even if the .svn folder is outside that folder (bug 435601)
-	 * If performing changes via external program, Subversive does not show actual status (bug 430056)
-	 * Delete file from SVN not work always (bug 434944)
-	 * Java Refactoring + SVN: Selecting "Cancel" in resource locking dialog leads to empty error dialog (bug 433208)
-	 * Subversive crashes ID-PPJQ5 (bug 432930)
-	 * ArrayOutOfBoundsException in IgnoreMethodPanel [ID-MFS28] (bug 433287)
-	 * ResourceException in SaveProjectMetaOperation [ID-IE0RW] (bug 432177)
-	 * Subversive produces unnecessary SVN error log entries for eclipse projects. (bug 431237)
-	 * A virtual folder in project will cause "The resource is inaccessible" (bug 430349)
-	 * Improve bug reporting code in SVNUtility.getWCRoot [ID-PH38V] (bug 428141)
-	 * NullPointerException in "Merge properties" (bug 428253)
-	 * NPE in EditTreeConflictsPanel [ID-LZRIO] (bug 425263)
-	 * Ignored files shown as outgoing additions (bug 392750)
-	 * There're unnecessary accesses to the file system while loading information on versioned resources (bug 427184)
-	 * There is an exception in Synchronize View when handling an obstructed resource of unexpected kind (dir instead of file) (bug 427183)
-	 * GetPropertiesOperation fails for deleted resource with SVN Kit 1.8.3 connector (bug 427093)
-	 * SVN 1.7 working copy format detection fails with SVN 1.8.3 connector (bug 427092)
-	 * Cannot commit package deletion (greyed out) (bug 426706)
-	 * Button position should comply Linux "convention": positive button on the right-most (bug 422826)
-	 * NPE in PropertyCompareInput [ID-KULS6] (bug 422623)
-	 * Connectors discovery fails with exceptions on MacOS X (bug 418768)
-	 * Synchronize view mistakingly treats workspace root as versioned resource [ID-NYQUI] (bug 417835)
-	 * FileNotFoundException in FileUtility.copyFile [ID-JJCVG] (bug 421251)
-	 * Deleting and replacing a resource is a SVN delete/add instead of a modify (bug 276018)
-		+ special thanks to Forest Johnson
-	 * Undo Delete result in replaced content (bug 419368)
-	 * NPE when using "Create Patch" in history view (bug 419563)
-	 * Subversive doesn't allow to use IPv6 addresses as host names (bug 418301)
+	 * There is an exception when unversioned resources selected for synchronizing [ID-OX0F5] (bug 426049)
+	 * opening a closed project with svnkit 1.3.8 working copy with JavaHL 1.7 connector freezes Eclipse (bug 440297)
+	 * bugtraq:url does not work with URL starting with / (bug 441393)
+	 * Create patch with workspace root produces wrong result (bug 437106)
+	 * Wrong enablement in Create Patch wizard for nested projects (bug 441039)
+	 * FileNotFoundException while trying to save an imported from repository and not existing locally file in "Compare with revision" editor [ID-WQB6L] (bug 438953)
+	 * When Project Explorer contains semanticfs then the error "SVN: '0x0040011a: Call Menu Action' operation finished with error: The resource is inaccessible" occurs on commit (bug 437623)
 	
 	
 2. Information
@@ -68,7 +41,7 @@ Version 2.0.0.I20140609-1700 release date: 09 June 2014
    Subversive supports 
     Migration for Subversion below version 1.6 to version 1.7 and higher,
     Subversion version 1.7 with SVN Kit 1.7.13 and JavaHL 1.7.9,
-    Subversion version 1.8 with SVN Kit 1.8.5 and JavaHL 1.8.8
+    Subversion version 1.8 with SVN Kit 1.8.6 and JavaHL 1.8.9
 
 2.2 Known issues
 

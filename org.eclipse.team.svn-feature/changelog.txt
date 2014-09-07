@@ -8,6 +8,24 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 2.0.1.I20140907-1700 [07 September 2014]
+
+Features:
+ * Refactor Log should be written into console (bug 211245)
+ * Update all SVN operations console output (bug 443135)
+ * Add API to convert SVN command options into command-line counterparts (bug 443132)
+ 
+Fixes:
+ * There is an exception when unversioned resources selected for synchronizing [ID-OX0F5] (bug 426049)
+ * opening a closed project with svnkit 1.3.8 working copy with JavaHL 1.7 connector freezes Eclipse (bug 440297)
+ * bugtraq:url does not work with URL starting with / (bug 441393)
+ * Create patch with workspace root produces wrong result (bug 437106)
+ * Wrong enablement in Create Patch wizard for nested projects (bug 441039)
+ * FileNotFoundException while trying to save an imported from repository and not existing locally file in "Compare with revision" editor [ID-WQB6L] (bug 438953)
+ * When Project Explorer contains semanticfs then the error "SVN: '0x0040011a: Call Menu Action' operation finished with error: The resource is inaccessible" occurs on commit (bug 437623)
+ 
+--------------------------------------------------------------------------------
+
 Version 2.0.0.I20140609-1700 [09 June 2014]
 
 Features:
