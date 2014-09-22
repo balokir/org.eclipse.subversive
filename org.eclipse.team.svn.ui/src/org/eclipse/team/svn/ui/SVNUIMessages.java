@@ -166,6 +166,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Button_RemoveAll;
 	public static String Button_SelectAll;
 	public static String Button_Simple;
+	public static String Button_CheckForConnectors;
 
 	public static String ChangeSetModel_UnassignedChangeSetTitle;
 	public static String ChangeSet_DefaultDecoration;
