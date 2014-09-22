@@ -166,7 +166,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		return svnProjectFound && !CoreExtensionsManager.isExtensionsRegistered(CoreExtensionsManager.SVN_CONNECTOR);
 	}
 	
-	protected void discoveryConnectors() {
+	public void discoveryConnectors() {
 		/*
 		 * We can't run Discovery Connectors through IActionOperation, because
 		 * it uses CoreExtensionsManager (for getting nationalized operation name),

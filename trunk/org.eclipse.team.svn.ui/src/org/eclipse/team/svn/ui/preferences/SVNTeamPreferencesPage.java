@@ -46,7 +46,9 @@ import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.factory.SVNConnectorHelper;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.DateFormatVerifier;
@@ -131,6 +133,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button consultCSNeverButton;
 	protected Button consultCSPromptButton;
 	protected Button ignoreExternalsButton;
+	protected Button checkForConnectorsButton;
 	
 	public SVNTeamPreferencesPage() {
 		super();
@@ -413,6 +416,23 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				SVNTeamPreferencesPage.this.initializeClientSettings();
 			}
 		});
+
+		if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty()) {
+			this.checkForConnectorsButton = new Button(composite, SWT.PUSH);
+			this.checkForConnectorsButton.setText(SVNUIMessages.Button_CheckForConnectors);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.widthHint = DefaultDialog.computeButtonWidth(this.checkForConnectorsButton);
+			data.grabExcessHorizontalSpace = true;
+			data.horizontalSpan = 2;
+			data.horizontalAlignment = SWT.RIGHT;
+			this.checkForConnectorsButton.setLayoutData(data);
+			this.checkForConnectorsButton.setEnabled(true);
+			this.checkForConnectorsButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					SVNTeamUIPlugin.instance().discoveryConnectors();
+				}
+			});
+		}
 		
 		// Merge settings group
 		Group group = new Group(composite, SWT.NONE);
