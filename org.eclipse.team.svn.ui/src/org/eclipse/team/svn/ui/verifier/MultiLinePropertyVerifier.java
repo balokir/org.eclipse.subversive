@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 
 /**
  * Verify multiple properties separated by line separator
@@ -39,19 +38,10 @@ public class MultiLinePropertyVerifier extends AbstractFormattedVerifier {
 				continue;
 			}
 			
-			String[] nestedProperties = properties[i].split(SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);
-			for (int j = 0; j < nestedProperties.length; j++) {
-				String property = nestedProperties[j].trim();
-				if (property.length() == 0) {
-					continue;
-				}
-				
-				String retVal = this.validateProperty(property, i);
-				if (retVal != null) {
-					return retVal;
-				}
+			String retVal = this.validateProperty(properties[i], i);
+			if (retVal != null) {
+				return retVal;
 			}
-		
 		}
 		
 		return null;
