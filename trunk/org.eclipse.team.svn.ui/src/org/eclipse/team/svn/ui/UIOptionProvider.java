@@ -21,8 +21,8 @@ import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.panel.callback.PromptCredentialsPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -109,10 +109,10 @@ public class UIOptionProvider implements IOptionProvider {
 				if (autoProperty.properties.length() == 0) {
 					return new SVNProperty[0];
 				}
-				String[] props = autoProperty.properties.split(";"); //$NON-NLS-1$
+				String[] props = autoProperty.properties.split(System.getProperty("line.separator")); //$NON-NLS-1$
 				SVNProperty[] propertyData = new SVNProperty[props.length];
 				for (int j = 0; j < props.length; j++) {
-					String[] propsNameValue = props[j].split("="); //$NON-NLS-1$
+					String[] propsNameValue = props[j].split("=", 2); //$NON-NLS-1$
 					propertyData[j] = new SVNProperty(propsNameValue[0], propsNameValue.length == 1 ? "" : propsNameValue[1]); //$NON-NLS-1$
 				}
 				return propertyData;
