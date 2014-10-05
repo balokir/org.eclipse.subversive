@@ -18,11 +18,12 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
+import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.panel.callback.PromptCredentialsPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -113,7 +114,12 @@ public class UIOptionProvider implements IOptionProvider {
 				SVNProperty[] propertyData = new SVNProperty[props.length];
 				for (int j = 0; j < props.length; j++) {
 					String[] propsNameValue = props[j].split("=", 2); //$NON-NLS-1$
-					propertyData[j] = new SVNProperty(propsNameValue[0], propsNameValue.length == 1 ? "" : propsNameValue[1]); //$NON-NLS-1$
+					String propVal = propsNameValue.length == 1 ? "" : propsNameValue[1];
+					// handle multiline properties (lines are split by \n, if you need to specify such a character sequence, then use masking \\n)
+					propVal = PatternProvider.replaceAll(propVal, "([^\\\\])\\\\n|^\\\\n", "$1" + System.getProperty("line.separator")); //$NON-NLS-1$ //$NON-NLS-2$
+					// replace masked \\n entries with unmasked ones \n
+					propVal = PatternProvider.replaceAll(propVal, "\\\\n", "n"); //$NON-NLS-1$ //$NON-NLS-2$
+					propertyData[j] = new SVNProperty(propsNameValue[0], propVal);
 				}
 				return propertyData;
 			}
