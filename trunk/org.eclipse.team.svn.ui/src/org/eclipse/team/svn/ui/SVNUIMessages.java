@@ -1608,9 +1608,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Verifier_IntegerField_Negative;
 	public static String Verifier_MultiLineProperty_EmptyValue;
 	public static String Verifier_MultiLineProperty_InvalidNameChar;
-	public static String Verifier_MultiLineProperty_InvalidValueChar;
 	public static String Verifier_MultiLineProperty_Main;
-	public static String Verifier_MultiLineProperty_ManyEquals;
 	public static String Verifier_MultiLineProperty_NameIsEmpty;
 	public static String Verifier_MultiLineProperty_NotALetter;
 	public static String Verifier_NonEmpty;
