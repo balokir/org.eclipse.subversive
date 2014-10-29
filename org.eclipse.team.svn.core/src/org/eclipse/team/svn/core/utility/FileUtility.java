@@ -147,7 +147,7 @@ public final class FileUtility {
 	
 	public static IPath getResourcePath(IResource resource) {
 		IPath location = resource.getLocation();
-		if (location == null) {
+		if (location == null && resource.getProject() != null) { // check in case if workspace root was passed as an argument
 			IPath projectLocation = resource.getProject().getLocation();
 			if (projectLocation != null) { // there're virtual projects too. See bug #437623
 				location = projectLocation.append(resource.getFullPath()); // virtual resource
