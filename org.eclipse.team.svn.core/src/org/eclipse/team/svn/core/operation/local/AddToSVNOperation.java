@@ -18,8 +18,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -87,24 +89,31 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void removeFromParentIgnore(ISVNConnector proxy, String parentPath, String name) throws Exception {
-		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, null, new SVNNullProgressMonitor());
-		String ignoreValue = data == null ? "" : data.value; //$NON-NLS-1$
-		
-		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true); //$NON-NLS-1$
-		ignoreValue = ""; //$NON-NLS-1$
-		boolean skipToken = false;
-		while (tok.hasMoreTokens()) {
-		    String oneOf = tok.nextToken();
-		    
-			if (!oneOf.equals(name) && !skipToken) {
-			    ignoreValue += oneOf;
+		try {
+			SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, null, new SVNNullProgressMonitor());
+			String ignoreValue = data == null ? "" : data.value; //$NON-NLS-1$
+			
+			StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true); //$NON-NLS-1$
+			ignoreValue = ""; //$NON-NLS-1$
+			boolean skipToken = false;
+			while (tok.hasMoreTokens()) {
+			    String oneOf = tok.nextToken();
+			    
+				if (!oneOf.equals(name) && !skipToken) {
+				    ignoreValue += oneOf;
+				}
+				else {
+				    skipToken = !skipToken;
+				}
 			}
-			else {
-			    skipToken = !skipToken;
+			
+			proxy.setPropertyLocal(new String[] {parentPath}, new SVNProperty(BuiltIn.IGNORE, ignoreValue.length() > 0 ? ignoreValue : null), SVNDepth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
+		}
+		catch (SVNConnectorException ex) {
+			if (ex.getErrorId() != SVNErrorCodes.unversionedResource) { // if the parent is unversioned, then just ignore it
+				throw ex;
 			}
 		}
-		
-		proxy.setPropertyLocal(new String[] {parentPath}, new SVNProperty(BuiltIn.IGNORE, ignoreValue.length() > 0 ? ignoreValue : null), SVNDepth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 	}
 	
 	protected void doAdd(IResource current, ISVNConnector proxy, IProgressMonitor monitor) throws Exception {
