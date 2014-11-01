@@ -51,21 +51,26 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 public class FileReplaceListener implements IResourceChangeListener {
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		try {
-			final List<IFile> added = new ArrayList<IFile>();			
-			event.getDelta().accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					if (delta.getResource().getType() == IResource.FILE && delta.getKind() == IResourceDelta.ADDED) {
-						added.add((IFile)delta.getResource());
-					}					
-					return true;
-				}			
-			});			
-			if (!added.isEmpty()) {
-				this.processResources(added.toArray(new IResource[0]));
+		if (event.getType() == IResourceChangeEvent.POST_CHANGE || event.getType() == IResourceChangeEvent.PRE_BUILD) {
+			try {
+				final List<IFile> added = new ArrayList<IFile>();			
+				event.getDelta().accept(new IResourceDeltaVisitor() {
+					public boolean visit(IResourceDelta delta) throws CoreException {
+						if (delta.getResource().getType() == IResource.FILE) {
+							int kind = delta.getKind();
+							if (kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED) {
+								added.add((IFile)delta.getResource());
+							}					
+						}					
+						return true;
+					}			
+				});			
+				if (!added.isEmpty()) {
+					this.processResources(added.toArray(new IResource[0]));
+				}
+			} catch (CoreException e) {
+				LoggedOperation.reportError(this.getClass().getName(), e);
 			}
-		} catch (CoreException e) {
-			LoggedOperation.reportError(this.getClass().getName(), e);
 		}
 	}
 
