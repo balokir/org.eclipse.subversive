@@ -335,11 +335,11 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			diffKindRight |= Differencer.RIGHT;
 		}
 		
-		if ((diffKindRight & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION || (diffKindLeft & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION) {
+		if (/*(diffKindRight & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION ||*/ (diffKindLeft & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION) {
 			left.setSelectedRevision(SVNRevision.INVALID_REVISION);
-			ancestor.setSelectedRevision(SVNRevision.INVALID_REVISION);
+			//ancestor.setSelectedRevision(SVNRevision.INVALID_REVISION);
 		}
-		if ((diffKindRight & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION || (diffKindLeft & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) {
+		if ((diffKindRight & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION /*|| (diffKindLeft & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION*/) {
 			right.setSelectedRevision(SVNRevision.INVALID_REVISION);
 		}
 		
