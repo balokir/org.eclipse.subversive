@@ -120,7 +120,7 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 	}
 	
 	protected void fireInputChange() {
-		((BaseCompareNode)getCompareResult()).fireChange();
+//		((BaseCompareNode)getCompareResult()).fireChange();
 	}
 
 	public ResourceCompareInput(CompareConfiguration configuration) {
@@ -624,10 +624,10 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 			super(parent, kind);
 		}
 		
-		public void fireChange() {
-			super.fireChange();
-		}
-		
+//		public void fireChange() {
+//			super.fireChange();
+//		}
+//		
 		protected String detectCharset(InputStream stream) throws Exception {
 			try {
 				IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(stream, this.getName(), IContentDescription.ALL);
