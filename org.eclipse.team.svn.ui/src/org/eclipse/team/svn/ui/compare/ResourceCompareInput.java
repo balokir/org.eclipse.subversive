@@ -47,6 +47,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -577,6 +578,20 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 					}
 				});
 				UIMonitorUtility.doTaskNowDefault(fetchContent, true);
+			}
+			else { // handle a folder expansion/collapse
+				ISelection selection = this.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					for (Iterator elements = ((IStructuredSelection)selection).iterator(); elements.hasNext(); ) {
+						Object next = elements.next();
+						if (!this.getExpandedState(next)) {
+							this.expandToLevel(next, 1);
+						}
+						else {
+							this.collapseToLevel(next, 1);
+						}
+					}
+				}
 			}
 			super.handleDoubleSelect(event);
 		}
