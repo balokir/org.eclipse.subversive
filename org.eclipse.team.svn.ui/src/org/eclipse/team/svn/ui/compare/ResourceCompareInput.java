@@ -556,27 +556,28 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 		protected void handleDoubleSelect(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
 			CompositeOperation fetchContent = node.getFetcher();
-			fetchContent.add(new AbstractActionOperation("Operation_FetchContent", SVNUIMessages.class) { //$NON-NLS-1$
-				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					final Throwable []t = new Throwable[1];
-					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-						public void run() {
-							try {
-								ResourceCompareInput.this.refreshTitles();
-								ResourceCompareViewer.super.handleOpen(event);
-							} 
-							catch (Exception e) {
-								t[0] = e;
+			if (!fetchContent.isEmpty()) {
+				fetchContent.add(new AbstractActionOperation("Operation_FetchContent", SVNUIMessages.class) { //$NON-NLS-1$
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						final Throwable []t = new Throwable[1];
+						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+							public void run() {
+								try {
+									ResourceCompareInput.this.refreshTitles();
+									ResourceCompareViewer.super.handleOpen(event);
+								} 
+								catch (Exception e) {
+									t[0] = e;
+								}
 							}
+						});
+						if (t[0] != null ){
+							this.reportStatus(IStatus.ERROR, null, t[0]);
 						}
-					});
-					if (t[0] != null ){
-						this.reportStatus(IStatus.ERROR, null, t[0]);
 					}
-				}
-			});
-			UIMonitorUtility.doTaskNowDefault(fetchContent, true);
-			
+				});
+				UIMonitorUtility.doTaskNowDefault(fetchContent, true);
+			}
 			super.handleDoubleSelect(event);
 		}
 		
