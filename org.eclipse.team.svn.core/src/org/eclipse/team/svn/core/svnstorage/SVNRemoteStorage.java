@@ -804,15 +804,18 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			}
 		}
 		IRepositoryResource baseResource = provider.getRepositoryResource();
-		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString());
+		int offsetFromRoot = resourcePath.segmentCount() - wcPath.segmentCount();
+		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString(), offsetFromRoot < 1 || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() ? SVNDepth.IMMEDIATES : SVNDepth.INFINITY);
 		String desiredUrl = this.makeUrl(target, baseResource);
-		ILocalResource retVal = this.fillCache(statuses, desiredUrl, resource, subPathStart, requestedPath);
+		SVNChangeStatus [][]loadTargets = new SVNChangeStatus[1][];
+		ILocalResource retVal = this.fillCache(statuses, desiredUrl, resource, subPathStart, requestedPath, loadTargets);
 		
 		if (statuses.length == 1 || statuses.length > 1 && this.parent2Children.get(target.getFullPath()) == null) {
 			// the caching is done for the folder if it is empty 
 			this.parent2Children.put(target.getFullPath(), new HashSet());
 		}
 		
+		statuses = loadTargets[0];
 		if (retVal != null && hasSVNMeta && statuses.length > 1 && recurse && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
 			this.scheduleStatusesFetch(statuses, target);
 		}
@@ -855,19 +858,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						IProject prj = target.getProject();
 						IPath location = prj.getLocation();
 						if (location != null) {
-							SVNUtility.reorder(st, false);
 							int projectEnd = location.toString().length();
 							for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled(); i++) {
 								ProgressMonitorUtility.progress(monitor, i, IProgressMonitor.UNKNOWN);
-								if (st[i] != null) {
-									if (st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
-										IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
-										ProgressMonitorUtility.setTaskInfo(monitor, this, folder.getFullPath().toString());
-										ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
-										if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
-											local.getChildren();
-										}
-									}	
+								if (st[i] != null && st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
+									IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
+									ProgressMonitorUtility.setTaskInfo(monitor, this, folder.getFullPath().toString());
+									ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
+									if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
+										local.getChildren();
+									}
 								}
 							}
 						}
@@ -885,10 +885,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return new File(file, SVNUtility.getSVNFolderName()).exists();
 	}
 	
-	protected SVNChangeStatus []getStatuses(String path) throws Exception {
+	protected SVNChangeStatus []getStatuses(String path, int depth) throws Exception {
 		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 		try {
-			SVNChangeStatus []statuses = SVNUtility.status(proxy, path, SVNDepth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new SVNNullProgressMonitor());
+			SVNChangeStatus []statuses = SVNUtility.status(proxy, path, depth, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new SVNNullProgressMonitor());
 			SVNUtility.reorder(statuses, true);
 			return statuses;
 		}
@@ -917,11 +917,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	 * (it even can make some statuses to null) passed as input parameter.
 	 * This can happen for external definitions.
 	 */
-	protected ILocalResource fillCache(SVNChangeStatus []statuses, String desiredUrl, IResource resource, int subPathStart, IPath requestedPath) {
+	protected ILocalResource fillCache(SVNChangeStatus []statuses, String desiredUrl, IResource resource, int subPathStart, IPath requestedPath, SVNChangeStatus [][]loadTargets) {
 		IProject project = resource.getProject();
 		
 		ILocalResource retVal = null;
 		
+		HashMap<IPath, SVNChangeStatus> lTargetsTmp = new HashMap<IPath, SVNChangeStatus>();
 		ISVNConnector proxy = null;
 		try {
 			for (int i = 0; i < statuses.length; i++) {
@@ -978,6 +979,13 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					else {
 					    tRes = project.getFile(new Path(nodePath));
 					}
+				}
+				
+				if (nodeKind == SVNEntry.Kind.DIR) {
+					lTargetsTmp.put(tRes.getFullPath(), statuses[i]);
+				}
+				if (tRes.getParent() != null && lTargetsTmp.containsKey(tRes.getParent().getFullPath())) {
+					lTargetsTmp.remove(tRes.getParent().getFullPath());
 				}
 				
 				ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
@@ -1093,6 +1101,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					retVal = local;
 				}
 			}
+			loadTargets[0] = lTargetsTmp.values().toArray(new SVNChangeStatus[lTargetsTmp.size()]);
 		}
 		finally {
 			if (proxy != null) {
