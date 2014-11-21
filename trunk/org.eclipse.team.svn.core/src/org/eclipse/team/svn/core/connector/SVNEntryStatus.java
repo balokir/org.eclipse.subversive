@@ -97,7 +97,7 @@ public class SVNEntryStatus {
 	}
 
 	/**
-	 * The entry kind (see {@link Kind})
+	 * The entry kind (see {@link SVNEntry.Kind})
 	 */
 	public final int nodeKind;
 
@@ -115,7 +115,7 @@ public class SVNEntryStatus {
 	 * The {@link SVNChangeStatus} instance could be initialized only once because all fields are final
 	 * 
 	 * @param nodeKind
-	 *            kind of item (directory, file or unknown)
+	 *            kind of item (directory, file or unknown) (see {@link SVNEntry.Kind})
 	 * @param textStatus
 	 *            the file or directory status (see {@link SVNEntryStatus.Kind})
 	 * @param propStatus
