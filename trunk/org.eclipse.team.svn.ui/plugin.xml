@@ -2376,6 +2376,10 @@
           schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+S"/>
     <key
+          commandId="org.eclipse.team.svn.ui.command.SynchronizeCommand"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme.ubuntu"
+          sequence="SHIFT+CTRL+ALT+S"/>
+    <key
           commandId="org.eclipse.team.svn.ui.command.CommitCommand"
           schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+C"/>
@@ -2404,6 +2408,10 @@
           schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+T"/>
     <key
+          commandId="org.eclipse.team.svn.ui.command.EditPropertiesCommand"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme.ubuntu"
+          sequence="SHIFT+CTRL+ALT+T"/>
+    <key
           commandId="org.eclipse.team.svn.ui.command.ShowAnnotationCommand"
           schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+A"/>
@@ -2412,6 +2420,10 @@
           commandId="org.eclipse.team.svn.ui.command.CompareWithLatestRevisionCommand"
           schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+L"/>
+    <key
+          commandId="org.eclipse.team.svn.ui.command.CompareWithLatestRevisionCommand"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme.ubuntu"
+          sequence="SHIFT+CTRL+ALT+L"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.CompareWithRevisionCommand"
           schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
@@ -2426,6 +2438,11 @@
           id="org.eclipse.team.svn.ui.keybindings.scheme"
           name="Default + Subversive"
           parentId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+    <scheme
+          description="The Subversive key bindings"
+          id="org.eclipse.team.svn.ui.keybindings.scheme.ubuntu"
+          name="Default + Subversive (Ubuntu)"
+          parentId="org.eclipse.team.svn.ui.keybindings.scheme"/>
  </extension>
 
 <!-- ************ Model elements ************ -->
