@@ -689,14 +689,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				? this.loadUnversionedSubtree(resource, isLinked, recurse) : retVal;
 	}
 	
-	protected ILocalResource loadUnversionedSubtree(final IResource resource, boolean isLinked, boolean recurse) throws Exception {
-	    // if resource has unversioned parents it cannot be wrapped directly and it status should be calculated in other way
-		String status = this.calculateUnversionedStatus(resource, isLinked);
-		
-		// delegate status
-		final String fStatus = status;
-		final ILocalResource parent = this.getFirstExistingParentLocal(resource);
-		final int parentCM = parent != null ? (parent.getChangeMask() & ILocalResource.IS_SWITCHED | parent.getChangeMask() & ILocalResource.IS_UNVERSIONED_EXTERNAL) : 0;
+	protected ILocalResource loadUnversionedSubtree(final IResource resource, final boolean isLinked, boolean recurse) throws Exception {
 		final ILocalResource []tmp = new ILocalResource[1];
 		/*
 		 * Performance optimization: make an assumption that if resource is unversioned external then all its unversioned
@@ -711,9 +704,20 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
             	String path = FileUtility.getWorkingCopyPath(child);
             	if (new File(path + "/" + SVNUtility.getSVNFolderName()).exists() && SVNUtility.getSVNInfoForNotConnected(child) != null) { //$NON-NLS-1$
             		return false;
-            	}            	            	
-               	String textState = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);            	
-            	int changeMask = parentCM;            	
+            	}
+        		ILocalResource parent = SVNRemoteStorage.this.getFirstExistingParentLocal(child);
+        		boolean parentIsSymlink = parent != null && (parent.getChangeMask() & ILocalResource.IS_SYMLINK) != 0;
+        		int parentCM = 
+        			(parent != null ? (parent.getChangeMask() & (ILocalResource.IS_SWITCHED | ILocalResource.IS_UNVERSIONED_EXTERNAL)) : 0) |
+        			(parentIsSymlink ? ILocalResource.IS_UNVERSIONED_EXTERNAL : 0);
+        	    // if resource has unversioned parents it cannot be wrapped directly and it status should be calculated in other way
+        		String inheritedStatus = parentIsSymlink ? IStateFilter.ST_IGNORED : SVNRemoteStorage.this.calculateUnversionedStatus(resource, isLinked);
+               	String textState = child == resource ? inheritedStatus : SVNRemoteStorage.this.getDelegatedStatus(child, parentIsSymlink ? IStateFilter.ST_IGNORED : inheritedStatus, 0);
+               	int changeMask = parentCM;
+               	//FIXME sometime it fails to detect a symlink change mask and fails to delegate change mask status ILocalResource.IS_UNVERSIONED_EXTERNAL ?
+	           	if (textState == IStateFilter.ST_NEW && child.getType() == IResource.FOLDER && FileUtility.isSymlink(child)) {
+               		changeMask |= ILocalResource.IS_SYMLINK;
+               	}
             	//if resource's parent is ignored but not external, then don't check this resource as it is ignored too
             	if ((parent != null && !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(parent) || parent == null) 
             		&& textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
@@ -964,20 +968,30 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				}
 				
 				IResource tRes = null;
+				boolean isSymlink = false;
 				if (new Path(statuses[i].path).equals(requestedPath) && (resource.getType() > IResource.FOLDER || resource.getType() == nodeKind)) {//if nodekind not equals do not use default resource
 				    tRes = resource;
 				}
 				else {
-					if (nodeKind == SVNEntry.Kind.DIR) {
-						if (nodePath.length() == 0) {
-							tRes = project;
+					if (nodeKind == SVNEntry.Kind.SYMLINK) { //symlink, if reported
+						tRes = project.findMember(nodePath, true);
+						isSymlink = true;
+					}
+					if (tRes == null) {
+						if (nodeKind == SVNEntry.Kind.DIR) {
+							if (nodePath.length() == 0) {
+								tRes = project;
+							}
+							else {
+								tRes = project.getFolder(new Path(nodePath));
+							}
 						}
 						else {
-							tRes = project.getFolder(new Path(nodePath));
+						    tRes = project.getFile(new Path(nodePath));
 						}
 					}
-					else {
-					    tRes = project.getFile(new Path(nodePath));
+					if (nodeKind == SVNEntry.Kind.SYMLINK) {
+						nodeKind = tRes.getType() == IResource.FILE ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
 					}
 				}
 				
@@ -991,6 +1005,18 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
 				if (local == null) {
 					ILocalResource parent = this.getFirstExistingParentLocal(tRes);
+					
+					if (parent != null) {
+						if ((parent.getChangeMask() & ILocalResource.IS_SYMLINK) != 0) {
+							local = this.registerExternalUnversionedResource(tRes);
+							continue;
+						}
+						
+						if (IStateFilter.SF_IGNORED.accept(parent)) {
+							local = this.registerUnversionedResource(tRes, parent.getChangeMask() & ILocalResource.IS_UNVERSIONED_EXTERNAL);
+							continue;
+						}
+					}
 					
 					boolean isSVNExternals = false;
 					if (statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL) {
@@ -1006,7 +1032,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							if (tRes == resource) {
 								retVal = local;
 							}
-							continue;	
+							continue;
 						}
 					}																		
 					else if (i == 0 && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl) && tRes.getParent().getType() != IResource.ROOT) {
@@ -1034,6 +1060,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
 					boolean forceCopied = parent != null && parent.isCopied();
 					int changeMask = SVNRemoteStorage.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched, isSVNExternals);
+					if (isSymlink) {
+						changeMask |= ILocalResource.IS_SYMLINK;
+					}
 					if (statuses[i].wcLock != null) {
 						changeMask |= ILocalResource.IS_LOCKED;
 					}
@@ -1173,12 +1202,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected ILocalResource registerExternalUnversionedResource(IResource resource) {
-		return this.registerResource(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, IStateFilter.ST_NORMAL, ILocalResource.IS_UNVERSIONED_EXTERNAL, null, 0, null);
+		return this.registerUnversionedResource(resource, ILocalResource.IS_UNVERSIONED_EXTERNAL);
+	}
+	
+	protected ILocalResource registerUnversionedResource(IResource resource, int changeMask) {
+		return this.registerResource(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, IStateFilter.ST_NORMAL, changeMask, null, 0, null);
 	}
 	
 	protected ILocalResource registerResource(IResource current, long revision, long baseRevision, String textStatus, String propStatus, int changeMask, String author, long date, SVNConflictDescriptor treeConflictDescriptor) {
 	    SVNLocalResource local = null;
-	    
+	      
 	    if (IStateFilter.SF_OBSTRUCTED.accept(current, textStatus, changeMask)) {
 	    	try {
 	        	IIgnoreRecommendations []ignores = CoreExtensionsManager.instance().getIgnoreRecommendations();

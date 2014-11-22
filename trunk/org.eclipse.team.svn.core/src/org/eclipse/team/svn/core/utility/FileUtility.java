@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +34,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -65,6 +69,24 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 public final class FileUtility {
 	public static final IResource []NO_CHILDREN = new IResource[0];
 	private static IPath ALWAYS_IGNORED_PATH = null;
+	
+	public static boolean isSymlink(IResource resource) {
+//    	Files.isSymbolicLink(Paths.get(FileUtility.getWorkingCopyPath(resource)));
+		URI uri = null;
+		if (resource.exists() && (uri = resource.getLocationURI()) != null) {
+			try {
+				IFileStore store = EFS.getStore(uri);
+				IFileInfo info = store.fetchInfo();
+				if (info.getAttribute(EFS.ATTRIBUTE_SYMLINK)) {
+					return true;
+				}
+			} 
+			catch (CoreException e) {
+				// uninterested
+			}
+		}
+		return false;
+	}
 	
 	public static IPath getAlwaysIgnoredPath() {
 		if (FileUtility.ALWAYS_IGNORED_PATH == null) {
