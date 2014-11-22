@@ -37,6 +37,7 @@ public interface ILocalResource {
 	public static final int TREE_CONFLICT_UNKNOWN_NODE_KIND = 0x20;
 	public static final int IS_UNVERSIONED_EXTERNAL = 0x40;
 	public static final int IS_SVN_EXTERNALS = 0x80;
+	public static final int IS_SYMLINK = 0x100;
 	
 	public IResource getResource();
 	

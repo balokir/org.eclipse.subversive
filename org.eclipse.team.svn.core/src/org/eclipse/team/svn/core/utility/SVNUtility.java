@@ -19,6 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1134,19 +1136,21 @@ public final class SVNUtility {
 	}
 	
 	public static int getNodeKind(String path, int kind, boolean ignoreNone) {
-		File f = new File(path);
-		if ((kind == Kind.NONE || kind == Kind.UNKNOWN) && f.exists()) {
-			return f.isDirectory() ? Kind.DIR : Kind.FILE;
+		if (kind == Kind.DIR || kind == Kind.FILE || kind == Kind.SYMLINK) {
+			return kind;
 		}
-		else if (kind == Kind.DIR) {
-			return Kind.DIR;
-		}
-		else if (kind == Kind.FILE) {
-			return Kind.FILE;
-		}
-		// ignore files absent in the WC base and WC working. But what is the reason why it is reported ?
-		if (ignoreNone) {
-			return Kind.NONE;
+		else if (kind == Kind.NONE || kind == Kind.UNKNOWN) {
+			File f = new File(path);
+			if (f.exists()) {
+				if (Files.isSymbolicLink(Paths.get(path))) {
+					return Kind.SYMLINK;
+				}
+				return f.isDirectory() ? Kind.DIR : Kind.FILE;
+			}
+			// ignore files absent in the WC base and WC working. But what is the reason why it is reported ?
+			if (ignoreNone) {
+				return Kind.NONE;
+			}
 		}
 		String errMessage = SVNMessages.format("Error_UnrecognizedNodeKind", new String[] {String.valueOf(kind), path}); //$NON-NLS-1$
 		throw new RuntimeException(errMessage);
