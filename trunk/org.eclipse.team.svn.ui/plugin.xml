@@ -2374,7 +2374,7 @@
     <key
           commandId="org.eclipse.team.svn.ui.command.SynchronizeCommand"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          sequence="CTRL+ALT+S"/>
+          sequence="CTRL+ALT+Z"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.CommitCommand"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
