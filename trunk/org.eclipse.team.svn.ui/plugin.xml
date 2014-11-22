@@ -2373,58 +2373,59 @@
        point="org.eclipse.ui.bindings">
     <key
           commandId="org.eclipse.team.svn.ui.command.SynchronizeCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          sequence="CTRL+ALT+Z"/>
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
+          sequence="CTRL+ALT+S"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.CommitCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+C"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.UpdateCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+U"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.UpdateToRevisionCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+D"/>          
     <key
           commandId="org.eclipse.team.svn.ui.command.CreatePatchCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+P"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.AddToSVNIgnoreCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+I"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.LockCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+K"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.EditPropertiesCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+T"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.ShowAnnotationCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+A"/>
           
     <key
           commandId="org.eclipse.team.svn.ui.command.CompareWithLatestRevisionCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+L"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.CompareWithRevisionCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+R"/>
     <key
           commandId="org.eclipse.team.svn.ui.command.MergeCommand"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          schemeId="org.eclipse.team.svn.ui.keybindings.scheme"
           sequence="CTRL+ALT+E"/>
                     
     <scheme
           description="The Subversive key bindings"
           id="org.eclipse.team.svn.ui.keybindings.scheme"
-          name="Subversive Key Bindings Scheme"/>
+          name="Default + Subversive"
+          parentId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
  </extension>
 
 <!-- ************ Model elements ************ -->
