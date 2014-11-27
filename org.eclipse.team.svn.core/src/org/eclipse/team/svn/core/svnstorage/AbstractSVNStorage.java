@@ -576,7 +576,12 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 					//store normal password settings
 					node.put("username", tmp.getUsername(), false); //$NON-NLS-1$
-					node.put("password", toStorePass ? tmp.getPassword() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
+					if (toStorePass) {
+						node.put("password", tmp.getPassword(), true); //$NON-NLS-1$
+					}
+					else {
+						node.remove("password"); //$NON-NLS-1$
+					}
 					node.putBoolean("password_saved", toStorePass, false); //$NON-NLS-1$
 					
 					//store SSH settings
@@ -585,8 +590,13 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 					node.putBoolean("ssh_use_key", useKeyFile, false); //$NON-NLS-1$
 					boolean savePassphrase = sshSettings.isPassPhraseSaved();
 					node.putBoolean("ssh_passphrase_saved", useKeyFile ? savePassphrase : false, false); //$NON-NLS-1$ //$NON-NLS-2$
-					node.put("ssh_key", useKeyFile ? sshSettings.getPrivateKeyPath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$				
-					node.put("ssh_passprase", (useKeyFile && savePassphrase) ? sshSettings.getPassPhrase() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
+					node.put("ssh_key", useKeyFile ? sshSettings.getPrivateKeyPath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$
+					if (useKeyFile && savePassphrase) {
+						node.put("ssh_passprase", sshSettings.getPassPhrase(), true); //$NON-NLS-1$
+					}
+					else {
+						node.remove("ssh_passprase"); //$NON-NLS-1$
+					}
 					node.putInt("ssh_port", sshSettings.getPort(), false);
 					
 					//store SSL settings
@@ -596,7 +606,12 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 					node.putBoolean("ssl_enabled", clientAuthEnabled, false); //$NON-NLS-1$
 					node.put("ssl_certificate", clientAuthEnabled ? sslSettings.getCertificatePath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$
 					node.putBoolean("ssl_passphrase_saved", clientAuthEnabled ? savePassphrase : false, false); //$NON-NLS-1$ //$NON-NLS-2$
-					node.put("ssl_passphrase", (clientAuthEnabled && savePassphrase) ? sslSettings.getPassPhrase() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
+					if (clientAuthEnabled && savePassphrase) {
+						node.put("ssl_passphrase", sslSettings.getPassPhrase(), true); //$NON-NLS-1$
+					}
+					else {
+						node.remove("ssl_passphrase"); //$NON-NLS-1$
+					}
 				} catch (StorageException e) {				
 					LoggedOperation.reportError(SVNMessages.getErrorString("Error_SaveAutherizationInfo"), e); //$NON-NLS-1$
 				}
