@@ -19,7 +19,6 @@ import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 /**
  * @author Eugene Kuleshov
  */
-@SuppressWarnings("restriction")
 public class SvnUrlAdapterFactory implements IAdapterFactory {
 
 	@SuppressWarnings("rawtypes")

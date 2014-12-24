@@ -3,20 +3,20 @@
 <plugin>
 
 	<extension point="org.eclipse.m2e.scm.scmHandlers">
-		<handler type="svn" priority="9" class="org.polarion.eclipse.team.svn.m2eclipse.SVNScmHandler"/>
+		<handler type="svn" priority="9" class="org.eclipse.team.svn.m2e.SVNScmHandler"/>
 	</extension>
 
 	<extension point="org.eclipse.m2e.scm.scmHandlersUi">
-		<handlerUi type="svn" class="org.polarion.eclipse.team.svn.m2eclipse.SVNScmHandlerUi"/>
+		<handlerUi type="svn" class="org.eclipse.team.svn.m2e.SVNScmHandlerUi"/>
 	</extension>
 
 	<extension point="org.eclipse.core.runtime.adapters">
 		<factory adaptableType="org.eclipse.team.svn.ui.repository.model.RepositoryFolder"
-				class="org.polarion.eclipse.team.svn.m2eclipse.SvnUrlAdapterFactory">
+				class="org.eclipse.team.svn.m2e.SvnUrlAdapterFactory">
 			<adapter type="org.eclipse.m2e.scm.ScmUrl"/>
 		</factory>
 		<factory adaptableType="org.eclipse.team.svn.ui.repository.model.RepositoryLocation"
-				class="org.polarion.eclipse.team.svn.m2eclipse.SvnUrlAdapterFactory">
+				class="org.eclipse.team.svn.m2e.SvnUrlAdapterFactory">
 			<adapter type="org.eclipse.m2e.scm.ScmUrl"/>
 		</factory>
 	</extension>
