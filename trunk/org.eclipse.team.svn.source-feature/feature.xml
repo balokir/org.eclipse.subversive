@@ -36,6 +36,10 @@
          version="2.0.2.I20141207-1700"/>
 
    <includes
+         id="org.eclipse.team.svn.m2e.sources"
+         version="2.0.2.I20141207-1700"/>
+
+   <includes
          id="org.eclipse.team.svn.revision.graph.sources"
          version="2.0.2.I20141207-1700"/>
 
