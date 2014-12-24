@@ -175,7 +175,7 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 					//validate repository location before adding
 					final boolean[] isAddLocation = new boolean[1];
 					isAddLocation[0] = true;
-					final Exception validationException = SVNUtility.validateRepositoryLocation(location);
+					final Exception validationException = SVNUtility.validateRepositoryLocation(location, new SVNProgressMonitor(this, monitor, null));
 					if (validationException != null) {
 						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 							public void run() {
