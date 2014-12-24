@@ -3,7 +3,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.mylyn;singleton:=true
-Bundle-Version: 2.0.2.I20141207-1700
+Bundle-Version: 2.0.3.I20141224-1700
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.team.svn.mylyn.SVNMylynIntegrationPlugin
 Bundle-Localization: plugin
