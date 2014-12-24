@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
+import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsOperation;
 import org.eclipse.team.svn.core.operation.remote.management.AddRepositoryLocationOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
@@ -208,11 +209,14 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		
 		if (this.propertiesTabFolder.isValidateOnFinishRequested() && panel == null) {
 			final Exception []problem = new Exception[1];
-			UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation_ValidateLocation", SVNUIMessages.class) { //$NON-NLS-1$
+			boolean cancelled = UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation_ValidateLocation", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					problem[0] = SVNUtility.validateRepositoryLocation(AddRepositoryLocationPage.this.propertiesTabFolder.getRepositoryLocation());
+					problem[0] = SVNUtility.validateRepositoryLocation(AddRepositoryLocationPage.this.propertiesTabFolder.getRepositoryLocation(), new SVNProgressMonitor(this, monitor, null));
 				}
-			}, false);
+			}, true).isCancelled();
+			if (cancelled) {
+				return false;
+			}
 			if (problem[0] != null) {
 				NonValidLocationErrorDialog dialog = new NonValidLocationErrorDialog(this.getShell(), problem[0].getMessage());
 				if (dialog.open() != 0)

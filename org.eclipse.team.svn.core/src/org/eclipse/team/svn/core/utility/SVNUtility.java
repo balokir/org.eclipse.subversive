@@ -810,13 +810,13 @@ public final class SVNUtility {
 	    return retVal.toString();
 	}
 	
-	public static Exception validateRepositoryLocation(IRepositoryLocation location) {
+	public static Exception validateRepositoryLocation(IRepositoryLocation location, ISVNProgressMonitor monitor) {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			proxy.listEntries(new SVNEntryRevisionReference(SVNUtility.encodeURL(location.getUrl()), null, null), SVNDepth.EMPTY, SVNEntry.Fields.NONE, ISVNConnector.Options.NONE, new ISVNEntryCallback() {
 				public void next(SVNEntry entry) {
 				}
-			}, new SVNNullProgressMonitor());
+			}, monitor);
 		} 
 		catch (Exception e) {
 			return e;
