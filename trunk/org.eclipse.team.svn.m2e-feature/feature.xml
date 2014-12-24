@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.m2e"
       label="%featureName"
-      version="2.0.2.I20141207-1700"
+      version="2.0.3.I20141224-1700"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -35,7 +35,7 @@
          id="org.eclipse.team.svn.m2e"
          download-size="26"
          install-size="26"
-         version="2.0.2.I20141207-1700"
+         version="2.0.3.I20141224-1700"
          unpack="false"/>
 
 </feature>
