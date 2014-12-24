@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -43,7 +44,7 @@ public abstract class SVNUtilityTest extends AbstractOperationTestCase {
 			    url = SVNUtility.normalizeURL(url);
 			    assertTrue ("SVNUtility.normalizeURL", url.equals("http://test/location/url"));
 			    
-			    assertTrue("SVNUtility.isValidRepositoryLocation", SVNUtility.validateRepositoryLocation(SVNRemoteStorage.instance().getRepositoryLocations()[0]) == null);
+			    assertTrue("SVNUtility.isValidRepositoryLocation", SVNUtility.validateRepositoryLocation(SVNRemoteStorage.instance().getRepositoryLocations()[0], new SVNNullProgressMonitor()) == null);
 				
 				assertTrue("SVNUtility.getConnectedToSVNInfo", SVNUtility.getSVNInfoForNotConnected(prj1) != null);
 				assertTrue("SVNUtility.getConnectedToSVNInfo", SVNUtility.getSVNInfoForNotConnected(prj2) != null);
