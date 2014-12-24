@@ -8,13 +8,14 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 2.0.2.I20141207-1700 [07 December 2014]
+Version 2.0.3.I20141224-1700 [24 December 2014]
 
 Features:
  * Improve status caching with SVN 1.7/1.8 connectors (bug 449932)
  * Double click on folders in Compare Editor should expand/collapse them (bug 449598)
  * There is no way to specify a multi-line property in automatic properties configuration (bug 445999)
  * Unable to install Subversive via Eclipse Marketplace [add "Get Connectors" button into preferences] (bug 442249)
+ * Move Subversive m2e integration plugin to eclipse.org (bug 455407)
  
 Fixes:
  * There is a secure storage's password prompt when editing repo props even if the "save password" option is not set (bug 453465)
@@ -35,6 +36,9 @@ Fixes:
  * In automatic properties configuration dialog only first = should separate name and value (bug 445997)
  * In automatic properties configuration dialog ; character in a value part should not have a special meaning (bug 445998)
  * The automatic properties editor validation does not validate the name and the value properly (bug 446001)
+ * Cleanup Subversive-M2E integration's code (bug 456134)
+ * Cancel button is disabled on "Validate Repository Location" progress dialog (bug 455204)
+ * Preserve compatibility with the previous keybindings scheme [Default] (bug 456139)
  
 --------------------------------------------------------------------------------
 
