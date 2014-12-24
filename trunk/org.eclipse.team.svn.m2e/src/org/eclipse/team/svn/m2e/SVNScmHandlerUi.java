@@ -34,7 +34,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Eugene Kuleshov
  */
-@SuppressWarnings("restriction")
 public class SVNScmHandlerUi extends ScmHandlerUi {
 
 	public boolean canSelectUrl() {

@@ -40,7 +40,6 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-@SuppressWarnings("restriction")
 public class SVNScmHandler extends ScmHandler {
 	public static final String SVN_SCM_ID = "scm:svn:";
 	
