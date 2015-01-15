@@ -19,8 +19,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,12 +32,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
@@ -1142,8 +1144,15 @@ public final class SVNUtility {
 		else if (kind == Kind.NONE || kind == Kind.UNKNOWN) {
 			File f = new File(path);
 			if (f.exists()) {
-				if (Files.isSymbolicLink(Paths.get(path))) {
-					return Kind.SYMLINK;
+				try {
+					IFileStore store = EFS.getStore(f.toURI());
+					IFileInfo info = store.fetchInfo();
+					if (info.getAttribute(EFS.ATTRIBUTE_SYMLINK)) {
+						return Kind.SYMLINK;
+					}
+				} 
+				catch (CoreException e) {
+					// uninterested
 				}
 				return f.isDirectory() ? Kind.DIR : Kind.FILE;
 			}
