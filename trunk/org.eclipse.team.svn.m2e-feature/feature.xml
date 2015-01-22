@@ -21,7 +21,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.team.svn" version="1.0.0.I20120601-1700" match="compatible"/>
+      <import feature="org.eclipse.team.svn" version="2.0.0.I20131101-1700" match="compatible"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.runtime"/>
