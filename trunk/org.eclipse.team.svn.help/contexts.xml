@@ -197,6 +197,7 @@
 	</context>
 	<context id="errorDialogContext">
 		<description>If you see this dialog than the error has occurred in Subversive plug-in. To post a bug on Bugzilla, click on the 'Send Report' button and to ignore it click on 'Don't Send' button. The bug report is automatically filled with stack-trace, Subversive version and JVM configuration.</description>
+		<topic label="Typical SVN errors and solutions" href="teamSupport/errors.html"/>
 	</context>
 	<context id="cancelDialogContext">
 		<description>If you see this dialog than the operation hasn't normally finished. The error information is contained in this dialog.</description>

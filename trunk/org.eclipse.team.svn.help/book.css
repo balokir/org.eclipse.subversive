@@ -11,6 +11,27 @@
 
 @import "../PRODUCT_PLUGIN/book.css";
 
+table {
+	border-spacing: 0;
+	border: none;
+	border-collapse: collapse;
+	empty-cells: show;
+	width: 100%;
+	font-size: 0.9em;
+}
+tr {
+	vertical-align: top;
+}
+td, th {
+	padding: 5px 10px;
+}
+td:first-child, th:first-child {
+	padding-left: 0;
+}
+td:last-child, th:last-child {
+	padding-right: 0;
+}
+
 td.header {
 font-weight: bold;
 font-style: italic;
@@ -19,4 +40,17 @@ text-align: center;
 		
 td.head_picture {
 background-color: #E7E7EF;
+}
+
+#errors td:first-child + td
+{
+	width: 25%;
+}
+#errors td:first-child + td + td
+{
+	width: 35%;
+}
+#errors td:last-child
+{
+	width: 40%;
 }

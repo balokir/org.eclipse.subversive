@@ -34,4 +34,5 @@
 	<topic label="Refactoring" href="teamSupport/refactor.html"/>
 	<topic label="Repository Layouts" href="teamSupport/layouts.html"/>
 	<topic label="Hot Keys" href="teamSupport/keys.html"/>
+	<topic label="Typical SVN errors and solutions" href="teamSupport/errors.html"/>
 </toc>
