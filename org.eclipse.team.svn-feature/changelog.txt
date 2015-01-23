@@ -8,6 +8,19 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 2.0.4.I20150123-1700 [23 January 2015]
+
+Features:
+ * Add typical SVN errors description and possible solutions to help pages (bug 457516)
+ 
+Fixes:
+ * Can't install Subversive SVN Integration for the M2E Project v2.0.3 (bug 457869)
+ * NPE at CopyRemoteResourcesToWcOperation [ID-QI8GK] (bug 457835)
+ * JRE 1.6 incompatibility [ID-HK8DF] (bug 456334)
+ * Automatic properties do not get applied to new files (bug 456640)
+ 
+--------------------------------------------------------------------------------
+
 Version 2.0.3.I20141224-1700 [24 December 2014]
 
 Features:
