@@ -177,7 +177,7 @@ public final class SVNUtility {
 		
 		SVNExternalPropertyData[] externalsData = SVNExternalPropertyData.parse(property);
 		for (SVNExternalPropertyData externalData : externalsData) {
-			String url = externalData.url;
+			String url = externalData.url.trim();
 			SVNRevision revision = null;
 			SVNRevision pegRevision = null;
 			
@@ -199,8 +199,8 @@ public final class SVNUtility {
 			}
 			catch (IllegalArgumentException ex) {
 				// the URL is not encoded
+			    url = SVNUtility.normalizeURL(url);
 			}
-		    url = SVNUtility.normalizeURL(url);
 		    
 		    retVal.put(externalData.localPath, new SVNEntryRevisionReference(url, pegRevision, revision));
 		}
@@ -783,12 +783,18 @@ public final class SVNUtility {
         }
         return src;
 	}
-	
+
 	public static String normalizeURL(String url) {
 		if (url == null) {
 			return null;
 		}
-		url = url.trim();
+		
+        int len = url.length();
+        int st = 0;
+        while ((st < len) && (url.charAt(st) <= ' ')) {
+            st++;
+        }
+        url = url.substring(st);
 		
 		String prefix = ""; //$NON-NLS-1$
 		final String[] knownPrefixes = new String[] {"http://", "https://", "svn://", "svn+ssh://", "file:///", "file://", "^/", "../", "//", "/"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
