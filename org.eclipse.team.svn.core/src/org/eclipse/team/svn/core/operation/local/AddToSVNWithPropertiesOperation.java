@@ -85,7 +85,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 		String path = FileUtility.getWorkingCopyPath(resource);
 		SVNProperty[] properties = CoreExtensionsManager.instance().getOptionProvider().getAutomaticProperties(resource.getName());
 		for (int pCount = 0; pCount < properties.length; pCount++) {
-			proxy.setPropertyLocal(new String[] {path}, new SVNProperty(properties[pCount].name, properties[pCount].value), SVNDepth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
+			proxy.setPropertyLocal(new String[] {path}, properties[pCount], SVNDepth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		if (resource.getType() == IResource.FILE) {
 			this.processFile(resource, proxy, monitor);
