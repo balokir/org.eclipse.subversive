@@ -168,7 +168,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	protected CompareNode makeNode(SVNDiffStatus st, Map path2node, IProgressMonitor monitor) throws Exception {
 		String urlNext = SVNUtility.decodeURL(st.pathNext);
 		String urlPrev = SVNUtility.decodeURL(st.pathPrev);
-		int nodeKind = this.getNodeKind(st, false);
+		SVNEntry.Kind nodeKind = this.getNodeKind(st, false);
 		
 		IRepositoryResource next = this.createResourceFor(this.rootLeft.getRepositoryLocation(), nodeKind, urlNext);
 		next.setSelectedRevision(this.rootLeft.getSelectedRevision());
@@ -228,9 +228,9 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	}
 	
 	protected class CompareNode extends BaseCompareNode {
-		protected int changeType;
+		protected SVNEntryStatus.Kind changeType;
 		
-		public CompareNode(IDiffContainer parent, int kind, IRepositoryResource next, IRepositoryResource prev, int changeType) {
+		public CompareNode(IDiffContainer parent, int kind, IRepositoryResource next, IRepositoryResource prev, SVNEntryStatus.Kind changeType) {
 			super(parent, kind);
 			
 			this.changeType = changeType;
@@ -239,7 +239,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 			this.setLeft(new ResourceElement(next, null, changeType != SVNEntryStatus.Kind.DELETED));
 		}
 
-		public int getChangeType() {
+		public SVNEntryStatus.Kind getChangeType() {
 			return this.changeType;
 		}
 		

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
@@ -137,7 +138,7 @@ public class ImportPanel extends AbstractDialogPanel {
     	return this.comment.getMessage();
     }
     
-    public int getDepth() {
+    public SVNDepth getDepth() {
     	return this.depthSelector.getDepth();
     }
     

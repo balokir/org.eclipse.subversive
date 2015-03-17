@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.connector;
 
+
 /**
  * Changed path information container
  * 
@@ -21,26 +22,38 @@ package org.eclipse.team.svn.core.connector;
  * @author Alexander Gurov
  */
 public class SVNLogPath {
-	public static class ChangeType {
+	public enum ChangeType {
 		/**
 		 * The addition action type identifier
 		 */
-		public static final char ADDED = 'A';
-
+		ADDED('A'),
 		/**
 		 * The deletion action type identifier
 		 */
-		public static final char DELETED = 'D';
-
+		DELETED('D'),
 		/**
 		 * The replacement action type identifier
 		 */
-		public static final char REPLACED = 'R';
-
+		REPLACED('R'),
 		/**
 		 * The modification action type identifier
 		 */
-		public static final char MODIFIED = 'M';
+		MODIFIED('M');
+		
+		public final char id;
+		
+		public static ChangeType fromId(char id) {
+			for (ChangeType kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid change kind: " + id); //$NON-NLS-1$
+		}
+		
+		private ChangeType(char id) {
+			this.id = id;
+		}
 	}
 
 	/**
@@ -51,7 +64,7 @@ public class SVNLogPath {
 	/**
 	 * The action performed over the entry (see {@link ChangeType}).
 	 */
-	public final char action;
+	public final ChangeType action;
 
 	/**
 	 * The copy source path. Contains <code>null</code> if resource revision is not copied.
@@ -75,7 +88,7 @@ public class SVNLogPath {
 	 * @param copiedFromRevision
 	 *            the copy source revision
 	 */
-	public SVNLogPath(String path, char action, String copiedFromPath, long copiedFromRevision) {
+	public SVNLogPath(String path, ChangeType action, String copiedFromPath, long copiedFromRevision) {
 		this.path = path;
 		this.copiedFromRevision = copiedFromRevision;
 		this.copiedFromPath = copiedFromPath;

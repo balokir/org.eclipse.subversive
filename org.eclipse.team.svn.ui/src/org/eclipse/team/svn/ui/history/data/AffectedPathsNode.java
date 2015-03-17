@@ -14,6 +14,8 @@ package org.eclipse.team.svn.ui.history.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.team.svn.core.connector.SVNLogPath;
+
 
 /**
  * Node for the tree of the affected paths 
@@ -26,9 +28,9 @@ public class AffectedPathsNode {
 	protected List<AffectedPathsNode> children; 
 	protected AffectedPathsNode parent;
 	protected ArrayList<SVNChangedPathData> data;
-	protected char status;
+	protected SVNLogPath.ChangeType status;
 	
-	public AffectedPathsNode(String name, AffectedPathsNode parent, char status) {
+	public AffectedPathsNode(String name, AffectedPathsNode parent, SVNLogPath.ChangeType status) {
 		this.name = this.compressedName = name;
 		this.parent = parent;
 		this.data = new ArrayList<SVNChangedPathData>();
@@ -138,11 +140,11 @@ public class AffectedPathsNode {
 		return this.parent != null ? this.parent.getFullPath() + "/" + this.compressedName : ""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public char getStatus() {
+	public SVNLogPath.ChangeType getStatus() {
 		return this.status;
 	}
 	
-	public void setStatus(char status) {
+	public void setStatus(SVNLogPath.ChangeType status) {
 		this.status = status;
 	}
 	

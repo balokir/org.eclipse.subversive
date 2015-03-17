@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateProjectsOperation;
@@ -50,7 +51,7 @@ public interface ICheckoutFactory {
 	 * @return alternative Checkout Operation instance
 	 */
 	public IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []remote, 
-			HashMap checkoutMap, boolean respectHierarchy, String location, int recurseDepth, boolean ignoreExternals);
+			HashMap checkoutMap, boolean respectHierarchy, String location, SVNDepth recurseDepth, boolean ignoreExternals);
 	/**
 	 * The method allows correction of the automatically proposed project name mapping 
 	 * @param name2resources automatically proposed project name mapping

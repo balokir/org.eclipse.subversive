@@ -123,7 +123,7 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 		}
 
 		public int hashCode() {
-			return this.revision.getKind();
+			return this.revision.getKind().id;
 		}
 		
 		public boolean equals(Object obj) {

@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 public class CreatePatchOperation extends AbstractFileOperation {
 	protected String fileName;
 	protected boolean useRelativePath;
-	protected int depth;
+	protected SVNDepth depth;
 	protected long options;
 	protected long diffOptions;
 
@@ -41,7 +41,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 			(processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE), useRelativePath, ISVNConnector.DiffOptions.NONE);
 	}
 
-	public CreatePatchOperation(File file, String fileName, int depth, long options, boolean useRelativePath, long diffOptions) {
+	public CreatePatchOperation(File file, String fileName, SVNDepth depth, long options, boolean useRelativePath, long diffOptions) {
 		super("Operation_CreatePatchFile", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 		this.fileName = fileName;
 		this.depth = depth;

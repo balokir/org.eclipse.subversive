@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -100,14 +101,14 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				long changeRev = current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastChangedRevision : current.reposLastCmtRevision;
 				return changeRev == SVNRevision.INVALID_REVISION_NUMBER ? null : (SVNRevision.Number)SVNRevision.fromNumber(changeRev);
 			}
-			public int getTextChangeType() {
+			public Kind getTextChangeType() {
 				return current.repositoryTextStatus;
 			}
-			public int getPropertiesChangeType() {
+			public SVNEntryStatus.Kind getPropertiesChangeType() {
 				return current.repositoryPropStatus;
 			}
-			public int getNodeKind() {
-				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
+			public SVNEntry.Kind getNodeKind() {
+				SVNEntry.Kind kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
 				return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.reposKind, true) : kind;
 			}
 			public String getLocalPath() {

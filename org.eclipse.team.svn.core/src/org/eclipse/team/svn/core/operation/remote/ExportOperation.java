@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -32,17 +33,17 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class ExportOperation extends AbstractRepositoryOperation {
 	protected String path;
-	protected int depth;
+	protected SVNDepth depth;
 	protected boolean ignoreExternals;
 	
-	public ExportOperation(IRepositoryResource []resources, String path, int depth, boolean ignoreExternals) {
+	public ExportOperation(IRepositoryResource []resources, String path, SVNDepth depth, boolean ignoreExternals) {
 		super("Operation_ExportRevision", SVNMessages.class, resources); //$NON-NLS-1$
 		this.path = path;
 		this.depth = depth;
 		this.ignoreExternals = ignoreExternals;
 	}
 	
-	public ExportOperation(IRepositoryResourceProvider provider, String path, int depth, boolean ignoreExternals) {
+	public ExportOperation(IRepositoryResourceProvider provider, String path, SVNDepth depth, boolean ignoreExternals) {
 		super("Operation_ExportRevision", SVNMessages.class, provider); //$NON-NLS-1$
 		this.path = path;
 		this.depth = depth;

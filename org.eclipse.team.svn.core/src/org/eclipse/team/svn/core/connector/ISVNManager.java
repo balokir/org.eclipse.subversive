@@ -61,14 +61,22 @@ public interface ISVNManager {
 		public static final long SET_REV_PROP = Options.USE_PREREVPROPCHANGE_HOOK | Options.USE_POSTREVPROPCHANGE_HOOK;
 	}
 
-	/** 
-	 * constant identifying the "bdb"  repository type 
-	 */
-	public final static String REPOSITORY_FSTYPE_BDB = "bdb";
-	/** 
-	 * constant identifying the "fsfs"  repository type 
-	 */
-	public final static String REPOSITORY_FSTYPE_FSFS = "fsfs";
+	public enum RepositoryKind {
+		/** 
+		 * constant identifying the "bdb"  repository type 
+		 */
+		BDB("bdb"),
+		/** 
+		 * constant identifying the "fsfs"  repository type 
+		 */
+		FSFS("fsfs");
+		
+		public final String id;
+		
+		private RepositoryKind(String id) {
+			this.id = id;
+		}
+	}
     
 	/**
 	 * Creates a SVN repository.
@@ -79,7 +87,7 @@ public interface ISVNManager {
 	 * @param monitor operation progress monitor
 	 * @throws SVNConnectorException
 	 */
-	public void create(String repositoryPath, String repositoryType, String configPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void create(String repositoryPath, RepositoryKind repositoryType, String configPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	
 	/**
 	 * Deltify the revisions in the repository.
@@ -203,7 +211,7 @@ public interface ISVNManager {
 	 * @return 
 	 * @throws SVNConnectorException
 	 */
-	public SVNLock []listLocks(String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public SVNLock []listLocks(String path, SVNDepth depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	/**
 	 * Remove multiple locks from the repository.
 	 * @param path the path to the repository

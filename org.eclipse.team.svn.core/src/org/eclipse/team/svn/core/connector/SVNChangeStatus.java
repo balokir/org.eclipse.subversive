@@ -75,12 +75,12 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	/**
 	 * The entry remote content status in compare to base revision (see {@link SVNEntryStatus.Kind})
 	 */
-	public final int repositoryTextStatus;
+	public final Kind repositoryTextStatus;
 
 	/**
 	 * The entry remote properties status in compare to base revision (see {@link SVNEntryStatus.Kind})
 	 */
-	public final int repositoryPropStatus;
+	public final Kind repositoryPropStatus;
 
 	/**
 	 * @since 1.7 The lock in the working copy (<code>null</code> if not locked)
@@ -106,7 +106,7 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	/**
 	 * @since 1.3 Set to the node kind of the youngest commit, or {@link Kind#NONE} if not out of date.
 	 */
-	public final int reposKind;
+	public final SVNEntry.Kind reposKind;
 
 	/**
 	 * @since 1.3 Set to the user name of the youngest commit, or <code>null</code> if not out of date.
@@ -190,10 +190,10 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	 * @param changeListName
 	 *            The entry's change list name
 	 */
-	public SVNChangeStatus(String path, String url, int nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, int textStatus,
-			int propStatus, int repositoryTextStatus, int repositoryPropStatus, boolean locked, boolean copied,
+	public SVNChangeStatus(String path, String url, SVNEntry.Kind nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, Kind textStatus,
+			Kind propStatus, Kind repositoryTextStatus, Kind repositoryPropStatus, boolean locked, boolean copied,
 			boolean switched, SVNLock wcLock, SVNLock reposLock,
-			long reposLastCmtRevision, long reposLastCmtDate, int reposKind, String reposLastCmtAuthor,
+			long reposLastCmtRevision, long reposLastCmtDate, SVNEntry.Kind reposKind, String reposLastCmtAuthor,
 			boolean isFileExternal, boolean hasConflict, SVNConflictDescriptor []treeConflicts, String changeListName) {
 		this(path, url, nodeKind, revision, lastChangedRevision, lastChangedDate, lastCommitAuthor, textStatus,
 				propStatus, repositoryTextStatus, repositoryPropStatus, locked, copied,
@@ -260,10 +260,10 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	 *            A path, the entry was moved to
 	 * @since 1.8
 	 */
-	public SVNChangeStatus(String path, String url, int nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, int textStatus,
-			int propStatus, int repositoryTextStatus, int repositoryPropStatus, boolean locked, boolean copied,
+	public SVNChangeStatus(String path, String url, SVNEntry.Kind nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, Kind textStatus,
+			Kind propStatus, Kind repositoryTextStatus, Kind repositoryPropStatus, boolean locked, boolean copied,
 			boolean switched, SVNLock wcLock, SVNLock reposLock,
-			long reposLastCmtRevision, long reposLastCmtDate, int reposKind, String reposLastCmtAuthor,
+			long reposLastCmtRevision, long reposLastCmtDate, SVNEntry.Kind reposKind, String reposLastCmtAuthor,
 			boolean isFileExternal, boolean hasConflict, SVNConflictDescriptor []treeConflicts, String changeListName, String movedFromAbsPath, String movedToAbsPath) {
 		super(nodeKind, textStatus, propStatus);
 		this.path = path;

@@ -1296,7 +1296,7 @@ public class HistoryActionManager {
 	        		tAction.setEnabled(isCompareFoldersAllowed
 	        				 && HistoryActionManager.this.selectedRevision != 0
 	        				 && affectedTableSelection.size() == 1 &&
-	        				 (node.getStatus() == '\0'
+	        				 (node.getStatus() == null
 	        				 || node.getStatus() == SVNLogPath.ChangeType.MODIFIED
 	        				 || node.getStatus() == SVNLogPath.ChangeType.REPLACED));
 	        		
@@ -1332,7 +1332,7 @@ public class HistoryActionManager {
 							HistoryActionManager.this.createPatchToPrevious(viewer.getControl().getShell(), provider, provider);
 						}
 					});
-	        		tAction.setEnabled(affectedTableSelection.size() == 1 && HistoryActionManager.this.selectedRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == '\0' || node.getStatus() == SVNLogPath.ChangeType.MODIFIED));
+	        		tAction.setEnabled(affectedTableSelection.size() == 1 && HistoryActionManager.this.selectedRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == null || node.getStatus() == SVNLogPath.ChangeType.MODIFIED));
 	        		
 	        		if (HistoryActionManager.this.view.getResource() != null) {
 	        			manager.add(tAction = new HistoryAction(SVNUIMessages.HistoryView_GetContents) {

@@ -96,13 +96,8 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 					 * files and LOCK_FAILED for those that wasn't locked. 
 					 */
 					ISVNNotificationCallback listener = new ISVNNotificationCallback() {
-						//SVNEventAction.LOCK_FAILED 23
-						//SVNEventAction.LOCKED 21
-						
-						protected final static int FAILED = 23;
-						
 						public void notify(SVNNotification info) {					
-							if (FAILED == info.action) {									
+							if (SVNNotification.PerformedAction.FAILED_LOCK == info.action) {									
 								problems.add(info);				
 							}					
 						}						

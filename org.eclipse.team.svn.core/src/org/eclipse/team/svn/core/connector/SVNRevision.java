@@ -29,46 +29,61 @@ public class SVNRevision {
 	/**
 	 * The revision definition ways
 	 */
-	public static final class Kind {
+	public enum Kind {
 		/**
 		 * First existing revision
 		 */
-		public static final int START = 0;
-
+		START(0, "START"), //$NON-NLS-1$
 		/**
 		 * Number-based revision
 		 */
-		public static final int NUMBER = 1;
-
+		NUMBER(1, ""), //$NON-NLS-1$
 		/**
 		 * Date-based revision
 		 */
-		public static final int DATE = 2;
-
+		DATE(2, ""), //$NON-NLS-1$
 		/**
 		 * Last committed revision
 		 */
-		public static final int COMMITTED = 3;
-
+		COMMITTED(3, "COMMITTED"), //$NON-NLS-1$
 		/**
 		 * The revision before last committed
 		 */
-		public static final int PREVIOUS = 4;
-
+		PREVIOUS(4, "PREV"), //$NON-NLS-1$
 		/**
 		 * The working copy base revision
 		 */
-		public static final int BASE = 5;
-
+		BASE(5, "BASE"), //$NON-NLS-1$
 		/**
 		 * The working copy working revision
 		 */
-		public static final int WORKING = 6;
-
+		WORKING(6, "WORKING"), //$NON-NLS-1$
 		/**
 		 * The latest repository revision
 		 */
-		public static final int HEAD = 7;
+		HEAD(7, "HEAD"); //$NON-NLS-1$
+		
+		public final int id;
+		private final String name;
+		
+		public String toString() {
+			// and there is no need for named representations of numeric/date kinds. So, they're empty.
+			return this.name;
+		}
+		
+		public static Kind fromId(int id) {
+			for (Kind kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid revision kind: " + id); //$NON-NLS-1$
+		}
+		
+		private Kind(int id, String name) {
+			this.id = id;
+			this.name = name;
+		}
 	}
 
 	/**
@@ -132,7 +147,7 @@ public class SVNRevision {
 
 		public int hashCode() {
 			int result = 31;
-			result += this.revKind;
+			result += this.revKind.id;
 			result = 31 * result + (int) this.revNumber;
 			result = 31 * result + (int) (this.revNumber >> 32);
 			return result;
@@ -171,7 +186,7 @@ public class SVNRevision {
 
 		public int hashCode() {
 			int result = 31;
-			result += this.revKind;
+			result += this.revKind.id;
 			result = 31 * result + (int) this.revDate;
 			result = 31 * result + (int) (this.revDate >> 32);
 			return result;
@@ -188,7 +203,7 @@ public class SVNRevision {
 
 	}
 
-	protected int revKind;
+	protected Kind revKind;
 
 	/**
 	 * Creates revision object by revision kind
@@ -199,34 +214,34 @@ public class SVNRevision {
 	 * @throws IllegalArgumentException
 	 *             if kind is {@link Kind#DATE}, {@link Kind#NUMBER} or exceeds kind limits
 	 */
-	public static SVNRevision fromKind(int kind) {
+	public static SVNRevision fromKind(Kind kind) {
 		switch (kind) {
-			case Kind.BASE: {
+			case BASE: {
 				return SVNRevision.BASE;
 			}
-			case Kind.WORKING: {
+			case WORKING: {
 				return SVNRevision.WORKING;
 			}
-			case Kind.HEAD: {
+			case HEAD: {
 				return SVNRevision.HEAD;
 			}
-			case Kind.PREVIOUS: {
+			case PREVIOUS: {
 				return SVNRevision.PREVIOUS;
 			}
-			case Kind.START: {
+			case START: {
 				return SVNRevision.START;
 			}
-			case Kind.COMMITTED: {
+			case COMMITTED: {
 				return SVNRevision.COMMITTED;
 			}
-			case Kind.DATE: {
-				throw new IllegalArgumentException("Use fromDate() method instead");
+			case DATE: {
+				throw new IllegalArgumentException("Use fromDate() method instead"); //$NON-NLS-1$
 			}
-			case Kind.NUMBER: {
-				throw new IllegalArgumentException("Use fromNumber() method instead");
+			case NUMBER: {
+				throw new IllegalArgumentException("Use fromNumber() method instead"); //$NON-NLS-1$
 			}
 		}
-		throw new IllegalArgumentException("Invalid revision kind: " + kind);
+		throw new IllegalArgumentException("Invalid revision kind: " + kind); //$NON-NLS-1$
 	}
 
 	/**
@@ -240,7 +255,7 @@ public class SVNRevision {
 	 */
 	public static SVNRevision.Number fromNumber(long revisionNumber) {
 		if (revisionNumber < 0) {
-			throw new IllegalArgumentException("Negative revision numbers are not allowed: " + revisionNumber);
+			throw new IllegalArgumentException("Negative revision numbers are not allowed: " + revisionNumber); //$NON-NLS-1$
 		}
 		return new SVNRevision.Number(revisionNumber);
 	}
@@ -256,7 +271,7 @@ public class SVNRevision {
 	 */
 	public static SVNRevision.Date fromDate(long revisionDate) {
 		if (revisionDate == -1) {
-			throw new IllegalArgumentException("A date must be specified");
+			throw new IllegalArgumentException("A date must be specified"); //$NON-NLS-1$
 		}
 		return new SVNRevision.Date(revisionDate);
 	}
@@ -272,19 +287,22 @@ public class SVNRevision {
 	 */
 	public static SVNRevision fromString(String revisionString) {
 		revisionString = revisionString.toUpperCase();
-		if ("BASE".equals(revisionString)) { //$NON-NLS-1$
+		if (START.toString().equals(revisionString)) {
+			return SVNRevision.START;
+		}
+		if (BASE.toString().equals(revisionString)) {
 			return SVNRevision.BASE;
 		}
-		if ("WORKING".equals(revisionString)) { //$NON-NLS-1$
+		if (WORKING.toString().equals(revisionString)) {
 			return SVNRevision.WORKING;
 		}
-		if ("COMMITTED".equals(revisionString)) { //$NON-NLS-1$
+		if (COMMITTED.toString().equals(revisionString)) {
 			return SVNRevision.COMMITTED;
 		}
-		if ("HEAD".equals(revisionString)) { //$NON-NLS-1$
+		if (HEAD.toString().equals(revisionString)) {
 			return SVNRevision.HEAD;
 		}
-		if ("PREVIOUS".equals(revisionString)) { //$NON-NLS-1$
+		if (PREVIOUS.toString().equals(revisionString)) {
 			return SVNRevision.PREVIOUS;
 		}
 		try {
@@ -300,7 +318,7 @@ public class SVNRevision {
 				// do nothing
 			}
 		}
-		throw new IllegalArgumentException("Invalid revision string: " + revisionString);
+		throw new IllegalArgumentException("Invalid revision string: " + revisionString); //$NON-NLS-1$
 	}
 
 	/**
@@ -308,33 +326,16 @@ public class SVNRevision {
 	 * 
 	 * @return the revision kind
 	 */
-	public int getKind() {
+	public Kind getKind() {
 		return this.revKind;
 	}
 
 	public String toString() {
-		switch (this.revKind) {
-			case Kind.BASE: {
-				return "BASE"; //$NON-NLS-1$
-			}
-			case Kind.COMMITTED: {
-				return "COMMITTED"; //$NON-NLS-1$
-			}
-			case Kind.HEAD: {
-				return "HEAD"; //$NON-NLS-1$
-			}
-			case Kind.PREVIOUS: {
-				return "PREV"; //$NON-NLS-1$
-			}
-			case Kind.WORKING: {
-				return "WORKING"; //$NON-NLS-1$
-			}
-		}
-		return "UNSPECIFIED"; //$NON-NLS-1$
+		return this.revKind.toString();
 	}
 
 	public int hashCode() {
-		return this.revKind;
+		return this.revKind.id;
 	}
 
 	public boolean equals(Object target) {
@@ -348,7 +349,7 @@ public class SVNRevision {
 		return ((SVNRevision) target).revKind == this.revKind;
 	}
 
-	protected SVNRevision(int kind) {
+	protected SVNRevision(Kind kind) {
 		this.revKind = kind;
 	}
 

@@ -24,26 +24,29 @@ public class SVNEntryInfo {
 	/**
 	 * Enumeration of operation types which could be scheduled for the working copy entries
 	 */
-	public static class ScheduledOperation {
+	public enum ScheduledOperation {
 		/**
 		 * No operation scheduled
 		 */
-		public static final int NORMAL = 0;
-
+		NORMAL(0),
 		/**
 		 * Will be added to repository on commit
 		 */
-		public static final int ADD = 1;
-
+		ADD(1),
 		/**
 		 * Will be deleted from repository on commit
 		 */
-		public static final int DELETE = 2;
-
+		DELETE(2),
 		/**
 		 * Will be replaced in repository on commit
 		 */
-		public static final int REPLACE = 3;
+		REPLACE(3);
+		
+		public final int id;
+		
+		private ScheduledOperation(int id) {
+			this.id = id;
+		}
 	}
 	
 	/**
@@ -69,7 +72,7 @@ public class SVNEntryInfo {
 	/**
 	 * The entry node kind.
 	 */
-	public final int kind;
+	public final SVNEntry.Kind kind;
 
 	/**
 	 * The repository root URL.
@@ -109,7 +112,7 @@ public class SVNEntryInfo {
 	/**
 	 * The operation scheduled at next commit (see {@link ScheduledOperation})
 	 */
-	public final int schedule;
+	public final ScheduledOperation schedule;
 
 	/**
 	 * The copied from URL.
@@ -156,7 +159,7 @@ public class SVNEntryInfo {
      * The depth of the directory or <code>null</code> if the item is a file.
      * @since 1.6
      */
-	public final int depth;
+	public final SVNDepth depth;
 	
     /**
      * Info on any tree conflict of which this node is a victim
@@ -164,9 +167,9 @@ public class SVNEntryInfo {
      */
 	public final SVNConflictDescriptor []treeConflicts;
 	
-	public SVNEntryInfo(String path, String wcRoot, String url, long rev, int kind, String reposRootUrl, String reposUUID, long lastChangedRev, long lastChangedDate, String lastChangedAuthor, SVNLock lock,
-			boolean hasWcInfo, int schedule, String copyFromUrl, long copyFromRev, long textTime, long propTime, SVNChecksum checksum, String changeListName, long wcSize, long reposSize,
-			int depth, SVNConflictDescriptor []treeConflicts) {
+	public SVNEntryInfo(String path, String wcRoot, String url, long rev, SVNEntry.Kind kind, String reposRootUrl, String reposUUID, long lastChangedRev, long lastChangedDate, String lastChangedAuthor, SVNLock lock,
+			boolean hasWcInfo, ScheduledOperation schedule, String copyFromUrl, long copyFromRev, long textTime, long propTime, SVNChecksum checksum, String changeListName, long wcSize, long reposSize,
+			SVNDepth depth, SVNConflictDescriptor []treeConflicts) {
 		this.path = path;
 		this.wcRoot = wcRoot;
 		this.url = url;

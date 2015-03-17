@@ -21,45 +21,47 @@ package org.eclipse.team.svn.core.connector;
  * @author Alexander Gurov
  */
 public class SVNConflictResolution {
-	/**
-	 * Nothing done to resolve the conflict; conflict remains.
-	 */
-	public static final int POSTPONE = 0;
-
-	/**
-	 * Resolve the conflict by choosing the base version.
-	 */
-	public static final int CHOOSE_BASE = 1;
-
-	/**
-	 * Resolve the conflict by choosing the repository version.
-	 */
-	public static final int CHOOSE_REMOTE_FULL = 2;
-
-	/**
-	 * Resolve the conflict by choosing local version.
-	 */
-	public static final int CHOOSE_LOCAL_FULL = 3;
-
-	/**
-	 * Resolve the conflict by choosing the incoming (repository) version of the object (for conflicted hunks only).
-	 */
-	public static final int CHOOSE_REMOTE = 4;
-
-	/**
-	 * Resolve the conflict by choosing own (local) version of the object (for conflicted hunks only).
-	 */
-	public static final int CHOOSE_LOCAL = 5;
-
-	/**
-	 * Resolve the conflict by choosing the merged object (potentially manually edited).
-	 */
-	public static final int CHOOSE_MERGED = 6;
+	public enum Choice {
+		/**
+		 * Nothing done to resolve the conflict; conflict remains.
+		 */
+		POSTPONE(0),
+		/**
+		 * Resolve the conflict by choosing the base version.
+		 */
+		CHOOSE_BASE(1),
+		/**
+		 * Resolve the conflict by choosing the repository version.
+		 */
+		CHOOSE_REMOTE_FULL(2),
+		/**
+		 * Resolve the conflict by choosing local version.
+		 */
+		CHOOSE_LOCAL_FULL(3),
+		/**
+		 * Resolve the conflict by choosing the incoming (repository) version of the object (for conflicted hunks only).
+		 */
+		CHOOSE_REMOTE(4),
+		/**
+		 * Resolve the conflict by choosing own (local) version of the object (for conflicted hunks only).
+		 */
+		CHOOSE_LOCAL(5),
+		/**
+		 * Resolve the conflict by choosing the merged object (potentially manually edited).
+		 */
+		CHOOSE_MERGED(6);
+		
+		public final int id;
+		
+		private Choice(int id) {
+			this.id = id;
+		}
+	}
 
 	/**
 	 * The acceptable choice.
 	 */
-	public final int choice;
+	public final Choice choice;
 
 	/**
 	 * The path to the result of a merge. Could be <code>null</code>.
@@ -74,7 +76,7 @@ public class SVNConflictResolution {
 	 * @param mergedPath
 	 *            the path to the result of merge
 	 */
-	public SVNConflictResolution(int choice, String mergedPath) {
+	public SVNConflictResolution(Choice choice, String mergedPath) {
 		this.choice = choice;
 		this.mergedPath = mergedPath;
 	}

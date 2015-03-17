@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 
 /**
  * Abstract URL-based merge set
@@ -20,10 +21,10 @@ import org.eclipse.core.resources.IResource;
  */
 public abstract class AbstractMergeSetURL extends AbstractMergeSet {
     public final boolean ignoreAncestry;
-    public final int depth;
+    public final SVNDepth depth;
     public final boolean recordOnly;
 
-	public AbstractMergeSetURL(IResource[] to, boolean ignoreAncestry, boolean recordOnly, int depth) {
+	public AbstractMergeSetURL(IResource[] to, boolean ignoreAncestry, boolean recordOnly, SVNDepth depth) {
 		super(to);
 		
     	this.ignoreAncestry = ignoreAncestry;

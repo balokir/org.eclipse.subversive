@@ -53,7 +53,7 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
     	}
     }
     
-    public int getDepth() {
+    public SVNDepth getDepth() {
     	if (this.depthSelector == null) {
     		return SVNDepth.INFINITY;
     	}

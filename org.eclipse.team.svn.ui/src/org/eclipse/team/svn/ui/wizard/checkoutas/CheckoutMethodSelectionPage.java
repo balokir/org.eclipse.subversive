@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -54,7 +55,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	protected Button selectLocationButton;
 	protected Text nameField;
 	protected RevisionComposite revisionComposite;
-	protected DepthSelectionComposite recureDepthSelector;
+	protected DepthSelectionComposite depthSelector;
 
 	protected String projectName;
 	protected int checkoutType;
@@ -88,8 +89,8 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		return this.checkoutType == CheckoutMethodSelectionPage.CHECKOUT_AS_FOLDER;
 	}
 	
-	public int getRecureDepth() {
-		return this.recureDepthSelector.getDepth();
+	public SVNDepth getdepth() {
+		return this.depthSelector.getDepth();
 	}
 	
 	public SVNRevision getSelectedRevision() {
@@ -193,8 +194,8 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		separator.setLayoutData(data);		
 		
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE, false);
-		this.recureDepthSelector.setLayoutData(data);			
+		this.depthSelector = new DepthSelectionComposite(composite, SWT.NONE, false);
+		this.depthSelector.setLayoutData(data);			
 
 		this.revisionComposite = new RevisionComposite(composite, this, false, new String[]{SVNUIMessages.RevisionComposite_Revision, SVNUIMessages.RevisionComposite_HeadRevision}, SVNRevision.HEAD, false);
 		data = new GridData(GridData.FILL_HORIZONTAL);

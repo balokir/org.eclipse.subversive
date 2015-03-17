@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.connector;
 
+
 /**
  * Directory entry information container
  * 
@@ -24,32 +25,43 @@ public class SVNEntry {
 	/**
 	 * Entry node kind enumeration
 	 */
-	public static class Kind {
+	public enum Kind {
 		/**
 		 * The entry is absent.
 		 */
-		public static final int NONE = 0;
-
+		NONE(0),
 		/**
 		 * The entry is a file
 		 */
-		public static final int FILE = 1;
-
+		FILE(1),
 		/**
 		 * The entry is a directory
 		 */
-		public static final int DIR = 2;
-
+		DIR(2),
 		/**
 		 * The entry kind is unknown
 		 */
-		public static final int UNKNOWN = 3;
-
+		UNKNOWN(3),
 		/**
 		 * The entry kind is a symbolic link
 		 * @since 1.8
 		 */
-		public static final int SYMLINK = 4;
+		SYMLINK(4);
+		
+		public final int id;
+		
+		public static Kind fromId(int id) {
+			for (Kind kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid entry kind: " + id); //$NON-NLS-1$
+		}
+		
+		private Kind(int id) {
+			this.id = id;
+		}
 	}
 
 	/**
@@ -131,7 +143,7 @@ public class SVNEntry {
 	 * {@link Kind#DIR} for directories or {@link Kind#FILE} for file. Undetermined if access mask does not
 	 * specify the nodeKind field.
 	 */
-	public final int nodeKind;
+	public final Kind nodeKind;
 
 	/**
 	 * Size in bytes. Valid only for files, for directories always zero. Undetermined if access mask does not specify
@@ -164,7 +176,7 @@ public class SVNEntry {
 	 * @param lock
 	 *            entry lock information
 	 */
-	public SVNEntry(String path, long revision, long date, String author, boolean hasProperties, int nodeKind, long size, SVNLock lock) {
+	public SVNEntry(String path, long revision, long date, String author, boolean hasProperties, Kind nodeKind, long size, SVNLock lock) {
 		this.date = date;
 		this.revision = revision;
 		this.hasProperties = hasProperties;

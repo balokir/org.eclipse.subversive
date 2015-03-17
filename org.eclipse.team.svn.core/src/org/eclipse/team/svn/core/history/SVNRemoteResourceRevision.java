@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -40,7 +41,7 @@ public class SVNRemoteResourceRevision extends FileRevision {
 		this.remote.setSelectedRevision(SVNRevision.fromNumber(msg.revision));
 		if (this.msg.changedPaths != null) {
 			for (int i = 0; i < this.msg.changedPaths.length && !this.isDeletionRev; i++) {
-				if (this.msg.changedPaths[i].action == 'D' && this.remote.getUrl().endsWith(this.msg.changedPaths[i].path)) {
+				if (this.msg.changedPaths[i].action == SVNLogPath.ChangeType.DELETED && this.remote.getUrl().endsWith(this.msg.changedPaths[i].path)) {
 					this.isDeletionRev = true;
 				}
 			}

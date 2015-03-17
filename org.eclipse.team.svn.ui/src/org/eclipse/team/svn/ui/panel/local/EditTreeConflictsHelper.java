@@ -58,19 +58,19 @@ public class EditTreeConflictsHelper {
 	}
 	
 	public String getOperationAsString() {
-		String operation;
+		String operation = SVNUIMessages.EditTreeConflictsPanel_None_Operation;
 		switch (this.treeConflict.operation) {
-			case Operation.UPDATE:
+			case UPDATE:
 				operation = SVNUIMessages.EditTreeConflictsPanel_Update_Operation;
 				break;
-			case Operation.MERGE:
+			case MERGE:
 				operation = SVNUIMessages.EditTreeConflictsPanel_Merge_Operation;
 				break;
-			case Operation.SWITCHED:
+			case SWITCHED:
 				operation = SVNUIMessages.EditTreeConflictsPanel_Switch_Operation;
-				break;	
-			default:
-				operation = SVNUIMessages.EditTreeConflictsPanel_None_Operation;
+				break;
+			case NONE:
+				break;
 		}
 		return operation;
 	}
@@ -78,23 +78,32 @@ public class EditTreeConflictsHelper {
 	public String getReasonAsString() {
 		String reason = ""; //$NON-NLS-1$
 		switch (this.treeConflict.reason) {
-			case Reason.ADDED:
+			case ADDED:
 				reason = SVNUIMessages.EditTreeConflictsPanel_Add_Reason;
 				break;
-			case Reason.DELETED:
+			case DELETED:
 				reason = SVNUIMessages.EditTreeConflictsPanel_Delete_Reason;
 				break;
-			case Reason.MISSING:
+			case MISSING:
 				reason = SVNUIMessages.EditTreeConflictsPanel_Missing_Reason;
 				break;
-			case Reason.MODIFIED:
+			case MODIFIED:
 				reason = SVNUIMessages.EditTreeConflictsPanel_Modified_Reason;
 				break;
-			case Reason.OBSTRUCTED:
+			case OBSTRUCTED:
 				reason = SVNUIMessages.EditTreeConflictsPanel_Obstructed_Reason;
 				break;
-			case Reason.UNVERSIONED:
+			case UNVERSIONED:
 				reason = SVNUIMessages.EditTreeConflictsPanel_Unversioned_Reason;
+				break;
+			case MOVED_AWAY:
+				reason = SVNUIMessages.EditTreeConflictsPanel_MovedAway_Reason;
+				break;
+			case MOVED_HERE:
+				reason = SVNUIMessages.EditTreeConflictsPanel_MovedHere_Reason;
+				break;
+			case REPLACED:
+				reason = SVNUIMessages.EditTreeConflictsPanel_Replaced_Reason;
 				break;
 		}
 		return reason;
@@ -102,12 +111,18 @@ public class EditTreeConflictsHelper {
 	
 	public String getActionAsString() {
 		String action = SVNUIMessages.EditTreeConflictsPanel_Replace_Action;
-		if (this.treeConflict.action == Action.MODIFY) {
-			action = SVNUIMessages.EditTreeConflictsPanel_Modify_Action;
-		} else if (this.treeConflict.action == Action.ADD) {
+		switch (this.treeConflict.action) {
+		case ADD:
 			action = SVNUIMessages.EditTreeConflictsPanel_Add_Action;
-		} else if (this.treeConflict.action == Action.DELETE) {
+			break;
+		case DELETE:
 			action = SVNUIMessages.EditTreeConflictsPanel_Delete_Action;
+			break;
+		case MODIFY:
+			action = SVNUIMessages.EditTreeConflictsPanel_Modify_Action;
+			break;
+		case REPLACE:
+			break;
 		}
 		return action;
 	}
@@ -258,7 +273,7 @@ public class EditTreeConflictsHelper {
 		//  for reference please check this article: http://tortoisesvn.tigris.org/ds/viewMessage.do?dsForumId=757&viewType=browseAll&dsMessageId=2411874#messagefocus
 		//  so, for now Subversive code will just resolve conflicts and the only call SVN API resolve() function to mark it as merged
 		//  which means the only acceptable option is SVNConflictResolution.CHOOSE_MERGED
-		int resolution = SVNConflictResolution.CHOOSE_MERGED;
+		SVNConflictResolution.Choice resolution = SVNConflictResolution.Choice.CHOOSE_MERGED;
 		return new MarkResolvedOperation(new IResource[] {this.local.getResource()}, resolution, SVNDepth.INFINITY);		
 	}
 	

@@ -46,7 +46,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class CommitOperation extends AbstractConflictDetectionOperation implements IRevisionProvider, IPostCommitErrorsProvider {
-	protected int depth;
+	protected SVNDepth depth;
 	protected long options;
 	protected String message;
 	protected ArrayList<RevisionPair> revisionsPairs;
@@ -62,14 +62,14 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 		this(provider, message, SVNDepth.infinityOrEmpty(recursive), keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE);
 	}
 	
-	public CommitOperation(IResource []resources, String message, int depth, long options) {
+	public CommitOperation(IResource []resources, String message, SVNDepth depth, long options) {
 		super("Operation_Commit", SVNMessages.class, resources); //$NON-NLS-1$
 		this.message = message;
 		this.depth = depth;
 		this.options = options & ISVNConnector.CommandMasks.COMMIT;
 	}
 	
-	public CommitOperation(IResourceProvider provider, String message, int depth, long options) {
+	public CommitOperation(IResourceProvider provider, String message, SVNDepth depth, long options) {
 		super("Operation_Commit", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
 		this.depth = depth;

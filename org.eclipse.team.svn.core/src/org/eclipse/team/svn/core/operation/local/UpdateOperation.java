@@ -43,7 +43,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UpdateOperation extends AbstractConflictDetectionOperation implements IResourceProvider {
 	protected SVNRevision selectedRevision;
-	protected int depth;
+	protected SVNDepth depth;
 	protected long options;
 	protected String updateDepthPath;
 	
@@ -63,7 +63,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		this(resources, selectedRevision, SVNDepth.INFINITY, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, null);
 	}
 	
-	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, int depth, long options, String updateDepthPath) {
+	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, SVNDepth depth, long options, String updateDepthPath) {
 		super("Operation_Update", SVNMessages.class, provider); //$NON-NLS-1$		
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 		this.depth = depth;
@@ -71,7 +71,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		this.updateDepthPath = updateDepthPath;
 	}
 	
-	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, int depth, long options, String updateDepthPath) {
+	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, SVNDepth depth, long options, String updateDepthPath) {
 		super("Operation_Update", SVNMessages.class, resources); //$NON-NLS-1$
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 		this.depth = depth;
@@ -79,7 +79,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		this.updateDepthPath = updateDepthPath;
 	}
 	
-	public void setDepthOptions(int depth, boolean isStickyDepth, String updateDepthPath) {
+	public void setDepthOptions(SVNDepth depth, boolean isStickyDepth, String updateDepthPath) {
 		this.depth = depth;
 		this.options &= ~ISVNConnector.Options.DEPTH_IS_STICKY;
 		this.options |= isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE;

@@ -16,6 +16,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -29,15 +30,15 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class CheckoutAsOperation extends AbstractFileOperation {
 	protected IRepositoryResource resource;
-	protected int depth;
+	protected SVNDepth depth;
 	protected long options;
 	protected boolean override;
 
-	public CheckoutAsOperation(File to, IRepositoryResource resource, int depth, boolean ignoreExternals, boolean override) {
+	public CheckoutAsOperation(File to, IRepositoryResource resource, SVNDepth depth, boolean ignoreExternals, boolean override) {
 		this(to, resource, depth, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, override);
 	}
 
-	public CheckoutAsOperation(File to, IRepositoryResource resource, int depth, long options, boolean override) {
+	public CheckoutAsOperation(File to, IRepositoryResource resource, SVNDepth depth, long options, boolean override) {
 		super("Operation_CheckoutAsFile", SVNMessages.class, new File[] {to}); //$NON-NLS-1$
 		this.resource = resource;
 		this.depth = depth;

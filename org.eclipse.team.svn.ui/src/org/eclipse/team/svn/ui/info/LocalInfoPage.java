@@ -270,65 +270,65 @@ public class LocalInfoPage extends PropertyPage {
     }
     
     protected String getTreeConflictDescription(SVNConflictDescriptor conflictDescriptor) {
-		String reason;
-		String action;
-		String operation;
+		String reason = ""; //$NON-NLS-1$
+		String action = ""; //$NON-NLS-1$
+		String operation = ""; //$NON-NLS-1$
 		switch (conflictDescriptor.reason) {
-		case SVNConflictDescriptor.Reason.MODIFIED:
+		case MODIFIED:
 			reason = "edit"; //$NON-NLS-1$
 			break;
-		case SVNConflictDescriptor.Reason.OBSTRUCTED:
+		case OBSTRUCTED:
 			reason = "obstruction"; //$NON-NLS-1$
 			break;
-		case SVNConflictDescriptor.Reason.DELETED:
+		case DELETED:
 			reason = "delete"; //$NON-NLS-1$
 			break;		
-		case SVNConflictDescriptor.Reason.MISSING:
+		case MISSING:
 			reason = "missing"; //$NON-NLS-1$
 			break;	
-		case SVNConflictDescriptor.Reason.UNVERSIONED:
+		case UNVERSIONED:
 			reason = "unversioned"; //$NON-NLS-1$
 			break;
-		case SVNConflictDescriptor.Reason.ADDED:
+		case ADDED:
 			reason = "add"; //$NON-NLS-1$
-			break;					
-		default:
-			reason = Integer.toString(conflictDescriptor.reason);
+			break;
+		case MOVED_AWAY:
+			reason = "moved away"; //$NON-NLS-1$
+			break;
+		case MOVED_HERE:
+			reason = "moved here"; //$NON-NLS-1$
+			break;
+		case REPLACED:
+			reason = "replaced"; //$NON-NLS-1$
 			break;
 		}
 		switch (conflictDescriptor.action) {
-		case SVNConflictDescriptor.Action.MODIFY:
+		case MODIFY:
 			action = "edit"; //$NON-NLS-1$
 			break;
-		case SVNConflictDescriptor.Action.ADD:
+		case ADD:
 			action = "add"; //$NON-NLS-1$
 			break;
-		case SVNConflictDescriptor.Action.DELETE:
+		case DELETE:
 			action = "delete"; //$NON-NLS-1$
 			break;			
-		case SVNConflictDescriptor.Action.REPLACE:
+		case REPLACE:
 			action = "replace"; //$NON-NLS-1$
-			break;
-		default:
-			action = Integer.toString(conflictDescriptor.action);
 			break;
 		}
 		switch (conflictDescriptor.operation) {
-		case SVNConflictDescriptor.Operation.NONE:
+		case NONE:
 			operation = "none"; //$NON-NLS-1$
 			break;
-		case SVNConflictDescriptor.Operation.UPDATE:
+		case UPDATE:
 			operation = "update"; //$NON-NLS-1$
 			break;
-		case SVNConflictDescriptor.Operation.SWITCHED:
+		case SWITCHED:
 			operation = "switch"; //$NON-NLS-1$
 			break;	
-		case SVNConflictDescriptor.Operation.MERGE:
+		case MERGE:
 			operation = "merge"; //$NON-NLS-1$
 			break;			
-		default:
-			operation = Integer.toString(conflictDescriptor.operation);
-			break;
 		}		
 		return SVNUIMessages.format(SVNUIMessages.LocalInfoPage_TreeConflictDescription, new String[]{reason, action, operation});
 	}

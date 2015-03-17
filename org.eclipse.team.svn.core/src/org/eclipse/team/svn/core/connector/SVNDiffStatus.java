@@ -46,7 +46,7 @@ public class SVNDiffStatus extends SVNEntryStatus {
 	 * @param propStatus
 	 *            The entries properties diff status (see {@link SVNEntryStatus.Kind})
 	 */
-	public SVNDiffStatus(String path1, String path2, int nodeKind, int textStatus, int propStatus) {
+	public SVNDiffStatus(String path1, String path2, SVNEntry.Kind nodeKind, Kind textStatus, Kind propStatus) {
 		super(nodeKind, textStatus, propStatus);
 		this.pathPrev = path1;
 		this.pathNext = path2;

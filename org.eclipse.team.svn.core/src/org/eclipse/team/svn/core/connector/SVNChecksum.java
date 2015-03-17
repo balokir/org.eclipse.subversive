@@ -21,23 +21,31 @@ package org.eclipse.team.svn.core.connector;
  * @author Alexander Gurov
  */
 public class SVNChecksum {
-	/**
-	 * Pre-SVN 1.7
-	 */
-	public static final int LEGACY = -1;
-	/**
-	 * MD5 checksum type
-	 */
-	public static final int MD5 = 0;
-	/**
-	 * SHA1 checksum type
-	 */
-	public static final int SHA1 = 1;
+	public enum Kind {
+		/**
+		 * Pre-SVN 1.7
+		 */
+		LEGACY(-1),
+		/**
+		 * MD5 checksum type
+		 */
+		MD5(0),
+		/**
+		 * SHA1 checksum type
+		 */
+		SHA1(1);
+		
+		public final int id;
+		
+		private Kind(int id) {
+			this.id = id;
+		}
+	}
 
 	/**
 	 * Checksum kind
 	 */
-	public final int kind;
+	public final Kind kind;
 
 	/**
 	 * Checksum data
@@ -52,7 +60,7 @@ public class SVNChecksum {
 	 * @param digest
 	 *            the checksum digest
 	 */
-	public SVNChecksum(int kind, byte []digest) {
+	public SVNChecksum(Kind kind, byte []digest) {
 		this.kind = kind;
 		this.digest = digest != null ? new byte[digest.length] : null;
 		if (digest != null) {

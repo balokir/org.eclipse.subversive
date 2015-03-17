@@ -31,7 +31,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	protected AffectedPathsNode root;
 	
 	public void initialize(SVNChangedPathData [] affectedPaths, Collection<String> relatedPathPrefixes, Collection<String> relatedParents, long currentRevision) {
-		this.root = new AffectedPathsNode(SVNUIMessages.AffectedPathsContentProvider_RootName, null, '\0');
+		this.root = new AffectedPathsNode(SVNUIMessages.AffectedPathsContentProvider_RootName, null, null);
 		if (affectedPaths == null) {
 			return;
 		}
@@ -88,7 +88,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			String name = st.nextToken();
 			node = this.findByName(parent, name);
 			if (node == null) {
-				node = new AffectedPathsNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : '\0');
+				node = new AffectedPathsNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : null);
 				parent.addChild(node);
 			} 
 			else if (!st.hasMoreTokens()) {

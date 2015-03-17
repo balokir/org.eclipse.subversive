@@ -27,122 +27,157 @@ public class SVNConflictDescriptor {
 	/**
 	 * Conflict kind: content or properties
 	 */
-	public static class Kind {
+	public enum Kind {
 		/**
 		 * Conflicting content
 		 */
-		public static final int CONTENT = 0;
-
+		CONTENT(0),
 		/**
 		 * Conflicting properties
 		 */
-		public static final int PROPERTIES = 1;
-
+		PROPERTIES(1),
 		/**
 		 * @since 1.7 Tree structure conflict
 		 */
-		public static final int TREE = 2;
+		TREE(2);
+		
+		public final int id;
+		
+		private Kind(int id) {
+			this.id = id;
+		}
 	}
 
 	/**
 	 * The action in result of which conflict occurs
 	 */
-	public static class Action {
+	public enum Action {
 		/**
 		 * Modification of content or properties
 		 */
-		public static final int MODIFY = 0;
-
+		MODIFY(0),
 		/**
 		 * Adding entry
 		 */
-		public static final int ADD = 1;
-
+		ADD(1),
 		/**
 		 * Deleting entry
 		 */
-		public static final int DELETE = 2;
-
+		DELETE(2),
 		/**
 		 * Replacing entry
 		 */
-		public static final int REPLACE = 3;
+		REPLACE(3);
+		
+		public final int id;
+		
+		public static Action fromId(int id) {
+			for (Action kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid action kind: " + id); //$NON-NLS-1$
+		}
+		
+		private Action(int id) {
+			this.id = id;
+		}
 	}
 
 	/**
 	 * The reason why the conflict occurs
 	 */
-	public static class Reason {
+	public enum Reason {
 		/**
 		 * The entry is locally modified.
 		 */
-		public static final int MODIFIED = 0;
-
+		MODIFIED(0),
 		/**
 		 * Another entry is in the way.
 		 */
-		public static final int OBSTRUCTED = 1;
-
+		OBSTRUCTED(1),
 		/**
 		 * The entry is locally deleted.
 		 */
-		public static final int DELETED = 2;
-
+		DELETED(2),
 		/**
 		 * The entry is missing (deleted from the file system).
 		 */
-		public static final int MISSING = 3;
-
+		MISSING(3),
 		/**
 		 * The unversioned entry at the path in the working copy.
 		 */
-		public static final int UNVERSIONED = 4;
-		
+		UNVERSIONED(4),
 	    /**
          * Object is already added or schedule-add.
          * @since 1.6
          */
-        public static final int ADDED = 5;
-		
+        ADDED(5),
 	    /**
          * Object is already replaced.
          * @since 1.7
          */
-        public static final int REPLACED = 6;
-		
+        REPLACED(6),
 	    /**
          * Object is moved away.
          * @since 1.8
          */
-        public static final int MOVED_AWAY = 7;
-		
+        MOVED_AWAY(7),
 	    /**
          * Object is moved here.
          * @since 1.8
          */
-        public static final int MOVED_HERE = 8;
+        MOVED_HERE(8);
+		
+		public final int id;
+		
+		public static Reason fromId(int id) {
+			for (Reason kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid reason kind: " + id); //$NON-NLS-1$
+		}
+		
+		private Reason(int id) {
+			this.id = id;
+		}
 	}
 
-	public static class Operation {
+	public enum Operation {
 	    /**
 	     * none
 	     */
-	    public static final int NONE = 0;
-
+	    NONE(0),
 	    /**
 	     * update
 	     */
-	    public static final int UPDATE = 1;
-
+	    UPDATE(1),
 	    /**
 	     * switch 
 	     */	   
-	    public static final int SWITCHED = 2;
-
+	    SWITCHED(2),
 	    /**
 	     * merge 
 	     */
-	    public static final int MERGE = 3;
+	    MERGE(3);
+		
+		public final int id;
+		
+		public static Operation fromId(int id) {
+			for (Operation kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid operation kind: " + id); //$NON-NLS-1$
+		}
+		
+		private Operation(int id) {
+			this.id = id;
+		}
 	}
 	
 	/**
@@ -153,12 +188,12 @@ public class SVNConflictDescriptor {
 	/**
 	 * The conflict kind (see {@link Kind}).
 	 */
-	public final int conflictKind;
+	public final Kind conflictKind;
 
 	/**
 	 * The node kind (see {@link SVNEntry.Kind}).
 	 */
-	public final int nodeKind;
+	public final SVNEntry.Kind nodeKind;
 
 	/**
 	 * The conflicting property name.
@@ -178,12 +213,12 @@ public class SVNConflictDescriptor {
 	/**
 	 * The action in result of which conflict occurs (see {@link Action}).
 	 */
-	public final int action;
+	public final Action action;
 
 	/**
 	 * The reason why the conflict occurs (see {@link Reason}).
 	 */
-	public final int reason;
+	public final Reason reason;
 
 	/**
 	 * The base revision content path.
@@ -208,7 +243,7 @@ public class SVNConflictDescriptor {
 	/**
      * @see Operation
      */
-	public final int operation;
+	public final Operation operation;
 	
     public final SVNConflictVersion srcLeftVersion;
     
@@ -244,7 +279,7 @@ public class SVNConflictDescriptor {
 	 * @param srcLeftVersion
 	 * @param srcRightVersion
 	 */
-	public SVNConflictDescriptor(String path, int conflictKind, int nodeKind, String propertyName, boolean isBinary, String mimeType, int action, int reason, int operation, 
+	public SVNConflictDescriptor(String path, Kind conflictKind, SVNEntry.Kind nodeKind, String propertyName, boolean isBinary, String mimeType, Action action, Reason reason, Operation operation, 
 			String basePath, String remotePath, String localPath, String mergedPath, SVNConflictVersion srcLeftVersion, SVNConflictVersion srcRightVersion) {
 		this.path = path;
 		this.conflictKind = conflictKind;
@@ -294,8 +329,8 @@ public class SVNConflictDescriptor {
 	/*
 	 * Constructor for creating tree conflict descriptor
 	 */
-	public SVNConflictDescriptor(String path, int action, int reason, int operation, SVNConflictVersion srcLeftVersion, SVNConflictVersion srcRightVersion) {		
-		this(path, 0, 0, null, false, null, action, reason, operation, null, null, null, null, srcLeftVersion, srcRightVersion);
+	public SVNConflictDescriptor(String path, Action action, Reason reason, Operation operation, SVNConflictVersion srcLeftVersion, SVNConflictVersion srcRightVersion) {		
+		this(path, Kind.CONTENT, SVNEntry.Kind.NONE, null, false, null, action, reason, operation, null, null, null, null, srcLeftVersion, srcRightVersion);
 	}
 	
 }

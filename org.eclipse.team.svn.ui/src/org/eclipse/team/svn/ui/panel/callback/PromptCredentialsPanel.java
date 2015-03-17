@@ -367,7 +367,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 			return this.showPanel((IRepositoryLocation)context, SVNRepositoryLocation.PROXY_CONNECTION, ((IRepositoryLocation)context).getUrlAsIs());
 		}	
 	    
-		public int askTrustSSLServer(final Object context, final String info, final boolean allowPermanently) {
+		public Answer askTrustSSLServer(final Object context, final String info, final boolean allowPermanently) {
             final int []retVal = new int[1];
             UIMonitorUtility.getDisplay().syncExec(new Runnable() {
                 public void run() {
@@ -376,7 +376,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
                 	retVal[0] = dlg.open();
 	            }
 	        });
-			return retVal[0] == 0 ? ISVNCredentialsPrompt.ACCEPT_TEMPORARY : (retVal[0] == 2 ? ISVNCredentialsPrompt.REJECT : (retVal[0] == 1 ? (allowPermanently ? ISVNCredentialsPrompt.ACCEPT_PERMANENTLY : ISVNCredentialsPrompt.REJECT) : ISVNCredentialsPrompt.REJECT));
+			return retVal[0] == 0 ? ISVNCredentialsPrompt.Answer.ACCEPT_TEMPORARY : (retVal[0] == 2 ? ISVNCredentialsPrompt.Answer.REJECT : (retVal[0] == 1 ? (allowPermanently ? ISVNCredentialsPrompt.Answer.ACCEPT_PERMANENTLY : ISVNCredentialsPrompt.Answer.REJECT) : ISVNCredentialsPrompt.Answer.REJECT));
 		}
         
         public String getUsername() {

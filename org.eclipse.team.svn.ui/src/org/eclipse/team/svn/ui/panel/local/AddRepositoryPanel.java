@@ -126,8 +126,8 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 		return this.pathSelectionComposite.getSelectedPath();		
 	}
 	
-	public String getRepositoryType() {
-		return this.fsfsButton.getSelection() ? ISVNManager.REPOSITORY_FSTYPE_FSFS : ISVNManager.REPOSITORY_FSTYPE_BDB;
+	public ISVNManager.RepositoryKind getRepositoryType() {
+		return this.fsfsButton.getSelection() ? ISVNManager.RepositoryKind.FSFS : ISVNManager.RepositoryKind.BDB;
 	}
 	
 	public boolean isCreateRepositoryLocation() {
@@ -135,7 +135,7 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 	}
 	
 	public boolean performFinish() {		
-		final String repositoryType = this.getRepositoryType();				
+		final ISVNManager.RepositoryKind repositoryType = this.getRepositoryType();				
 		File repositoryPathFile = new File(this.getRepositoryPath());
 		final String repositoryPath =  repositoryPathFile.isAbsolute() ? this.getRepositoryPath() : repositoryPathFile.getAbsolutePath();
 		
@@ -152,7 +152,7 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 					StringBuffer msg = new StringBuffer();
 					msg.append("svnadmin create").append(" ");  //$NON-NLS-1$ //$NON-NLS-2$
 					msg.append("--fs-type ").append(repositoryType).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-					if (ISVNManager.REPOSITORY_FSTYPE_BDB.equals(repositoryType)) {
+					if (ISVNManager.RepositoryKind.BDB == repositoryType) {
 						msg.append("--bdb-txn-nosync").append(" "); //$NON-NLS-1$ //$NON-NLS-2$
 						msg.append("--bdb-log-keep").append(" ");	 //$NON-NLS-1$ //$NON-NLS-2$
 					}					

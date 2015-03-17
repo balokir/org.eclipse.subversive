@@ -68,32 +68,33 @@ public class SVNProgressMonitor extends SVNNullProgressMonitor {
 
 	public static void writeToConsole(IConsoleStream stream, int contentState, int propState, int action, String path, long revision) {
 		if (stream != null && path != null && path.length() > 0) {
-			if (action == PerformedAction.UPDATE_COMPLETED || action == PerformedAction.STATUS_COMPLETED) {
+			PerformedAction pAction = PerformedAction.fromId(action);
+			if (pAction == PerformedAction.UPDATE_COMPLETED || pAction == PerformedAction.STATUS_COMPLETED) {
 				String message = SVNMessages.format(SVNMessages.Console_AtRevision, new String[] {String.valueOf(revision)});
 				stream.write(IConsoleStream.LEVEL_OK, message);
-			} else if (action == PerformedAction.UPDATE_EXTERNAL) {
+			} else if (pAction == PerformedAction.UPDATE_EXTERNAL) {
 				String message = SVNMessages.format(SVNMessages.Console_UpdateExternal, new String[] {path});
 				stream.write(IConsoleStream.LEVEL_OK, message);
 			} else {
 				int severity = IConsoleStream.LEVEL_OK;
 				String status = null;
-				switch (action) {
-					case PerformedAction.ADD: 
-					case PerformedAction.UPDATE_ADD: 
-					case PerformedAction.COMMIT_ADDED: {
+				switch (pAction) {
+					case ADD: 
+					case UPDATE_ADD: 
+					case COMMIT_ADDED: {
 						status = SVNMessages.Console_Action_Added;
 						break;
 					}
-					case PerformedAction.DELETE: 
-					case PerformedAction.UPDATE_DELETE: 
-					case PerformedAction.COMMIT_DELETED: {
+					case DELETE: 
+					case UPDATE_DELETE: 
+					case COMMIT_DELETED: {
 						status = SVNMessages.Console_Action_Deleted;
 						break;
 					}
-					case PerformedAction.UPDATE_UPDATE: {
-						int resourceState = contentState == NodeStatus.INAPPLICABLE || contentState == NodeStatus.UNCHANGED ? propState : contentState;
+					case UPDATE_UPDATE: {
+						int resourceState = contentState == NodeStatus.INAPPLICABLE.id || contentState == NodeStatus.UNCHANGED.id ? propState : contentState;
 						severity = 
-							contentState == NodeStatus.CONFLICTED || contentState == NodeStatus.OBSTRUCTED  || propState == NodeStatus.CONFLICTED ? 
+							contentState == NodeStatus.CONFLICTED.id || contentState == NodeStatus.OBSTRUCTED.id  || propState == NodeStatus.CONFLICTED.id ? 
 							IConsoleStream.LEVEL_WARNING : 
 							IConsoleStream.LEVEL_OK;
 						if (resourceState >= 0 && resourceState < NodeStatus.shortStatusNames.length) {
@@ -105,45 +106,45 @@ public class SVNProgressMonitor extends SVNNullProgressMonitor {
 						status = " "; //$NON-NLS-1$
 						break;
 					}
-					case PerformedAction.COMMIT_MODIFIED: {
+					case COMMIT_MODIFIED: {
 						status = SVNMessages.Console_Action_Modified;
 						break;
 					}
-					case PerformedAction.COMMIT_REPLACED: {
+					case COMMIT_REPLACED: {
 						status = SVNMessages.Console_Action_Replaced;
 						break;
 					}
-					case PerformedAction.REVERT: {
+					case REVERT: {
 						status = SVNMessages.Console_Action_Reverted;
 						break;
 					}
-					case PerformedAction.RESTORE: {
+					case RESTORE: {
 						status = SVNMessages.Console_Action_Restored;
 						break;
 					}
-					case PerformedAction.LOCKED: {
+					case LOCKED: {
 						status = SVNMessages.Console_Action_Locked;
 						break;
 					}
-					case PerformedAction.UNLOCKED: {
+					case UNLOCKED: {
 						status = SVNMessages.Console_Action_Unlocked;
 						break;
 					}
-					case PerformedAction.TREE_CONFLICT:
+					case TREE_CONFLICT:
 						status = SVNMessages.Console_Status_Conflicted;
 						severity = IConsoleStream.LEVEL_WARNING;
 						break;
 					default: {
-						int resourceState = contentState == SVNEntryStatus.Kind.NORMAL ? propState : contentState;
+						int resourceState = contentState == SVNEntryStatus.Kind.NORMAL.id ? propState : contentState;
 						status = SVNProgressMonitor.getStatus(resourceState);
 						severity = 
-							resourceState == SVNEntryStatus.Kind.CONFLICTED || resourceState == SVNEntryStatus.Kind.OBSTRUCTED ?
+							resourceState == SVNEntryStatus.Kind.CONFLICTED.id || resourceState == SVNEntryStatus.Kind.OBSTRUCTED.id ?
 							IConsoleStream.LEVEL_WARNING : 
 							IConsoleStream.LEVEL_OK;
 						break;
 					}
 				}
-				if (action == PerformedAction.COMMIT_POSTFIX_TXDELTA) {
+				if (pAction == PerformedAction.COMMIT_POSTFIX_TXDELTA) {
 					String message = SVNMessages.format(SVNMessages.Console_TransmittingData, new String[] {path});
 					stream.write(severity, message);
 				}
@@ -156,29 +157,29 @@ public class SVNProgressMonitor extends SVNNullProgressMonitor {
 	}
 	
 	protected static String getStatus(int resourceState) {
-		switch (resourceState) {
-			case SVNEntryStatus.Kind.ADDED: {
+		switch (SVNEntryStatus.Kind.fromId(resourceState)) {
+			case ADDED: {
 				return SVNMessages.Console_Status_Added;
 			}
-			case SVNEntryStatus.Kind.MODIFIED: {
+			case MODIFIED: {
 				return SVNMessages.Console_Status_Modified;
 			}
-			case SVNEntryStatus.Kind.DELETED: {
+			case DELETED: {
 				return SVNMessages.Console_Status_Deleted;
 			}
-			case SVNEntryStatus.Kind.MISSING: {
+			case MISSING: {
 				return SVNMessages.Console_Status_Missing;
 			}
-			case SVNEntryStatus.Kind.REPLACED: {
+			case REPLACED: {
 				return SVNMessages.Console_Status_Replaced;
 			}
-			case SVNEntryStatus.Kind.MERGED: {
+			case MERGED: {
 				return SVNMessages.Console_Status_Merged;
 			}
-			case SVNEntryStatus.Kind.CONFLICTED: {
+			case CONFLICTED: {
 				return SVNMessages.Console_Status_Conflicted;
 			}
-			case SVNEntryStatus.Kind.OBSTRUCTED: {
+			case OBSTRUCTED: {
 				return SVNMessages.Console_Status_Obstructed;
 			}
 			default: {

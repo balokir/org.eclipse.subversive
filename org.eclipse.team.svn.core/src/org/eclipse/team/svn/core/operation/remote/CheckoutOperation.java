@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -36,7 +37,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	protected CheckoutAsOperation []operations;
 	protected ISchedulingRule rule;
 
-	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
+	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, SVNDepth recureDepth, boolean ignoreExternals) {
 		super("Operation_CheckOut", SVNMessages.class); //$NON-NLS-1$
 		
 		ArrayList<IProject> projects = new ArrayList<IProject>();
@@ -73,7 +74,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 		}
 	}
 	
-	public static CheckoutAsOperation getCheckoutAsOperation(String name, IRepositoryResource currentResource, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
+	public static CheckoutAsOperation getCheckoutAsOperation(String name, IRepositoryResource currentResource, boolean respectHierarchy, String location, SVNDepth recureDepth, boolean ignoreExternals) {
 		if (location != null && location.trim().length() > 0) {
 			return new CheckoutAsOperation(name, currentResource, respectHierarchy, location, recureDepth, ignoreExternals);
 		}

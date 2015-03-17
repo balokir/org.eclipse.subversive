@@ -43,7 +43,7 @@ import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 public class ScanLocksOperation extends AbstractActionOperation {
 
 	protected IResource[] resources;
-	protected int depth;
+	protected SVNDepth depth;
 	
 	protected Map<IResource, List<LockResource>> lockResources = new HashMap<IResource, List<LockResource>>();
 	
@@ -51,7 +51,7 @@ public class ScanLocksOperation extends AbstractActionOperation {
 		this(resources, SVNDepth.INFINITY);
 	}
 	
-	public ScanLocksOperation(IResource[] resources, int depth) {
+	public ScanLocksOperation(IResource[] resources, SVNDepth depth) {
 		super("Operation_ScanLocks", SVNUIMessages.class); //$NON-NLS-1$
 		this.resources = resources;		
 		this.depth = depth;

@@ -60,6 +60,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
@@ -357,29 +359,29 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 		return node;
 	}
 	
-	protected static int getDiffKind(int textStatus, int propStatus) {
-		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED ||
-			textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.UNVERSIONED) {
+	protected static int getDiffKind(SVNEntryStatus.Kind textStatus, SVNEntryStatus.Kind propStatus) {
+		if (textStatus == SVNEntryStatus.Kind.ADDED ||
+			textStatus == SVNEntryStatus.Kind.UNVERSIONED) {
 			return Differencer.ADDITION;
 		}
-		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED) {
+		if (textStatus == SVNEntryStatus.Kind.DELETED) {
 			return Differencer.DELETION;
 		}
-		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.REPLACED) {
+		if (textStatus == SVNEntryStatus.Kind.REPLACED) {
 			return Differencer.CHANGE;
 		}
-		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED ||
-			propStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED) {
+		if (textStatus == SVNEntryStatus.Kind.MODIFIED ||
+			propStatus == SVNEntryStatus.Kind.MODIFIED) {
 			return Differencer.CHANGE;
 		}
 		return Differencer.NO_CHANGE;
 	}
 	
-	protected int getNodeKind(SVNDiffStatus st, boolean ignoreNone) {
+	protected Kind getNodeKind(SVNDiffStatus st, boolean ignoreNone) {
 		return SVNUtility.getNodeKind(st.pathPrev, st.nodeKind, ignoreNone);
 	}
 	
-	protected IRepositoryResource createResourceFor(IRepositoryLocation location, int kind, String url) {
+	protected IRepositoryResource createResourceFor(IRepositoryLocation location, Kind kind, String url) {
 		IRepositoryResource retVal = null;
 		if (kind == SVNEntry.Kind.FILE) {
 			retVal = location.asRepositoryFile(url, false);
@@ -514,7 +516,7 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 			}
 			if (this.resource instanceof IRepositoryFile) {
 				if (this.resource.getSelectedRevision() != SVNRevision.INVALID_REVISION) {
-					int revisionKind = this.resource.getSelectedRevision().getKind();
+					SVNRevision.Kind revisionKind = this.resource.getSelectedRevision().getKind();
 					return this.op = revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 
 						(AbstractGetFileContentOperation)new GetLocalFileContentOperation(this.localAlias.getResource(), revisionKind) : 
 						new GetFileContentOperation(this.resource);

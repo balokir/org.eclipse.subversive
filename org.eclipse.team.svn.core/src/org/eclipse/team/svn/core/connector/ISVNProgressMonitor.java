@@ -26,22 +26,30 @@ public interface ISVNProgressMonitor {
 
 	public static class ItemState {
 		public final String path;
-
+		/**
+		 * It could be of either kind: SVNNotification.PerformedAction or SVNRepositoryNotification.Action, so leaving as int
+		 */
 		public final int action;
 
-		public final int kind;
+		public final SVNEntry.Kind kind;
 
 		public final String mimeType;
 
+		/**
+		 * It could be of either kind: SVNNotification.NodeStatus or SVNEntryStatus.Kind, so leaving as int
+		 */
 		public final int contentState;
 
+		/**
+		 * It could be of either kind: SVNNotification.NodeStatus or SVNEntryStatus.Kind, so leaving as int
+		 */
 		public final int propState;
 
 		public final long revision;
 		
 		public final String error;
 
-		public ItemState(String path, int action, int kind, String mimeType, int contentState, int propState, long revision, String error) {
+		public ItemState(String path, int action, SVNEntry.Kind kind, String mimeType, int contentState, int propState, long revision, String error) {
 			this.path = path;
 			this.action = action;
 			this.kind = kind;
