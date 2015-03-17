@@ -23,6 +23,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -41,23 +42,23 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class SwitchOperation extends AbstractRepositoryOperation implements IUnresolvedConflictDetector {
 	protected IResource []resources;
-	protected int depth;
+	protected SVNDepth depth;
 	protected long options;
 	protected UnresolvedConflictDetectorHelper conflictDetectorHelper; 
 
-	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth, boolean isStickyDepth, boolean ignoreExternals) {
+	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, SVNDepth depth, boolean isStickyDepth, boolean ignoreExternals) {
 		this(resources, destination, depth, 
 			(ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE) | 
 			(isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE));
 	}
 
-	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth, boolean isStickyDepth, boolean ignoreExternals) {
+	public SwitchOperation(IResource []resources, IRepositoryResource []destination, SVNDepth depth, boolean isStickyDepth, boolean ignoreExternals) {
 		this(resources, destination, depth, 
 			(ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE) | 
 			(isStickyDepth ? ISVNConnector.Options.DEPTH_IS_STICKY : ISVNConnector.Options.NONE));
 	}
 	
-	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth, long options) {
+	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, SVNDepth depth, long options) {
 		super("Operation_Switch", SVNMessages.class, destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
@@ -65,7 +66,7 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
 	}
 
-	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth, long options) {
+	public SwitchOperation(IResource []resources, IRepositoryResource []destination, SVNDepth depth, long options) {
 		super("Operation_Switch", SVNMessages.class, destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;

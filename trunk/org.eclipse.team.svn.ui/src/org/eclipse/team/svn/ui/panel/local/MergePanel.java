@@ -361,7 +361,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		return parent;
 	}
 	
-	public int getDepth() {
+	public SVNDepth getDepth() {
 		return this.mode == MergePanel.MODE_1URL ? this.depthSelectorSimple.getDepth() : (this.mode == MergePanel.MODE_2URL ? this.depthSelector.getDepth() : SVNDepth.UNKNOWN);
 	}
 	
@@ -396,16 +396,16 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		mergeOp.setExternalMonitor(new SVNNullProgressMonitor() {
 			public void progress(int current, int total, ItemState state) {
 				buf.append("<b>"); //$NON-NLS-1$
-				switch (state.action) {
-					case PerformedAction.UPDATE_ADD: {
+				switch (PerformedAction.fromId(state.action)) {
+					case UPDATE_ADD: {
 						buf.append(SVNUIMessages.MergePanel_Preview_Added);
 						break;
 					}
-					case PerformedAction.UPDATE_DELETE: {
+					case UPDATE_DELETE: {
 						buf.append(SVNUIMessages.MergePanel_Preview_Deleted);
 						break;
 					}
-					case PerformedAction.UPDATE_UPDATE: {
+					case UPDATE_UPDATE: {
 						buf.append(SVNUIMessages.MergePanel_Preview_Modified);
 						break;
 					}

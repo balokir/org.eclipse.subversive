@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.history.data;
 
+import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
@@ -24,7 +25,7 @@ public class SVNChangedPathData {
 	/**
 	 * Action performed to resource.
 	 */
-	public final char action;
+	public final SVNLogPath.ChangeType action;
 	
 	/**
 	 * Name of the resource in changed path.
@@ -63,7 +64,7 @@ public class SVNChangedPathData {
 	 * @param copiedFromRevision
 	 *            - previous resource revision, if it had been copied
 	 */
-	public SVNChangedPathData(char action,
+	public SVNChangedPathData(SVNLogPath.ChangeType action,
 						String resourceName,
 						String resourcePath,
 						String copiedFromPath,

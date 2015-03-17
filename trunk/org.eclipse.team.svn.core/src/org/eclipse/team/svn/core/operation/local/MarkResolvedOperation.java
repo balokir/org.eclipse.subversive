@@ -15,6 +15,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConflictResolution;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -28,16 +30,16 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * @author Alexander Gurov
  */
 public class MarkResolvedOperation extends AbstractWorkingCopyOperation {
-	protected int conflictResult;
-	protected int depth;
+	protected SVNConflictResolution.Choice conflictResult;
+	protected SVNDepth depth;
 	
-	public MarkResolvedOperation(IResource[] resources, int conflictResult, int depth) {
+	public MarkResolvedOperation(IResource[] resources, SVNConflictResolution.Choice conflictResult, SVNDepth depth) {
 		super("Operation_MarkResolved", SVNMessages.class, resources); //$NON-NLS-1$
 		this.conflictResult = conflictResult;
 		this.depth = depth;
 	}
 
-	public MarkResolvedOperation(IResourceProvider provider, int conflictResult, int depth) {
+	public MarkResolvedOperation(IResourceProvider provider, SVNConflictResolution.Choice conflictResult, SVNDepth depth) {
 		super("Operation_MarkResolved", SVNMessages.class, provider); //$NON-NLS-1$
 		this.conflictResult = conflictResult;
 		this.depth = depth;

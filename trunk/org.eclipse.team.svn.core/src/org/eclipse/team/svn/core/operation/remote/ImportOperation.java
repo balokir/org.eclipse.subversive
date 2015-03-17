@@ -17,6 +17,7 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNImportFilterCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -35,15 +36,15 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class ImportOperation extends AbstractRepositoryOperation implements IRevisionProvider {
 	protected String path;
 	protected String message;
-	protected int depth;
+	protected SVNDepth depth;
 	protected RevisionPair []revisionPair;
 	protected ISVNImportFilterCallback filter;
 	
-	public ImportOperation(IRepositoryResource resource, String path, String message, int depth) {
+	public ImportOperation(IRepositoryResource resource, String path, String message, SVNDepth depth) {
 		this(resource, path, message, depth, null);
 	}
 	
-	public ImportOperation(IRepositoryResource resource, String path, String message, int depth, ISVNImportFilterCallback filter) {
+	public ImportOperation(IRepositoryResource resource, String path, String message, SVNDepth depth, ISVNImportFilterCallback filter) {
 		super("Operation_Import", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.path = path;
 		this.message = message;

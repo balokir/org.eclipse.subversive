@@ -72,10 +72,8 @@ public class UnlockOperation extends AbstractFileOperation {
 			this.protectStep(new IUnprotectedOperation() {				
 				public void run(IProgressMonitor monitor) throws Exception {
 					ISVNNotificationCallback listener = new ISVNNotificationCallback() {
-						//SVNEventAction.UNLOCK_FAILED 24						
-						protected final static int FAILED = 24;						
 						public void notify(SVNNotification info) {					
-							if (FAILED == info.action) {									
+							if (SVNNotification.PerformedAction.FAILED_UNLOCK == info.action) {									
 								problems.add(info);				
 							}					
 						}						

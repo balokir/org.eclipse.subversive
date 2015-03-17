@@ -27,8 +27,6 @@ public class SVNErrorCodes {
 	public static final int NO_ERROR_CODE = 0;
 	
 	// SVN error codes
-	public static final int categorySize = 5000;
-
 	public static final int badContainingPool = 125000;
 
 	public static final int badFilename = 125001;
@@ -487,4 +485,39 @@ public class SVNErrorCodes {
 	public static final int diffDatasourceModified = 225000;
 
 	public static final int raSerfSspiInitialisationFailed = 230000;
+	
+	public static boolean belongsTo(int errorCode, int errorCategory) {
+		return errorCode >= errorCategory && errorCode < errorCategory + SVNErrorCodes.ERROR_CATEGORY_SIZE;
+	}
+	
+	public static int categoryOf(int errorCode) {
+		return errorCode - (errorCode - SVNErrorCodes.ERROR_START_OFFSET) % SVNErrorCodes.ERROR_CATEGORY_SIZE;
+	}
+	
+    private static final int ERROR_START_OFFSET = 120000;
+    private static final int ERROR_CATEGORY_SIZE = 5000;
+
+    public static final int BAD_CATEGORY = ERROR_START_OFFSET + 1 * ERROR_CATEGORY_SIZE;
+    public static final int XML_CATEGORY = ERROR_START_OFFSET + 2 * ERROR_CATEGORY_SIZE;
+    public static final int IO_CATEGORY = ERROR_START_OFFSET + 3 * ERROR_CATEGORY_SIZE;
+    public static final int STREAM_CATEGORY = ERROR_START_OFFSET + 4 * ERROR_CATEGORY_SIZE;
+    public static final int NODE_CATEGORY = ERROR_START_OFFSET + 5 * ERROR_CATEGORY_SIZE;
+    public static final int ENTRY_CATEGORY = ERROR_START_OFFSET + 6 * ERROR_CATEGORY_SIZE;
+    public static final int WC_CATEGORY = ERROR_START_OFFSET + 7 * ERROR_CATEGORY_SIZE;
+    public static final int FS_CATEGORY = ERROR_START_OFFSET + 8 * ERROR_CATEGORY_SIZE;
+    public static final int REPOS_CATEGORY = ERROR_START_OFFSET + 9 * ERROR_CATEGORY_SIZE;
+    public static final int RA_CATEGORY = ERROR_START_OFFSET + 10 * ERROR_CATEGORY_SIZE;
+    public static final int RA_DAV_CATEGORY = ERROR_START_OFFSET + 11 * ERROR_CATEGORY_SIZE;
+    public static final int RA_LOCAL_CATEGORY = ERROR_START_OFFSET + 12 * ERROR_CATEGORY_SIZE;
+    public static final int SVNDIFF_CATEGORY = ERROR_START_OFFSET + 13 * ERROR_CATEGORY_SIZE;
+    public static final int APMOD_CATEGORY = ERROR_START_OFFSET + 14 * ERROR_CATEGORY_SIZE;
+    public static final int CLIENT_CATEGORY = ERROR_START_OFFSET + 15 * ERROR_CATEGORY_SIZE;
+    public static final int MISC_CATEGORY = ERROR_START_OFFSET + 16 * ERROR_CATEGORY_SIZE;
+    public static final int CL_CATEGORY = ERROR_START_OFFSET + 17 * ERROR_CATEGORY_SIZE;
+    public static final int RA_SVN_CATEGORY = ERROR_START_OFFSET + 18 * ERROR_CATEGORY_SIZE;
+    public static final int AUTHN_CATEGORY = ERROR_START_OFFSET + 19 * ERROR_CATEGORY_SIZE;
+    public static final int AUTHZ_CATEGORY = ERROR_START_OFFSET + 20 * ERROR_CATEGORY_SIZE;
+    public static final int DIFF_CATEGORY = ERROR_START_OFFSET + 21 * ERROR_CATEGORY_SIZE;
+    public static final int RA_SERF_CATEGORY = ERROR_START_OFFSET + 22 * ERROR_CATEGORY_SIZE;
+    public static final int MALFUNC_CATEGORY = ERROR_START_OFFSET + 23 * ERROR_CATEGORY_SIZE;
 }

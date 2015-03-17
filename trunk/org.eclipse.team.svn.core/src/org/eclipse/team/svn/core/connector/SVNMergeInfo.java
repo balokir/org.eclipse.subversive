@@ -31,16 +31,21 @@ public class SVNMergeInfo {
 	/**
 	 * Kind of merge info log classes
 	 */
-	public static class LogKind {
+	public enum LogKind {
 		/**
 		 * Does not exist
 		 */
-		public static final int ELIGIBLE = 0;
-
+		ELIGIBLE(0),
 		/**
 		 * Exists, but uninteresting
 		 */
-		public static final int MERGED = 1;
+		MERGED(1);
+		
+		public final int id;
+		
+		private LogKind(int id) {
+			this.id = id;
+		}
 	}
 	
 	private Map<String, List<SVNRevisionRange>> mergeSources;

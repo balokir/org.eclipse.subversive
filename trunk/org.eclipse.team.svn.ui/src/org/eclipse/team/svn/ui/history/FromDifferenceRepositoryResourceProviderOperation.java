@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
@@ -65,7 +66,7 @@ public class FromDifferenceRepositoryResourceProviderOperation extends AbstractR
 		};
 	}
 	
-	protected IRepositoryResource createResourceFor(int kind, String url) {
+	protected IRepositoryResource createResourceFor(Kind kind, String url) {
 		IRepositoryResource retVal = null;
 		if (kind == SVNEntry.Kind.FILE) {
 			retVal = this.location.asRepositoryFile(url, false);

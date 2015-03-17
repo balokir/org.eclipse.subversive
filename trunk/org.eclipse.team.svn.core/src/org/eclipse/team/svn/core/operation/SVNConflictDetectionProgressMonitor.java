@@ -33,9 +33,9 @@ public abstract class SVNConflictDetectionProgressMonitor extends SVNProgressMon
 	
 	public void progress(int current, int total, ItemState state) {
 		super.progress(current, total, state);
-	    if (state.contentState == NodeStatus.CONFLICTED || 
-	        state.propState == NodeStatus.CONFLICTED ||
-	        state.action == PerformedAction.TREE_CONFLICT) {	    	
+	    if (state.contentState == NodeStatus.CONFLICTED.id || 
+	        state.propState == NodeStatus.CONFLICTED.id ||
+	        state.action == PerformedAction.TREE_CONFLICT.id) {	    	
 	    	this.processConflict(state);
 	    }
 	}

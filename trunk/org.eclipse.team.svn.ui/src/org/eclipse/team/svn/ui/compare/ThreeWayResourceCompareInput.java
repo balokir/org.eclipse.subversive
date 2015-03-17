@@ -238,8 +238,8 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	
 	protected void makeBranch(String localPath, SVNDiffStatus stLocal, SVNDiffStatus stRemote, final Map path2node, final IProgressMonitor monitor) throws Exception {
 		// 1) take local statuses
-		int localKind = stLocal == null ? SVNEntry.Kind.NONE : this.getNodeKind(stLocal, true);
-		int nodeKind = localKind == SVNEntry.Kind.NONE && stRemote != null ? this.getNodeKind(stRemote, false) : localKind;
+		SVNEntry.Kind localKind = stLocal == null ? SVNEntry.Kind.NONE : this.getNodeKind(stLocal, true);
+		SVNEntry.Kind nodeKind = localKind == SVNEntry.Kind.NONE && stRemote != null ? this.getNodeKind(stRemote, false) : localKind;
 		ILocalResource local = this.getLocalResource(localPath, nodeKind == SVNEntry.Kind.FILE);
 		// 2) skip all ignored resources that does not have real remote variants
 		if ((stRemote != null || !IStateFilter.SF_IGNORED.accept(local)) && !path2node.containsKey(SVNUtility.createPathForSVNUrl(SVNRemoteStorage.instance().asRepositoryResource(local.getResource()).getUrl()))) {
@@ -289,8 +289,8 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	}
 	
 	protected CompareNode makeNode(ILocalResource local, SVNDiffStatus stLocal, SVNDiffStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
-		int localNodeKind = local instanceof ILocalFile ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
-		int remoteNodeKind = stRemote == null ? localNodeKind : this.getNodeKind(stRemote, false);
+		SVNEntry.Kind localNodeKind = local instanceof ILocalFile ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
+		SVNEntry.Kind remoteNodeKind = stRemote == null ? localNodeKind : this.getNodeKind(stRemote, false);
 		
 		boolean useOriginator = this.local.isCopied() && (stLocal != null && stLocal.textStatus != SVNEntryStatus.Kind.ADDED || local.getResource().equals(this.local.getResource()));
 		IRepositoryResource []entries = this.getRepositoryEntries(local, remoteNodeKind, stLocal, stRemote);
@@ -303,12 +303,12 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			return null;
 		}
 		
-		int statusLeft = stLocal == null ? SVNEntryStatus.Kind.NORMAL : (stLocal.textStatus == SVNEntryStatus.Kind.NORMAL ? stLocal.propStatus : stLocal.textStatus);
+		SVNEntryStatus.Kind statusLeft = stLocal == null ? SVNEntryStatus.Kind.NORMAL : (stLocal.textStatus == SVNEntryStatus.Kind.NORMAL ? stLocal.propStatus : stLocal.textStatus);
 		if (statusLeft == SVNEntryStatus.Kind.DELETED && localNodeKind == SVNEntry.Kind.FILE && new File(FileUtility.getWorkingCopyPath(local.getResource())).exists()) {
 			statusLeft = SVNEntryStatus.Kind.REPLACED;
 		}
-		int fictiveStatusRight = useOriginator || statusLeft != SVNEntryStatus.Kind.ADDED && statusLeft != SVNEntryStatus.Kind.IGNORED && statusLeft != SVNEntryStatus.Kind.NONE && statusLeft != SVNEntryStatus.Kind.UNVERSIONED ? SVNEntryStatus.Kind.NORMAL :  SVNEntryStatus.Kind.NONE;
-		int statusRight = stRemote != null ? (stRemote.textStatus == SVNEntryStatus.Kind.NORMAL ? stRemote.propStatus : stRemote.textStatus) : fictiveStatusRight;
+		SVNEntryStatus.Kind fictiveStatusRight = useOriginator || statusLeft != SVNEntryStatus.Kind.ADDED && statusLeft != SVNEntryStatus.Kind.IGNORED && statusLeft != SVNEntryStatus.Kind.NONE && statusLeft != SVNEntryStatus.Kind.UNVERSIONED ? SVNEntryStatus.Kind.NORMAL :  SVNEntryStatus.Kind.NONE;
+		SVNEntryStatus.Kind statusRight = stRemote != null ? (stRemote.textStatus == SVNEntryStatus.Kind.NORMAL ? stRemote.propStatus : stRemote.textStatus) : fictiveStatusRight;
 		
 		// skip resources that already up-to-date: only in case if URL's are same
 		if (stRemote != null && this.rootRight.getUrl().equals(this.rootAncestor.getUrl())) {
@@ -384,7 +384,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		return new CompareNode(parent, Differencer.NO_CHANGE, local, node, ancestor, remote, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL);
 	}
 	
-	protected IRepositoryResource []getRepositoryEntries(ILocalResource local, int remoteNodeKind, SVNDiffStatus stLocal, SVNDiffStatus stRemote) {
+	protected IRepositoryResource []getRepositoryEntries(ILocalResource local, SVNEntry.Kind remoteNodeKind, SVNDiffStatus stLocal, SVNDiffStatus stRemote) {
 		IRepositoryLocation location = this.rootLeft.getRepositoryLocation();
 		
 		IRepositoryResource left = SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
@@ -423,7 +423,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	protected String getRevisionPart(ResourceElement element) throws Exception {
 		IRepositoryResource resource = element.getRepositoryResource();
 		SVNRevision selected = resource.getSelectedRevision();
-		int kind = selected.getKind();
+		SVNRevision.Kind kind = selected.getKind();
 		
 		if (kind == Kind.WORKING) {
 			return SVNUIMessages.ResourceCompareInput_LocalSign;
@@ -505,10 +505,10 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	}
 	
 	protected class CompareNode extends BaseCompareNode {
-		protected int localChangeType;
-		protected int remoteChangeType;
+		protected SVNEntryStatus.Kind localChangeType;
+		protected SVNEntryStatus.Kind remoteChangeType;
 		
-		public CompareNode(IDiffContainer parent, int kind, ILocalResource workingVersion, IRepositoryResource local, IRepositoryResource ancestor, IRepositoryResource remote, int localChangeType, int remoteChangeType) {
+		public CompareNode(IDiffContainer parent, int kind, ILocalResource workingVersion, IRepositoryResource local, IRepositoryResource ancestor, IRepositoryResource remote, SVNEntryStatus.Kind localChangeType, SVNEntryStatus.Kind remoteChangeType) {
 			super(parent, kind);
 			
 			this.localChangeType = localChangeType;
@@ -548,11 +548,11 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			}
 		}
 		
-		public int getLocalChangeType() {
+		public SVNEntryStatus.Kind getLocalChangeType() {
 			return this.localChangeType;
 		}
 		
-		public int getRemoteChangeType() {
+		public SVNEntryStatus.Kind getRemoteChangeType() {
 			return this.remoteChangeType;
 		}
 		

@@ -1709,6 +1709,9 @@ public class SVNUIMessages extends BaseMessages {
     public static String EditTreeConflictsPanel_StartVersion_Label;
     public static String EditTreeConflictsPanel_Switch_Operation;
     public static String EditTreeConflictsPanel_Unversioned_Reason;
+    public static String EditTreeConflictsPanel_MovedAway_Reason;
+    public static String EditTreeConflictsPanel_MovedHere_Reason;
+    public static String EditTreeConflictsPanel_Replaced_Reason;
     public static String EditTreeConflictsPanel_Update_Operation;
     public static String EditTreeConflictsPanel_MarkAsMerged_Button;
     

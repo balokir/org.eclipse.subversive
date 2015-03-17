@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.connector;
 
+
 /**
  * The basic status information container
  * 
@@ -24,92 +25,94 @@ public class SVNEntryStatus {
 	/**
 	 * Possible SVN status kinds
 	 */
-	public static class Kind {
+	public enum Kind {
 		/**
 		 * The entry does not exist
 		 */
-		public static final int NONE = 0;
-	
+		NONE(0),
 		/**
 		 * The entry exists, but uninteresting
 		 */
-		public static final int NORMAL = 1;
-	
+		NORMAL(1),
 		/**
 		 * The entry content or properties have been modified
 		 */
-		public static final int MODIFIED = 2;
-	
+		MODIFIED(2),
 		/**
 		 * The entry is scheduled for addition
 		 */
-		public static final int ADDED = 3;
-	
+		ADDED(3),
 		/**
 		 * The entry is scheduled for deletion
 		 */
-		public static final int DELETED = 4;
-	
+		DELETED(4),
 		/**
 		 * The entry is not versioned
 		 */
-		public static final int UNVERSIONED = 5;
-	
+		UNVERSIONED(5),
 		/**
 		 * The entry is missing (not scheduled for deletion but absent on the file system)
 		 */
-		public static final int MISSING = 6;
-	
+		MISSING(6),
 		/**
 		 * The entry was deleted and then re-added
 		 */
-		public static final int REPLACED = 7;
-	
+		REPLACED(7),
 		/**
 		 * The entry not only locally changed but merged with the repository changes also
 		 */
-		public static final int MERGED = 8;
-	
+		MERGED(8),
 		/**
 		 * The entry local is in conflicting state because local and repository changes cannot be merged automatically
 		 */
-		public static final int CONFLICTED = 9;
-	
+		CONFLICTED(9),
 		/**
 		 * An unversioned (or inconsistent working copy part) entry is in the way of the versioned entry
 		 */
-		public static final int OBSTRUCTED = 10;
-	
+		OBSTRUCTED(10),
 		/**
 		 * The entry is marked as ignored
 		 */
-		public static final int IGNORED = 11;
-	
+		IGNORED(11),
 		/**
 		 * The folder entry doesn't contain a complete child entries list
 		 */
-		public static final int INCOMPLETE = 12;
-	
+		INCOMPLETE(12),
 		/**
 		 * An unversioned path populated by an svn:externals property
 		 */
-		public static final int EXTERNAL = 13;
+		EXTERNAL(13);
+		
+		public final int id;
+		
+		public static Kind fromId(int id) {
+			for (Kind kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid entry status kind: " + id); //$NON-NLS-1$
+		}
+		
+		private Kind(int id) {
+			this.id = id;
+		}
 	}
 
 	/**
 	 * The entry kind (see {@link SVNEntry.Kind})
 	 */
-	public final int nodeKind;
+	public final SVNEntry.Kind nodeKind;
 
 	/**
 	 * The entry local content status in compare to base revision (see {@link SVNEntryStatus.Kind})
 	 */
-	public final int textStatus;
+	public final Kind textStatus;
 
 	/**
 	 * The entry local properties status in compare to base revision (see {@link SVNEntryStatus.Kind})
 	 */
-	public final int propStatus;
+	public final Kind propStatus;
 
 	/**
 	 * The {@link SVNChangeStatus} instance could be initialized only once because all fields are final
@@ -121,7 +124,7 @@ public class SVNEntryStatus {
 	 * @param propStatus
 	 *            the property status (see {@link SVNEntryStatus.Kind})
 	 */
-	public SVNEntryStatus(int nodeKind, int textStatus, int propStatus) {
+	public SVNEntryStatus(SVNEntry.Kind nodeKind, Kind textStatus, Kind propStatus) {
 		this.nodeKind = nodeKind;
 		this.textStatus = textStatus;
 		this.propStatus = propStatus;

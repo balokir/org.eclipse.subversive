@@ -119,25 +119,31 @@ public interface ISVNCredentialsPrompt {
 			return null;
 		}
 
-		public int askTrustSSLServer(Object context, String info, boolean allowPermanently) {
-			return ISVNCredentialsPrompt.ACCEPT_TEMPORARY;
+		public Answer askTrustSSLServer(Object context, String info, boolean allowPermanently) {
+			return Answer.ACCEPT_TEMPORARY;
 		}
 	};
 
-	/**
-	 * Reject the connection to the server.
-	 */
-	public static final int REJECT = 0;
-
-	/**
-	 * Accept the connection to the server <i>once</i> per session.
-	 */
-	public static final int ACCEPT_TEMPORARY = 1;
-
-	/**
-	 * Accept the connection to the server <i>permanently</i>.
-	 */
-	public static final int ACCEPT_PERMANENTLY = 2;
+	public enum Answer {
+		/**
+		 * Reject the connection to the server.
+		 */
+		REJECT(0),
+		/**
+		 * Accept the connection to the server <i>once</i> per session.
+		 */
+		ACCEPT_TEMPORARY(1),
+		/**
+		 * Accept the connection to the server <i>permanently</i>.
+		 */
+		ACCEPT_PERMANENTLY(2);
+		
+		public final int id;
+		
+		private Answer(int id) {
+			this.id = id;
+		}
+	}
 
 	public static final String ROOT_LOCATION = "<Repository Location>"; //$NON-NLS-1$
 
@@ -149,7 +155,7 @@ public interface ISVNCredentialsPrompt {
 
 	public boolean promptProxy(Object context);
 
-	public int askTrustSSLServer(Object context, String info, boolean allowPermanently);
+	public Answer askTrustSSLServer(Object context, String info, boolean allowPermanently);
 
 	public String getSSHPrivateKeyPath();
 

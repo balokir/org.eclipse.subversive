@@ -35,16 +35,16 @@ public class SVNConflictVersion {
     /**
      * @see SVNEntry.Kind
      */
-    public final int nodeKind;
+    public final SVNEntry.Kind nodeKind;
     
-    public SVNConflictVersion(String reposURL, long pegRevision, String pathInRepos, int nodeKind) {
+    public SVNConflictVersion(String reposURL, long pegRevision, String pathInRepos, SVNEntry.Kind nodeKind) {
     	this(reposURL, null, pegRevision, pathInRepos, nodeKind);
     }
     
     /**
      * @since 1.8
      */
-    public SVNConflictVersion(String reposURL, String reposUUID, long pegRevision, String pathInRepos, int nodeKind) {
+    public SVNConflictVersion(String reposURL, String reposUUID, long pegRevision, String pathInRepos, SVNEntry.Kind nodeKind) {
     	this.reposURL = reposURL;
     	this.reposUUID = reposUUID;
     	this.pegRevision = pegRevision;

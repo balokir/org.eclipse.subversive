@@ -13,6 +13,8 @@ package org.eclipse.team.svn.core.resource;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
+import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
@@ -22,9 +24,9 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
  */
 public interface IChangeStateProvider {
 	public String getLocalPath();
-	public int getNodeKind();
-	public int getPropertiesChangeType();
-	public int getTextChangeType();
+	public SVNEntry.Kind getNodeKind();
+	public SVNEntryStatus.Kind getPropertiesChangeType();
+	public SVNEntryStatus.Kind getTextChangeType();
 	public SVNRevision.Number getChangeRevision();
 	public String getChangeAuthor();
 	public String getComment();

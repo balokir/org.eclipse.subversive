@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractMergeSet;
@@ -41,13 +42,13 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     protected SVNRevisionRange []revisions;
     protected boolean ignoreAncestry;
     protected boolean recordOnly;
-    protected int depth;
+    protected SVNDepth depth;
 
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []from, SVNRevisionRange []revisions, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []from, SVNRevisionRange []revisions, boolean ignoreAncestry, SVNDepth depth, IWorkbenchPart part) {
         this(locals, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(from), revisions, ignoreAncestry, depth, part);
     }
 
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry, SVNDepth depth, IWorkbenchPart part) {
         this(locals, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromStart), new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromEnd), ignoreAncestry, depth, part);
     }
 
@@ -55,7 +56,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
         this(locals, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(from), part);
     }
 
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider from, SVNRevisionRange []revisions, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider from, SVNRevisionRange []revisions, boolean ignoreAncestry, SVNDepth depth, IWorkbenchPart part) {
         super("Operation_ShowMergeView", SVNUIMessages.class); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;
@@ -65,7 +66,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
         this.depth = depth;
     }
     
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean ignoreAncestry, SVNDepth depth, IWorkbenchPart part) {
         super("Operation_ShowMergeView", SVNUIMessages.class); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;

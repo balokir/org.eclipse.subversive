@@ -55,7 +55,7 @@ public class GetFileContentOperation extends AbstractFileOperation {
 	    IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
 		ISVNConnector proxy = remote.getRepositoryLocation().acquireSVNProxy();
 		try {
-			int kind = this.revision.getKind();
+			SVNRevision.Kind kind = this.revision.getKind();
 			if (kind == Kind.BASE || kind == Kind.WORKING) {
 				proxy.streamFileContent(new SVNEntryRevisionReference(file.getAbsolutePath(), null, this.revision), this.bufferSize, this.target, new SVNProgressMonitor(this, monitor, null));
 			}

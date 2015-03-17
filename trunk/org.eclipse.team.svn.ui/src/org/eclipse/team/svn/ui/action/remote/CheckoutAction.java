@@ -244,7 +244,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 		return operateResources;
 	}
 	
-	public static IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []resources, HashMap checkoutMap, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
+	public static IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []resources, HashMap checkoutMap, boolean respectHierarchy, String location, SVNDepth depth, boolean ignoreExternals) {
 		List resourceList = new ArrayList(Arrays.asList(resources));
 		if (checkoutMap != null && checkoutMap.keySet().size() != resources.length) {
 			for (Iterator iter = checkoutMap.entrySet().iterator(); iter.hasNext();) {
@@ -272,7 +272,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 				operateMap.put(resources2names.get(checkoutSet[i]), checkoutSet[i]);
 			}
 			
-			return new CheckoutOperation(operateMap, respectHierarchy, location, recureDepth, ignoreExternals);
+			return new CheckoutOperation(operateMap, respectHierarchy, location, depth, ignoreExternals);
 		}
 		return null;
 	}

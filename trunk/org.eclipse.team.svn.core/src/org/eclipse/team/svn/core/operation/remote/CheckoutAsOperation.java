@@ -30,6 +30,7 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -53,15 +54,15 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	protected IRepositoryResource resource;
 	protected String projectLocation;
 	protected List<IProject> overlappingProjects;
-	protected int depth;
+	protected SVNDepth depth;
 	protected long options;
 	protected RestoreProjectMetaOperation restoreOp;
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, int depth, boolean ignoreExternals) {
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, SVNDepth depth, boolean ignoreExternals) {
 		this(projectName, resource, Platform.getLocation().toString(), depth, ignoreExternals);
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, int depth, boolean ignoreExternals) {
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, SVNDepth depth, boolean ignoreExternals) {
 		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), depth, ignoreExternals); //$NON-NLS-1$
 	}
 	
@@ -69,11 +70,11 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		return 19;
 	}
 
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int depth, boolean ignoreExternals) {
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, SVNDepth depth, boolean ignoreExternals) {
 		this(projectName, resource, projectLocation, depth, ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE);
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int depth, long options) {
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, SVNDepth depth, long options) {
 		super("Operation_CheckOutAs", SVNMessages.class); //$NON-NLS-1$
 		projectName = FileUtility.formatResourceName(projectName);
 		if (FileUtility.isCaseInsensitiveOS()) {

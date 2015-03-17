@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateProjectsOperation;
@@ -44,7 +45,7 @@ public class DefaultCheckoutFactory implements ICheckoutFactory {
 		return new EclipseProjectsFilter();
 	}
 	
-	public IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []remote, HashMap checkoutMap, boolean respectHierarchy, String location,  int recurseDepth, boolean ignoreExternals) {
+	public IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []remote, HashMap checkoutMap, boolean respectHierarchy, String location,  SVNDepth recurseDepth, boolean ignoreExternals) {
 		return CheckoutAction.getCheckoutOperation(shell, remote, checkoutMap, respectHierarchy, location, recurseDepth, ignoreExternals);
 	}
 

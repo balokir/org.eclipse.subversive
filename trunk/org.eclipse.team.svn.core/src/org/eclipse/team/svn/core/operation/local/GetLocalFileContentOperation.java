@@ -36,7 +36,7 @@ public class GetLocalFileContentOperation extends AbstractGetFileContentOperatio
 	protected IResource resource;
 	protected SVNRevision revision;
 
-	public GetLocalFileContentOperation(IResource resource, int revisionKind) {
+	public GetLocalFileContentOperation(IResource resource, SVNRevision.Kind revisionKind) {
 		super("Local"); //$NON-NLS-1$
 		this.resource = resource;
 		this.revision = revisionKind == Kind.BASE ? SVNRevision.BASE : SVNRevision.WORKING;

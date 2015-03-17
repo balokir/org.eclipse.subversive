@@ -271,8 +271,8 @@ public final class SVNUtility {
 	}
 	
 	public static boolean useSingleReferenceSignature(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2) {
-		int kind1 = reference1.revision.getKind();
-		int kind2 = reference2.revision.getKind();
+		SVNRevision.Kind kind1 = reference1.revision.getKind();
+		SVNRevision.Kind kind2 = reference2.revision.getKind();
 		if ((kind1 == SVNRevision.Kind.BASE || kind1 == SVNRevision.Kind.WORKING) && (kind2 == SVNRevision.Kind.BASE || kind2 == SVNRevision.Kind.WORKING)) {
 			return false;
 		}
@@ -302,7 +302,7 @@ public final class SVNUtility {
 		return retVal[0];
 	}
 	
-	public static SVNChangeStatus []status(ISVNConnector proxy, String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNChangeStatus []status(ISVNConnector proxy, String path, SVNDepth depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNChangeStatus> statuses = new ArrayList<SVNChangeStatus>();
 		proxy.status(path, depth, options, null, new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
@@ -324,7 +324,7 @@ public final class SVNUtility {
 		return statuses.toArray(new SVNChangeStatus[statuses.size()]);
 	}
 	
-	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, SVNDepth depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		proxy.diffStatusTwo(reference1, reference2, depth, options, null, new ISVNDiffStatusCallback() {
 			public void next(SVNDiffStatus status) {
 				statuses.add(status);
@@ -332,7 +332,7 @@ public final class SVNUtility {
 		}, monitor);
 	}
 	
-	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryReference reference, SVNRevisionRange range, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryReference reference, SVNRevisionRange range, SVNDepth depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		proxy.diffStatus(reference, range, depth, options, null, new ISVNDiffStatusCallback() {
 			public void next(SVNDiffStatus status) {
 				statuses.add(status);
@@ -340,7 +340,7 @@ public final class SVNUtility {
 		}, monitor);
 	}
 	
-	public static SVNMergeStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNMergeStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, SVNDepth depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNMergeStatus> statuses = new ArrayList<SVNMergeStatus>();
 		proxy.mergeStatus(reference, revisions, path, depth, options, new ISVNMergeStatusCallback() {
 			public void next(SVNMergeStatus status) {
@@ -350,7 +350,7 @@ public final class SVNUtility {
 		return statuses.toArray(new SVNMergeStatus[statuses.size()]);
 	}
 	
-	public static SVNEntry []list(ISVNConnector proxy, SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNEntry []list(ISVNConnector proxy, SVNEntryRevisionReference reference, SVNDepth depth, int direntFields, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNEntry> entries = new ArrayList<SVNEntry>();
 		proxy.listEntries(reference, depth, direntFields, options, new ISVNEntryCallback() {
 			public void next(SVNEntry entry) {
@@ -383,7 +383,7 @@ public final class SVNUtility {
 		}
 	}
 	
-	public static SVNEntryInfo []info(ISVNConnector proxy, SVNEntryRevisionReference reference, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNEntryInfo []info(ISVNConnector proxy, SVNEntryRevisionReference reference, SVNDepth depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNEntryInfo> infos = new ArrayList<SVNEntryInfo>();
 		proxy.getInfo(reference, depth, null, new ISVNEntryInfoCallback() {
 			public void next(SVNEntryInfo info) {
@@ -1143,7 +1143,7 @@ public final class SVNUtility {
 		return SVNUtility.combineLocationsByUUID(repository2Resources);
 	}
 	
-	public static int getNodeKind(String path, int kind, boolean ignoreNone) {
+	public static SVNEntry.Kind getNodeKind(String path, SVNEntry.Kind kind, boolean ignoreNone) {
 		if (kind == Kind.DIR || kind == Kind.FILE || kind == Kind.SYMLINK) {
 			return kind;
 		}
@@ -1358,7 +1358,7 @@ public final class SVNUtility {
 		return operatedProjects.toArray(new IProject[0]);
 	}
 	
-	public static String getDepthArg(int depth, long options) {
+	public static String getDepthArg(SVNDepth depth, long options) {
 		//TODO move into SVNDepth
 		String depthArg = (options & ISVNConnector.Options.DEPTH_IS_STICKY) != 0 ? " --set-depth " : " --depth "; //$NON-NLS-1$
 		if (depth == SVNDepth.EMPTY) {

@@ -24,134 +24,142 @@ public class SVNRepositoryNotification {
 	/**
 	 * What action was applied to the node
 	 */
-	public static class NodeAction {
-		public static final int UNKNOWN = -1;
-
+	public enum NodeAction {
+		UNKNOWN(-1),
 		/**
 		 * The node was changes
 		 */
-		public static final int CHANGE = 0;
-
+		CHANGE(0),
 		/**
 		 * The node was added
 		 */
-		public static final int ADD = 1;
-
+		ADD(1),
 		/**
 		 * The node was deleted
 		 */
-		public static final int DELETE = 2;
-
+		DELETE(2),
 		/**
 		 * The node was replaced
 		 */
-		public static final int REPLACE = 3;
+		REPLACE(3);
+		
+		public final int id;
 
 		public static boolean isActionKnown(int action) {
-			return action >= NodeAction.CHANGE /*0*/ && action <= NodeAction.REPLACE /*3*/;
+			return action >= NodeAction.CHANGE.id /*0*/ && action <= NodeAction.REPLACE.id /*3*/;
+		}
+		
+		public static NodeAction fromId(int id) {
+			for (NodeAction kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid node action kind: " + id); //$NON-NLS-1$
+		}
+		
+		private NodeAction(int id) {
+			this.id = id;
 		}
 	}
 
 	/**
 	 * The type of action triggering the notification
 	 */
-	public static class Action {
-		public static final int UNKNOWN = -1;
-
+	public enum Action {
+		UNKNOWN(-1),
 		/**
 		 * A warning message is waiting.
 		 */
-		public static final int WARNING = 0;
-
+		WARNING(0),
 		/**
 		 * A revision has finished being dumped.
 		 */
-		public static final int DUMP_REV_END = 1;
-
+		DUMP_REV_END(1),
 		/**
 		 * A revision has finished being verified.
 		 */
-		public static final int VERIFY_REV_END = 2;
-
+		VERIFY_REV_END(2),
 		/**
 		 * Packing of an FSFS shard has commenced.
 		 */
-		public static final int PACK_SHARD_START = 3;
-
+		PACK_SHARD_START(3),
 		/**
 		 * Packing of an FSFS shard is completed.
 		 */
-		public static final int PACK_SHARD_END = 4;
-
+		PACK_SHARD_END(4),
 		/**
 		 * Packing of the shard revprops has commenced.
 		 */
-		public static final int PACK_SHARD_START_REVPROP = 5;
-
+		PACK_SHARD_START_REVPROP(5),
 		/**
 		 * Packing of the shard revprops has completed.
 		 */
-		public static final int PACK_SHARD_END_REVPROP = 6;
-
+		PACK_SHARD_END_REVPROP(6),
 		/**
 		 * A revision has begun loading.
 		 */
-		public static final int LOAD_TXN_START = 7;
-
+		LOAD_TXN_START(7),
 		/**
 		 * A revision has finished loading.
 		 */
-		public static final int LOAD_TXN_COMMITTED = 8;
-
+		LOAD_TXN_COMMITTED(8),
 		/**
 		 * A node has begun loading.
 		 */
-		public static final int LOAD_NODE_START = 9;
-
+		LOAD_NODE_START(9),
 		/**
 		 * A node has finished loading.
 		 */
-		public static final int LOAD_NODE_END = 10;
-
+		LOAD_NODE_END(10),
 		/**
 		 * A copied node has been encountered.
 		 */
-		public static final int LOAD_COPIED_NODE = 11;
-
+		LOAD_COPIED_NODE(11),
 		/**
 		 * Mergeinfo has been normalized.
 		 */
-		public static final int LOAD_NORMALIZED_MERGEINFO = 12;
-
+		LOAD_NORMALIZED_MERGEINFO(12),
 		/**
 		 * The operation has acquired a mutex for the repo.
 		 */
-		public static final int MUTEX_ACQUIRED = 13;
-
+		MUTEX_ACQUIRED(13),
 		/**
 		 * Recover has started.
 		 */
-		public static final int RECOVER_START = 14;
-
+		RECOVER_START(14),
 		/**
 		 * Upgrade has started.
 		 */
-		public static final int UPGRADE_START = 15;
-
+		UPGRADE_START(15),
 		/**
 		 * A revision was skipped during loading.
 		 * @since 1.8
 		 */
-		public static final int LOAD_SKIPPED_REV = 16;
-
+		LOAD_SKIPPED_REV(16),
 		/**
 		 * The structure of a revision is being verified.
 		 * @since 1.8
 		 */
-		public static final int VERIFY_REV_STRUCTURE = 17;
+		VERIFY_REV_STRUCTURE(17);
 
+		public final int id;
+		
 		public static boolean isActionKnown(int action) {
-			return action >= Action.WARNING /*0*/ && action <= Action.VERIFY_REV_STRUCTURE /*17*/;
+			return action >= Action.WARNING.id /*0*/ && action <= Action.VERIFY_REV_STRUCTURE.id /*17*/;
+		}
+		
+		public static Action fromId(int id) {
+			for (Action kind : values()) {
+				if (kind.id == id) {
+					return kind;
+				}
+			}
+			throw new IllegalArgumentException("Invalid action kind: " + id); //$NON-NLS-1$
+		}
+		
+		private Action(int id) {
+			this.id = id;
 		}
 	}
 
@@ -163,12 +171,12 @@ public class SVNRepositoryNotification {
 	/**
 	 * The action performed with the node (see {@link NodeAction}).
 	 */
-	public final int nodeAction;
+	public final NodeAction nodeAction;
 
 	/**
 	 * The action performed which triggered the event (see {@link Action}).
 	 */
-	public final int action;
+	public final Action action;
 
 	/**
 	 * The revision for the item.
@@ -195,7 +203,7 @@ public class SVNRepositoryNotification {
 	 */
 	public final long oldRevision;
 
-	public SVNRepositoryNotification(String path, int nodeAction, int action, long revision, String warning, long shard, long newRevision, long oldRevision) {
+	public SVNRepositoryNotification(String path, NodeAction nodeAction, Action action, long revision, String warning, long shard, long newRevision, long oldRevision) {
 		this.path = path;
 		this.nodeAction = nodeAction;
 		this.action = action;

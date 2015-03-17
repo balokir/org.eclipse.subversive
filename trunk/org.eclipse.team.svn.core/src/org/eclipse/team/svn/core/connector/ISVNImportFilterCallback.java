@@ -34,5 +34,5 @@ public interface ISVNImportFilterCallback {
 	 *            
 	 * @return {@link Boolean}
 	 */
-	public boolean filterOut(String path, int kind, boolean special);
+	public boolean filterOut(String path, SVNEntry.Kind kind, boolean special);
 }

@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -172,19 +171,19 @@ public class AffectedPathsComposite extends Composite {
 					if (rect.contains(e.x, e.y)){
 						SVNChangedPathData data = (SVNChangedPathData)item.getData();
 						switch (data.action) {
-							case SVNLogPath.ChangeType.ADDED: {
+							case ADDED: {
 								tooltip = SVNUIMessages.LogMessagesComposite_Add;
 								break;
 			    			}
-			    			case SVNLogPath.ChangeType.MODIFIED: {
+			    			case MODIFIED: {
 			    				tooltip = SVNUIMessages.LogMessagesComposite_Modify;
 			    				break;
 			    			}
-			    			case SVNLogPath.ChangeType.DELETED: {
+			    			case DELETED: {
 			    				tooltip = SVNUIMessages.LogMessagesComposite_Delete;
 			    				break;
 			    			}
-			    			case SVNLogPath.ChangeType.REPLACED: {
+			    			case REPLACED: {
 			    				tooltip = SVNUIMessages.LogMessagesComposite_Replace;
 			    				break;
 			    			}
@@ -251,19 +250,19 @@ public class AffectedPathsComposite extends Composite {
 					this.images.put(descr, img);
 				}
 				switch (((SVNChangedPathData)element).action) {
-					case SVNLogPath.ChangeType.ADDED: {
+					case ADDED: {
 						descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.ADDITION_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 						break;
 					}
-					case SVNLogPath.ChangeType.MODIFIED: {
+					case MODIFIED: {
 						descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.MODIFICATION_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 						break;
 					}
-					case SVNLogPath.ChangeType.DELETED: {
+					case DELETED: {
 						descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.DELETION_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 						break;
 					}
-					case SVNLogPath.ChangeType.REPLACED: {
+					case REPLACED: {
 						descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.REPLACEMENT_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 						break;
 					}

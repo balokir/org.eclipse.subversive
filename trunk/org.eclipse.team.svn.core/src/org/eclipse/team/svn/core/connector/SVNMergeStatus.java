@@ -110,7 +110,7 @@ public class SVNMergeStatus extends SVNEntryStatus {
 	 * @param treeConflictDescriptor
 	 *            description of the tree conflict
 	 */
-	public SVNMergeStatus(String startUrl, String endUrl, String path, int nodeKind, int textStatus, int propStatus, long startRevision, long endRevision, long date, String author, String comment, boolean skipped, boolean hasTreeConflict, SVNConflictDescriptor treeConflictDescriptor) {
+	public SVNMergeStatus(String startUrl, String endUrl, String path, SVNEntry.Kind nodeKind, Kind textStatus, Kind propStatus, long startRevision, long endRevision, long date, String author, String comment, boolean skipped, boolean hasTreeConflict, SVNConflictDescriptor treeConflictDescriptor) {
 		super(nodeKind, textStatus, propStatus);
 		this.startUrl = startUrl;
 		this.endUrl = endUrl;

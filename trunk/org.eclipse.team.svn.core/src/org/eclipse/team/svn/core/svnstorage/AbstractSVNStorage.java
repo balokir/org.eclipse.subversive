@@ -345,16 +345,16 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 	protected SVNRevision convertToRevision(int revisionKind, long revNum, boolean isPegRevision) {
 		SVNRevision revision;
-		if (revisionKind == Kind.NUMBER) {
+		if (revisionKind == Kind.NUMBER.id) {
 			if (revNum == SVNRevision.INVALID_REVISION_NUMBER) {
 				revision = isPegRevision ? null : SVNRevision.INVALID_REVISION;
 			} else {
 				revision = SVNRevision.fromNumber(revNum);
 			}						
-		} else if (revisionKind == Kind.DATE) {
+		} else if (revisionKind == Kind.DATE.id) {
 			revision = SVNRevision.fromDate(revNum);
 		} else {
-			revision = SVNRevision.fromKind(revisionKind);			
+			revision = SVNRevision.fromKind(SVNRevision.Kind.fromId(revisionKind));			
 		}
 		return revision;
 	}

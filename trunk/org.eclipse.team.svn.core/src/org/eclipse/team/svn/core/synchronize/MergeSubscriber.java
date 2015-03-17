@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -141,14 +142,14 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			public SVNRevision.Number getChangeRevision() {
 				return current.endRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.endRevision);
 			}
-			public int getTextChangeType() {
+			public Kind getTextChangeType() {
 				return current.textStatus;
 			}
-			public int getPropertiesChangeType() {
+			public SVNEntryStatus.Kind getPropertiesChangeType() {
 				return current.propStatus;
 			}
-			public int getNodeKind() {
-				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
+			public SVNEntry.Kind getNodeKind() {
+				SVNEntry.Kind kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
 				// if not exists on repository try to check it with WC kind...
 				return kind == SVNEntry.Kind.NONE && !current.hasTreeConflict ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
 			}
@@ -196,14 +197,14 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			public SVNRevision.Number getChangeRevision() {
 				return current.startRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.startRevision);
 			}
-			public int getTextChangeType() {
+			public Kind getTextChangeType() {
 				return current.startRevision == SVNRevision.INVALID_REVISION_NUMBER ? SVNEntryStatus.Kind.NONE : SVNEntryStatus.Kind.NORMAL;
 			}
-			public int getPropertiesChangeType() {
+			public SVNEntryStatus.Kind getPropertiesChangeType() {
 				return SVNEntryStatus.Kind.NONE;
 			}
-			public int getNodeKind() {
-				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
+			public SVNEntry.Kind getNodeKind() {
+				SVNEntry.Kind kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
 				// if not exists on repository try to check it with WC kind...
 				return kind == SVNEntry.Kind.NONE && !current.hasTreeConflict ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
 			}

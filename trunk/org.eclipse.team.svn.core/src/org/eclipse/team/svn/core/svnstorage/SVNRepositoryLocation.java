@@ -97,7 +97,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	private transient HashMap<Thread, ProxyHolder> thread2Proxy;
 	private transient IRevisionLink []revisionLinks;
     protected transient boolean trustSiteDefined;
-    protected transient int trustSite;
+    protected transient ISVNCredentialsPrompt.Answer trustSite;
     protected transient int proxyConfigurationState;
     
     protected boolean authorNameEnabled;
@@ -978,7 +978,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.location = location;
 		}
 
-		public int askTrustSSLServer(Object location, String info, boolean allowPermanently) {
+		public Answer askTrustSSLServer(Object location, String info, boolean allowPermanently) {
         	return this.prompt.askTrustSSLServer(this.location, info, allowPermanently);
 		}
 
@@ -1182,10 +1182,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			super(prompt, SVNRepositoryLocation.this);
 		}
 
-		public int askTrustSSLServer(IRepositoryLocation location, String info, boolean allowPermanently) {
+		public ISVNCredentialsPrompt.Answer askTrustSSLServer(IRepositoryLocation location, String info, boolean allowPermanently) {
         	if (!SVNRepositoryLocation.this.trustSiteDefined) {
         		SVNRepositoryLocation.this.trustSite = super.askTrustSSLServer(SVNRepositoryLocation.this, info, allowPermanently);
-        		if (SVNRepositoryLocation.this.trustSite != ISVNCredentialsPrompt.REJECT) {
+        		if (SVNRepositoryLocation.this.trustSite != ISVNCredentialsPrompt.Answer.REJECT) {
             		SVNRepositoryLocation.this.trustSiteDefined = true;
         		}
         		else {

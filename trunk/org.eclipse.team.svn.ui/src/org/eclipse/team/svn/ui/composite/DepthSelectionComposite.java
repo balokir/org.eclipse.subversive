@@ -59,7 +59,7 @@ public class DepthSelectionComposite extends Composite {
 	protected IValidationManager validationManager;
 		
 	//output
-	protected int depth;
+	protected SVNDepth depth;
 	protected boolean isStickyDepth;
 	protected String updatePath;
 	
@@ -223,19 +223,19 @@ public class DepthSelectionComposite extends Composite {
 	protected void setDepthComboValue() {
 		String strDepth;
 		switch (this.depth) {
-			case SVNDepth.INFINITY:
+			case INFINITY:
 				strDepth = infinity;
 			break;
-			case SVNDepth.IMMEDIATES:
+			case IMMEDIATES:
 				strDepth = immediates;
 			break;
-			case SVNDepth.FILES:
+			case FILES:
 				strDepth = files;
 			break;
-			case SVNDepth.UNKNOWN:
+			case UNKNOWN:
 				strDepth = unknown;
 			break;
-			case SVNDepth.EXCLUDE:
+			case EXCLUDE:
 				strDepth = exclude;
 			break;
 			default:
@@ -305,7 +305,7 @@ public class DepthSelectionComposite extends Composite {
 		}			
 	}
 	
-	public int getDepth() {
+	public SVNDepth getDepth() {
 		return this.depth;
 	}
 	

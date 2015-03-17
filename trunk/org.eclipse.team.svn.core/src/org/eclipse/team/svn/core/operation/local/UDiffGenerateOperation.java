@@ -56,7 +56,7 @@ public class UDiffGenerateOperation extends AbstractActionOperation {
 			String projectPath = FileUtility.getWorkingCopyPath(this.local.getResource().getProject());
 			String relativeToDir = projectPath;
 								
-			int depth = SVNDepth.INFINITY;							
+			SVNDepth depth = SVNDepth.INFINITY;							
 			long options = ISVNConnector.Options.NONE;
 			//ISVNConnector.Options.IGNORE_ANCESTRY;					
 			String[] changelistNames = new String[0];

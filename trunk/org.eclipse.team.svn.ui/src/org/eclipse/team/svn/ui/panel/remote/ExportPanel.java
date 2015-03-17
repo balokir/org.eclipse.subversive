@@ -63,7 +63,7 @@ public class ExportPanel extends AbstractDialogPanel {
     protected void cancelChangesImpl() {
     }
     
-    public int getDepth(){
+    public SVNDepth getDepth(){
     	if (this.depthSelector == null) {
     		return SVNDepth.INFINITY;
     	}

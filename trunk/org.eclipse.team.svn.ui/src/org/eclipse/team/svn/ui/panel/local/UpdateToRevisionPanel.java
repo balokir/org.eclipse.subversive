@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.panel.local;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -36,7 +37,7 @@ public class UpdateToRevisionPanel extends AbstractDialogPanel {
 	
 	//output
 	protected SVNRevision revision;
-	protected int depth;
+	protected SVNDepth depth;
 	protected boolean isStickyDepth;
 	protected String updatePath;
 	
@@ -76,7 +77,7 @@ public class UpdateToRevisionPanel extends AbstractDialogPanel {
 		return this.revision;
 	}
 	
-	public int getDepth() {
+	public SVNDepth getDepth() {
 		return this.depth;
 	}
 	

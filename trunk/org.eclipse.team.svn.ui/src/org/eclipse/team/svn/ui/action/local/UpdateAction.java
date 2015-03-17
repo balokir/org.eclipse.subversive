@@ -87,7 +87,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 		return UpdateAction.getUpdateOperation(updateSet, selectedRevision, SVNDepth.INFINITY, false, null);
 	}
 	
-	public static CompositeOperation getUpdateOperation(IResource []updateSet, SVNRevision selectedRevision, int depth, boolean isStickyDepth, String updateDepthPath) {
+	public static CompositeOperation getUpdateOperation(IResource []updateSet, SVNRevision selectedRevision, SVNDepth depth, boolean isStickyDepth, String updateDepthPath) {
 		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 		UpdateOperation mainOp = new UpdateOperation(updateSet, selectedRevision, ignoreExternals);
 		mainOp.setDepthOptions(depth, isStickyDepth, updateDepthPath);

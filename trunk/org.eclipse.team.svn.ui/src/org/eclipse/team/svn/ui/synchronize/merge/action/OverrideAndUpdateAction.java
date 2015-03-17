@@ -98,7 +98,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 			op.add(saveOp);
 			IResource []conflicting = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_CONFLICTING, IResource.DEPTH_ZERO);
 			if (conflicting.length > 0) {
-				op.add(new MarkResolvedOperation(conflicting, SVNConflictResolution.CHOOSE_LOCAL_FULL, SVNDepth.INFINITY));
+				op.add(new MarkResolvedOperation(conflicting, SVNConflictResolution.Choice.CHOOSE_LOCAL_FULL, SVNDepth.INFINITY));
 			}
 			op.add(mainOp);
 			op.add(new RestoreProjectMetaOperation(saveOp));
