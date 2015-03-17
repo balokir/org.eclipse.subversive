@@ -18,18 +18,20 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.eclipse.team.svn.core.connector.SVNLogPath;
+
 /**
  * @author Igor Burilo
  */
 public class CacheChangedPath {
 		
 	protected int pathIndex;	
-	protected char action;
+	protected SVNLogPath.ChangeType action;
 	
 	protected int copiedFromPathIndex;	
 	protected long copiedFromRevision;
 	
-	public CacheChangedPath(int pathIndex, char action, int copiedFromPathIndex, long copiedFromRevision) {
+	public CacheChangedPath(int pathIndex, SVNLogPath.ChangeType action, int copiedFromPathIndex, long copiedFromRevision) {
 		this.pathIndex = pathIndex;
 		this.action = action;		
 		this.copiedFromPathIndex = copiedFromPathIndex;
@@ -44,7 +46,7 @@ public class CacheChangedPath {
 		return pathIndex;
 	}
 
-	public char getAction() {
+	public SVNLogPath.ChangeType getAction() {
 		return action;
 	}
 	
@@ -61,7 +63,7 @@ public class CacheChangedPath {
 			DataInput dataIn = new DataInputStream(new ByteArrayInputStream(bytes));
 						
 			this.pathIndex = dataIn.readInt();
-			this.action = dataIn.readChar();
+			this.action = SVNLogPath.ChangeType.fromId(dataIn.readChar());
 			
 			byte copyFlag = dataIn.readByte();
 			if (copyFlag == 1) {
@@ -91,7 +93,7 @@ public class CacheChangedPath {
 			DataOutput bytes = new DataOutputStream(byteArray);
 								
 			bytes.writeInt(this.pathIndex);
-			bytes.writeChar(this.action);
+			bytes.writeChar(this.action.id);
 			
 			//copied from
 			if (this.copiedFromPathIndex != RepositoryCache.UNKNOWN_INDEX) {

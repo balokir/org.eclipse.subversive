@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.cache;
 
+import org.eclipse.team.svn.core.connector.SVNLogPath;
+
 /**
  * Add revision info to changed path class
  *  
@@ -29,7 +31,7 @@ public class CacheChangedPathWithRevision {
 		return this.changedPath.getPathIndex();
 	}
 
-	public char getAction() {
+	public SVNLogPath.ChangeType getAction() {
 		return this.changedPath.getAction();
 	}
 	

@@ -117,7 +117,7 @@ public class SVNScmHandlerUi extends ScmHandlerUi {
 	public boolean isValidRevision(ScmUrl scmUrl, String scmRevision) {
 		try {
 			SVNRevision revision = SVNRevision.fromString(scmRevision);
-			int kind = revision.getKind();
+			SVNRevision.Kind kind = revision.getKind();
 			return kind == SVNRevision.Kind.HEAD || kind == SVNRevision.Kind.NUMBER;	
 		} catch (Exception e) {
 			return false;

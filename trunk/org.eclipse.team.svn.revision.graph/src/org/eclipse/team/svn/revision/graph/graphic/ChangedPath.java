@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic;
 
+import org.eclipse.team.svn.core.connector.SVNLogPath;
+
 /**
  * Changed path for revision node
  * 
@@ -18,15 +20,15 @@ package org.eclipse.team.svn.revision.graph.graphic;
 public class ChangedPath {
 	
 	public final String path;
-	public final char action;
+	public final SVNLogPath.ChangeType action;
 	public final String copiedFromPath;
 	public final long copiedFromRevision;
 	
-	public ChangedPath(String path, char action, long revision) {
+	public ChangedPath(String path, SVNLogPath.ChangeType action, long revision) {
 		this(path, action, null, -1);
 	}
 	
-	public ChangedPath(String path, char action, String copiedFromPath, long copiedFromRevision) {
+	public ChangedPath(String path, SVNLogPath.ChangeType action, String copiedFromPath, long copiedFromRevision) {
 		this.path = path;		
 		this.action = action;
 		this.copiedFromPath = copiedFromPath;
