@@ -1,0 +1,44 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 2.0.4.I20150123-1700 release date: 23 January 2015
+
+1. What's New
+
+   The version is 2.0.4 service release. 
+   
+   Changes comparatively to the previous release version are listed below. The full list of 
+   changes you can find in Change Log.
+		
+	Features:
+	 * Add typical SVN errors description and possible solutions to help pages (bug 457516)
+	 
+	Fixes:
+	 * Can't install Subversive SVN Integration for the M2E Project v2.0.3 (bug 457869)
+	 * NPE at CopyRemoteResourcesToWcOperation [ID-QI8GK] (bug 457835)
+	 * JRE 1.6 incompatibility [ID-HK8DF] (bug 456334)
+	 * Automatic properties do not get applied to new files (bug 456640)
+	
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
+    * 4.2
+    * 4.3
+    * 4.4
+   
+   Subversive supports 
+    Migration for Subversion below version 1.6 to version 1.7 and higher,
+    Subversion version 1.7 with SVN Kit 1.7.13 and JavaHL 1.7.9,
+    Subversion version 1.8 with SVN Kit 1.8.7 and JavaHL 1.8.10
+
+2.2 Known issues
+
+	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.13 connector]
+	
