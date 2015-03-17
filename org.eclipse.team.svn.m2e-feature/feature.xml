@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.m2e"
       label="%featureName"
-      version="2.0.4.I20150123-1700"
+      version="3.0.0.I20150317-1700"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -16,12 +16,12 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/2.0/update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/2.0/update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/3.0/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/3.0/update-site/"/>
    </url>
 
    <requires>
-      <import feature="org.eclipse.team.svn" version="2.0.0.I20131101-1700" match="compatible"/>
+      <import feature="org.eclipse.team.svn" version="3.0.0.I20150317-1700" match="compatible"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -35,7 +35,7 @@
          id="org.eclipse.team.svn.m2e"
          download-size="26"
          install-size="26"
-         version="2.0.4.I20150123-1700"
+         version="3.0.0.I20150317-1700"
          unpack="false"/>
 
 </feature>
