@@ -8,6 +8,19 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 3.0.0.I20150317-1700 [17 March 2015]
+
+Features:
+ * Refactor SVN API support [use strict types for constant enumerations, improve error codes etc.] (bug 462326)
+ * Update plug-ins API compatibility version (bug 462338)
+ * Update integrations according to API changes (bug 462327)
+ 
+Fixes:
+ * Useless SVNProperty conversion in AddToSVNWithPropertiesOperation (bug 461199)
+ * Problems using blank spaces for a folder. (bug 459010)
+ 
+--------------------------------------------------------------------------------
+
 Version 2.0.4.I20150123-1700 [23 January 2015]
 
 Features:
