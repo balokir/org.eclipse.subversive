@@ -51,7 +51,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	protected boolean ignoreNestedProjects;
 	
 	public RefreshResourcesOperation(IResource []resources) {
-		this(resources, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES, false);
+		this(resources, false);
 	}
 	
 	public RefreshResourcesOperation(IResource []resources, boolean ignoreNestedProjects) {
@@ -74,9 +74,14 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public RefreshResourcesOperation(IResourceProvider provider, int depth, int refreshType) {
+		this(provider, depth, refreshType, false);
+	}
+
+	public RefreshResourcesOperation(IResourceProvider provider, int depth, int refreshType, boolean ignoreNestedProjects) {
 		super("Operation_RefreshResources", SVNMessages.class, provider); //$NON-NLS-1$
 		this.depth = depth;
 		this.refreshType = refreshType;
+		this.ignoreNestedProjects = ignoreNestedProjects;
 	}
 
 	public ISchedulingRule getSchedulingRule() {
@@ -123,6 +128,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []original = this.operableData();
 		final IResource []resources = this.depth == IResource.DEPTH_INFINITE ? FileUtility.shrinkChildNodes(original) : original;
+		final boolean isPriorToSVN17 = SVNUtility.isPriorToSVN17();
 		
 		if (this.refreshType != RefreshResourcesOperation.REFRESH_CACHE) {
 	    	ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
@@ -132,7 +138,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 						final IResource resource = resources[i];
 						RefreshResourcesOperation.this.protectStep(new IUnprotectedOperation() {
 							public void run(IProgressMonitor monitor) throws Exception {
-								if (SVNUtility.isPriorToSVN17()) {
+								if (isPriorToSVN17) {
 									if (resource.getType() != IResource.FILE && RefreshResourcesOperation.this.depth != IResource.DEPTH_INFINITE) {
 										// if depth is set to "infinite", then meta info will be refreshed together with the resource itself
 										RefreshResourcesOperation.this.refreshMetaInfo((IContainer)resource, monitor);
@@ -142,10 +148,6 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 										RefreshResourcesOperation.this.refreshMetaInfo(resource.getParent(), monitor);
 									}
 								}
-//								else {
-//									// if the SVN meta info is present inside the project then it is in the project root or higher (we do not consider mixed working copies at the moment)
-//									RefreshResourcesOperation.this.refreshMetaInfo(resource.getProject(), monitor);
-//								}
 								RefreshResourcesOperation.this.doRefresh(resource, RefreshResourcesOperation.this.depth, monitor);
 							}
 						}, monitor, resources.length);
@@ -155,7 +157,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 		}
 		
 		// FIXME there could be event doubles when SVN 1.7 is used
-		if (RefreshResourcesOperation.this.refreshType != RefreshResourcesOperation.REFRESH_CHANGES || !SVNUtility.isPriorToSVN17()) {
+		if (RefreshResourcesOperation.this.refreshType != RefreshResourcesOperation.REFRESH_CHANGES || !isPriorToSVN17) {
 			SVNRemoteStorage.instance().refreshLocalResources(resources, this.depth);
 			
 			IResource []roots = FileUtility.getPathNodes(resources);
@@ -189,7 +191,6 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 			}
 			throw ex;
 		}
-		FileUtility.findAndMarkSVNInternals(resource, true);
 	}
 
 }
