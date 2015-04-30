@@ -128,7 +128,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 				op.add(setOp);
 			}
 			if (externalsMap.size() > 0) {
-				op.add(new RefreshResourcesOperation(externalsMap.keySet().toArray(new IResource[externalsMap.size()]), IResource.DEPTH_ZERO, RefreshResourcesOperation.REFRESH_CACHE, false));
+				op.add(new RefreshResourcesOperation(externalsMap.keySet().toArray(new IResource[externalsMap.size()]), IResource.DEPTH_ZERO, RefreshResourcesOperation.REFRESH_CACHE));
 			}
 			
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
