@@ -71,18 +71,20 @@ public class AffectedPathsLabelProvider extends LabelProvider {
 		if (((AffectedPathsNode)element).getParent() == null) {
 			return this.currentRevision == 0 ? AffectedPathsLabelProvider.rootAdditionIcon : AffectedPathsLabelProvider.overlayedRootIcon;
 		}
-		switch (((AffectedPathsNode)element).getStatus()) {
-			case ADDED: {
-				return AffectedPathsLabelProvider.addedFolderIcon;
-			}
-			case MODIFIED: {
-				return AffectedPathsLabelProvider.modifiedFolderIcon;
-			}
-			case DELETED: {
-				return AffectedPathsLabelProvider.deletedFolderIcon;
-			}
-			case REPLACED: {
-				return AffectedPathsLabelProvider.replacedFolderIcon;
+		if (((AffectedPathsNode)element).getStatus() != null) {
+			switch (((AffectedPathsNode)element).getStatus()) {
+				case ADDED: {
+					return AffectedPathsLabelProvider.addedFolderIcon;
+				}
+				case MODIFIED: {
+					return AffectedPathsLabelProvider.modifiedFolderIcon;
+				}
+				case DELETED: {
+					return AffectedPathsLabelProvider.deletedFolderIcon;
+				}
+				case REPLACED: {
+					return AffectedPathsLabelProvider.replacedFolderIcon;
+				}
 			}
 		}
 		return AffectedPathsLabelProvider.overlayedFolderIcon;
