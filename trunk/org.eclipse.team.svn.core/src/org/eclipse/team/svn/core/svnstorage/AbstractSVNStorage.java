@@ -335,10 +335,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			new String(Base64.encode(String.valueOf(resource instanceof IRepositoryContainer).getBytes())) + ";" +  //$NON-NLS-1$
 			resource.getRepositoryLocation().getId() + ";" + //$NON-NLS-1$
 			new String(Base64.encode(resource.getUrl().getBytes())) + ";" + //$NON-NLS-1$
-			String.valueOf(resource.getSelectedRevision().getKind()) + ";" +  //$NON-NLS-1$
+			String.valueOf(resource.getSelectedRevision().getKind().id) + ";" +  //$NON-NLS-1$
 			this.convertRevisionToString(resource.getSelectedRevision()) + ";" + //$NON-NLS-1$
 			String.valueOf(IRepositoryRoot.KIND_ROOT) + ";" +  //$NON-NLS-1$
-			String.valueOf(resource.getPegRevision().getKind()) + ";" +  //$NON-NLS-1$
+			String.valueOf(resource.getPegRevision().getKind().id) + ";" +  //$NON-NLS-1$
 			this.convertRevisionToString(resource.getPegRevision()); //$NON-NLS-1$
 		return retVal;
 	}
