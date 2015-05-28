@@ -83,7 +83,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 					public void run(IProgressMonitor monitor) throws Exception {
 						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
-								svnChangeStatus.treeConflicts = info.treeConflicts;
+								svnChangeStatus.setTreeConflicts(info.treeConflicts);
 							}
 						}, new SVNProgressMonitor(AbstractStatusOperation.this, monitor, null, false));
 					}

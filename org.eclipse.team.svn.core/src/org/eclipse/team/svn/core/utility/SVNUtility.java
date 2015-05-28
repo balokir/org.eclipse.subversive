@@ -315,7 +315,7 @@ public final class SVNUtility {
 			if (svnChangeStatus.hasConflict && svnChangeStatus.treeConflicts == null) {
 				proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 					public void next(SVNEntryInfo info) {
-						svnChangeStatus.treeConflicts = info.treeConflicts;
+						svnChangeStatus.setTreeConflicts(info.treeConflicts);
 					}
 				}, monitor);
 			}

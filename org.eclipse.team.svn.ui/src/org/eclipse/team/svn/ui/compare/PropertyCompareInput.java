@@ -438,7 +438,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 				if (this.usePropsRej) {
 					SVNChangeStatus []status = SVNUtility.status(proxy, this.reference.path, SVNDepth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 					if (status.length > 0 && status[0].propStatus == SVNEntryStatus.Kind.CONFLICTED && 
-						status[0].treeConflicts != null && status[0].treeConflicts.length > 0 && status[0].treeConflicts[0].remotePath != null) {
+						status[0].treeConflicts != null && status[0].treeConflicts[0].remotePath != null) {
 						File rejFile = new File(status[0].treeConflicts[0].remotePath);
 						if (rejFile.exists()) {
 							BufferedInputStream is = null;
