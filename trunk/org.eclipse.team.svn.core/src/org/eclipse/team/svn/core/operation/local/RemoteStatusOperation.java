@@ -173,7 +173,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 					public void run(IProgressMonitor monitor) throws Exception {
 						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
-								svnChangeStatus.treeConflicts = info.treeConflicts;
+								svnChangeStatus.setTreeConflicts(info.treeConflicts);
 							}
 						}, new SVNProgressMonitor(RemoteStatusOperation.this, monitor, null, false));
 					}

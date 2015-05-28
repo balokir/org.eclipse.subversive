@@ -285,10 +285,14 @@ public class SVNChangeStatus extends SVNEntryStatus {
 		this.reposLastCmtAuthor = reposLastCmtAuthor;
 		this.isFileExternal = isFileExternal;
 		this.hasConflict = hasConflict;
-		this.treeConflicts = treeConflicts;
+		this.setTreeConflicts(treeConflicts);
 		this.changeListName = changeListName;
 		this.movedFromAbsPath = movedFromAbsPath;
 		this.movedToAbsPath = movedToAbsPath;
+	}
+	
+	public void setTreeConflicts(SVNConflictDescriptor []treeConflicts) {
+		this.treeConflicts = treeConflicts == null || treeConflicts.length == 0 ? null : treeConflicts;
 	}
 
 }
