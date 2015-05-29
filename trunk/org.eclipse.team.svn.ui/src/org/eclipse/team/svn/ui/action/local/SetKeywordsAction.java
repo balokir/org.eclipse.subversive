@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
+import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyKeywordEditPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -34,13 +34,13 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Sergiy Logvin
  */
-public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
+public class SetKeywordsAction extends AbstractWorkingCopyAction {
 	public SetKeywordsAction() {
 		super();
 	}
 	
 	public void runImpl(IAction action) {
-		SetKeywordsAction.doSetKeywords(this.getSelectedResources(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES));
+		SetKeywordsAction.doSetKeywords(this.getSelectedResources(IStateFilter.SF_VERSIONED));
 	}
 	
 	public static void doSetKeywords(final IResource []resources) {
@@ -79,7 +79,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 	}
 
 	public boolean isEnabled() {
-		return this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES);
+		return this.checkForResourcesPresenceRecursive(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES);
 	}
 
 }
