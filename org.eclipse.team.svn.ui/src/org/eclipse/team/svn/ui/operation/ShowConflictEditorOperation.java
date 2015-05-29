@@ -142,7 +142,9 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		}
 		
 		// open compare editor if required
-		if (status.length == 1 && status[0].hasConflict && status[0].treeConflicts != null && status[0].treeConflicts[0].remotePath != null && status[0].treeConflicts[0].basePath != null) {
+		if (resource.getType() == IResource.FILE && 
+			status.length == 1 && status[0].hasConflict && status[0].treeConflicts != null && 
+			status[0].treeConflicts[0].remotePath != null && status[0].treeConflicts[0].basePath != null) {
 			IContainer parent = resource.getParent();
 			parent.refreshLocal(IResource.DEPTH_ONE, monitor);
 			/*
