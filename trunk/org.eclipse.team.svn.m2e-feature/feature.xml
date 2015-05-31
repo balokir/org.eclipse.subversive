@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.m2e"
       label="%featureName"
-      version="3.0.0.I20150317-1700"
+      version="3.0.0.I20150529-1700"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -21,7 +21,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.team.svn" version="3.0.0.I20150317-1700" match="compatible"/>
+      <import feature="org.eclipse.team.svn" version="3.0.0.I20150529-1700" match="compatible"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -35,7 +35,7 @@
          id="org.eclipse.team.svn.m2e"
          download-size="26"
          install-size="26"
-         version="3.0.0.I20150317-1700"
+         version="3.0.0.I20150529-1700"
          unpack="false"/>
 
 </feature>
