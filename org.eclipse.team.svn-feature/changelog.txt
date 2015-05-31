@@ -8,6 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 3.0.0.I20150529-1700 [29 May 2015]
+
+Features:
+ * "set keywords" grayed out for folders (no recursion allowed) (bug 467303)
+ 
+Fixes:
+ * Improve RefreshResourcesOperation performance (bug 465920)
+ * NullPointerException on SVN history view (JFace plugin) (bug 466983)
+ * ArrayIndexOutOfBoundsException in UpdateSubscriber [ID-OJ8UD] (bug 467720)
+ * NumberFormatException while performing "Synchronize with repository" [ID-FE6ZC] (bug 465812)
+ * File content comparison editor shouldn't be opened for conflicted folders [ID-HJ1S2] (bug 468639)
+ 
+--------------------------------------------------------------------------------
+
 Version 3.0.0.I20150317-1700 [17 March 2015]
 
 Features:

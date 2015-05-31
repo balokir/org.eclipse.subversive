@@ -5,23 +5,29 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 2.0.4.I20150123-1700 release date: 23 January 2015
+Version 3.0.0.I20150529-1700 release date: 29 May 2015
 
 1. What's New
 
-   The version is 2.0.4 service release. 
+   The version is 3.0.0 is a major release. It is incompatible with connectors version 4.x or earlier due to breaking API changes.
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
 	Features:
-	 * Add typical SVN errors description and possible solutions to help pages (bug 457516)
+	 * "set keywords" grayed out for folders (no recursion allowed) (bug 467303)
+	 * Refactor SVN API support [use strict types for constant enumerations, improve error codes etc.] (bug 462326)
+	 * Update plug-ins API compatibility version (bug 462338)
+	 * Update integrations according to API changes (bug 462327)
 	 
 	Fixes:
-	 * Can't install Subversive SVN Integration for the M2E Project v2.0.3 (bug 457869)
-	 * NPE at CopyRemoteResourcesToWcOperation [ID-QI8GK] (bug 457835)
-	 * JRE 1.6 incompatibility [ID-HK8DF] (bug 456334)
-	 * Automatic properties do not get applied to new files (bug 456640)
+	 * Improve RefreshResourcesOperation performance (bug 465920)
+	 * NullPointerException on SVN history view (JFace plugin) (bug 466983)
+	 * ArrayIndexOutOfBoundsException in UpdateSubscriber [ID-OJ8UD] (bug 467720)
+	 * NumberFormatException while performing "Synchronize with repository" [ID-FE6ZC] (bug 465812)
+	 * File content comparison editor shouldn't be opened for conflicted folders [ID-HJ1S2] (bug 468639)
+	 * Useless SVNProperty conversion in AddToSVNWithPropertiesOperation (bug 461199)
+	 * Problems using blank spaces for a folder. (bug 459010)
 	
 	
 2. Information
@@ -29,16 +35,16 @@ Version 2.0.4.I20150123-1700 release date: 23 January 2015
 2.1. System Requirements
 
    Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
-    * 4.2
     * 4.3
     * 4.4
+    * 4.5
    
    Subversive supports 
     Migration for Subversion below version 1.6 to version 1.7 and higher,
-    Subversion version 1.7 with SVN Kit 1.7.13 and JavaHL 1.7.9,
-    Subversion version 1.8 with SVN Kit 1.8.7 and JavaHL 1.8.10
+    Subversion version 1.7 with SVN Kit 1.7.14 and JavaHL 1.7.9,
+    Subversion version 1.8 with SVN Kit 1.8.10 and JavaHL 1.8.13
 
 2.2 Known issues
 
-	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.13 connector]
+	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.14 connector]
 	

@@ -3,6 +3,6 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: Localization
 Bundle-SymbolicName: org.eclipse.team.svn.core.nl1
-Bundle-Version: 3.0.0.I20150317-1700
+Bundle-Version: 3.0.0.I20150529-1700
 Fragment-Host: org.eclipse.team.svn.core;bundle-version="[0.7.0,4.0.0)"
 Bundle-Vendor: Eclipse.org
