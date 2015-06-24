@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.action;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -70,15 +71,9 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 	
 	public boolean checkForResourcesPresence(IResource []selectedResources, IStateFilter stateFilter, boolean recursive) {
 		boolean computeDeep = SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME);
+		selectedResources = this.connectedToSVN(selectedResources);
 		if (this.dirty) {
 			this.dirty = false;
-			if (!this.connectedToSVN(selectedResources)) {
-				this.flatChecker.clearFilters();
-				this.flatChecker.checkDisallowed();
-				this.recursiveChecker.clearFilters();
-				this.recursiveChecker.checkDisallowed();
-				return false;
-			}
 			if (this.filters2condition.size() > 0) {
 				this.flatChecker.clearFilters();
 				FileUtility.checkForResourcesPresence(selectedResources, this.flatChecker, IResource.DEPTH_ZERO);
@@ -109,13 +104,14 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 		return retVal.booleanValue();
 	}
 	
-	protected boolean connectedToSVN(IResource []selectedResources) {
+	protected IResource []connectedToSVN(IResource []selectedResources) {
+		ArrayList<IResource> retVal = new ArrayList<IResource>(selectedResources.length);
 		for (int i = 0; i < selectedResources.length; i++) {
-			if (!FileUtility.isConnected(selectedResources[i])) {
-				return false;
+			if (FileUtility.isConnected(selectedResources[i])) {
+				retVal.add(selectedResources[i]);
 			}
 		}
-		return true;
+		return retVal.toArray(new IResource[retVal.size()]);
 	}
 	
 	private FilterManager() {
