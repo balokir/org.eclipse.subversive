@@ -273,11 +273,12 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		layout.marginHeight = layout.marginWidth = 0;
 		composite.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessVerticalSpace = false;
 		composite.setLayoutData(data);
+		
 		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
 		tabFolder.setLayout(new TabFolderLayout());
-		tabFolder.setLayoutData(new GridData());
+		tabFolder.setLayoutData(data = new GridData(GridData.FILL_HORIZONTAL));
+		data.heightHint = 200;
 		
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNUIMessages.PreferencePage_generalTabName);
@@ -290,13 +291,13 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNUIMessages.PreferencePage_iconsTabName);
 		tabItem.setControl(this.createIconsSettingsPage(tabFolder));
-		
-		this.preview = new Preview(parent);
+
+		this.preview = new Preview(composite);
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.decorsPreferencesContext"); //$NON-NLS-1$
 		
-		return tabFolder;
+		return composite;
 	}
 	
 	protected Composite createTextSettingsPage(Composite parent) {
@@ -854,7 +855,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		public Preview(Composite parent) {
 			this.decoratorVariables = new DecoratorVariables(TextVariableSetProvider.instance);
 			this.images = new HashMap<ImageDescriptor, Image>();
-			Composite composite = new Composite(parent, SWT.FILL);
+			Composite composite = new Composite(parent, SWT.NULL);
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = layout.marginWidth = 0;
 			composite.setLayout(layout);
@@ -867,6 +868,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			this.fViewer = new TreeViewer(composite);
 			data = new GridData(GridData.FILL_BOTH);
 			data.heightHint = Math.max(SVNTeamDecorationPreferencesPage.this.convertHeightInCharsToPixels(1), 16) * 13;
+			data.grabExcessVerticalSpace = true;
 			this.fViewer.getControl().setLayoutData(data);
 			this.fViewer.setContentProvider(this);
 			this.fViewer.setLabelProvider(this);
