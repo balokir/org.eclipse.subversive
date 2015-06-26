@@ -240,6 +240,7 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
+		data.widthHint = 100;
 		composite.setLayout(layout);
 		composite.setLayoutData(data);
 		
