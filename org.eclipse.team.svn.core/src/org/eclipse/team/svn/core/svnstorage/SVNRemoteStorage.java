@@ -698,18 +698,15 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		final boolean[] isUnversionedExternalParent = new boolean[]{false};
 		FileUtility.visitNodes(resource, new IResourceVisitor() {
             public boolean visit(IResource child) throws CoreException {
-            	if (FileUtility.isSVNInternals(child)) {
-            		return false;
-            	}
-            	String path = FileUtility.getWorkingCopyPath(child);
-            	if (new File(path + "/" + SVNUtility.getSVNFolderName()).exists() && SVNUtility.getSVNInfoForNotConnected(child) != null) { //$NON-NLS-1$
+            	if (FileUtility.isSVNInternals(child) ||
+            		SVNRemoteStorage.this.canFetchStatuses(new File(FileUtility.getWorkingCopyPath(child)))) {
             		return false;
             	}
         		ILocalResource parent = SVNRemoteStorage.this.getFirstExistingParentLocal(child);
         		boolean parentIsSymlink = parent != null && (parent.getChangeMask() & ILocalResource.IS_SYMLINK) != 0;
         		int parentCM = 
-        			(parent != null ? (parent.getChangeMask() & (ILocalResource.IS_SWITCHED | ILocalResource.IS_UNVERSIONED_EXTERNAL)) : 0) |
-        			(parentIsSymlink ? ILocalResource.IS_UNVERSIONED_EXTERNAL : 0);
+        			(parent != null ? (parent.getChangeMask() & (ILocalResource.IS_SWITCHED | ILocalResource.IS_FORBIDDEN)) : 0) |
+        			(parentIsSymlink ? ILocalResource.IS_FORBIDDEN : 0);
         	    // if resource has unversioned parents it cannot be wrapped directly and it status should be calculated in other way
         		String inheritedStatus = parentIsSymlink ? IStateFilter.ST_IGNORED : SVNRemoteStorage.this.calculateUnversionedStatus(resource, isLinked);
                	String textState = child == resource ? inheritedStatus : SVNRemoteStorage.this.getDelegatedStatus(child, parentIsSymlink ? IStateFilter.ST_IGNORED : inheritedStatus, 0);
@@ -719,10 +716,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
                		changeMask |= ILocalResource.IS_SYMLINK;
                	}
             	//if resource's parent is ignored but not external, then don't check this resource as it is ignored too
-            	if ((parent != null && !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(parent) || parent == null) 
-            		&& textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
+            	if ((parent != null && !IStateFilter.SF_IGNORED_NOT_FORBIDDEN.accept(parent) || parent == null) 
+            		&& textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_FORBIDDEN) == 0) {
             		if (isUnversionedExternalParent[0] || SVNRemoteStorage.this.containsSVNMetaInChildren(resource)) {
-            			changeMask |= ILocalResource.IS_UNVERSIONED_EXTERNAL;
+            			changeMask |= ILocalResource.IS_FORBIDDEN;
             			if (!isUnversionedExternalParent[0] && child.equals(resource)) {
             				isUnversionedExternalParent[0] = true;
             			}
@@ -814,9 +811,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		SVNChangeStatus [][]loadTargets = new SVNChangeStatus[1][];
 		ILocalResource retVal = this.fillCache(statuses, desiredUrl, resource, subPathStart, requestedPath, loadTargets);
 		
-		if (statuses.length == 1 || statuses.length > 1 && this.parent2Children.get(target.getFullPath()) == null) {
+		if (statuses.length == 1 || statuses.length > 1) {
 			// the caching is done for the folder if it is empty 
-			this.parent2Children.put(target.getFullPath(), new HashSet());
+			this.writeChild(target, null);
 		}
 		
 		statuses = loadTargets[0];
@@ -969,55 +966,49 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				
 				IResource tRes = null;
 				boolean isSymlink = false;
-				if (new Path(statuses[i].path).equals(requestedPath) && (resource.getType() > IResource.FOLDER || resource.getType() == nodeKind.id)) {//if nodekind not equals do not use default resource
-				    tRes = resource;
+				tRes = project.findMember(nodePath, true);
+				if (tRes != null && tRes.getType() != nodeKind.id && FileUtility.isSymlink(tRes)) { // FILE instead of SYMLINK: SVN Kit failure?
+					nodeKind = SVNEntry.Kind.SYMLINK;
 				}
-				else {
-					if (nodeKind == SVNEntry.Kind.SYMLINK) { //symlink, if reported
-						tRes = project.findMember(nodePath, true);
-						isSymlink = true;
-					}
-					if (tRes == null) {
-						if (nodeKind == SVNEntry.Kind.DIR) {
-							if (nodePath.length() == 0) {
-								tRes = project;
-							}
-							else {
-								tRes = project.getFolder(new Path(nodePath));
-							}
+				if (nodeKind == SVNEntry.Kind.SYMLINK) { //symlink, if reported
+					isSymlink = true;
+				}
+				if (tRes == null) {
+					if (nodeKind == SVNEntry.Kind.DIR) {
+						if (nodePath.length() == 0) {
+							tRes = project;
 						}
 						else {
-						    tRes = project.getFile(new Path(nodePath));
+							tRes = project.getFolder(new Path(nodePath));
 						}
 					}
-					if (nodeKind == SVNEntry.Kind.SYMLINK) {
-						nodeKind = tRes.getType() == IResource.FILE ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
+					else {
+					    tRes = project.getFile(new Path(nodePath));
 					}
+				}
+				if (nodeKind == SVNEntry.Kind.SYMLINK) {
+					nodeKind = tRes.getType() == IResource.FILE ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
+				}
+				if (new Path(statuses[i].path).equals(requestedPath) && (resource.getType() > IResource.FOLDER || resource.getType() == nodeKind.id)) {//if nodekind not equals do not use default resource
+				    tRes = resource;
 				}
 				String tDesiredUrl = tRes.getFullPath().removeFirstSegments(resource.getFullPath().segmentCount()).toString();
 				tDesiredUrl = tDesiredUrl.length() > 0 ? desiredUrl + "/" + tDesiredUrl : desiredUrl;
 				
-				if (nodeKind == SVNEntry.Kind.DIR) {
-					lTargetsTmp.put(tRes.getFullPath(), statuses[i]);
-				}
-				if (tRes.getParent() != null && lTargetsTmp.containsKey(tRes.getParent().getFullPath())) {
-					lTargetsTmp.remove(tRes.getParent().getFullPath());
-				}
-				
 				ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
 				if (local == null) {
+					if (nodeKind == SVNEntry.Kind.DIR) {
+						lTargetsTmp.put(tRes.getFullPath(), statuses[i]);
+					}
+					if (tRes.getParent() != null && lTargetsTmp.containsKey(tRes.getParent().getFullPath())) {
+						lTargetsTmp.remove(tRes.getParent().getFullPath());
+					}
+				
 					ILocalResource parent = this.getFirstExistingParentLocal(tRes);
 					
-					if (parent != null) {
-						if ((parent.getChangeMask() & ILocalResource.IS_SYMLINK) != 0) {
-							local = this.registerExternalUnversionedResource(tRes);
-							continue;
-						}
-						
-						if (IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(parent)) {
-							local = this.registerUnversionedResource(tRes, parent.getChangeMask() & ILocalResource.IS_UNVERSIONED_EXTERNAL);
-							continue;
-						}
+					if (parent != null && (parent.getChangeMask() & (ILocalResource.IS_SYMLINK | ILocalResource.IS_FORBIDDEN)) != 0) {
+						local = this.registerUnversionedResource(tRes, ILocalResource.IS_FORBIDDEN);
+						continue;
 					}
 					
 					boolean isSVNExternals = false;
@@ -1029,7 +1020,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						 */					
 						statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
 						if (statuses[i] == null) {
-							local = this.registerExternalUnversionedResource(tRes);
+							local = this.registerUnversionedResource(tRes, ILocalResource.IS_SVN_EXTERNALS);
 							if (tRes == resource) {
 								retVal = local;
 							}
@@ -1088,7 +1079,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							continue;
 						}
 						else if (this.containsSVNMetaInChildren(tRes)) {
-							local = this.registerExternalUnversionedResource(tRes);
+							local = this.registerUnversionedResource(tRes, ILocalResource.IS_SVN_EXTERNALS);
 							continue;
 						}
 					}
@@ -1126,9 +1117,6 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					// fetch revision for "copied from"
 					long revision = statuses[i].lastChangedRevision == SVNRevision.INVALID_REVISION_NUMBER && (changeMask & ILocalResource.IS_COPIED) != 0 ? statuses[i].revision : statuses[i].lastChangedRevision;
 					local = this.registerResource(tRes, revision, statuses[i].revision, textStatus, propStatus, changeMask, statuses[i].lastCommitAuthor, statuses[i].lastChangedDate, statuses[i].treeConflicts == null || statuses[i].treeConflicts.length == 0 ? null : statuses[i].treeConflicts[0]);
-				}
-				else {
-					this.writeChild(local.getResource(), local.getStatus(), local.getChangeMask());
 				}
 	
 				if (tRes == resource) {
@@ -1206,10 +1194,6 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    return status;
 	}
 	
-	protected ILocalResource registerExternalUnversionedResource(IResource resource) {
-		return this.registerUnversionedResource(resource, ILocalResource.IS_UNVERSIONED_EXTERNAL);
-	}
-	
 	protected ILocalResource registerUnversionedResource(IResource resource, int changeMask) {
 		return this.registerResource(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, IStateFilter.ST_NORMAL, changeMask, null, 0, null);
 	}
@@ -1254,7 +1238,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    	new SVNLocalFile(current, revision, baseRevision, textStatus, propStatus, changeMask, author, date, treeConflictDescriptor);
 
 		//  handle parent-to-child relations
-	    this.writeChild(current, textStatus, changeMask);
+	    this.writeChild(current.getParent(), current);
 		
 		this.localResources.put(current.getFullPath(), local);
 		
@@ -1283,13 +1267,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return null;
 	}
 	
-	protected void writeChild(IResource current, String status, int mask) {
-	    if (!SVNRemoteStorage.SF_NONSVN.accept(current, status, mask)) {
-			IResource parent = current.getParent();
-			Set children = (Set)this.parent2Children.get(parent.getFullPath());
-			if (children == null) {
-				this.parent2Children.put(parent.getFullPath(), children = new HashSet());
-			}
+	protected void writeChild(IResource parent, IResource current) {
+		Set children = (Set)this.parent2Children.get(parent.getFullPath());
+		if (children == null) {
+			this.parent2Children.put(parent.getFullPath(), children = new HashSet());
+		}
+		if (current != null) {
 			children.add(current);
 		}
 	}
