@@ -280,7 +280,8 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_UNVERSIONED_EXTERNAL = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state == IStateFilter.ST_IGNORED && (mask & ILocalResource.IS_UNVERSIONED_EXTERNAL) != 0;
+			//return state == IStateFilter.ST_IGNORED && (mask & ILocalResource.IS_UNVERSIONED_EXTERNAL) != 0;
+			return state == IStateFilter.ST_IGNORED && (mask & ILocalResource.IS_SVN_EXTERNALS) != 0;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
@@ -359,6 +360,18 @@ public interface IStateFilter {
 		}
 	};
 		
+	public static final IStateFilter SF_IGNORED_NOT_FORBIDDEN = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_IGNORED.accept(resource, state, mask) && (mask & ILocalResource.IS_FORBIDDEN) == 0;
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return true;
+		}
+	};
+	
+	/**
+	 * @deprecated due to mixed semantics 
+	 */
 	public static final IStateFilter SF_IGNORED_BUT_NOT_EXTERNAL = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_IGNORED.accept(resource, state, mask) && (mask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0;
@@ -409,10 +422,8 @@ public interface IStateFilter {
 				return !IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local);
 			}	
 			return 
-				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW ||
-				IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) ||
-				state == IStateFilter.ST_NOTEXISTS ||
-				state == IStateFilter.ST_ADDED;			
+				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || state == IStateFilter.ST_IGNORED ||
+				state == IStateFilter.ST_NOTEXISTS || state == IStateFilter.ST_ADDED;			
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
@@ -441,7 +452,9 @@ public interface IStateFilter {
 			return (state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW) && !IStateFilter.SF_IGNORED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return 
+				(!IStateFilter.SF_IGNORED.accept(resource, state, mask) || (mask & ILocalResource.IS_SVN_EXTERNALS) != 0) &&  
+				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
@@ -572,7 +585,9 @@ public interface IStateFilter {
 				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return 
+				(!IStateFilter.SF_IGNORED.accept(resource, state, mask) || (mask & ILocalResource.IS_SVN_EXTERNALS) != 0) &&
+				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 
@@ -630,7 +645,9 @@ public interface IStateFilter {
 					!IStateFilter.SF_NOTMODIFIED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return 
+				(!IStateFilter.SF_IGNORED.accept(resource, state, mask) || (mask & ILocalResource.IS_SVN_EXTERNALS) != 0) && 
+				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
