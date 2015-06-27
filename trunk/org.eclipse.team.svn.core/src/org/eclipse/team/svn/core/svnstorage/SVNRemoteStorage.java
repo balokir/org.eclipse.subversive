@@ -994,6 +994,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						nodeKind = tRes.getType() == IResource.FILE ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
 					}
 				}
+				String tDesiredUrl = tRes.getFullPath().removeFirstSegments(resource.getFullPath().segmentCount()).toString();
+				tDesiredUrl = tDesiredUrl.length() > 0 ? desiredUrl + "/" + tDesiredUrl : desiredUrl;
 				
 				if (nodeKind == SVNEntry.Kind.DIR) {
 					lTargetsTmp.put(tRes.getFullPath(), statuses[i]);
@@ -1012,7 +1014,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							continue;
 						}
 						
-						if (IStateFilter.SF_IGNORED.accept(parent)) {
+						if (IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(parent)) {
 							local = this.registerUnversionedResource(tRes, parent.getChangeMask() & ILocalResource.IS_UNVERSIONED_EXTERNAL);
 							continue;
 						}
@@ -1022,9 +1024,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					if (statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL) {
 						isSVNExternals = true;
 						/*
-						 * Sometimes we can get the situation that resource has status SVNEntryStatus.Kind.EXTERNAL, 
-						 * but it is versioned (and created by external), so we try to retrieve its
-						 * status despite that SVN returned that it is unversioned.
+						 * If there is an SVNEntryStatus.Kind.EXTERNAL status, then there is no info in the resource's real status, 
+						 * and that is why we do reload it explicitly
 						 */					
 						statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
 						if (statuses[i] == null) {
@@ -1035,7 +1036,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							continue;
 						}
 					}																		
-					else if (i == 0 && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl) && tRes.getParent().getType() != IResource.ROOT) {
+					else if (i == 0 && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(tDesiredUrl) && tRes.getParent().getType() != IResource.ROOT) {
 						ILocalResource tLocalParent = (ILocalResource)this.localResources.get(tRes.getParent().getFullPath());
 						if (tLocalParent == null || (tLocalParent.getChangeMask() & ILocalResource.IS_SWITCHED) == 0) {
 							if (proxy == null) {
@@ -1043,10 +1044,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							}
 							try {
 								SVNChangeStatus []tStats = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(tRes.getParent()), SVNDepth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
-								SVNUtility.reorder(tStats, true);
 								for (SVNChangeStatus st : tStats) {
 									if (st.path.equals(statuses[i].path)) {
-										isSVNExternals = st.textStatus == SVNEntryStatus.Kind.EXTERNAL;
+										isSVNExternals = st.textStatus == SVNEntryStatus.Kind.EXTERNAL; // why is it UNVERSIONED if parent is new???
 										break;
 									}
 								}
@@ -1083,12 +1083,17 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					 * then we consider this folder as unversioned folder created by external definition and
 					 * make its status in corresponding way, i.e. Ignored.
 					 */
-					if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR && this.containsSVNMetaInChildren(tRes)) {
-						local = this.registerExternalUnversionedResource(tRes);
-						continue;
+					if (textStatus == IStateFilter.ST_NEW && nodeKind == SVNEntry.Kind.DIR) {
+						if (tRes.getLocation() != null && this.canFetchStatuses(tRes.getLocation())) { // externals root
+							continue;
+						}
+						else if (this.containsSVNMetaInChildren(tRes)) {
+							local = this.registerExternalUnversionedResource(tRes);
+							continue;
+						}
 					}
 					
-					if (!statuses[i].isSwitched && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl)) {
+					if (!statuses[i].isSwitched && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(tDesiredUrl)) {
 						changeMask |= ILocalResource.IS_SWITCHED;
 					}
 					
