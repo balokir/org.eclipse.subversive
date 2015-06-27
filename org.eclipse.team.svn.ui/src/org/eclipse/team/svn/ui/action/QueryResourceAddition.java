@@ -56,7 +56,7 @@ public class QueryResourceAddition {
      * @return recursive, non-recursive additions and root nodes
      */
     public IResource [][]queryAdditionsSeparated() {
-    	HashSet<IResource> nonRecursive = new HashSet<IResource>(Arrays.asList(this.selector.getSelectedResources(IStateFilter.SF_IGNORED)));
+    	HashSet<IResource> nonRecursive = new HashSet<IResource>(Arrays.asList(this.selector.getSelectedResources(IStateFilter.SF_IGNORED_NOT_FORBIDDEN)));
     	HashSet<IResource> recursive = new HashSet<IResource>(Arrays.asList(this.selector.getSelectedResourcesRecursive(IStateFilter.SF_NEW)));
     	
 		HashSet<IResource> resources = new HashSet<IResource>();
@@ -97,7 +97,7 @@ public class QueryResourceAddition {
 	public static IResource []getSelectedForAddition(IResourceSelector selector) {
 		Set<IResource> resources = new HashSet<IResource>();
 		// non-recursive part (ignored)
-		resources.addAll(Arrays.asList(selector.getSelectedResources(IStateFilter.SF_IGNORED)));
+		resources.addAll(Arrays.asList(selector.getSelectedResources(IStateFilter.SF_IGNORED_NOT_FORBIDDEN)));
 		// all new resources that can be fetched recursively
 		resources.addAll(Arrays.asList(selector.getSelectedResourcesRecursive(IStateFilter.SF_NEW)));
 		return resources.toArray(new IResource[resources.size()]);

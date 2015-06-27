@@ -35,7 +35,12 @@ public interface ILocalResource {
 	public static final int IS_SWITCHED = 0x08;
 	public static final int IS_LOCKED = 0x10;
 	public static final int TREE_CONFLICT_UNKNOWN_NODE_KIND = 0x20;
+	/**
+	 * @deprecated due to mixed semantics it is replaced with IS_FORBIDDEN which is required to prevent SVN actions with resources, 
+	 * while unversioned resources, produced by svn:externals, will be marked as ST_IGNORED + IS_SVN_EXTERNALS
+	 */
 	public static final int IS_UNVERSIONED_EXTERNAL = 0x40;
+	public static final int IS_FORBIDDEN = 0x40;
 	public static final int IS_SVN_EXTERNALS = 0x80;
 	public static final int IS_SYMLINK = 0x100;
 	
