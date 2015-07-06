@@ -14,6 +14,7 @@
 package org.eclipse.team.svn.ui.history;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -732,9 +733,9 @@ public class HistoryActionManager {
 							}
 						}
 						finally {
-							output.close();
+							try {output.close();} catch (IOException ex) {}
 							if (input != null) {
-								input.close();
+								try {input.close();} catch (IOException ex) {}
 							}
 						}
 					}
