@@ -129,7 +129,6 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map localResources;
 	protected Map switchedToUrls;
 	protected Map externalsLocations;
-	protected Map parent2Children;
 	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
 	protected LinkedList fetchQueue;
 	protected LinkedList refreshQueue;
@@ -398,14 +397,15 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			return null;
 		}
 		IResource []members = FileUtility.resourceMembers(container, false);
-		
-		Set retVal = (Set)this.parent2Children.get(container.getFullPath());
-		if (retVal == null) {
+
+		Map map = (Map)this.localResources.get(container);
+		if (map == null) {
 			this.loadLocalResourcesSubTree(container, false);
-			retVal = (Set)this.parent2Children.get(container.getFullPath());
+			map = (Map)this.localResources.get(container);
 		}
-		if (retVal != null) {
-			retVal = new HashSet(retVal);
+		Set retVal = null;
+		if (map != null) {
+			retVal = new HashSet(map.keySet());
 			retVal.addAll(Arrays.asList(members));
 		}
 		
@@ -420,13 +420,30 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (resource == null || resource.getProject() == null) {
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
-		ILocalResource retVal = (ILocalResource)this.localResources.get(resource.getFullPath());
+		ILocalResource retVal = this.getCachedResource(resource);
 		if (retVal == null) {
 			ILocalResource parent = this.getFirstExistingParentLocal(resource);
 			int mask = parent == null ? 0 : (parent.getChangeMask() & ILocalResource.IS_SWITCHED);
 			retVal = this.wrapUnexistingResource(resource, IStateFilter.ST_NOTEXISTS, mask);
 		}
 		return retVal;
+	}
+	
+	protected ILocalResource getCachedResource(IResource resource) {
+		Map map = (Map)this.localResources.get(resource.getParent());
+		if (map != null) {
+			return (ILocalResource)map.get(resource);
+		}
+		return null;
+	}
+	
+	protected void setCachedResource(ILocalResource local) {
+		IResource parent = local.getResource().getParent();
+		Map map = (Map)this.localResources.get(parent);
+		if (map == null) {
+			this.localResources.put(parent, map = new HashMap());
+		}
+		map.put(local.getResource(), local);
 	}
 	
 	public ILocalResource asLocalResourceAccessible(IResource resource) {
@@ -447,10 +464,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (resource == null || resource.getProject() == null || !resource.getProject().isAccessible()) {
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
-		ILocalResource local = (ILocalResource)this.localResources.get(resource.getFullPath());
+		ILocalResource local = this.getCachedResource(resource);
 		if (local == null) {
 			synchronized (this) {
-				local = (ILocalResource)this.localResources.get(resource.getFullPath());
+				local = this.getCachedResource(resource);
 				if (local == null) {
 					try {
 						local = this.loadLocalResourcesSubTree(resource, recurse);
@@ -476,6 +493,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		for (int i = 0; i < resources.length; i++) {
 			this.refreshLocalResourceImpl(resources[i], depth);
+			this.localResources.remove(resources[i].getParent());
 		}
 	}
 	
@@ -637,13 +655,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected void refreshLocalResourceImpl(IResource resource, int depth) {
-		IPath rootPath = resource.getFullPath();
-		if (resource.getType() == IResource.FILE) {
-			this.localResources.remove(rootPath);
-			this.switchedToUrls.remove(rootPath);
-        	this.parent2Children.remove(rootPath.removeLastSegments(1));
-		}
-		else {
+		if (resource.getType() != IResource.FILE)  {
 		    if (resource.getType() == IResource.PROJECT) {
 		    	IConnectedProjectInformation info = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
 		    	if (info != null) {
@@ -655,18 +667,17 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					}
 		    	}
 		    }
-			for (Iterator it = this.localResources.entrySet().iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry)it.next();
-				ILocalResource local = (ILocalResource)entry.getValue();
-				IPath currentPath = (IPath)entry.getKey();
-				if (IStateFilter.SF_NOTEXISTS.accept(local) || rootPath.isPrefixOf(currentPath)) {
-					it.remove();
-					this.switchedToUrls.remove(currentPath);
-		            this.parent2Children.remove(currentPath);
-		        	this.parent2Children.remove(currentPath.removeLastSegments(1));
+		    if (depth != IResource.DEPTH_ZERO) {
+				Map map = (Map)this.localResources.get(resource);
+				if (map != null) {
+					for (Iterator it = map.keySet().iterator(); it.hasNext(); ) {
+						this.refreshLocalResourceImpl((IResource)it.next(), depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth);
+					}
 				}
-			}
+		    }
+			this.localResources.remove(resource);
 		}
+		this.switchedToUrls.remove(resource.getFullPath());
 	}
 	
 	protected ILocalResource loadLocalResourcesSubTree(final IResource resource, boolean recurse) throws Exception {
@@ -756,7 +767,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			    // may be ignored ?
 				status = IStateFilter.ST_IGNORED;
 				if (!SVNUtility.isIgnored(resource)) {
-					ILocalResource local = (ILocalResource)this.localResources.get(resource.getFullPath());
+					ILocalResource local = this.getCachedResource(resource);
 					if (local != null) {
 						return local.getStatus();
 					}
@@ -819,9 +830,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		SVNChangeStatus [][]loadTargets = new SVNChangeStatus[1][];
 		ILocalResource retVal = this.fillCache(statuses, desiredUrl, resource, subPathStart, requestedPath, loadTargets);
 		
-		if (statuses.length == 1 || statuses.length > 1) {
+		if (statuses.length == 1 && !this.localResources.containsKey(target)) {
 			// the caching is done for the folder if it is empty 
-			this.writeChild(target, null);
+			this.localResources.put(target, new HashMap());
 		}
 		
 		statuses = loadTargets[0];
@@ -1050,7 +1061,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				String tDesiredUrl = tRes.getFullPath().removeFirstSegments(resource.getFullPath().segmentCount()).toString();
 				tDesiredUrl = tDesiredUrl.length() > 0 ? desiredUrl + "/" + tDesiredUrl : desiredUrl;
 				
-				ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
+				ILocalResource local = this.getCachedResource(tRes);
 				if (local == null) {
 					if (nodeKind == SVNEntry.Kind.DIR) {
 						lTargetsTmp.put(tRes.getFullPath(), statuses[i]);
@@ -1083,7 +1094,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						}
 					}																		
 					else if (i == 0 && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(tDesiredUrl) && tRes.getParent().getType() != IResource.ROOT) {
-						ILocalResource tLocalParent = (ILocalResource)this.localResources.get(tRes.getParent().getFullPath());
+						ILocalResource tLocalParent = this.getCachedResource(tRes.getParent());
 						if (tLocalParent == null || (tLocalParent.getChangeMask() & ILocalResource.IS_SWITCHED) == 0) {
 							if (proxy == null) {
 								proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
@@ -1292,10 +1303,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    	(SVNLocalResource)new SVNLocalFolder(current, revision, baseRevision, textStatus, propStatus, changeMask, author, date, treeConflictDescriptor) : 
 	    	new SVNLocalFile(current, revision, baseRevision, textStatus, propStatus, changeMask, author, date, treeConflictDescriptor);
 
-		//  handle parent-to-child relations
-	    this.writeChild(current.getParent(), current);
-		
-		this.localResources.put(current.getFullPath(), local);
+	    this.setCachedResource(local);
 		
 		if (current.getType() == IResource.PROJECT && !this.changeMonitorMap.containsKey(current)) {
 			File wcDB = this.findWCDB(new File(FileUtility.getResourcePath(current).toString()));
@@ -1322,22 +1330,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return null;
 	}
 	
-	protected void writeChild(IResource parent, IResource current) {
-		Set children = (Set)this.parent2Children.get(parent.getFullPath());
-		if (children == null) {
-			this.parent2Children.put(parent.getFullPath(), children = new HashSet());
-		}
-		if (current != null) {
-			children.add(current);
-		}
-	}
-	
 	protected ILocalResource getFirstExistingParentLocal(IResource node) {
 		IResource parent = node.getParent();
 		if (parent == null) {
 			return null;
 		}
-		ILocalResource local = (ILocalResource)this.localResources.get(parent.getFullPath());
+		ILocalResource local = this.getCachedResource(parent);
 		if (local != null) {
 			return local;
 		}
@@ -1480,9 +1478,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	
 	private SVNRemoteStorage() {
 		super();
-		this.localResources = Collections.synchronizedMap(new HashMap(500));
+		this.localResources = new HashMap(500);
 		this.switchedToUrls = Collections.synchronizedMap(new LinkedHashMap());
-		this.parent2Children = new HashMap(500);
 		this.externalsLocations = new HashMap();
 		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
 		this.fetchQueue = new LinkedList();
