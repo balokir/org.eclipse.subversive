@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2008 Polarion Software.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Alexander Gurov - Initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -10,7 +21,6 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
-import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -38,7 +48,7 @@ public class DeletePaneAction extends AbstractSynchronizeModelAction {
 			op.add(saveOp);
 			op.add(deleteOperation);
 			op.add(restoreOp);
-			op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES));
+			op.add(new RefreshResourcesOperation(selectedResources, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES));
 			return op;
 		}
 		return null;

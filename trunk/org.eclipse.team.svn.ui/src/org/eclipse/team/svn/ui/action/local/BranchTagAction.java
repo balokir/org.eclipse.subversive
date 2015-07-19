@@ -37,7 +37,6 @@ import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
-import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -178,7 +177,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 					op.add(new NotifyUnresolvedConflictOperation(updateOp));
 					
 					op.add(new RestoreProjectMetaOperation(saveOp));
-					op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(resources)/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
+					op.add(new RefreshResourcesOperation(resources));
 					
 					if (UIMonitorUtility.doTaskNowDefault(op, true).isCancelled() || updateOp.hasUnresolvedConflicts()) {
 						return null;

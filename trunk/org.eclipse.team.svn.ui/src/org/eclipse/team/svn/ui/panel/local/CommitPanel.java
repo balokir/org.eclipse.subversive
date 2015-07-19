@@ -701,7 +701,7 @@ public class CommitPanel extends CommentPanel implements IModifiableCommentDialo
 							op.add(saveOp);
 							op.add(deleteOperation);
 							op.add(restoreOp);
-							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES));
+							op.add(new RefreshResourcesOperation(selectedResources));
 							UIMonitorUtility.doTaskNowDefault(op, true);
 						}
 					}

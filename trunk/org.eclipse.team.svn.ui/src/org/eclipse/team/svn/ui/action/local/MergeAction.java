@@ -24,7 +24,6 @@ import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
-import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -94,7 +93,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 	    		op.add(saveOp);
 		    	op.add(mainOp);
 	    		op.add(new RestoreProjectMetaOperation(saveOp));
-		    	op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(resources)));
+		    	op.add(new RefreshResourcesOperation(resources));
 		    	mergeOp = op;		    	
 	    	}
 	    	else if (panel.getMode() == MergePanel.MODE_2URL) {

@@ -53,7 +53,6 @@ import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
-import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
@@ -256,7 +255,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				op.add(new NotifyUnresolvedConflictOperation(mainOp));
 			}
 			op.add(new RestoreProjectMetaOperation(saveOp));
-			op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(resources[0])/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
+			op.add(new RefreshResourcesOperation(resources[0]));
 			ProgressMonitorUtility.doTaskExternal(op, monitor);
 		}
 		return Status.OK_STATUS;
