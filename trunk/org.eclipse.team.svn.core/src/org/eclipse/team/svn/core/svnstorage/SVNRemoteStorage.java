@@ -132,6 +132,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map parent2Children;
 	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
 	protected LinkedList fetchQueue;
+	protected LinkedList refreshQueue;
 	
 	protected long lastMonitorTime;
 	protected Map<IResource, File> changeMonitorMap;
@@ -824,6 +825,53 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return retVal;
 	}
 	
+	public void scheduleRefresh(IResource []resources, int depth, ResourceStatesChangedEvent pathEvent, ResourceStatesChangedEvent resourcesEvent) {
+		synchronized (this.refreshQueue) {
+			this.refreshQueue.add(new Object[] {resources, Integer.valueOf(depth), pathEvent, resourcesEvent});
+			if (this.refreshQueue.size() == 1) {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache", SVNMessages.class) { //$NON-NLS-1$
+					public ISchedulingRule getSchedulingRule() {
+						return null;
+					}
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						while (true) {
+							IResource []resources;
+							int depth;
+							ResourceStatesChangedEvent pathEvent;
+							ResourceStatesChangedEvent resourcesEvent;
+							synchronized (SVNRemoteStorage.this.refreshQueue) {
+								if (monitor.isCanceled() || SVNRemoteStorage.this.refreshQueue.size() == 0) {
+									SVNRemoteStorage.this.refreshQueue.clear();
+									break;
+								}
+								Object []entry = (Object [])SVNRemoteStorage.this.refreshQueue.get(0);
+								resources = (IResource [])entry[0];
+								depth = (Integer)entry[1];
+								pathEvent = (ResourceStatesChangedEvent)entry[2];
+								resourcesEvent = (ResourceStatesChangedEvent)entry[3];
+							}
+							if (resources != null) {
+								SVNRemoteStorage.instance().refreshLocalResources(resources, depth);
+							}
+							if (pathEvent != null) {
+								SVNRemoteStorage.instance().fireResourceStatesChangedEvent(pathEvent);
+							}
+							if (resourcesEvent != null) {
+								SVNRemoteStorage.instance().fireResourceStatesChangedEvent(resourcesEvent);
+							}
+							synchronized (SVNRemoteStorage.this.refreshQueue) {
+								SVNRemoteStorage.this.refreshQueue.remove(0);
+								if (SVNRemoteStorage.this.refreshQueue.size() == 0) {
+									break;
+								}
+							}
+						}
+					}
+				}, false);
+			}
+		}
+	}
+	
 	protected void scheduleStatusesFetch(SVNChangeStatus []st, IResource target) {
 		synchronized (this.fetchQueue) {
 			this.fetchQueue.add(new Object[] {st, target});
@@ -1431,6 +1479,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		this.externalsLocations = new HashMap();
 		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
 		this.fetchQueue = new LinkedList();
+		this.refreshQueue = new LinkedList();
 		this.lastMonitorTime = System.currentTimeMillis();
 		this.changeMonitorMap = new HashMap<IResource, File>();
 	}
