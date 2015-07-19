@@ -147,7 +147,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 							op.add(saveOp);
 							op.add(deleteOperation);
 							op.add(restoreOp);
-							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
+							op.add(new RefreshResourcesOperation(selectedResources));
 							UIMonitorUtility.doTaskNowDefault(op, true);
 						}
 					}

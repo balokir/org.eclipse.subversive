@@ -25,7 +25,6 @@ import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
@@ -99,7 +98,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 		op.add(mainOp);
 		op.add(new RestoreProjectMetaOperation(saveOp));
 		op.add(new ClearUpdateStatusesOperation(mainOp), new IActionOperation[]{mainOp});
-		op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(mainOp)/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
+		op.add(new RefreshResourcesOperation(mainOp));
 		op.add(new NotifyUnresolvedConflictOperation(mainOp));
 		
 		return op;
