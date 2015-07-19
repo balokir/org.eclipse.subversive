@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.team.svn.core.operation.LoggedOperation;
+
 public class IssueList extends LinkList {
 	public IssueList() {
 		super();
@@ -116,6 +118,13 @@ public class IssueList extends LinkList {
 					while (entryMatcher.find()) {
 						String originalPrefix = model.getMessage() == null ? "" : this.getTemplatePrefix(model.getMessage());
 						int prefixLength = matcher.start() + originalPrefix.length();
+						// FIXME generate debug report, since there is an error, check bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=471473
+						if (prefixLength + entryMatcher.end() > message.length()) {
+							LoggedOperation.reportError(
+								prefix + "~~" + suffix + "~~" + issueRegex + "~~" + (innerRegExp == null ? "null" : innerRegExp) + "~~" + originalPrefix, 
+								new StringIndexOutOfBoundsException(message));
+							continue;
+						}
 						this.links.add(new LinkPlacement(prefixLength + entryMatcher.start(), prefixLength + entryMatcher.end(), message));
 					}	
 				}															
