@@ -636,28 +636,35 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return (IConnectedProjectInformation)provider;
 	}
 	
-	protected void refreshLocalResourceImpl(IResource resource, int depth) {	   
-	    if (resource.getType() == IResource.PROJECT) {
-	    	IConnectedProjectInformation info = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
-	    	if (info != null) {
-	    		try {
-					info.relocateResource();
-				}
-				catch (CoreException ex) {
-					throw new RuntimeException(ex);
-				}
-	    	}
-	    }
+	protected void refreshLocalResourceImpl(IResource resource, int depth) {
 		IPath rootPath = resource.getFullPath();
-		for (Iterator it = this.localResources.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry)it.next();
-			ILocalResource local = (ILocalResource)entry.getValue();
-			IPath currentPath = (IPath)entry.getKey();
-			if (IStateFilter.SF_NOTEXISTS.accept(local) || rootPath.isPrefixOf(currentPath)) {
-				it.remove();
-				this.switchedToUrls.remove(currentPath);
-	            this.parent2Children.remove(currentPath);
-	        	this.parent2Children.remove(currentPath.removeLastSegments(1));
+		if (resource.getType() == IResource.FILE) {
+			this.localResources.remove(rootPath);
+			this.switchedToUrls.remove(rootPath);
+        	this.parent2Children.remove(rootPath.removeLastSegments(1));
+		}
+		else {
+		    if (resource.getType() == IResource.PROJECT) {
+		    	IConnectedProjectInformation info = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
+		    	if (info != null) {
+		    		try {
+						info.relocateResource();
+					}
+					catch (CoreException ex) {
+						throw new RuntimeException(ex);
+					}
+		    	}
+		    }
+			for (Iterator it = this.localResources.entrySet().iterator(); it.hasNext();) {
+				Map.Entry entry = (Map.Entry)it.next();
+				ILocalResource local = (ILocalResource)entry.getValue();
+				IPath currentPath = (IPath)entry.getKey();
+				if (IStateFilter.SF_NOTEXISTS.accept(local) || rootPath.isPrefixOf(currentPath)) {
+					it.remove();
+					this.switchedToUrls.remove(currentPath);
+		            this.parent2Children.remove(currentPath);
+		        	this.parent2Children.remove(currentPath.removeLastSegments(1));
+				}
 			}
 		}
 	}
