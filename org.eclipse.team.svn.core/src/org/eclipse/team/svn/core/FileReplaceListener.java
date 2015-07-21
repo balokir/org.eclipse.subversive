@@ -162,10 +162,10 @@ public class FileReplaceListener implements IResourceChangeListener {
 		
 		public void write(byte b[], int off, int len) throws IOException {
 			byte []b1 = b;
-			if (b.length != len || off != 0) {
+			if (b.length != len) {
 				b1 = Arrays.copyOfRange(b, off, off + len);
 			}
-			if (this.buffer == null || this.buffer.length != len) {
+			if (this.buffer == null || this.buffer.length != b1.length) {
 				this.buffer = new byte[b1.length];
 			}
 			this.stream.read(this.buffer);
