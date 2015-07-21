@@ -54,6 +54,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 public class FileReplaceListener implements IResourceChangeListener {
 
 	public void resourceChanged(IResourceChangeEvent event) {
+// TODO (requires API change) SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME);
+//		SVNTeamPlugin.instance().getOptionProvider().isFileReplaceListenerEnabled()
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE || event.getType() == IResourceChangeEvent.PRE_BUILD) {
 			try {
 				final List<IFile> added = new ArrayList<IFile>();			

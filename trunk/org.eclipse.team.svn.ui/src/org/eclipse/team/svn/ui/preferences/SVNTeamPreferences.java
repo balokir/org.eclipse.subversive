@@ -250,11 +250,13 @@ public final class SVNTeamPreferences {
 	public static final String DECORATION_PRECISE_ENABLEMENTS_NAME = "precise.enablements"; //$NON-NLS-1$
 	public static final String DECORATION_ENABLE_CACHE_NAME = "enable.cache"; //$NON-NLS-1$
 	public static final String DECORATION_ENABLE_PERSISTENT_SSH_NAME = "enable.persistent.ssh"; //$NON-NLS-1$
+	public static final String DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_NAME = "enable.replacement.autoundo"; //$NON-NLS-1$
 	
 	public static final boolean DECORATION_COMPUTE_DEEP_DEFAULT = true;
 	public static final boolean DECORATION_PRECISE_ENABLEMENTS_DEFAULT = false;
 	public static final boolean DECORATION_ENABLE_CACHE_DEFAULT = true;
 	public static final boolean DECORATION_ENABLE_PERSISTENT_SSH_DEFAULT = true;
+	public static final boolean DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_DEFAULT = true;
 	
 	public static final String DECORATION_USE_FONT_COLORS_DECOR_NAME = "use.fontdecor"; //$NON-NLS-1$
 	public static final boolean DECORATION_USE_FONT_COLORS_DECOR_DEFAULT = false;
@@ -468,6 +470,7 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME), SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_DEFAULT);		
 		store.setDefault(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME), SVNTeamPreferences.DECORATION_ENABLE_CACHE_DEFAULT);		
 		store.setDefault(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME), SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_DEFAULT);		
+		store.setDefault(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_NAME), SVNTeamPreferences.DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_DEFAULT);		
 	}
 	
 	public static void setDefaultMailReporterValues(IPreferenceStore store) {
@@ -620,6 +623,7 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME), SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME), SVNTeamPreferences.DECORATION_ENABLE_CACHE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME), SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_NAME), SVNTeamPreferences.DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_DEFAULT);
 	}
 	
 	public static void resetToDefaultCommentTemplatesValues(IPreferenceStore store) {

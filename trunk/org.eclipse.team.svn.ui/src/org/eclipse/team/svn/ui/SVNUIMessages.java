@@ -985,6 +985,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PerformancePreferencePage_computeDeep;
 	public static String PerformancePreferencePage_enableCache;
 	public static String PerformancePreferencePage_enablePersistentSSHConnection;
+	public static String PerformancePreferencePage_enableFileReplacementAutoundo;
 	public static String PerformancePreferencePage_optionsDesc;
 	public static String PerformancePreferencePage_preciseEnablements;
 	public static String PreferencePage_demoAscendant;

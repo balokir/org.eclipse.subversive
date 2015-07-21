@@ -35,11 +35,13 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 	protected Button preciseEnablementsButton;
 	protected Button enableCacheButton;
 	protected Button enablePersistentSSHConnectionButton;
+//	protected Button enableFileReplacementAutoundoButton;
 	
 	protected boolean computeDeep;
 	protected boolean preciseEnablements;
 	protected boolean enableCache;
 	protected boolean enablePersistentSSHConnection;
+//	protected boolean enableFileReplacementAutoundo;
 
 	public SVNTeamPerformancePage() {
 		super();
@@ -54,6 +56,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME, this.preciseEnablements);
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME, this.computeDeep | this.enableCache);
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME, this.enablePersistentSSHConnection);
+//		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_NAME, this.enableFileReplacementAutoundo);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
@@ -61,6 +64,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		this.preciseEnablements = SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_DEFAULT;
 		this.enableCache = SVNTeamPreferences.DECORATION_ENABLE_CACHE_DEFAULT;
 		this.enablePersistentSSHConnection = SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_DEFAULT;
+//		this.enableFileReplacementAutoundo = SVNTeamPreferences.DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
@@ -68,6 +72,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		this.preciseEnablements = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME);
 		this.enableCache = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME);
 		this.enablePersistentSSHConnection = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME);
+//		this.enableFileReplacementAutoundo = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_FILE_REPLACEMENT_AUTOUNDO_NAME);
 	}
 	
 	protected void initializeControls() {
@@ -75,6 +80,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		this.preciseEnablementsButton.setSelection(this.preciseEnablements);
 		this.enableCacheButton.setSelection(this.enableCache);
 		this.enablePersistentSSHConnectionButton.setSelection(this.enablePersistentSSHConnection);
+//		this.enableFileReplacementAutoundoButton.setSelection(this.enableFileReplacementAutoundo);
 		if (this.computeDeep || this.preciseEnablements) {
 			this.enableCacheButton.setEnabled(false);
 		}
@@ -142,6 +148,15 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 				SVNTeamPerformancePage.this.enablePersistentSSHConnection = SVNTeamPerformancePage.this.enablePersistentSSHConnectionButton.getSelection();
 			}
 		});
+		
+//		this.enableFileReplacementAutoundoButton = new Button(composite, SWT.CHECK);
+//		this.enableFileReplacementAutoundoButton.setLayoutData(new GridData());
+//		this.enableFileReplacementAutoundoButton.setText(SVNUIMessages.PerformancePreferencePage_enableFileReplacementAutoundo);
+//		this.enableFileReplacementAutoundoButton.addListener(SWT.Selection, new Listener() {
+//			public void handleEvent (Event event) {
+//				SVNTeamPerformancePage.this.enableFileReplacementAutoundo = SVNTeamPerformancePage.this.enableFileReplacementAutoundoButton.getSelection();
+//			}
+//		});
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.performancePreferencesContext"); //$NON-NLS-1$
