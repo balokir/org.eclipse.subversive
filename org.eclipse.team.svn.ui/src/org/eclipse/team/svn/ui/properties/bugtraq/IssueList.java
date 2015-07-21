@@ -74,6 +74,7 @@ public class IssueList extends LinkList {
 
 		String issueRegex = ".*"; //$NON-NLS-1$
 		String innerRegExp = null;
+		String modelMessage = null;
 
 		if (model.getLogregex() != null) {
 			issueRegex = model.getLogregex()[0];
@@ -82,9 +83,9 @@ public class IssueList extends LinkList {
 			}
 		}
 		else if (model.getMessage() != null) {
-			String template = model.getMessage();
-			prefix = getTemplatePrefix(template);
-			suffix = getTemplateSuffix(template);
+			modelMessage = model.getMessage();
+			prefix = this.getTemplatePrefix(modelMessage);
+			suffix = this.getTemplateSuffix(modelMessage);
 			if (model.isNumber()) {
 				issueRegex = "[0-9]+(?:,[0-9]+)*"; //$NON-NLS-1$
 				innerRegExp = "[0-9]+"; //$NON-NLS-1$
@@ -116,7 +117,7 @@ public class IssueList extends LinkList {
 					
 					Matcher entryMatcher = Pattern.compile(innerRegExp).matcher(group);
 					while (entryMatcher.find()) {
-						String originalPrefix = model.getMessage() == null ? "" : this.getTemplatePrefix(model.getMessage());
+						String originalPrefix = modelMessage == null ? "" : this.getTemplatePrefix(modelMessage);
 						int prefixLength = matcher.start() + originalPrefix.length();
 						// FIXME generate debug report, since there is an error, check bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=471473
 						if (prefixLength + entryMatcher.end() > message.length()) {
