@@ -127,9 +127,21 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []original = this.operableData();
+		if (original.length == 0) {
+			return;
+		}
+		int tDepth = this.depth;
+		if (tDepth != IResource.DEPTH_ZERO) {
+			boolean allFiles = true; // reduce specified refresh depth in case all are files 
+			for (int i = 0; i < original.length; i++) {
+				allFiles &= original[i].getType() == IResource.FILE;
+			}		
+			if (allFiles) {
+				tDepth = IResource.DEPTH_ZERO;
+			}
+		}
 		final IResource []resources = this.depth == IResource.DEPTH_INFINITE ? FileUtility.shrinkChildNodes(original) : original;
 		final boolean isPriorToSVN17 = SVNUtility.isPriorToSVN17();
-		
 		if (this.refreshType != RefreshResourcesOperation.REFRESH_CACHE) {
 	    	ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -162,7 +174,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 			
 			IResource []roots = FileUtility.getPathNodes(resources);
 			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(roots, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.PATH_NODES));
-			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(original, this.depth, ResourceStatesChangedEvent.CHANGED_NODES));
+			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(original, tDepth, ResourceStatesChangedEvent.CHANGED_NODES));
 		}
 		
 		if (this.ignoreNestedProjects) {

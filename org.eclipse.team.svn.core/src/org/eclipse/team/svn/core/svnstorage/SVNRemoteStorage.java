@@ -136,6 +136,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected long lastMonitorTime;
 	protected Map<IResource, File> changeMonitorMap;
 	
+	protected int suggestedLoadDepth = IResource.DEPTH_INFINITE;
+	
 	protected ISchedulingRule notifyLock = new ISchedulingRule() {
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -400,7 +402,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 
 		Map map = (Map)this.localResources.get(container);
 		if (map == null) {
-			this.loadLocalResourcesSubTree(container, false);
+			this.loadLocalResourcesSubTree(container, IResource.DEPTH_ONE);
 			map = (Map)this.localResources.get(container);
 		}
 		Set retVal = null;
@@ -417,7 +419,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			return this.asLocalResource(resource);
 		}
 		// null resource and workspace root shouldn't be provided
-		if (resource == null || resource.getProject() == null) {
+		if (resource == null || resource.getProject() == null || !resource.getProject().isAccessible()) {
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
 		ILocalResource retVal = this.getCachedResource(resource);
@@ -456,40 +458,39 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	public ILocalResource asLocalResource(IResource resource) {
-		return this.asLocalResourceImpl(resource, true);
+		return this.asLocalResourceImpl(resource, this.suggestedLoadDepth);
 	}
 	
-	protected ILocalResource asLocalResourceImpl(IResource resource, boolean recurse) {
+	protected ILocalResource asLocalResourceImpl(IResource resource, int depth) {
 		// null resource and workspace root shouldn't be provided
 		if (resource == null || resource.getProject() == null || !resource.getProject().isAccessible()) {
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
-		ILocalResource local = this.getCachedResource(resource);
-		if (local == null) {
-			synchronized (this) {
-				local = this.getCachedResource(resource);
-				if (local == null) {
-					try {
-						local = this.loadLocalResourcesSubTree(resource, recurse);
-					} 
-					catch (RuntimeException ex) {
-						throw ex;
-					}
-					catch (SVNConnectorException ex) {
-						return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
-					}
-					catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+		synchronized (this) {
+			ILocalResource local = this.getCachedResource(resource);
+			if (local == null) {
+				try {
+					local = this.loadLocalResourcesSubTree(resource, depth);
+				} 
+				catch (RuntimeException ex) {
+					throw ex;
+				}
+				catch (SVNConnectorException ex) {
+					return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
+				}
+				catch (Exception e) {
+					throw new RuntimeException(e);
 				}
 			}
+			return local;
 		}
-		return local;
 	}
 	
 	public synchronized void refreshLocalResources(IResource []resources, int depth) {
+		this.suggestedLoadDepth = IResource.DEPTH_ONE;
 		if (depth == IResource.DEPTH_INFINITE) {
 			resources = FileUtility.shrinkChildNodes(resources);
+			this.suggestedLoadDepth = IResource.DEPTH_INFINITE;
 		}
 		for (int i = 0; i < resources.length; i++) {
 			this.refreshLocalResourceImpl(resources[i], depth);
@@ -680,7 +681,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		this.switchedToUrls.remove(resource.getFullPath());
 	}
 	
-	protected ILocalResource loadLocalResourcesSubTree(final IResource resource, boolean recurse) throws Exception {
+	protected ILocalResource loadLocalResourcesSubTree(final IResource resource, int depth) throws Exception {
 		IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
 		if (provider == null || FileUtility.isSVNInternals(resource)) {
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
@@ -690,25 +691,25 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (!isCacheEnabled) {
 			this.localResources.clear();
 		}
-		recurse &= isCacheEnabled;
+		depth = isCacheEnabled ? depth : IResource.DEPTH_ZERO;
 		
 		ILocalResource retVal = null;
 	    boolean isLinked = FileUtility.isLinked(resource);
 		IResource parent = resource.getParent();
 		boolean parentExists = parent != null && parent.isAccessible();
 		if (parentExists && !isLinked) {
-			ILocalResource parentLocal = this.asLocalResourceImpl(parent, false);
+			ILocalResource parentLocal = this.asLocalResourceImpl(parent, IResource.DEPTH_ONE);
 			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal) ||
 				IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(parentLocal)) {
-			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, recurse);
+			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, depth);
 			}
 		}
 
 		return (retVal == null || IStateFilter.SF_UNVERSIONED.accept(retVal) && !IStateFilter.SF_IGNORED.accept(retVal))
-				? this.loadUnversionedSubtree(resource, isLinked, recurse) : retVal;
+				? this.loadUnversionedSubtree(resource, isLinked, depth) : retVal;
 	}
 	
-	protected ILocalResource loadUnversionedSubtree(final IResource resource, final boolean isLinked, boolean recurse) throws Exception {
+	protected ILocalResource loadUnversionedSubtree(final IResource resource, final boolean isLinked, int depth) throws Exception {
 		final ILocalResource []tmp = new ILocalResource[1];
 		/*
 		 * Performance optimization: make an assumption that if resource is unversioned external then all its unversioned
@@ -751,7 +752,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
                 }
                 return true;
             }
-        }, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, false);
+        }, depth, false);
         
 		return tmp[0] != null ? tmp[0] : this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 	}
@@ -796,7 +797,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return false;
 	}
 	
-	protected ILocalResource loadLocalResourcesSubTreeSVNImpl(IConnectedProjectInformation provider, IResource resource, boolean recurse) throws Exception {
+	protected ILocalResource loadLocalResourcesSubTreeSVNImpl(IConnectedProjectInformation provider, IResource resource, int depth) throws Exception {
 		IProject project = resource.getProject();
 		IResource target = resource.getType() == IResource.FILE ? resource.getParent() : resource;
 
@@ -825,7 +826,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		IRepositoryResource baseResource = provider.getRepositoryResource();
 		int offsetFromRoot = resourcePath.segmentCount() - wcPath.segmentCount();
-		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString(), offsetFromRoot < 1 || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() ? SVNDepth.IMMEDIATES : SVNDepth.INFINITY);
+		SVNDepth svnDepth = depth == IResource.DEPTH_ZERO ? SVNDepth.EMPTY : (depth == IResource.DEPTH_ONE ? SVNDepth.IMMEDIATES : SVNDepth.INFINITY);
+		svnDepth = offsetFromRoot < 1 || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() ? SVNDepth.IMMEDIATES : svnDepth;
+		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString(), svnDepth);
 		String desiredUrl = this.makeUrl(target, baseResource);
 		SVNChangeStatus [][]loadTargets = new SVNChangeStatus[1][];
 		ILocalResource retVal = this.fillCache(statuses, desiredUrl, resource, subPathStart, requestedPath, loadTargets);
@@ -836,7 +839,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		
 		statuses = loadTargets[0];
-		if (retVal != null && hasSVNMeta && statuses.length > 1 && recurse && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
+		if (retVal != null && hasSVNMeta && statuses.length > 1 && depth != IResource.DEPTH_ZERO && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
 			this.scheduleStatusesFetch(statuses, target);
 		}
 		
