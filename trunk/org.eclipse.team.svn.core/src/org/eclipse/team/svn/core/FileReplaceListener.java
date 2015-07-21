@@ -13,8 +13,9 @@ package org.eclipse.team.svn.core;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -118,78 +120,61 @@ public class FileReplaceListener implements IResourceChangeListener {
 				}
 				
 				File originalFile = new File(FileUtility.getWorkingCopyPath(file));
-				File tmpFile = new File(originalFile + ".svntmp"); //$NON-NLS-1$
+				IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(file);
+				ISVNConnector proxy = location.acquireSVNProxy();
+				OutputStreamComparator oStream = null;
 				try {
-					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(file);
-					ISVNConnector proxy = location.acquireSVNProxy();
-					FileOutputStream oStream = null;
-					try {
-						oStream = new FileOutputStream(tmpFile);
-						proxy.streamFileContent(new SVNEntryRevisionReference(originalFile.getAbsolutePath(), null, SVNRevision.BASE), 8192, oStream, new SVNProgressMonitor(this, monitor, null));
-						if (this.equals(originalFile, tmpFile)) {
-							this.processedResources.add(file);
-							originalFile.delete();
-							proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
-						}
-					}
-					finally {
-						if (oStream != null) {
-							try {oStream.close();} catch (IOException ex) {}
-						}
-						location.releaseSVNProxy(proxy);
-					}
+					oStream = new OutputStreamComparator(originalFile);
+					proxy.streamFileContent(new SVNEntryRevisionReference(originalFile.getAbsolutePath(), null, SVNRevision.BASE), 8192, oStream, new SVNProgressMonitor(this, monitor, null));
+					this.processedResources.add(file);
+					originalFile.delete();
+					proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
+				}
+				catch (UnreportableException ex) {
+					// do nothing
 				}
 				finally {
-					if (!originalFile.exists()) {
-						tmpFile.renameTo(originalFile);
+					if (oStream != null) {
+						try {oStream.close();} catch (IOException ex) {}
 					}
-					else {
-						tmpFile.delete();
-					}
+					location.releaseSVNProxy(proxy);
 				}
 			}									
 		}	
-		
-		protected boolean equals(File src1, File src2) throws IOException {
-			long len = src1.length();
-			if (len == src2.length()) {
-				FileInputStream stream1 = null;
-				FileInputStream stream2 = null;
-				try {
-					stream1 = new FileInputStream(src1);
-					stream2 = new FileInputStream(src2);
-					int bufSize = len < 8192 ? (int)len : 8192;
-					byte []buffer1 = new byte[bufSize];
-					byte []buffer2 = new byte[bufSize];
-					int rem = (int)(len % bufSize);
-					for (int off = 0; off < len; off += bufSize) {
-						stream1.read(buffer1);							
-						stream2.read(buffer2);
-						if (!Arrays.equals(buffer1, buffer2)) {
-							return false;
-						}
-					}
-					if (rem != 0) {
-						buffer1 = new byte[rem];
-						buffer2 = new byte[rem];
-						stream1.read(buffer1);
-						stream2.read(buffer2);
-						if (!Arrays.equals(buffer1, buffer2)) {
-							return false;
-						}
-					}
-					return true;
-				}
-				finally {
-					if (stream1 != null) {
-						try {stream1.close();} catch (IOException ex) {}
-					}
-					if (stream2 != null) {
-						try {stream2.close();} catch (IOException ex) {}
-					}
-				}
-			}
-			return false;
+	}
+	
+	private class OutputStreamComparator
+		extends OutputStream {
+		private FileInputStream stream;
+		private byte []buffer;
+
+		public OutputStreamComparator(File src1) throws FileNotFoundException {
+			this.stream = new FileInputStream(src1);
 		}
+		
+		public void write(int b) throws IOException {
+			if (b != this.stream.read()) {
+				throw new UnreportableException();
+			}
+		}
+		
+		public void write(byte b[], int off, int len) throws IOException {
+			byte []b1 = b;
+			if (b.length != len || off != 0) {
+				b1 = Arrays.copyOfRange(b, off, off + len);
+			}
+			if (this.buffer == null || this.buffer.length != len) {
+				this.buffer = new byte[b1.length];
+			}
+			this.stream.read(this.buffer);
+			if (!Arrays.equals(b1, this.buffer)) {
+				throw new UnreportableException();
+			}
+		}
+		
+		public void close() throws IOException {
+			this.stream.close();
+		}
+		
 	}
 }
