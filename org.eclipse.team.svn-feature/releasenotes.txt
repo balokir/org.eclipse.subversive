@@ -5,29 +5,31 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 3.0.0.I20150529-1700 release date: 29 May 2015
+Version 3.0.1.I20150722-1700 release date: 22 July 2015
 
 1. What's New
 
-   The version is 3.0.0 is a major release. It is incompatible with connectors version 4.x or earlier due to breaking API changes.
+   The version 3.0.1 is a service release.
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
-	Features:
-	 * "set keywords" grayed out for folders (no recursion allowed) (bug 467303)
-	 * Refactor SVN API support [use strict types for constant enumerations, improve error codes etc.] (bug 462326)
-	 * Update plug-ins API compatibility version (bug 462338)
-	 * Update integrations according to API changes (bug 462327)
-	 
 	Fixes:
-	 * Improve RefreshResourcesOperation performance (bug 465920)
-	 * NullPointerException on SVN history view (JFace plugin) (bug 466983)
-	 * ArrayIndexOutOfBoundsException in UpdateSubscriber [ID-OJ8UD] (bug 467720)
-	 * NumberFormatException while performing "Synchronize with repository" [ID-FE6ZC] (bug 465812)
-	 * File content comparison editor shouldn't be opened for conflicted folders [ID-HJ1S2] (bug 468639)
-	 * Useless SVNProperty conversion in AddToSVNWithPropertiesOperation (bug 461199)
-	 * Problems using blank spaces for a folder. (bug 459010)
+	 * StringIndexOutOfBoundsException in bugtraq in History View (bug 471473)
+	 * Reduce I/O amount produced by FileReplaceListener (bug 473193)
+	 * Limit SVN status cache refresh depth when possible (bug 473161)
+	 * Excessive SVN status reloads for updates, revert, commits etc. (bug 473029)
+	 * Improve status cache performance (bug 473028)
+	 * Status refresh for files does unnecessary work that significantly reduces performance on large projects (bug 473026)
+	 * cant't save file or build waiting for user operation (bug 472752)
+	 * Possible resource leak in UI (bug 471963)
+	 * If the folder is unversioned, Subversive tries to load it more than once (bug 471205)
+	 * Symbolic links and external resources interfere with each other in UI (bug 471204)
+	 * There should be a way to add to SVN the intermediate folders produced by svn:externals (bug 471188)
+	 * Obstructed externals (bug 465574)
+	 * Diff viewer preference page has wrong button sizes in Mars (bug 471161)
+	 * Subversive Label Decorations Preferences dialog broken (bug 470990)
+	 * Enable team context menu actions on working set (bug 470552)
 	
 	
 2. Information

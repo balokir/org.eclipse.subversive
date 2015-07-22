@@ -8,6 +8,27 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 3.0.1.I20150722-1700 [22 July 2015]
+
+Fixes:
+ * StringIndexOutOfBoundsException in bugtraq in History View (bug 471473)
+ * Reduce I/O amount produced by FileReplaceListener (bug 473193)
+ * Limit SVN status cache refresh depth when possible (bug 473161)
+ * Excessive SVN status reloads for updates, revert, commits etc. (bug 473029)
+ * Improve status cache performance (bug 473028)
+ * Status refresh for files does unnecessary work that significantly reduces performance on large projects (bug 473026)
+ * cant't save file or build waiting for user operation (bug 472752)
+ * Possible resource leak in UI (bug 471963)
+ * If the folder is unversioned, Subversive tries to load it more than once (bug 471205)
+ * Symbolic links and external resources interfere with each other in UI (bug 471204)
+ * There should be a way to add to SVN the intermediate folders produced by svn:externals (bug 471188)
+ * Obstructed externals (bug 465574)
+ * Diff viewer preference page has wrong button sizes in Mars (bug 471161)
+ * Subversive Label Decorations Preferences dialog broken (bug 470990)
+ * Enable team context menu actions on working set (bug 470552)
+ 
+--------------------------------------------------------------------------------
+
 Version 3.0.0.I20150529-1700 [29 May 2015]
 
 Features:
