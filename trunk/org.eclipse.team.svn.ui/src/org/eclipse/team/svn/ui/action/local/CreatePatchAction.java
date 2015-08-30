@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
@@ -48,7 +49,10 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 			CreatePatchWizard wizard = new CreatePatchWizard(targets[0].getName(), targets);
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			if (dialog.open() == 0) {
-				CreatePatchOperation mainOp = new CreatePatchOperation(wizard.getSelection(), wizard.getFileName(), wizard.isRecursive(), wizard.isIgnoreDeleted(), wizard.isProcessBinary(), wizard.isProcessUnversioned(), wizard.getRootPoint());
+				CreatePatchOperation mainOp = 
+					new CreatePatchOperation(
+						wizard.getSelection(), wizard.getFileName(), wizard.isRecursive(), wizard.isProcessUnversioned(), 
+						ISVNConnector.Options.IGNORE_ANCESTRY | wizard.getDiffOptions(), wizard.getRootPoint(), wizard.getDiffOutputOptions());
 				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				op.add(mainOp);
 				switch (wizard.getWriteMode()) {

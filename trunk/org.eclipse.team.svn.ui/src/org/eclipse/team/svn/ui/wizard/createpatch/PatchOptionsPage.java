@@ -20,6 +20,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -43,6 +46,8 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 	protected boolean ignoreAncestry;
 	protected int rootPoint;
 	protected boolean multiSelect;
+	
+	protected long diffOutputOptions;
 	
 	protected Button rootSelection;
 	protected Button rootProject;
@@ -96,6 +101,10 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 	
 	public boolean isIgnoreAncestry() {
 		return this.showIgnoreAncestry ? this.ignoreAncestry : true;
+	}
+	
+	public long getDiffOutputOptions() {
+		return this.diffOutputOptions;
 	}
 
 	protected Composite createControlImpl(Composite parent) {
@@ -187,6 +196,95 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 				}
 			});
 			showIgnoreAncestryButton.setSelection(this.ignoreAncestry);
+		}
+		
+		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_8_x) {
+			Group outputOptions = new Group(composite, SWT.NONE);
+			outputOptions.setText(SVNUIMessages.PatchOptionsPage_DiffOutputOptions);
+			layout = new GridLayout();
+			outputOptions.setLayout(layout);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			outputOptions.setLayoutData(data);
+			
+			Button ignoreWhitespaceButton = new Button(outputOptions, SWT.CHECK);
+			data = new GridData();
+			ignoreWhitespaceButton.setLayoutData(data);
+			ignoreWhitespaceButton.setText(SVNUIMessages.PatchOptionsPage_IgnoreWhitespace);
+			ignoreWhitespaceButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (((Button)e.widget).getSelection()) {
+						PatchOptionsPage.this.diffOutputOptions |= ISVNConnector.DiffOptions.IGNORE_WHITESPACE;
+					}
+					else {
+						PatchOptionsPage.this.diffOutputOptions &= ~ISVNConnector.DiffOptions.IGNORE_WHITESPACE;
+					}
+				}
+			});
+			ignoreWhitespaceButton.setSelection((this.diffOutputOptions & ISVNConnector.DiffOptions.IGNORE_WHITESPACE) != 0);
+			
+			Button ignoreSpaceChangeButton = new Button(outputOptions, SWT.CHECK);
+			data = new GridData();
+			ignoreSpaceChangeButton.setLayoutData(data);
+			ignoreSpaceChangeButton.setText(SVNUIMessages.PatchOptionsPage_IgnoreSpaceChange);
+			ignoreSpaceChangeButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (((Button)e.widget).getSelection()) {
+						PatchOptionsPage.this.diffOutputOptions |= ISVNConnector.DiffOptions.IGNORE_SPACE_CHANGE;
+					}
+					else {
+						PatchOptionsPage.this.diffOutputOptions &= ~ISVNConnector.DiffOptions.IGNORE_SPACE_CHANGE;
+					}
+				}
+			});
+			ignoreSpaceChangeButton.setSelection((this.diffOutputOptions & ISVNConnector.DiffOptions.IGNORE_SPACE_CHANGE) != 0);
+			
+			Button ignoreEOLStyleButton = new Button(outputOptions, SWT.CHECK);
+			data = new GridData();
+			ignoreEOLStyleButton.setLayoutData(data);
+			ignoreEOLStyleButton.setText(SVNUIMessages.PatchOptionsPage_IgnoreEOLStyle);
+			ignoreEOLStyleButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (((Button)e.widget).getSelection()) {
+						PatchOptionsPage.this.diffOutputOptions |= ISVNConnector.DiffOptions.IGNORE_EOL_STYLE;
+					}
+					else {
+						PatchOptionsPage.this.diffOutputOptions &= ~ISVNConnector.DiffOptions.IGNORE_EOL_STYLE;
+					}
+				}
+			});
+			ignoreEOLStyleButton.setSelection((this.diffOutputOptions & ISVNConnector.DiffOptions.IGNORE_EOL_STYLE) != 0);
+			
+			Button showCFunctionButton = new Button(outputOptions, SWT.CHECK);
+			data = new GridData();
+			showCFunctionButton.setLayoutData(data);
+			showCFunctionButton.setText(SVNUIMessages.PatchOptionsPage_ShowCFunction);
+			showCFunctionButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (((Button)e.widget).getSelection()) {
+						PatchOptionsPage.this.diffOutputOptions |= ISVNConnector.DiffOptions.SHOW_FUNCTION;
+					}
+					else {
+						PatchOptionsPage.this.diffOutputOptions &= ~ISVNConnector.DiffOptions.SHOW_FUNCTION;
+					}
+				}
+			});
+			showCFunctionButton.setSelection((this.diffOutputOptions & ISVNConnector.DiffOptions.SHOW_FUNCTION) != 0);
+			
+			Button useGITFormatButton = new Button(outputOptions, SWT.CHECK);
+			data = new GridData();
+			useGITFormatButton.setLayoutData(data);
+			useGITFormatButton.setText(SVNUIMessages.PatchOptionsPage_GITFormat);
+			useGITFormatButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (((Button)e.widget).getSelection()) {
+						PatchOptionsPage.this.diffOutputOptions |= ISVNConnector.DiffOptions.GIT_FORMAT;
+					}
+					else {
+						PatchOptionsPage.this.diffOutputOptions &= ~ISVNConnector.DiffOptions.GIT_FORMAT;
+					}
+				}
+			});
+			useGITFormatButton.setSelection((this.diffOutputOptions & ISVNConnector.DiffOptions.GIT_FORMAT) != 0);
 		}
 		
 		if (this.localMode) { 

@@ -974,6 +974,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PatchOptionsPage_Description;
 	public static String PatchOptionsPage_New;
 	public static String PatchOptionsPage_Options;
+	public static String PatchOptionsPage_DiffOutputOptions;
+	public static String PatchOptionsPage_IgnoreWhitespace;
+	public static String PatchOptionsPage_IgnoreSpaceChange;
+	public static String PatchOptionsPage_IgnoreEOLStyle;
+	public static String PatchOptionsPage_ShowCFunction;
+	public static String PatchOptionsPage_GITFormat;
 	public static String PatchOptionsPage_PatchRoot;
 	public static String PatchOptionsPage_PatchRootProject;
 	public static String PatchOptionsPage_PatchRootSelection;

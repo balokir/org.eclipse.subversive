@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.wizard.createpatch.PatchOptionsPage;
 import org.eclipse.team.svn.ui.wizard.createpatch.SelectPatchFilePage;
@@ -90,7 +91,18 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	public boolean isRecursive() {
 		return this.options.isRecursive() & this.selectFile.isRecursive();
 	}
+
+	public long getDiffOptions() {
+		return 
+			(this.isIgnoreAncestry() ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE) | 
+			(this.isIgnoreDeleted() ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE) | 
+			(this.isProcessBinary() ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE);
+	}
 	
+	public long getDiffOutputOptions() {
+		return this.options.getDiffOutputOptions();
+	}
+
 	public IResource []getSelection() {
 		return this.selectFile.isRecursive() ? this.roots : this.selectFile.getSelection();
 	}

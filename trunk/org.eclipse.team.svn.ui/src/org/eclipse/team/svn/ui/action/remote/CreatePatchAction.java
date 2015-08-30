@@ -65,7 +65,7 @@ public class CreatePatchAction extends AbstractRepositoryModifyWorkspaceAction {
 	}
 	
 	public static IActionOperation getCreatePatchOperation(IRepositoryResource first, IRepositoryResource second, CreatePatchWizard wizard) {
-		CreatePatchOperation mainOp = new CreatePatchOperation(first, second, wizard.getFileName(), wizard.isRecursive(), wizard.isIgnoreDeleted(), wizard.isProcessBinary(), wizard.isIgnoreAncestry());
+		CreatePatchOperation mainOp = new CreatePatchOperation(first, second, wizard.getFileName(), wizard.isRecursive(), wizard.getDiffOptions(), wizard.getDiffOutputOptions());
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		switch (wizard.getWriteMode()) {
