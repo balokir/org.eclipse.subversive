@@ -407,8 +407,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		Set retVal = null;
 		if (map != null) {
-			retVal = new HashSet(map.keySet());
-			retVal.addAll(Arrays.asList(members));
+			retVal = new HashSet(Arrays.asList(members));
+			for (Object local : map.values()) {
+				if (((ILocalResource)local).getStatus() != IStateFilter.ST_NOTEXISTS) {
+					retVal.add(((ILocalResource)local).getResource());
+				}
+			}
 		}
 		
 		return retVal == null ? members : (IResource [])retVal.toArray(new IResource[retVal.size()]);
