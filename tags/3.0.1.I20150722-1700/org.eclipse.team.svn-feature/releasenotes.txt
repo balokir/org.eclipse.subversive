@@ -1,0 +1,52 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 3.0.1.I20150722-1700 release date: 22 July 2015
+
+1. What's New
+
+   The version 3.0.1 is a service release.
+   
+   Changes comparatively to the previous release version are listed below. The full list of 
+   changes you can find in Change Log.
+		
+	Fixes:
+	 * StringIndexOutOfBoundsException in bugtraq in History View (bug 471473)
+	 * Reduce I/O amount produced by FileReplaceListener (bug 473193)
+	 * Limit SVN status cache refresh depth when possible (bug 473161)
+	 * Excessive SVN status reloads for updates, revert, commits etc. (bug 473029)
+	 * Improve status cache performance (bug 473028)
+	 * Status refresh for files does unnecessary work that significantly reduces performance on large projects (bug 473026)
+	 * cant't save file or build waiting for user operation (bug 472752)
+	 * Possible resource leak in UI (bug 471963)
+	 * If the folder is unversioned, Subversive tries to load it more than once (bug 471205)
+	 * Symbolic links and external resources interfere with each other in UI (bug 471204)
+	 * There should be a way to add to SVN the intermediate folders produced by svn:externals (bug 471188)
+	 * Obstructed externals (bug 465574)
+	 * Diff viewer preference page has wrong button sizes in Mars (bug 471161)
+	 * Subversive Label Decorations Preferences dialog broken (bug 470990)
+	 * Enable team context menu actions on working set (bug 470552)
+	
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
+    * 4.3
+    * 4.4
+    * 4.5
+   
+   Subversive supports 
+    Migration for Subversion below version 1.6 to version 1.7 and higher,
+    Subversion version 1.7 with SVN Kit 1.7.14 and JavaHL 1.7.9,
+    Subversion version 1.8 with SVN Kit 1.8.10 and JavaHL 1.8.13
+
+2.2 Known issues
+
+	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.14 connector]
+	
