@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site
+      associateSitesURL="http://download.eclipse.org/technology/subversive/3.0/update-site/associates.xml">
+   <description url="http://download.eclipse.org/technology/subversive/3.0/update-site/">
+      Eclipse Subversive - SVN Team Provider
+   </description>
+   <feature url="features/org.eclipse.team.svn_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn" version="3.0.0.I20150529-1700">
+      <category name="Subversive"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.nl1_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.nl1" version="3.0.0.I20150529-1700">
+      <category name="Subversive"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="3.0.0.I20150529-1700">
+      <category name="Subversive"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.mylyn_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.mylyn" version="3.0.0.I20150529-1700">
+      <category name="Subversive Integration"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.m2e_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.m2e" version="3.0.0.I20150529-1700">
+      <category name="Subversive Integration"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.revision.graph_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.revision.graph" version="3.0.0.I20150529-1700">
+      <category name="Subversive"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.source_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.source" version="3.0.0.I20150529-1700">
+      <category name="Subversive Sources"/>
+   </feature>
+   <category-def name="Subversive" label="Subversive SVN Team Provider Plugin">
+      <description>
+         Eclipse Subversive Team Provider for the Subversion version control system.
+      </description>
+   </category-def>
+   <category-def name="Subversive Integration" label="Subversive Integration Plug-in&apos;s">
+      <description>
+         Eclipse Subversive Team Provider integration for third party tools.
+      </description>
+   </category-def>
+   <category-def name="Subversive Sources" label="Subversive Sources">
+      <description>
+         Eclipse Subversive Team Provider development resources.
+      </description>
+   </category-def>
+</site>
