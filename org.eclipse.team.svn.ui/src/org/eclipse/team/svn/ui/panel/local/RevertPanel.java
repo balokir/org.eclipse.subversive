@@ -51,6 +51,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
+import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -340,7 +341,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 							op.add(saveOp);
 							op.add(deleteOperation);
 							op.add(restoreOp);
-							op.add(new RefreshResourcesOperation(selectedResources));
+							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CHANGES));
 							UIMonitorUtility.doTaskNowDefault(op, true);
 						}
 					}

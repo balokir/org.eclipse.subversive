@@ -516,15 +516,11 @@ public final class FileUtility {
 	}
 	
 	public static boolean isSVNInternals(IResource resource) {
-		return FileUtility.getSVNFolder(resource) != null;
-	}
-	
-	public static IResource getSVNFolder(IResource resource) {
-		if (resource.getType() == IResource.FOLDER && SVNUtility.getSVNFolderName().equals(resource.getName())) {
-			return resource;
+		if (SVNUtility.getSVNFolderName().equals(resource.getName())) {
+			return true;
 		}
 		IResource parent = resource.getParent();
-		return parent == null ? null : FileUtility.getSVNFolder(parent);
+		return parent == null ? false : FileUtility.isSVNInternals(parent);
 	}
 	
 	public static void findAndMarkSVNInternals(IResource node, boolean isTeamPrivate) throws CoreException {

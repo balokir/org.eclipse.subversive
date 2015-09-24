@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.team.svn.core.operation.LoggedOperation;
-
 public class IssueList extends LinkList {
 	public IssueList() {
 		super();
@@ -74,7 +72,6 @@ public class IssueList extends LinkList {
 
 		String issueRegex = ".*"; //$NON-NLS-1$
 		String innerRegExp = null;
-		String modelMessage = null;
 
 		if (model.getLogregex() != null) {
 			issueRegex = model.getLogregex()[0];
@@ -83,9 +80,9 @@ public class IssueList extends LinkList {
 			}
 		}
 		else if (model.getMessage() != null) {
-			modelMessage = model.getMessage();
-			prefix = this.getTemplatePrefix(modelMessage);
-			suffix = this.getTemplateSuffix(modelMessage);
+			String template = model.getMessage();
+			prefix = getTemplatePrefix(template);
+			suffix = getTemplateSuffix(template);
 			if (model.isNumber()) {
 				issueRegex = "[0-9]+(?:,[0-9]+)*"; //$NON-NLS-1$
 				innerRegExp = "[0-9]+"; //$NON-NLS-1$
@@ -117,15 +114,8 @@ public class IssueList extends LinkList {
 					
 					Matcher entryMatcher = Pattern.compile(innerRegExp).matcher(group);
 					while (entryMatcher.find()) {
-						String originalPrefix = modelMessage == null ? "" : this.getTemplatePrefix(modelMessage);
+						String originalPrefix = model.getMessage() == null ? "" : this.getTemplatePrefix(model.getMessage());
 						int prefixLength = matcher.start() + originalPrefix.length();
-						// FIXME generate debug report, since there is an error, check bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=471473
-						if (prefixLength + entryMatcher.end() > message.length()) {
-							LoggedOperation.reportError(
-								prefix + "~~" + suffix + "~~" + issueRegex + "~~" + (innerRegExp == null ? "null" : innerRegExp) + "~~" + originalPrefix, 
-								new StringIndexOutOfBoundsException(message));
-							continue;
-						}
 						this.links.add(new LinkPlacement(prefixLength + entryMatcher.start(), prefixLength + entryMatcher.end(), message));
 					}	
 				}															

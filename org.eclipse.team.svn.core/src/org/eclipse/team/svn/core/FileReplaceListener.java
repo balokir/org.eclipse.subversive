@@ -13,9 +13,8 @@ package org.eclipse.team.svn.core;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,12 +34,10 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
-import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -54,8 +51,6 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 public class FileReplaceListener implements IResourceChangeListener {
 
 	public void resourceChanged(IResourceChangeEvent event) {
-// TODO (requires API change) SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME);
-//		SVNTeamPlugin.instance().getOptionProvider().isFileReplaceListenerEnabled()
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE || event.getType() == IResourceChangeEvent.PRE_BUILD) {
 			try {
 				final List<IFile> added = new ArrayList<IFile>();			
@@ -80,103 +75,101 @@ public class FileReplaceListener implements IResourceChangeListener {
 	}
 
 	protected void processResources(IResource []resources) {
-		FileReplaceListenerOperation mainOp = new FileReplaceListenerOperation(resources);			
+		AbstractWorkingCopyOperation mainOp = new AbstractWorkingCopyOperation("Operation_FileReplaceListener", SVNMessages.class, resources) { //$NON-NLS-1$
+			protected void runImpl(IProgressMonitor monitor) throws Exception {																				
+				for (IResource file : this.operableData()) {														
+					if (monitor.isCanceled()) {
+						return;
+					}
+
+					ILocalResource local = SVNRemoteStorage.instance().asLocalResource(file);
+					if (!IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
+						continue;
+					}
+					IResource parent = file.getParent();
+					ILocalResource localParent = SVNRemoteStorage.instance().asLocalResource(parent);
+					if (IStateFilter.SF_DELETED.accept(localParent)) {
+						continue;
+					}
+					
+					File originalFile = new File(FileUtility.getWorkingCopyPath(file));
+					File tmpFile = new File(originalFile + ".svntmp"); //$NON-NLS-1$
+					try {
+						IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(file);
+						ISVNConnector proxy = location.acquireSVNProxy();
+						FileOutputStream oStream = null;
+						try {
+							oStream = new FileOutputStream(tmpFile);
+							proxy.streamFileContent(new SVNEntryRevisionReference(originalFile.getAbsolutePath(), null, SVNRevision.BASE), 8192, oStream, new SVNProgressMonitor(this, monitor, null));
+							if (this.equals(originalFile, tmpFile)) {
+								originalFile.delete();
+								proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
+							}
+						}
+						finally {
+							if (oStream != null) {
+								try {oStream.close();} catch (IOException ex) {}
+							}
+							location.releaseSVNProxy(proxy);
+						}
+					}
+					finally {
+						if (!originalFile.exists()) {
+							tmpFile.renameTo(originalFile);
+						}
+						else {
+							tmpFile.delete();
+						}
+					}
+				}									
+			}	
+			
+			protected boolean equals(File src1, File src2) throws IOException {
+				long len = src1.length();
+				if (len == src2.length()) {
+					FileInputStream stream1 = null;
+					FileInputStream stream2 = null;
+					try {
+						stream1 = new FileInputStream(src1);
+						stream2 = new FileInputStream(src2);
+						int bufSize = len < 8192 ? (int)len : 8192;
+						byte []buffer1 = new byte[bufSize];
+						byte []buffer2 = new byte[bufSize];
+						int rem = (int)(len % bufSize);
+						for (int off = 0; off < len; off += bufSize) {
+							stream1.read(buffer1);							
+							stream2.read(buffer2);
+							if (!Arrays.equals(buffer1, buffer2)) {
+								return false;
+							}
+						}
+						if (rem != 0) {
+							buffer1 = new byte[rem];
+							buffer2 = new byte[rem];
+							stream1.read(buffer1);
+							stream2.read(buffer2);
+							if (!Arrays.equals(buffer1, buffer2)) {
+								return false;
+							}
+						}
+						return true;
+					}
+					finally {
+						if (stream1 != null) {
+							try {stream1.close();} catch (IOException ex) {}
+						}
+						if (stream2 != null) {
+							try {stream2.close();} catch (IOException ex) {}
+						}
+					}
+				}
+				return false;
+			}
+		};			
 		
 		CompositeOperation cmpOp = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		cmpOp.add(mainOp);
-		cmpOp.add(new RefreshResourcesOperation(mainOp, IResource.DEPTH_ZERO, RefreshResourcesOperation.REFRESH_CHANGES));			
+		cmpOp.add(new RefreshResourcesOperation(resources));			
 		ProgressMonitorUtility.doTaskScheduledDefault(cmpOp);
-	}
-	
-	private class FileReplaceListenerOperation 
-		extends AbstractWorkingCopyOperation 
-		implements IResourceProvider {
-		
-		private ArrayList<IResource> processedResources;
-		
-		public FileReplaceListenerOperation(IResource []resources) {
-			super("Operation_FileReplaceListener", SVNMessages.class, resources);//$NON-NLS-1$
-			this.processedResources = new ArrayList<IResource>();
-		}
-		
-		public IResource[] getResources() {
-			return this.processedResources.toArray(new IResource[this.processedResources.size()]);
-		}
-		
-		protected void runImpl(IProgressMonitor monitor) throws Exception {																				
-			IResource []resources = this.operableData();
-			SVNRemoteStorage.instance().refreshLocalResources(resources, IResource.DEPTH_ZERO);
-			for (IResource file : resources) {														
-				if (monitor.isCanceled()) {
-					return;
-				}
-
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(file);
-				if (!IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
-					continue;
-				}
-				IResource parent = file.getParent();
-				ILocalResource localParent = SVNRemoteStorage.instance().asLocalResource(parent);
-				if (IStateFilter.SF_DELETED.accept(localParent)) {
-					continue;
-				}
-				
-				File originalFile = new File(FileUtility.getWorkingCopyPath(file));
-				IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(file);
-				ISVNConnector proxy = location.acquireSVNProxy();
-				OutputStreamComparator oStream = null;
-				try {
-					oStream = new OutputStreamComparator(originalFile);
-					proxy.streamFileContent(new SVNEntryRevisionReference(originalFile.getAbsolutePath(), null, SVNRevision.BASE), 8192, oStream, new SVNProgressMonitor(this, monitor, null));
-					this.processedResources.add(file);
-					originalFile.delete();
-					proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
-				}
-				catch (UnreportableException ex) {
-					// do nothing
-				}
-				finally {
-					if (oStream != null) {
-						try {oStream.close();} catch (IOException ex) {}
-					}
-					location.releaseSVNProxy(proxy);
-				}
-			}									
-		}	
-	}
-	
-	private class OutputStreamComparator
-		extends OutputStream {
-		private FileInputStream stream;
-		private byte []buffer;
-
-		public OutputStreamComparator(File src1) throws FileNotFoundException {
-			this.stream = new FileInputStream(src1);
-		}
-		
-		public void write(int b) throws IOException {
-			if (b != this.stream.read()) {
-				throw new UnreportableException();
-			}
-		}
-		
-		public void write(byte b[], int off, int len) throws IOException {
-			byte []b1 = b;
-			if (b.length != len) {
-				b1 = Arrays.copyOfRange(b, off, off + len);
-			}
-			if (this.buffer == null || this.buffer.length != b1.length) {
-				this.buffer = new byte[b1.length];
-			}
-			this.stream.read(this.buffer);
-			if (!Arrays.equals(b1, this.buffer)) {
-				throw new UnreportableException();
-			}
-		}
-		
-		public void close() throws IOException {
-			this.stream.close();
-		}
-		
 	}
 }

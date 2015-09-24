@@ -974,12 +974,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PatchOptionsPage_Description;
 	public static String PatchOptionsPage_New;
 	public static String PatchOptionsPage_Options;
-	public static String PatchOptionsPage_DiffOutputOptions;
-	public static String PatchOptionsPage_IgnoreWhitespace;
-	public static String PatchOptionsPage_IgnoreSpaceChange;
-	public static String PatchOptionsPage_IgnoreEOLStyle;
-	public static String PatchOptionsPage_ShowCFunction;
-	public static String PatchOptionsPage_GITFormat;
 	public static String PatchOptionsPage_PatchRoot;
 	public static String PatchOptionsPage_PatchRootProject;
 	public static String PatchOptionsPage_PatchRootSelection;
@@ -991,7 +985,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PerformancePreferencePage_computeDeep;
 	public static String PerformancePreferencePage_enableCache;
 	public static String PerformancePreferencePage_enablePersistentSSHConnection;
-	public static String PerformancePreferencePage_enableFileReplacementAutoundo;
 	public static String PerformancePreferencePage_optionsDesc;
 	public static String PerformancePreferencePage_preciseEnablements;
 	public static String PreferencePage_demoAscendant;

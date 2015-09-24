@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,7 +55,6 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_ResourcesChanged", SVNMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				final Set<IResource> modified = new HashSet<IResource>();
-				final int []depth = new int[] {IResource.DEPTH_ZERO};
 				event.getDelta().accept(new IResourceDeltaVisitor() {
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						IResource resource = delta.getResource();
@@ -65,27 +65,24 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 						if (!FileUtility.isConnected(resource)) {
 						    return false;
 						}
-
-						IResource toAdd = null;
-						IResource svnFolder = FileUtility.getSVNFolder(resource);
-						if (svnFolder != null) {
-							toAdd = svnFolder.getParent();
+						if (FileUtility.isSVNInternals(resource)) {
+							IContainer parent = resource.getParent();
+							modified.add(parent);
+							if (parent.exists()) {
+								modified.addAll(Arrays.asList(parent.members()));
+							}
 							return false;
 						}
-						if (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.REMOVED) {
-							toAdd = resource;
+
+						if (delta.getKind() == IResourceDelta.ADDED ||
+							delta.getKind() == IResourceDelta.REMOVED) {
+							modified.add(resource);
 						}
-						else if (delta.getKind() == IResourceDelta.CHANGED) {
+						if (delta.getKind() == IResourceDelta.CHANGED) {
 							int flags = delta.getFlags();
 							if (resource instanceof IContainer && (flags & ResourceChangeListener.INTERESTING_CHANGES) != 0 ||
 								resource instanceof IFile && (flags & (ResourceChangeListener.INTERESTING_CHANGES | IResourceDelta.CONTENT)) != 0) {
-								toAdd = resource;
-							}
-						}
-						if (toAdd != null) {
-							modified.add(toAdd);
-							if (toAdd.getType() != IResource.FILE) {
-								depth[0] = IResource.DEPTH_INFINITE;
+								modified.add(resource);
 							}
 						}
 						
@@ -93,14 +90,13 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 					}
 				}, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 
-				// reset statuses only for changed resources, but notify regarding all and including parents
-				if (modified.size() > 0) {
-					IResource []resources = modified.toArray(new IResource[modified.size()]);
-					SVNRemoteStorage.instance().scheduleRefresh(
-							resources, depth[0], 
-							new ResourceStatesChangedEvent(FileUtility.getPathNodes(resources), IResource.DEPTH_ZERO, ResourceStatesChangedEvent.PATH_NODES), 
-							new ResourceStatesChangedEvent(resources, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));
-				}
+				// reset statuses only for changed resources
+				IResource []resources = modified.toArray(new IResource[modified.size()]);
+				SVNRemoteStorage.instance().refreshLocalResources(resources, IResource.DEPTH_INFINITE);
+				
+				// but notify including parents
+				SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(FileUtility.getPathNodes(resources), IResource.DEPTH_ZERO, ResourceStatesChangedEvent.PATH_NODES));
+				SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(resources, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));
 			}
 		});
 	}

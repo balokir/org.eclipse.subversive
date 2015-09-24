@@ -410,25 +410,13 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		if (location == null) {
 		    return null;
 		}
+		int revisionKind = Integer.parseInt(data[3]);
 		long revNum = Long.parseLong(data[4]);
-		int revisionKind;
-		try {
-			revisionKind = Integer.parseInt(data[3]);
-		}
-		catch (NumberFormatException ex) { // in order to prevent crashing on improperly stored data (see bug 465812)
-			revisionKind = revNum > 0 ? SVNRevision.Kind.NUMBER.id : SVNRevision.Kind.HEAD.id;
-		}
 		SVNRevision selectedRevision = this.convertToRevision(revisionKind, revNum, false); 
 		SVNRevision pegRevision = null;
 		if (data.length > 6) {
+			int pegKind = Integer.parseInt(data[6]);
 			long pegNum = Long.parseLong(data[7]);
-			int pegKind;
-			try {
-				pegKind = Integer.parseInt(data[6]);
-			}
-			catch (NumberFormatException ex) { // in order to prevent crashing on improperly stored data (see bug 465812)
-				pegKind = pegNum > 0 ? SVNRevision.Kind.NUMBER.id : SVNRevision.Kind.HEAD.id;
-			}
 			pegRevision = this.convertToRevision(pegKind, pegNum, true);
 		}
 		
