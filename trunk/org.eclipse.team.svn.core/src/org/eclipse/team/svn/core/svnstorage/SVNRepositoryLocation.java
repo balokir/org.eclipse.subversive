@@ -356,7 +356,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     	IPath urlPath = SVNUtility.createPathForSVNUrl(url);
     	String name = urlPath.lastSegment();
     	
-    	if (location.isStructureEnabled()) {
+    	if (name != null && location.isStructureEnabled()) {
     		boolean regularFolder = false;
     		if (name.equals(location.getTrunkLocation()) || name.equals(location.getTagsLocation()) || name.equals(location.getBranchesLocation())) {
 	    		IPath tPath = SVNUtility.createPathForSVNUrl(url);
