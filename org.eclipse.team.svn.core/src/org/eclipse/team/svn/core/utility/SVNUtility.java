@@ -132,10 +132,14 @@ public final class SVNUtility {
 		}
 		location.setUrl(url);
 	}
-	
+
 	public static IRepositoryResource getCopiedFrom(IResource resource) {
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		return SVNUtility.getCopiedFrom(SVNRemoteStorage.instance().asLocalResource(resource));
+	}
+	
+	public static IRepositoryResource getCopiedFrom(ILocalResource local) {
 		if (local.isCopied()) {
+			IResource resource = local.getResource();
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 			ISVNConnector proxy = location.acquireSVNProxy();
 			final String path = FileUtility.getWorkingCopyPath(resource);
