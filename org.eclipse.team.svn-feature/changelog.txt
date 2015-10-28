@@ -8,6 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 3.0.2.I20151028-1700 [28 October 2015]
+
+Features:
+ * Provide interface to use SVN 1.8 diff output options (bug 476177)
+
+Fixes:
+ * NPE in CompareWithLatestRevisionAction [ID-D9JJ1] (bug 480129)
+ * Attempted to beginRule: P/xxxx, does not match outer scope rule in SVNRemoteStorage [ID-HTT9T] (bug 325407)
+ * NPE in SVNRepositoryLocation.asRepositoryContainer [ID-W6HFD] (bug 477111)
+ * Grammatical error (bug 476637)
+ * Unversioned deleted files may reappear in patch dialog if called from Synchronize View (bug 476171)
+ 
+--------------------------------------------------------------------------------
+
 Version 3.0.1.I20150722-1700 [22 July 2015]
 
 Fixes:
