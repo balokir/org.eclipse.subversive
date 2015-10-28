@@ -5,31 +5,24 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 3.0.1.I20150722-1700 release date: 22 July 2015
+Version 3.0.2.I20151028-1700 release date: 28 October 2015
 
 1. What's New
 
-   The version 3.0.1 is a service release.
+   The version 3.0.2 is a service release.
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
+	Features:
+	 * Provide interface to use SVN 1.8 diff output options (bug 476177)
+	
 	Fixes:
-	 * StringIndexOutOfBoundsException in bugtraq in History View (bug 471473)
-	 * Reduce I/O amount produced by FileReplaceListener (bug 473193)
-	 * Limit SVN status cache refresh depth when possible (bug 473161)
-	 * Excessive SVN status reloads for updates, revert, commits etc. (bug 473029)
-	 * Improve status cache performance (bug 473028)
-	 * Status refresh for files does unnecessary work that significantly reduces performance on large projects (bug 473026)
-	 * cant't save file or build waiting for user operation (bug 472752)
-	 * Possible resource leak in UI (bug 471963)
-	 * If the folder is unversioned, Subversive tries to load it more than once (bug 471205)
-	 * Symbolic links and external resources interfere with each other in UI (bug 471204)
-	 * There should be a way to add to SVN the intermediate folders produced by svn:externals (bug 471188)
-	 * Obstructed externals (bug 465574)
-	 * Diff viewer preference page has wrong button sizes in Mars (bug 471161)
-	 * Subversive Label Decorations Preferences dialog broken (bug 470990)
-	 * Enable team context menu actions on working set (bug 470552)
+	 * NPE in CompareWithLatestRevisionAction [ID-D9JJ1] (bug 480129)
+	 * Attempted to beginRule: P/xxxx, does not match outer scope rule in SVNRemoteStorage [ID-HTT9T] (bug 325407)
+	 * NPE in SVNRepositoryLocation.asRepositoryContainer [ID-W6HFD] (bug 477111)
+	 * Grammatical error (bug 476637)
+	 * Unversioned deleted files may reappear in patch dialog if called from Synchronize View (bug 476171)
 	
 	
 2. Information
@@ -44,7 +37,7 @@ Version 3.0.1.I20150722-1700 release date: 22 July 2015
    Subversive supports 
     Migration for Subversion below version 1.6 to version 1.7 and higher,
     Subversion version 1.7 with SVN Kit 1.7.14 and JavaHL 1.7.9,
-    Subversion version 1.8 with SVN Kit 1.8.10 and JavaHL 1.8.13
+    Subversion version 1.8 with SVN Kit 1.8.11 and JavaHL 1.8.14
 
 2.2 Known issues
 
