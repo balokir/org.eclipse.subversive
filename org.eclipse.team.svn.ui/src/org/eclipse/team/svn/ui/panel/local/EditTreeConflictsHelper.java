@@ -37,6 +37,7 @@ import org.eclipse.team.svn.core.operation.remote.CopyRemoteResourcesToWcOperati
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -148,9 +149,10 @@ public class EditTreeConflictsHelper {
 	
 	public String getSrcUrl(boolean isLeft) {
 		SVNConflictVersion version = isLeft ? this.treeConflict.srcLeftVersion : this.treeConflict.srcRightVersion;
-		String url = version.reposURL + "/" + version.pathInRepos; //$NON-NLS-1$
-		url = SVNUtility.normalizeURL(url);
-		return url;
+		return  
+			version == null ? 
+			SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource()).getUrl() : 
+			SVNUtility.normalizeURL(version.reposURL + "/" + version.pathInRepos); //$NON-NLS-1$
 	}
 	
 	/*

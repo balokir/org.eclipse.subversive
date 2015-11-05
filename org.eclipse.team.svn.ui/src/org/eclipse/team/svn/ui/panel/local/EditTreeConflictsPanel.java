@@ -127,11 +127,12 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		SVNConflictVersion cVersionLeft = this.local.getTreeConflictDescriptor().srcLeftVersion;
 		SVNConflictVersion cVersionRight = this.local.getTreeConflictDescriptor().srcRightVersion;
 		label.setText(SVNUIMessages.format(SVNUIMessages.EditTreeConflictsPanel_revision, String.valueOf(cVersionLeft != null ? cVersionLeft.pegRevision : SVNRevision.INVALID_REVISION_NUMBER)));
-		
+
+		String leftUrl = this.helper.getSrcUrl(true);
 		if (this.local.getTreeConflictDescriptor().operation == Operation.MERGE || this.local.getTreeConflictDescriptor().operation == Operation.SWITCHED) {
 			Link leftLink = new Link(composite, SWT.NULL); 
 			leftLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			leftLink.setText("<a>" + this.helper.getSrcUrl(true) + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+			leftLink.setText("<a>" + leftUrl + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			leftLink.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {			
 					EditTreeConflictsPanel.this.showHistoryPage(true);
@@ -140,7 +141,7 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		} else {
 			label = new Label(composite, SWT.NULL);
 			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			label.setText(this.helper.getSrcUrl(true));
+			label.setText(leftUrl);
 		}
 						
 		//srcRight
