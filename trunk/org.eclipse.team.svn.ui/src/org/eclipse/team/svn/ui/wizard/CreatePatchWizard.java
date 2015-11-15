@@ -65,7 +65,10 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	}
 	
 	public IResource getTargetFolder() {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(this.getFileName())).getParent();
+		if (this.selectFile.getFile() != null) {
+			return this.selectFile.getFile().getParent();
+		}
+		return ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(this.getFileName()).removeLastSegments(1));
 	}
 	
 	public String getFileName() {
