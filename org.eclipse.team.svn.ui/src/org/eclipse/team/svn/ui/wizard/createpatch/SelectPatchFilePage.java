@@ -148,6 +148,10 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		return Arrays.asList(this.realSelection).toArray(new IResource[this.realSelection.length]);
 	}
 
+	public IFile getFile() {
+		return this.file;
+	}
+	
 	public String getFileName() {
 		return this.fileName;
 	}
