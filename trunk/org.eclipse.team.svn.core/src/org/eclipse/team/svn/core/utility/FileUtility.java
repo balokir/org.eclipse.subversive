@@ -52,9 +52,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -660,7 +660,7 @@ public final class FileUtility {
 	public static boolean isConnected(IResource resource) {
 		if (resource.getProject() != null) {
 			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
-			return provider != null && provider instanceof IConnectedProjectInformation;	
+			return provider != null && provider instanceof SVNTeamProvider;	
 		}
 		return false;
 	}

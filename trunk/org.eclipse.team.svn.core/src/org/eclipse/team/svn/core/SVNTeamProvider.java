@@ -55,6 +55,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
+@SuppressWarnings("deprecation")
 public class SVNTeamProvider extends RepositoryProvider implements IConnectedProjectInformation {
 	public final static QualifiedName LOCATION_PROPERTY = new QualifiedName("org.eclipse.team.svn", "location"); //$NON-NLS-1$ //$NON-NLS-2$
 	public final static QualifiedName VERIFY_TAG_ON_COMMIT_PROPERTY = new QualifiedName("org.eclipse.team.svn", "verifyTagOnCommit"); //$NON-NLS-1$ //$NON-NLS-2$

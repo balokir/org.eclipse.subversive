@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.BaseMessages;
-import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNDepth;
@@ -81,7 +81,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 				final IProject current = (IProject)projects[i];
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(current, SVNTeamPlugin.NATURE_ID);
+						SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(current, SVNTeamPlugin.NATURE_ID);
 						IPath fsLocation = current.getLocation();
 						if (fsLocation != null) {
 							String path = fsLocation.toString();
