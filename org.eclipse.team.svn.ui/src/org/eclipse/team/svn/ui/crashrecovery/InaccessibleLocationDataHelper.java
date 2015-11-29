@@ -18,8 +18,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -83,7 +83,7 @@ public class InaccessibleLocationDataHelper implements IResolutionHelper {
 					if (container == null) {
 						return false;
 					}
-					IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+					SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
 					try {
 						provider.switchResource(container);
 					}

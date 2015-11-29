@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -102,7 +102,7 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 							SwitchOperation.this.options, new ConflictDetectionProgressMonitor(SwitchOperation.this, monitor, null));
 					
 					if (resource instanceof IProject) {
-						IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider((IProject)resource);
+						SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider((IProject)resource);
 						provider.switchResource(destination);
 					}
 				}
