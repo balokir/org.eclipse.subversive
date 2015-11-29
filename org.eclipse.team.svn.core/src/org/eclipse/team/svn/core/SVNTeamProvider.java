@@ -329,24 +329,30 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		return null;
 	}
 	
-	protected int uploadRepositoryLocation() {
+	public IRepositoryLocation peekAtLocation() {
 		try {
 			IProject project = this.getProject();
-			
 			String data = project.getPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY);
 			if (data != null) {
-				this.location = SVNRemoteStorage.instance().newRepositoryLocation(data);
-				this.locationId = this.location.getId();
-				if (SVNRemoteStorage.instance().getRepositoryLocation(this.location.getId()) == null) {
-					return ErrorDescription.REPOSITORY_LOCATION_IS_DISCARDED;
-				}
-				return ErrorDescription.SUCCESS;
+				return SVNRemoteStorage.instance().newRepositoryLocation(data);
 			}
 		}
 		catch (CoreException ex) {
 			// do nothing
 		}
-		return ErrorDescription.CANNOT_READ_LOCATION_DATA;
+		return null;
+	}
+	
+	protected int uploadRepositoryLocation() {
+		this.location = this.peekAtLocation();
+		if (this.location == null) {
+			return ErrorDescription.CANNOT_READ_LOCATION_DATA;
+		}
+		this.locationId = this.location.getId();
+		if (SVNRemoteStorage.instance().getRepositoryLocation(this.location.getId()) == null) {
+			return ErrorDescription.REPOSITORY_LOCATION_IS_DISCARDED;
+		}
+		return ErrorDescription.SUCCESS;
 	}
 	
 	public boolean isVerifyTagOnCommit() {
