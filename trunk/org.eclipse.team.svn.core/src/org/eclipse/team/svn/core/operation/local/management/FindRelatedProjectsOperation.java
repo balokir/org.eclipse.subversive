@@ -22,9 +22,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -63,10 +63,10 @@ public class FindRelatedProjectsOperation extends AbstractActionOperation implem
 			final IProject current = projects[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(current, SVNTeamPlugin.NATURE_ID);
+					SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(current, SVNTeamPlugin.NATURE_ID);
 					if (provider != null && 
 						(FindRelatedProjectsOperation.this.exceptProjects == null || !FindRelatedProjectsOperation.this.exceptProjects.contains(current)) &&
-						provider.getRepositoryLocation() == FindRelatedProjectsOperation.this.location) {
+						provider.peekAtLocation() == FindRelatedProjectsOperation.this.location) {
 						FindRelatedProjectsOperation.this.resources.add(current);
 					}
 				}
