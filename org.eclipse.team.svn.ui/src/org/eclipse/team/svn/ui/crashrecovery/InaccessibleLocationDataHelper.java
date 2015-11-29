@@ -63,13 +63,8 @@ public class InaccessibleLocationDataHelper implements IResolutionHelper {
 							0);
 					solved[0] = dlg.open() == 0;
 					if (solved[0]) {
-						String locationId = (String)context[2];
-						location[0] = 
-							locationId == null ? 
-							SVNRemoteStorage.instance().newRepositoryLocation() :
-							SVNRemoteStorage.instance().newRepositoryLocation(locationId);
-						
-							location[0].setUrl((String)context[1]);
+						location[0] = SVNRemoteStorage.instance().newRepositoryLocation();
+						location[0].setUrl((String)context[1]);
 						
 						NewRepositoryLocationWizard wizard = new NewRepositoryLocationWizard(location[0], false);
 						WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);

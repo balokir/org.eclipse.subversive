@@ -64,7 +64,6 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	protected IRepositoryLocation location;
 	protected IRepositoryResource resource;
 	protected String relocatedTo;
-	protected String locationId;
 	protected int errorCode;
 	protected int state;
 
@@ -163,7 +162,6 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	protected void restoreLocation() throws HiddenException {
 		if (this.state == 0) {
 			this.location = null;
-			this.locationId = null;
 			if ((this.errorCode = this.uploadRepositoryLocation()) == ErrorDescription.SUCCESS ||
 				(this.errorCode = this.acquireResolution(false)) == ErrorDescription.SUCCESS) {
     			return;
@@ -177,7 +175,6 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	protected synchronized void connectToProject() throws HiddenException {				
 		if (this.state == 0) {
 			this.location = null;
-			this.locationId = null;
 			this.resource = null;
 			this.relocatedTo = null;
 			if ((this.errorCode = this.uploadRepositoryResource()) == ErrorDescription.SUCCESS ||
@@ -201,7 +198,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 				context = new Object[] {this.getProject(), this.relocatedTo, this.location};
 			}
 			else if (this.errorCode == ErrorDescription.CANNOT_READ_LOCATION_DATA) {
-				context = new Object[] {this.getProject(), this.relocatedTo, this.locationId};
+				context = new Object[] {this.getProject(), this.relocatedTo};
 			}
 			else {
 				context = this.getProject();
@@ -348,7 +345,6 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		if (this.location == null) {
 			return ErrorDescription.CANNOT_READ_LOCATION_DATA;
 		}
-		this.locationId = this.location.getId();
 		if (SVNRemoteStorage.instance().getRepositoryLocation(this.location.getId()) == null) {
 			return ErrorDescription.REPOSITORY_LOCATION_IS_DISCARDED;
 		}
