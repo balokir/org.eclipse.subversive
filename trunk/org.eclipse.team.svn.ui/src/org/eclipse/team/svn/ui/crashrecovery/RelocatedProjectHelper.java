@@ -77,12 +77,10 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 			
 			if (panel.getRecoveryAction() == RelocationChoicesPanel.RELOCATE_THE_PROJECT_BACK) {
 				RelocateWorkingCopyOperation mainOp = new RelocateWorkingCopyOperation(new IResource[] {project}, location);
-				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				
-				op.add(mainOp);
-				op.add(new RefreshResourcesOperation(mainOp));
+				ProgressMonitorUtility.doTaskExternal(mainOp, new NullProgressMonitor());
 				
-				ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
+				ProgressMonitorUtility.doTaskScheduled(new RefreshResourcesOperation(mainOp));
 				
 				return mainOp.getExecutionState() == IActionOperation.OK;
 			}
@@ -113,9 +111,10 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 						}
 					}
 				});
-				op.add(new RefreshResourcesOperation(mainOp));
 				
 				ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
+				
+				ProgressMonitorUtility.doTaskScheduled(new RefreshResourcesOperation(mainOp));
 				
 				return true;
 			}
