@@ -404,17 +404,6 @@ public final class SVNUtility {
 		return SVNMessages.getString("Status_" + status); //$NON-NLS-1$
 	}
 	
-	public static String getOldRoot(String oldUrl, IRepositoryResource []rootChildren) {
-		for (int i = 0; i < rootChildren.length; i++) {
-			String childName = rootChildren[i].getName();
-			int idx = oldUrl.indexOf(childName);
-			if (idx > 0 && oldUrl.charAt(idx - 1) == '/' && (oldUrl.endsWith(childName) || oldUrl.charAt(idx + childName.length()) == '/')) {
-				return oldUrl.substring(0, idx - 1);
-			}
-		}
-		return null;
-	}
-	
 	public static IRepositoryRoot getTrunkLocation(IRepositoryResource resource) {
 		return SVNUtility.getRootLocation(resource, resource.getRepositoryLocation().getTrunkLocation(), IRepositoryRoot.KIND_TRUNK);
 	}

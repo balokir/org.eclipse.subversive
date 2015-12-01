@@ -95,11 +95,11 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	public synchronized void relocateResource() throws CoreException {
-		//does not affect finite automate state
 		if (this.state != 1) {
 			this.restoreLocation();
 		}
 		SVNTeamProvider.setRepositoryLocation(this.getProject(), this.location);
+		this.state = 0;
 	}
 	
 	public static void map(IProject project, IRepositoryResource resource) throws CoreException {

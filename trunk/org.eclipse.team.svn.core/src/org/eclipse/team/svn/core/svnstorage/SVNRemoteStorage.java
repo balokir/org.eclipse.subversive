@@ -1319,28 +1319,13 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    this.setCachedResource(local);
 		
 		if (current.getType() == IResource.PROJECT && !this.changeMonitorMap.containsKey(current)) {
-			File wcDB = this.findWCDB(new File(FileUtility.getResourcePath(current).toString()));
-			if (wcDB != null && wcDB.exists()) {
+			File wcDB = FileUtility.findWCDB(FileUtility.getResourcePath(current).toFile());
+			if (wcDB != null) {
 				this.changeMonitorMap.put(current, wcDB);
 			}
 		}
 
 		return local;
-	}
-	
-	protected File findWCDB(File folder) {
-		String fragment = "/" + SVNUtility.getSVNFolderName() + "/wc.db"; //$NON-NLS-1$
-		File target = null;
-		do
-		{
-			target = new File(folder.getAbsolutePath() + fragment);
-			if (target.exists()) {
-				return target;
-			}
-			folder = folder.getParentFile();
-		}
-		while (folder != null);
-		return null;
 	}
 	
 	protected ILocalResource getFirstExistingParentLocal(IResource node) {

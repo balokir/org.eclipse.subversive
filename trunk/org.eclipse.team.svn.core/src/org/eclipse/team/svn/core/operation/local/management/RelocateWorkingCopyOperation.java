@@ -11,7 +11,9 @@
 
 package org.eclipse.team.svn.core.operation.local.management;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -30,6 +32,7 @@ import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -75,28 +78,30 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 		
 		try {
 			final IRepositoryResource []children = this.location.getRepositoryRoot().getChildren();
-			final String rootUrl = this.location.getRepositoryRootUrl();
+			final HashSet<String> processedPaths = new HashSet<String>(); // handle nested projects
 			
 			for (int i = 0; i < projects.length && !monitor.isCanceled(); i++) {
 				final IProject current = (IProject)projects[i];
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(current, SVNTeamPlugin.NATURE_ID);
-						IPath fsLocation = current.getLocation();
-						if (fsLocation != null) {
-							String path = fsLocation.toString();
-							SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(current);
-							if (st != null) {
-								String url = SVNUtility.decodeURL(st.url);
-								String oldRoot = SVNUtility.getOldRoot(url, children);
-								if (oldRoot != null) {
-									RelocateWorkingCopyOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + oldRoot + "\" \"" + rootUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(RelocateWorkingCopyOperation.this.location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-									proxy.relocate(oldRoot, rootUrl, path, SVNDepth.INFINITY, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
-									//XXX: provider.relocateResource();
-									provider.switchResource(RelocateWorkingCopyOperation.this.location.asRepositoryContainer(rootUrl + url.substring(oldRoot.length()), false));
-									RelocateWorkingCopyOperation.this.resources.add(current);
+						IPath fsLocation = FileUtility.getResourcePath(current);
+						if (fsLocation != FileUtility.getAlwaysIgnoredPath()) {
+							String path = RelocateWorkingCopyOperation.this.getWCRootPath(fsLocation.toString());
+							if (!processedPaths.contains(path)) {
+								SVNChangeStatus []stats = SVNUtility.status(proxy, path, SVNDepth.EMPTY, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+								if (stats.length > 0 && stats[0].url != null) {
+									String url = SVNUtility.decodeURL(stats[0].url);
+									String newURL = RelocateWorkingCopyOperation.this.remapURL(url, children);
+									if (!url.equals(newURL)) {
+										RelocateWorkingCopyOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + newURL + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(RelocateWorkingCopyOperation.this.location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+										proxy.relocate(url, newURL, path, SVNDepth.INFINITY, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
+									}
 								}
+								processedPaths.add(path);
 							}
+							SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(current, SVNTeamPlugin.NATURE_ID);
+							provider.relocateResource();
+							RelocateWorkingCopyOperation.this.resources.add(current);
 						}
 					}
 				}, monitor, projects.length);
@@ -105,6 +110,25 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 		finally {
 		    this.location.releaseSVNProxy(proxy);
 		}
+	}
+	
+	public String remapURL(String oldUrl, IRepositoryResource []rootChildren) {
+		for (int i = 0; i < rootChildren.length; i++) {
+			String childName = rootChildren[i].getName();
+			int idx = oldUrl.indexOf(childName);
+			if (idx > 0 && oldUrl.charAt(idx - 1) == '/' && (oldUrl.endsWith(childName) || oldUrl.charAt(idx + childName.length()) == '/')) {
+				return rootChildren[i].getUrl() + oldUrl.substring(idx + childName.length()); 
+			}
+		}
+		return null;
+	}
+	
+	protected String getWCRootPath(String path) {
+		File wcDB = FileUtility.findWCDB(new File(path));
+		if (wcDB != null) {
+			return wcDB.getParentFile().getParent();
+		}
+		return path;
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
