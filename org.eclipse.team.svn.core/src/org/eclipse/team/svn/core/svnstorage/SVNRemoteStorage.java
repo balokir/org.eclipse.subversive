@@ -1397,7 +1397,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return status;
 	}
 	
-	protected static String getTextStatusString(SVNEntryStatus.Kind propKind, SVNEntryStatus.Kind textKind, boolean isRemoteStatus) {
+	public static String getTextStatusString(SVNEntryStatus.Kind propKind, SVNEntryStatus.Kind textKind, boolean isRemoteStatus) {
 		String status = IStateFilter.ST_NORMAL;
 		switch (textKind) {
 			case IGNORED: {
