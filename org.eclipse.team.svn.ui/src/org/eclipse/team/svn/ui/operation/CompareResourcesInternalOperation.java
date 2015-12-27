@@ -18,24 +18,33 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
+import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -91,24 +100,56 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 	}
 	
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		/*
-		 * As there's no svn operation (svn diff) which can compare working copy url and repository url
-		 * which doesn't match to working copy url (e.g. compare working copy with another branch etc.)
-		 * we need extra handling: and so we calculate local changes (using svn status)
-		 * and remote changes (using svn diff).
-		 * In order to compare working copy and not matched to it repository url we detect repository
-		 * url corresponding to working copy and compare it with repository url, in other words,
-		 * we compare 2 repository urls.
-		 */		
 		final ArrayList<SVNDiffStatus> localChanges = new ArrayList<SVNDiffStatus>();
 		final ArrayList<SVNDiffStatus> remoteChanges = new ArrayList<SVNDiffStatus>();
 		
-		final IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.local.getResource());
-		final ISVNConnector proxy = location.acquireSVNProxy();
+		IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.local.getResource());
+		ISVNConnector proxy = location.acquireSVNProxy();
+
+		try {
+			if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_7_x) {
+				this.fetchStatuses17(proxy, localChanges, remoteChanges, monitor);
+			}
+			else {
+				this.fetchStatuses18(proxy, localChanges, remoteChanges, monitor);
+			}
+		}
+		finally {
+			location.releaseSVNProxy(proxy);
+		}
 		
+		this.protectStep(new IUnprotectedOperation() {
+			public void run(IProgressMonitor monitor) throws Exception {
+				CompareConfiguration cc = new CompareConfiguration();
+				cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
+				final ThreeWayResourceCompareInput compare = new ThreeWayResourceCompareInput(cc, CompareResourcesInternalOperation.this.local, CompareResourcesInternalOperation.this.ancestor, CompareResourcesInternalOperation.this.remote, localChanges, remoteChanges);
+				compare.setForceId(CompareResourcesInternalOperation.this.forceId);
+				compare.initialize(monitor);
+				if (!monitor.isCanceled())
+				{
+					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							if (CompareResourcesInternalOperation.this.showInDialog) {
+								if (CompareResourcesInternalOperation.this.compareResultOK(compare)) {
+									ComparePanel panel = new ComparePanel(compare, CompareResourcesInternalOperation.this.local.getResource());
+									DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+									dialog.open();
+								}
+							}
+							else {
+								ResourceCompareInput.openCompareEditor(compare, CompareResourcesInternalOperation.this.forceReuse);
+							}
+						}
+					});
+				}
+			}
+		}, monitor, 100, 50);
+	}
+
+	protected void fetchStatuses17(final ISVNConnector proxy, final ArrayList<SVNDiffStatus> localChanges, final ArrayList<SVNDiffStatus> remoteChanges, final IProgressMonitor monitor) {
 		final IRepositoryResource []diffPair = new IRepositoryResource[] {this.ancestor, this.remote};
 		SVNRevision revision = this.remote.getSelectedRevision();
-		boolean fetchRemote = revision.getKind() == Kind.HEAD || revision.getKind() == Kind.NUMBER;
+		boolean fetchRemote = revision.getKind() == SVNRevision.Kind.HEAD || revision.getKind() == SVNRevision.Kind.NUMBER;
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
@@ -151,38 +192,38 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 				}
 			}, monitor, 100, 5);
 		}
-		
-		location.releaseSVNProxy(proxy);
-		
-		if (!monitor.isCanceled()) {
-			this.protectStep(new IUnprotectedOperation() {
-				public void run(IProgressMonitor monitor) throws Exception {
-					CompareConfiguration cc = new CompareConfiguration();
-					cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
-					diffPair[0].setSelectedRevision(SVNRevision.BASE);
-					final ThreeWayResourceCompareInput compare = new ThreeWayResourceCompareInput(cc, CompareResourcesInternalOperation.this.local, diffPair[0], diffPair[1], localChanges, remoteChanges);
-					compare.setForceId(CompareResourcesInternalOperation.this.forceId);
-					compare.initialize(monitor);
-					if (!monitor.isCanceled())
-					{
-						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								if (CompareResourcesInternalOperation.this.showInDialog) {
-									if (CompareResourcesInternalOperation.this.compareResultOK(compare)) {
-										ComparePanel panel = new ComparePanel(compare, CompareResourcesInternalOperation.this.local.getResource());
-										DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-										dialog.open();
-									}
-								}
-								else {
-									ResourceCompareInput.openCompareEditor(compare, CompareResourcesInternalOperation.this.forceReuse);
-								}
-							}
-						});
+	}
+	
+	protected void fetchStatuses18(final ISVNConnector proxy, final ArrayList<SVNDiffStatus> localChanges, final ArrayList<SVNDiffStatus> remoteChanges, final IProgressMonitor monitor) {
+		this.protectStep(new IUnprotectedOperation() {
+			public void run(IProgressMonitor monitor) throws Exception {
+				final IContainer compareRoot = 
+					CompareResourcesInternalOperation.this.local instanceof ILocalFolder ? 
+					(IContainer)CompareResourcesInternalOperation.this.local.getResource() : 
+					CompareResourcesInternalOperation.this.local.getResource().getParent();
+				final IPath rootPath = FileUtility.getResourcePath(compareRoot);
+
+				SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), null, SVNRevision.WORKING);
+				final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
+				proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, null, new ISVNDiffStatusCallback() {
+					public void next(SVNDiffStatus status) {
+						IPath tPath = new Path(status.pathPrev);
+						tPath = tPath.removeFirstSegments(rootPath.segmentCount());
+						IResource resource = compareRoot.findMember(tPath);
+						if (resource == null) {
+							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
+						}
+						if (IStateFilter.SF_ANY_CHANGE.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
+							localChanges.add(status);
+						}
+						else {
+							String pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + status.pathNext.substring(refNext.path.length());
+							remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, status.textStatus, status.propStatus));
+						}
 					}
-				}
-			}, monitor, 100, 40);
-		}
+				}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
+			}
+		}, monitor, 100, 50);
 	}
 	
 	protected boolean compareResultOK(CompareEditorInput input) {
