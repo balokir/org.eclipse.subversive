@@ -1,0 +1,6 @@
+<project xmlns:j="jelly:core" xmlns:interaction="jelly:interaction" xmlns:util="jelly:util" xmlns:log="jelly:log">
+  <preGoal name="site">
+  		<attainGoal name="jar:install-snapshot"/>
+  </preGoal>
+</project>
+ 

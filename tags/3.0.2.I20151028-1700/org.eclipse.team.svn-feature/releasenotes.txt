@@ -1,0 +1,45 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 3.0.2.I20151028-1700 release date: 28 October 2015
+
+1. What's New
+
+   The version 3.0.2 is a service release.
+   
+   Changes comparatively to the previous release version are listed below. The full list of 
+   changes you can find in Change Log.
+		
+	Features:
+	 * Provide interface to use SVN 1.8 diff output options (bug 476177)
+	
+	Fixes:
+	 * NPE in CompareWithLatestRevisionAction [ID-D9JJ1] (bug 480129)
+	 * Attempted to beginRule: P/xxxx, does not match outer scope rule in SVNRemoteStorage [ID-HTT9T] (bug 325407)
+	 * NPE in SVNRepositoryLocation.asRepositoryContainer [ID-W6HFD] (bug 477111)
+	 * Grammatical error (bug 476637)
+	 * Unversioned deleted files may reappear in patch dialog if called from Synchronize View (bug 476171)
+	
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
+    * 4.3
+    * 4.4
+    * 4.5
+   
+   Subversive supports 
+    Migration for Subversion below version 1.6 to version 1.7 and higher,
+    Subversion version 1.7 with SVN Kit 1.7.14 and JavaHL 1.7.9,
+    Subversion version 1.8 with SVN Kit 1.8.11 and JavaHL 1.8.14
+
+2.2 Known issues
+
+	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.14 connector]
+	
