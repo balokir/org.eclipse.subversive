@@ -1,0 +1,48 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 3.0.3.I20151228-1700 release date: 28 December 2015
+
+1. What's New
+
+   The version 3.0.3 is a service release.
+   
+   Changes comparatively to the previous release version are listed below. The full list of 
+   changes you can find in Change Log.
+		
+	Fixes:
+	 * Compare with another branch shows files with no difference [SVN 1.7 or older] (bug 326694)
+	 * Weird behavior of the "Compare with branch" feature (bug 484929)
+		+ special thanks to Florent Angebault
+	 * Deadlock is possible within RelocatedProjectHelper (bug 483402)
+	 * Prompt that asks what to do after project relocation shown in a loop forever (bug 482565)
+	 * IConnectedProjectInformation is an unneeded interface (bug 483232)
+	 * Remove unused code in the InaccessibleLocationDataHelper class (bug 483231)
+	 * FindRelatedProjectsOperation should not activate project initialization (bug 483230)
+	 * Remove outdated project-to-location management code (bug 483229)
+	 * NPE in CreatePatchWizard [ID-AW5HY] (bug 481725)
+	 * Unhandled event loop exception org.eclipse.team.svn.ui.panel.local.EditTreeConflictsHelper.getSrcUrl (bug 480521)
+	
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
+    * 4.3
+    * 4.4
+    * 4.5
+   
+   Subversive supports 
+    Migration for Subversion below version 1.6 to version 1.7 and higher,
+    Subversion version 1.7 with SVN Kit 1.7.14 and JavaHL 1.7.9,
+    Subversion version 1.8 with SVN Kit 1.8.11 and JavaHL 1.8.14
+
+2.2 Known issues
+
+	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.14 connector]
+	
