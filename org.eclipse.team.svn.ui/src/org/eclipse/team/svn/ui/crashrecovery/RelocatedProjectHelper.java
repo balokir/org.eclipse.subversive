@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -53,7 +53,7 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 			
 			IRepositoryRoot []roots = SVNUtility.findRoots(relocatedTo, true);
 			if (roots.length != 0) {
-				SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+				IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
 				try {
 					provider.switchResource(roots[0].asRepositoryContainer(relocatedTo, false));
 					return true;
@@ -77,10 +77,12 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 			
 			if (panel.getRecoveryAction() == RelocationChoicesPanel.RELOCATE_THE_PROJECT_BACK) {
 				RelocateWorkingCopyOperation mainOp = new RelocateWorkingCopyOperation(new IResource[] {project}, location);
+				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				
-				ProgressMonitorUtility.doTaskExternal(mainOp, new NullProgressMonitor());
+				op.add(mainOp);
+				op.add(new RefreshResourcesOperation(mainOp));
 				
-				ProgressMonitorUtility.doTaskScheduled(new RefreshResourcesOperation(mainOp));
+				ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
 				
 				return mainOp.getExecutionState() == IActionOperation.OK;
 			}
@@ -97,7 +99,7 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						location.setUrl(relocatedTo);
 						location.setUrl(location.getRepositoryRootUrl());
-						SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+						IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
 						provider.relocateResource();
 					}
 				});
@@ -106,21 +108,20 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						if (mainOp.getExecutionState() != IActionOperation.OK) {
 							SVNRemoteStorage.instance().copyRepositoryLocation(location, backup);
-							SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+							IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
 							provider.relocateResource();
 						}
 					}
 				});
+				op.add(new RefreshResourcesOperation(mainOp));
 				
 				ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
-				
-				ProgressMonitorUtility.doTaskScheduled(new RefreshResourcesOperation(mainOp));
 				
 				return true;
 			}
 			else if (panel.getRecoveryAction() == RelocationChoicesPanel.SHARE_WITH_ANOTHER_LOCATION) {
 				try {
-					SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+					IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
 					IRepositoryLocation newLocation = SVNRemoteStorage.instance().newRepositoryLocation();
 					SVNRemoteStorage.instance().copyRepositoryLocation(newLocation, location);
 					newLocation.setUrl(relocatedTo);

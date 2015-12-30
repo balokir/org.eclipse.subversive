@@ -44,10 +44,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
@@ -651,24 +651,24 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return baseResource.getUrl() + "/" + url.substring(project.getFullPath().toString().length() + 1); //$NON-NLS-1$
 	}
 	
-	protected SVNTeamProvider getConnectedProjectInformation(IProject project) {
+	protected IConnectedProjectInformation getConnectedProjectInformation(IProject project) {
 		RepositoryProvider provider = RepositoryProvider.getProvider(project);
 		if (provider == null) {
 			String errMessage = SVNMessages.formatErrorString("Error_NotConnectedProject", new String[] {project.getName()}); //$NON-NLS-1$
 			throw new UnreportableException(errMessage);
 		}
-		if (!(provider instanceof SVNTeamProvider)) {
+		if (!(provider instanceof IConnectedProjectInformation)) {
 			String errMessage = SVNMessages.formatErrorString("Error_AnotherProvider", new String[] {project.getName(), provider.getID()}); //$NON-NLS-1$
 			throw new UnreportableException(errMessage);
 		}
 		
-		return (SVNTeamProvider)provider;
+		return (IConnectedProjectInformation)provider;
 	}
 	
 	protected void refreshLocalResourceImpl(IResource resource, int depth) {
 		if (resource.getType() != IResource.FILE)  {
 		    if (resource.getType() == IResource.PROJECT) {
-		    	SVNTeamProvider info = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
+		    	IConnectedProjectInformation info = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
 		    	if (info != null) {
 		    		try {
 						info.relocateResource();
@@ -692,7 +692,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected ILocalResource loadLocalResourcesSubTree(final IResource resource, int depth) throws Exception {
-		SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
+		IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
 		if (provider == null || FileUtility.isSVNInternals(resource)) {
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
@@ -807,7 +807,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return false;
 	}
 	
-	protected ILocalResource loadLocalResourcesSubTreeSVNImpl(SVNTeamProvider provider, IResource resource, int depth) throws Exception {
+	protected ILocalResource loadLocalResourcesSubTreeSVNImpl(IConnectedProjectInformation provider, IResource resource, int depth) throws Exception {
 		IProject project = resource.getProject();
 		IResource target = resource.getType() == IResource.FILE ? resource.getParent() : resource;
 
@@ -1319,13 +1319,28 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    this.setCachedResource(local);
 		
 		if (current.getType() == IResource.PROJECT && !this.changeMonitorMap.containsKey(current)) {
-			File wcDB = FileUtility.findWCDB(FileUtility.getResourcePath(current).toFile());
-			if (wcDB != null) {
+			File wcDB = this.findWCDB(new File(FileUtility.getResourcePath(current).toString()));
+			if (wcDB != null && wcDB.exists()) {
 				this.changeMonitorMap.put(current, wcDB);
 			}
 		}
 
 		return local;
+	}
+	
+	protected File findWCDB(File folder) {
+		String fragment = "/" + SVNUtility.getSVNFolderName() + "/wc.db"; //$NON-NLS-1$
+		File target = null;
+		do
+		{
+			target = new File(folder.getAbsolutePath() + fragment);
+			if (target.exists()) {
+				return target;
+			}
+			folder = folder.getParentFile();
+		}
+		while (folder != null);
+		return null;
 	}
 	
 	protected ILocalResource getFirstExistingParentLocal(IResource node) {
@@ -1397,7 +1412,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return status;
 	}
 	
-	public static String getTextStatusString(SVNEntryStatus.Kind propKind, SVNEntryStatus.Kind textKind, boolean isRemoteStatus) {
+	protected static String getTextStatusString(SVNEntryStatus.Kind propKind, SVNEntryStatus.Kind textKind, boolean isRemoteStatus) {
 		String status = IStateFilter.ST_NORMAL;
 		switch (textKind) {
 			case IGNORED: {

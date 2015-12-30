@@ -55,8 +55,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-@SuppressWarnings("deprecation")
 public class SVNTeamProvider extends RepositoryProvider implements IConnectedProjectInformation {
+	public final static QualifiedName RESOURCE_PROPERTY = new QualifiedName("org.eclipse.team.svn", "resource"); //$NON-NLS-1$ //$NON-NLS-2$
 	public final static QualifiedName LOCATION_PROPERTY = new QualifiedName("org.eclipse.team.svn", "location"); //$NON-NLS-1$ //$NON-NLS-2$
 	public final static QualifiedName VERIFY_TAG_ON_COMMIT_PROPERTY = new QualifiedName("org.eclipse.team.svn", "verifyTagOnCommit"); //$NON-NLS-1$ //$NON-NLS-2$
 	
@@ -65,6 +65,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	protected IRepositoryLocation location;
 	protected IRepositoryResource resource;
 	protected String relocatedTo;
+	protected String locationId;
 	protected int errorCode;
 	protected int state;
 
@@ -95,11 +96,11 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	public synchronized void relocateResource() throws CoreException {
+		//does not affect finite automate state
 		if (this.state != 1) {
 			this.restoreLocation();
 		}
 		SVNTeamProvider.setRepositoryLocation(this.getProject(), this.location);
-		this.state = 0;
 	}
 	
 	public static void map(IProject project, IRepositoryResource resource) throws CoreException {
@@ -150,6 +151,8 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		IProject project = this.getProject();
 		if (project != null) {
 			try {project.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, null);} catch (Exception ex) {}
+			// compatibility with previous versions
+			try {project.setPersistentProperty(SVNTeamProvider.RESOURCE_PROPERTY, null);} catch (Exception ex) {}
 		}
 		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(new IResource[] {this.getProject()}, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));		
 		super.deconfigured();
@@ -163,6 +166,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	protected void restoreLocation() throws HiddenException {
 		if (this.state == 0) {
 			this.location = null;
+			this.locationId = null;
 			if ((this.errorCode = this.uploadRepositoryLocation()) == ErrorDescription.SUCCESS ||
 				(this.errorCode = this.acquireResolution(false)) == ErrorDescription.SUCCESS) {
     			return;
@@ -176,6 +180,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	protected synchronized void connectToProject() throws HiddenException {				
 		if (this.state == 0) {
 			this.location = null;
+			this.locationId = null;
 			this.resource = null;
 			this.relocatedTo = null;
 			if ((this.errorCode = this.uploadRepositoryResource()) == ErrorDescription.SUCCESS ||
@@ -199,7 +204,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 				context = new Object[] {this.getProject(), this.relocatedTo, this.location};
 			}
 			else if (this.errorCode == ErrorDescription.CANNOT_READ_LOCATION_DATA) {
-				context = new Object[] {this.getProject(), this.relocatedTo};
+				context = new Object[] {this.getProject(), this.relocatedTo, this.locationId};
 			}
 			else {
 				context = this.getProject();
@@ -327,31 +332,49 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		return null;
 	}
 	
-	public IRepositoryLocation peekAtLocation() {
+	protected int uploadRepositoryLocation() {
 		try {
 			IProject project = this.getProject();
+			
 			String data = project.getPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY);
 			if (data != null) {
-				return SVNRemoteStorage.instance().newRepositoryLocation(data);
+				this.location = SVNRemoteStorage.instance().newRepositoryLocation(data);
+				this.locationId = this.location.getId();
+				if (SVNRemoteStorage.instance().getRepositoryLocation(this.location.getId()) == null) {
+					return ErrorDescription.REPOSITORY_LOCATION_IS_DISCARDED;
+				}
 			}
+			else {
+				// compatibility with previous versions
+				data = project.getPersistentProperty(SVNTeamProvider.RESOURCE_PROPERTY);
+				if (data != null) {
+					this.locationId = SVNTeamProvider.extractLocationId(data);
+					if (this.locationId != null) {
+						this.location = SVNRemoteStorage.instance().getRepositoryLocation(this.locationId);
+						if (this.location != null) {
+							SVNTeamProvider.setRepositoryLocation(project, this.location);
+						}
+					}
+				}
+			}
+			return this.location == null ? ErrorDescription.CANNOT_READ_LOCATION_DATA : ErrorDescription.SUCCESS;
 		}
 		catch (CoreException ex) {
-			// do nothing
+			return ErrorDescription.CANNOT_READ_LOCATION_DATA;
+		}
+	}
+	
+	// compatibility with old plugin versions
+	protected static String extractLocationId(String resourceData) {
+		if (resourceData != null) {
+			String []data = resourceData.split(";"); //$NON-NLS-1$
+			if (data.length >= 2) {
+				return data[1];
+			}
 		}
 		return null;
 	}
-	
-	protected int uploadRepositoryLocation() {
-		this.location = this.peekAtLocation();
-		if (this.location == null) {
-			return ErrorDescription.CANNOT_READ_LOCATION_DATA;
-		}
-		if (SVNRemoteStorage.instance().getRepositoryLocation(this.location.getId()) == null) {
-			return ErrorDescription.REPOSITORY_LOCATION_IS_DISCARDED;
-		}
-		return ErrorDescription.SUCCESS;
-	}
-	
+
 	public boolean isVerifyTagOnCommit() {
 		try {
 			String strProp = this.getProject().getPersistentProperty(SVNTeamProvider.VERIFY_TAG_ON_COMMIT_PROPERTY);	

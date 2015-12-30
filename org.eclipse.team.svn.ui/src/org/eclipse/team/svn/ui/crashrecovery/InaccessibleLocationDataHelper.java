@@ -18,8 +18,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -63,8 +63,13 @@ public class InaccessibleLocationDataHelper implements IResolutionHelper {
 							0);
 					solved[0] = dlg.open() == 0;
 					if (solved[0]) {
-						location[0] = SVNRemoteStorage.instance().newRepositoryLocation();
-						location[0].setUrl((String)context[1]);
+						String locationId = (String)context[2];
+						location[0] = 
+							locationId == null ? 
+							SVNRemoteStorage.instance().newRepositoryLocation() :
+							SVNRemoteStorage.instance().newRepositoryLocation(locationId);
+						
+							location[0].setUrl((String)context[1]);
 						
 						NewRepositoryLocationWizard wizard = new NewRepositoryLocationWizard(location[0], false);
 						WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
@@ -83,7 +88,7 @@ public class InaccessibleLocationDataHelper implements IResolutionHelper {
 					if (container == null) {
 						return false;
 					}
-					SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+					IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
 					try {
 						provider.switchResource(container);
 					}

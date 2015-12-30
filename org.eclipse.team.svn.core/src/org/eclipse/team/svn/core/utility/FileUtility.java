@@ -52,9 +52,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
-import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -69,21 +69,6 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 public final class FileUtility {
 	public static final IResource []NO_CHILDREN = new IResource[0];
 	private static IPath ALWAYS_IGNORED_PATH = null;
-	
-	public static File findWCDB(File folder) {
-		String fragment = "/" + SVNUtility.getSVNFolderName() + "/wc.db"; //$NON-NLS-1$
-		File target = null;
-		do
-		{
-			target = new File(folder.getAbsolutePath() + fragment);
-			if (target.exists()) {
-				return target;
-			}
-			folder = folder.getParentFile();
-		}
-		while (folder != null);
-		return null;
-	}
 	
 	public static boolean isSymlink(IResource resource) {
 //    	Files.isSymbolicLink(Paths.get(FileUtility.getWorkingCopyPath(resource)));
@@ -675,7 +660,7 @@ public final class FileUtility {
 	public static boolean isConnected(IResource resource) {
 		if (resource.getProject() != null) {
 			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
-			return provider != null && provider instanceof SVNTeamProvider;	
+			return provider != null && provider instanceof IConnectedProjectInformation;	
 		}
 		return false;
 	}

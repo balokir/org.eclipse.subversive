@@ -19,8 +19,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 /**
  * This interface provides an information about project connection to the repository
  * 
- * @deprecated use SVNTeamProvider directly instead
- * 
  * @author Alexander Gurov
  */
 public interface IConnectedProjectInformation {
