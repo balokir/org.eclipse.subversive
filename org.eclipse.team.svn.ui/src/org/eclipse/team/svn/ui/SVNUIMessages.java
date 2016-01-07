@@ -117,6 +117,8 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AskTrustSSLServerPanel_Trust;
 	public static String AskTrustSSLServerPanel_TrustAlways;
 	public static String AskTrustSSLServerPanel_Value;
+	public static String AskTrustSSLServerPanel_Server;
+	public static String AskTrustSSLServerPanel_Problems;
 	public static String AutoPropsPreferencePage_buttonTextAdd;
 	public static String AutoPropsPreferencePage_buttonTextEdit;
 	public static String AutoPropsPreferencePage_buttonTextExport;

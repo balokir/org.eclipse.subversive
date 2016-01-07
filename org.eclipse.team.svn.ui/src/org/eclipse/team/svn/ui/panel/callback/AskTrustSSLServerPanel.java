@@ -12,6 +12,8 @@
 
 package org.eclipse.team.svn.ui.panel.callback;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -56,29 +58,41 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
     
 	public void createControlsImpl(Composite parent) {
 		String []baseLines = this.message.split("\n"); //$NON-NLS-1$
-		final String [][]tableData = new String[baseLines.length][];
+		ArrayList tData = new ArrayList();
+		boolean infoMessagePart = false;
+		String infoMessage = null;
 		for (int i = 0; i < baseLines.length; i++) {
-			int idx = baseLines[i].indexOf(':');
-			tableData[i] = new String[2];
-			if (idx != -1) {
-				int idx2 = baseLines[i].indexOf("https:"); //$NON-NLS-1$
-				if (idx2 == -1) {
-					tableData[i][0] = baseLines[i].substring(0, idx);
-					tableData[i][1] = baseLines[i].substring(idx + 1).trim();
+			int idx1 = baseLines[i].indexOf("https:"); //$NON-NLS-1$
+			if (idx1 != -1) {
+				String serverURL = baseLines[i].substring(idx1).trim();
+				serverURL = serverURL.substring(0, serverURL.length() - 2);
+				String []line = new String[2];
+				line[0] = SVNUIMessages.AskTrustSSLServerPanel_Server;
+				line[1] = serverURL;
+				tData.add(line);
+				infoMessagePart = true;
+			}
+			else if (infoMessagePart) {
+				if (baseLines[i].endsWith(":")) {
+					String []line = new String[2];
+					line[0] = SVNUIMessages.AskTrustSSLServerPanel_Problems;
+					line[1] = infoMessage;
+					tData.add(line);
+					infoMessagePart = false;
 				}
 				else {
-					tableData[i][0] = baseLines[i].substring(0, idx2).trim();
-					tableData[i][1] = baseLines[i].substring(idx2).trim();
-					if (tableData[i][1].endsWith(":")) { //$NON-NLS-1$
-						tableData[i][1] = tableData[i][1].substring(0, tableData[i][1].length() - 1);
-					}
+					infoMessage = infoMessage == null ? baseLines[i] : (infoMessage + "\n" + baseLines[i]); //$NON-NLS-1$
 				}
 			}
 			else {
-				tableData[i][0] = baseLines[i];
-				tableData[i][1] = ""; //$NON-NLS-1$
+				int idx = baseLines[i].indexOf(':');
+				String []line = new String[2];
+				line[0] = baseLines[i].substring(0, idx).replaceFirst("\\s*-\\s*", "").trim(); //$NON-NLS-1$
+				line[1] = baseLines[i].substring(idx + 1).trim();
+				tData.add(line);
 			}
 		}
+		final String [][]tableData = (String [][])tData.toArray(new String[tData.size()][]);
 		
 		GridData data = null;
 		
