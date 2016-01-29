@@ -1065,6 +1065,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ProjectLocationSelectionPage_SelectWS;
 	public static String ProjectLocationSelectionPage_Title;
 	public static String ProjectLocationSelectionPage_UseDefaultLocation;
+	public static String ProjectLocationSelectionPage_UseLocationFromSettings;
 	public static String ProjectLocationSelectionPage_WorkingSet_Verifier;
 	public static String ProjectsSelectionPage_CheckoutAsFolder_Multi;
 	public static String ProjectsSelectionPage_CheckoutAsFolder_Single;

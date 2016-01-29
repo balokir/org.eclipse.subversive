@@ -40,6 +40,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
@@ -78,9 +79,12 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		
 		this.setDescription(multiple ? SVNUIMessages.ProjectLocationSelectionPage_Description_Multi : SVNUIMessages.ProjectLocationSelectionPage_Description_Single);
 		
-		this.location = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		this.projectsSelectionPage = projectsSelectionPage;
-		this.defaultLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+		this.defaultLocation = 
+			SVNTeamPreferences.getCheckoutBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME) ?
+			ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() :
+			SVNTeamPreferences.getCheckoutString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME);
+		this.location = this.defaultLocation;
 	}
 	
 	public String getLocation() {
@@ -127,8 +131,8 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		data = new GridData();
 		data.horizontalSpan = 2;
 		this.useDefaultLocationButton.setLayoutData(data);
-		this.useDefaultLocationButton.setSelection(true);
-		this.useDefaultLocationButton.setText(SVNUIMessages.ProjectLocationSelectionPage_UseDefaultLocation);
+		this.useDefaultLocationButton.setSelection(this.useDefaultLocation);
+		this.useDefaultLocationButton.setText(SVNUIMessages.ProjectLocationSelectionPage_UseLocationFromSettings);
 		this.useDefaultLocationButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				ProjectLocationSelectionPage.this.validateContent();
@@ -140,7 +144,6 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		data.widthHint = 300;
 		this.locationField.setLayoutData(data);
 		this.locationField.setText(this.location);
-		this.locationField.setEnabled(false);
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(new ProjectLocationSelectionPage.LocationVerifier(this.projectsSelectionPage, this.defaultLocation, this.useDefaultLocationButton));
 		verifier.add(new AbstractVerifierProxy(new ExistingResourceVerifier(SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier, false)) {
@@ -154,12 +157,12 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 				ProjectLocationSelectionPage.this.location = ProjectLocationSelectionPage.this.locationField.getText();
 			}
 		});
+		this.locationField.setEnabled(!this.useDefaultLocationButton.getSelection());
 		
 		this.browse.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
 		this.browse.setLayoutData(data);		
-		this.browse.setEnabled(false);
 		this.browse.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				DirectoryDialog fileDialog = new DirectoryDialog(getShell());
@@ -170,6 +173,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 				}
 			}
 		});
+		this.browse.setEnabled(!this.useDefaultLocationButton.getSelection());
 		
 		Composite workingSetComposite = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();

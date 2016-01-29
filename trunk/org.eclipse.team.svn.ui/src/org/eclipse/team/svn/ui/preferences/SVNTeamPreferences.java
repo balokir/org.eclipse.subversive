@@ -13,6 +13,7 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -120,9 +121,12 @@ public final class SVNTeamPreferences {
 	
 	public static final String CHECKOUT_USE_DOT_PROJECT_NAME = "useDotProject"; //$NON-NLS-1$
 	public static final String CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME = "respectProjectStructure"; //$NON-NLS-1$
+	public static final String CHECKOUT_USE_DEFAULT_LOCATION_NAME = "useDefaultLocation"; //$NON-NLS-1$
+	public static final String CHECKOUT_SPECIFIED_LOCATION_NAME = "specifiedLocation"; //$NON-NLS-1$
 	
 	public static final boolean CHECKOUT_USE_DOT_PROJECT_DEFAULT = true;
 	public static final boolean CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT = false;
+	public static final boolean CHECKOUT_USE_DEFAULT_LOCATION_DEFAULT = true;
 	
 	public static final String HISTORY_PAGE_SIZE_NAME = "pageSize"; //$NON-NLS-1$
 	public static final String HISTORY_PAGING_ENABLE_NAME = "pagingEnable"; //$NON-NLS-1$
@@ -389,6 +393,8 @@ public final class SVNTeamPreferences {
 	public static void setDefaultCheckoutValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME), SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME), SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME), ResourcesPlugin.getWorkspace().getRoot().getLocation().toString());
 	}
 	
 	public static void setDefaultMergeValues(IPreferenceStore store) {
@@ -560,6 +566,8 @@ public final class SVNTeamPreferences {
 	public static void resetToDefaultCheckoutValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME), SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME), SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME), ResourcesPlugin.getWorkspace().getRoot().getLocation().toString());
 	}
 	
 	public static void resetToDefaultMergeValues(IPreferenceStore store) {
@@ -654,6 +662,10 @@ public final class SVNTeamPreferences {
 	
 	public static boolean getCheckoutBoolean(IPreferenceStore store, String shortName) {
 		return store.getBoolean(SVNTeamPreferences.fullCheckoutName(shortName));
+	}
+	
+	public static String getCheckoutString(IPreferenceStore store, String shortName) {
+		return store.getString(SVNTeamPreferences.fullCheckoutName(shortName));
 	}
 	
 	public static boolean getMergeBoolean(IPreferenceStore store, String shortName) {
@@ -763,6 +775,10 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setCheckoutBoolean(IPreferenceStore store, String shortName, boolean value) {
+		store.setValue(SVNTeamPreferences.fullCheckoutName(shortName), value);
+	}
+	
+	public static void setCheckoutString(IPreferenceStore store, String shortName, String value) {
 		store.setValue(SVNTeamPreferences.fullCheckoutName(shortName), value);
 	}
 	
