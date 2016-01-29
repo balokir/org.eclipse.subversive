@@ -71,18 +71,10 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 	protected boolean forceReuse;
 	protected String forceId;
 		
-	public CompareResourcesInternalOperation(ILocalResource local, IRepositoryResource remote) {
-		this(local, remote, false, false);
-	}
-	
-	public CompareResourcesInternalOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse) {
-		this(local, remote, forceReuse, false);
-	}
-	
 	public CompareResourcesInternalOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog) {
 		super("Operation_CompareLocal", SVNUIMessages.class); //$NON-NLS-1$
 		this.local = local;
-		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local.getResource()) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
+		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
 		this.ancestor.setSelectedRevision(local.getBaseRevision() != SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.fromNumber(local.getBaseRevision()) : SVNRevision.INVALID_REVISION);
 		this.remote = remote;
 		this.showInDialog = showInDialog;
@@ -105,7 +97,8 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 
 		try {
-			if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_7_x) {
+			if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_7_x ||
+				this.remote.getSelectedRevision() == SVNRevision.BASE) {
 				this.fetchStatuses17(proxy, localChanges, remoteChanges, monitor);
 			}
 			else {
@@ -178,30 +171,32 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 			}
 		}, monitor, 100, 10);
 		
-		for (final long revision : revisions) {
-			this.protectStep(new IUnprotectedOperation() {
-				public void run(IProgressMonitor monitor) throws Exception {
-					IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(CompareResourcesInternalOperation.this.local.getResource());
-					resource.setSelectedRevision(SVNRevision.fromNumber(revision));
-					final SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(resource);
-					final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
-					final String prevRootURL = resource.getUrl();
-					proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, null, new ISVNDiffStatusCallback() {
-						public void next(SVNDiffStatus status) {
-							IPath tPath = new Path(status.pathPrev.substring(prevRootURL.length()));
-							IResource resource = compareRoot.findMember(tPath);
-							if (resource == null) {
-								resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
+		if (this.remote.getSelectedRevision() != SVNRevision.BASE) {
+			for (final long revision : revisions) {
+				this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(CompareResourcesInternalOperation.this.local.getResource());
+						resource.setSelectedRevision(SVNRevision.fromNumber(revision));
+						final SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(resource);
+						final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
+						final String prevRootURL = resource.getUrl();
+						proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, null, new ISVNDiffStatusCallback() {
+							public void next(SVNDiffStatus status) {
+								IPath tPath = new Path(status.pathPrev.substring(prevRootURL.length()));
+								IResource resource = compareRoot.findMember(tPath);
+								if (resource == null) {
+									resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
+								}
+								Long rev = resourcesWithChanges.get(resource);
+								if (rev == null || rev == revision) {
+									String pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + status.pathNext.substring(refNext.path.length());
+									remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, status.textStatus, status.propStatus));
+								}
 							}
-							Long rev = resourcesWithChanges.get(resource);
-							if (rev == null || rev == revision) {
-								String pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + status.pathNext.substring(refNext.path.length());
-								remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, status.textStatus, status.propStatus));
-							}
-						}
-					}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
-				}
-			}, monitor, 100, 40 / revisions.size());
+						}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
+					}
+				}, monitor, 100, 40 / revisions.size());
+			}
 		}
 	}
 	
@@ -216,6 +211,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 
 				SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), null, SVNRevision.WORKING);
 				final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
+				// does not work with BASE working copy revision (not implemented yet exception)
 				proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, null, new ISVNDiffStatusCallback() {
 					public void next(SVNDiffStatus status) {
 						IPath tPath = new Path(status.pathPrev);
