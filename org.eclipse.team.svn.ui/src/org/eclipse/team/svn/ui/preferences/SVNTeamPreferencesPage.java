@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.compare.internal.TabFolderLayout;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -52,6 +54,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.DateFormatVerifier;
+import org.eclipse.team.svn.ui.verifier.ExistingResourceVerifier;
 import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
@@ -92,8 +95,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean includeMergedRevisions;
 	protected boolean checkoutUsingDotProjectName;
 	protected boolean checkoutRespectProjectStructure;
-//	protected boolean checkoutUseDefaultLocation;
-//	protected String checkoutSpecifiedLocation;
+	protected boolean checkoutUseDefaultLocation;
+	protected String checkoutSpecifiedLocation;
 	protected boolean branchTagConsiderStructure;
 	protected boolean forceExternalsFreeze;
 	protected boolean computeKeywordsValues;
@@ -125,6 +128,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button btnResourceSelectionTreatAsEdit;
 	protected Button checkoutUsingDotProjectNameButton;
 	protected Button checkoutRespectProjectStructureButton;
+	protected Button browse;
+	protected Button useDefaultLocationButton;
+	protected Text locationField;
 	protected Button branchTagConsiderStructureButton;
 	protected Button branchTagManualUrlEditButton;
 	protected Button computeKeywordsValuesButton;
@@ -187,8 +193,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME, this.checkoutUsingDotProjectName);
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME, this.checkoutRespectProjectStructure);
-//		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME, this.checkoutUseDefaultLocation);
-//		SVNTeamPreferences.setCheckoutString(store, SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME, this.checkoutSpecifiedLocation);
+		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME, this.checkoutUseDefaultLocation);
+		SVNTeamPreferences.setCheckoutString(store, SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME, this.checkoutSpecifiedLocation);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
@@ -223,8 +229,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT;
 		this.checkoutRespectProjectStructure = SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT;
-//		this.checkoutUseDefaultLocation = SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_DEFAULT;
-//		this.checkoutSpecifiedLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+		this.checkoutUseDefaultLocation = SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_DEFAULT;
+		this.checkoutSpecifiedLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		
 		this.branchTagConsiderStructure = SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT;
 		this.forceExternalsFreeze = SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_DEFAULT;
@@ -277,8 +283,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME);
 		this.checkoutRespectProjectStructure = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME);
-//		this.checkoutUseDefaultLocation = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME);
-//		this.checkoutSpecifiedLocation = SVNTeamPreferences.getCheckoutString(store, SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME);
+		this.checkoutUseDefaultLocation = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME);
+		this.checkoutSpecifiedLocation = SVNTeamPreferences.getCheckoutString(store, SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME);
 		
 		this.branchTagConsiderStructure = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		this.forceExternalsFreeze = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME);
@@ -325,6 +331,10 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.checkoutUsingDotProjectNameButton.setSelection(this.checkoutUsingDotProjectName);
 		this.checkoutRespectProjectStructureButton.setSelection(this.checkoutRespectProjectStructure);
+		this.useDefaultLocationButton.setSelection(this.checkoutUseDefaultLocation);
+		this.locationField.setText(this.checkoutSpecifiedLocation);
+		this.locationField.setEnabled(!this.checkoutUseDefaultLocation);
+		this.browse.setEnabled(!this.checkoutUseDefaultLocation);
 		
 		this.branchTagConsiderStructureButton.setSelection(this.branchTagConsiderStructure);
 		this.forceExternalsFreezeButton.setSelection(this.forceExternalsFreeze);
@@ -1000,18 +1010,22 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		// Checkout settings group
 		group = new Group(composite, SWT.NONE);
-		group.setLayout(new GridLayout());
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		group.setText(SVNUIMessages.MainPreferencePage_checkoutGroupName);
 		
 		label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
+		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 		label.setText(SVNUIMessages.MainPreferencePage_checkoutPrompt);
 		
 		this.checkoutUsingDotProjectNameButton = new Button(group, SWT.CHECK);
 		data = new GridData();
+		data.horizontalSpan = 2;
 		this.checkoutUsingDotProjectNameButton.setLayoutData(data);
 		this.checkoutUsingDotProjectNameButton.setText(SVNUIMessages.MainPreferencePage_checkoutUsingDotProjectName);
 		this.checkoutUsingDotProjectNameButton.addSelectionListener(new SelectionAdapter() {
@@ -1022,11 +1036,63 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.checkoutRespectProjectStructureButton = new Button(group, SWT.CHECK);
 		data = new GridData();
+		data.horizontalSpan = 2;
 		this.checkoutRespectProjectStructureButton.setLayoutData(data);
 		this.checkoutRespectProjectStructureButton.setText(SVNUIMessages.MainPreferencePage_checkoutRespectProjectStructure);
 		this.checkoutRespectProjectStructureButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.checkoutRespectProjectStructure = SVNTeamPreferencesPage.this.checkoutRespectProjectStructureButton.getSelection();
+			}
+		});
+		
+		this.useDefaultLocationButton = new Button(group, SWT.CHECK);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		this.useDefaultLocationButton.setLayoutData(data);
+		this.useDefaultLocationButton.setSelection(true);
+		this.useDefaultLocationButton.setText(SVNUIMessages.ProjectLocationSelectionPage_UseDefaultLocation);
+		this.useDefaultLocationButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				SVNTeamPreferencesPage.this.checkoutUseDefaultLocation = SVNTeamPreferencesPage.this.useDefaultLocationButton.getSelection();
+				SVNTeamPreferencesPage.this.locationField.setEnabled(!SVNTeamPreferencesPage.this.checkoutUseDefaultLocation);
+				SVNTeamPreferencesPage.this.browse.setEnabled(!SVNTeamPreferencesPage.this.checkoutUseDefaultLocation);
+				SVNTeamPreferencesPage.this.validateContent();
+			}
+		});
+		
+		this.locationField = new Text(group, SWT.SINGLE | SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 300;
+		this.locationField.setLayoutData(data);
+		this.locationField.setEnabled(false);
+		verifier = new CompositeVerifier();
+		verifier.add(new NonEmptyFieldVerifier(SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier));
+		verifier.add(new ExistingResourceVerifier(SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier, false));
+		this.attachTo(this.locationField, new AbstractVerifierProxy(verifier) {
+			protected boolean isVerificationEnabled(Control input) {
+				return !SVNTeamPreferencesPage.this.useDefaultLocationButton.getSelection();
+			}
+		});
+		this.locationField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				SVNTeamPreferencesPage.this.checkoutSpecifiedLocation = SVNTeamPreferencesPage.this.locationField.getText();
+			}
+		});
+		
+		this.browse = new Button(group, SWT.PUSH);
+		this.browse.setText(SVNUIMessages.Button_Browse);
+		data = new GridData();
+		data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
+		this.browse.setLayoutData(data);		
+		this.browse.setEnabled(false);
+		this.browse.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				DirectoryDialog fileDialog = new DirectoryDialog(getShell());
+				fileDialog.setFilterPath(SVNTeamPreferencesPage.this.locationField.getText());
+				String res = fileDialog.open();
+				if (res != null) {
+					SVNTeamPreferencesPage.this.locationField.setText(res);
+				}
 			}
 		});
 		
