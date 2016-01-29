@@ -1178,7 +1178,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						}
 					}
 					
-					if (textStatus == IStateFilter.ST_DELETED && nodeKind == SVNEntry.Kind.FILE && new File(statuses[i].path).exists()) {
+					if (textStatus == IStateFilter.ST_DELETED && (nodeKind == SVNEntry.Kind.FILE || !SVNUtility.isPriorToSVN17()) && new File(statuses[i].path).exists()) {
 						textStatus = IStateFilter.ST_PREREPLACED;
 					}
 					
