@@ -92,6 +92,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean includeMergedRevisions;
 	protected boolean checkoutUsingDotProjectName;
 	protected boolean checkoutRespectProjectStructure;
+//	protected boolean checkoutUseDefaultLocation;
+//	protected String checkoutSpecifiedLocation;
 	protected boolean branchTagConsiderStructure;
 	protected boolean forceExternalsFreeze;
 	protected boolean computeKeywordsValues;
@@ -185,6 +187,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME, this.checkoutUsingDotProjectName);
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME, this.checkoutRespectProjectStructure);
+//		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME, this.checkoutUseDefaultLocation);
+//		SVNTeamPreferences.setCheckoutString(store, SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME, this.checkoutSpecifiedLocation);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
@@ -219,6 +223,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT;
 		this.checkoutRespectProjectStructure = SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT;
+//		this.checkoutUseDefaultLocation = SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_DEFAULT;
+//		this.checkoutSpecifiedLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		
 		this.branchTagConsiderStructure = SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT;
 		this.forceExternalsFreeze = SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_DEFAULT;
@@ -271,6 +277,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME);
 		this.checkoutRespectProjectStructure = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME);
+//		this.checkoutUseDefaultLocation = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DEFAULT_LOCATION_NAME);
+//		this.checkoutSpecifiedLocation = SVNTeamPreferences.getCheckoutString(store, SVNTeamPreferences.CHECKOUT_SPECIFIED_LOCATION_NAME);
 		
 		this.branchTagConsiderStructure = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		this.forceExternalsFreeze = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME);
@@ -910,14 +918,14 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		Group group = new Group(composite, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 6;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		group.setText(SVNUIMessages.MainPreferencePage_structureGroupName);
 		
 		Label label = new Label(group, SWT.NULL);
 		data = new GridData();
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 6;
 		label.setLayoutData(data);
 		label.setText(SVNUIMessages.MainPreferencePage_repositoryPrompt);
 		
@@ -981,7 +989,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 
 		this.showExternalsButton = new Button(group, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 6;
 		this.showExternalsButton.setLayoutData(data);
 		this.showExternalsButton.setText(SVNUIMessages.MainPreferencePage_showExternals);
 		this.showExternalsButton.addSelectionListener(new SelectionAdapter() {
