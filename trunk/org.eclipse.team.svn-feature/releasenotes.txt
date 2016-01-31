@@ -5,27 +5,25 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 3.0.3.I20151228-1700 release date: 28 December 2015
+Version 3.0.4.I20160131-1700 release date: 31 January 2016
 
 1. What's New
 
-   The version 3.0.3 is a service release.
+   The version 3.0.4 is a service release.
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
+	Features:
+	 * Make 'Project Structure' preferences page more compact (bug 486862)
+	 * SVN Plugin does not provide option to set default checkout directory (bug 486009)
+	
 	Fixes:
-	 * Compare with another branch shows files with no difference [SVN 1.7 or older] (bug 326694)
-	 * Weird behavior of the "Compare with branch" feature (bug 484929)
-		+ special thanks to Florent Angebault
-	 * Deadlock is possible within RelocatedProjectHelper (bug 483402)
-	 * Prompt that asks what to do after project relocation shown in a loop forever (bug 482565)
-	 * IConnectedProjectInformation is an unneeded interface (bug 483232)
-	 * Remove unused code in the InaccessibleLocationDataHelper class (bug 483231)
-	 * FindRelatedProjectsOperation should not activate project initialization (bug 483230)
-	 * Remove outdated project-to-location management code (bug 483229)
-	 * NPE in CreatePatchWizard [ID-AW5HY] (bug 481725)
-	 * Unhandled event loop exception org.eclipse.team.svn.ui.panel.local.EditTreeConflictsHelper.getSrcUrl (bug 480521)
+	 * Typo in "Getting Started" documentation (bug 485185)
+	 * Information in "Trust server certificate" dialog is hard to read (bug 485344)
+	 * "Compare with" dialogs exit with "A path under version control is needed for this operation" error message (bug 485622)
+	 * An exception occurs while moving a resource into a package whose SVN text status is set to "Deleted" (bug 486496)
+	 * "Inappropriate resource state" exception while adding replaced but not yet added folder to source control (bug 486835)
 	
 	
 2. Information

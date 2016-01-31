@@ -8,6 +8,21 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 3.0.4.I20160131-1700 [31 January 2016]
+
+Features:
+ * Make 'Project Structure' preferences page more compact (bug 486862)
+ * SVN Plugin does not provide option to set default checkout directory (bug 486009)
+
+Fixes:
+ * Typo in "Getting Started" documentation (bug 485185)
+ * Information in "Trust server certificate" dialog is hard to read (bug 485344)
+ * "Compare with" dialogs exit with "A path under version control is needed for this operation" error message (bug 485622)
+ * An exception occurs while moving a resource into a package whose SVN text status is set to "Deleted" (bug 486496)
+ * "Inappropriate resource state" exception while adding replaced but not yet added folder to source control (bug 486835)
+ 
+--------------------------------------------------------------------------------
+
 Version 3.0.3.I20151228-1700 [28 December 2015]
 
 Fixes:
