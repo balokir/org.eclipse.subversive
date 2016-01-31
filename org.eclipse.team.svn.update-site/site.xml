@@ -4,7 +4,7 @@
    <description url="http://download.eclipse.org/technology/subversive/3.0/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="features/org.eclipse.team.svn_3.0.3.I20151228-1700.jar" id="org.eclipse.team.svn" version="3.0.3.I20151228-1700">
+   <feature url="features/org.eclipse.team.svn_3.0.4.I20160131-1700.jar" id="org.eclipse.team.svn" version="3.0.4.I20160131-1700">
       <category name="Subversive"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.nl1_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.nl1" version="3.0.0.I20150529-1700">
@@ -22,7 +22,7 @@
    <feature url="features/org.eclipse.team.svn.revision.graph_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.revision.graph" version="3.0.0.I20150529-1700">
       <category name="Subversive"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_3.0.3.I20151228-1700.jar" id="org.eclipse.team.svn.source" version="3.0.3.I20151228-1700">
+   <feature url="features/org.eclipse.team.svn.source_3.0.4.I20160131-1700.jar" id="org.eclipse.team.svn.source" version="3.0.4.I20160131-1700">
       <category name="Subversive Sources"/>
    </feature>
    <category-def name="Subversive" label="Subversive SVN Team Provider Plugin">
