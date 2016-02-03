@@ -43,12 +43,12 @@
                   
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on SVN Kit library (SVN/1.8.1 SVNKit/1.8.11 r10483_v20150925_0010). Compatible with SVN 1.8.x. Pure Java. Supported platforms: All."
+            description="SVN connector based on SVN Kit library (SVN/1.8.1 SVNKit/1.8.12 r10533_v20160129_0158). Compatible with SVN 1.8.x. Pure Java. Supported platforms: All."
             groupId="org.eclipse.team.svn.discovery-svnkit"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit18"
             kind="task"
             license="TMate Open Source License"
-            name="SVN Kit 1.8.11"
+            name="SVN Kit 1.8.12"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/5.0/update-site/">
          <icon image32="images/Polarion.png">
