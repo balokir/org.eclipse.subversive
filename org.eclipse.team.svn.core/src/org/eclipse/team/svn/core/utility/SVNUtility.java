@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -118,7 +119,7 @@ public final class SVNUtility {
 		String valid = map.get("valid"); //$NON-NLS-1$
 		long validFrom = 0, validTo = 0;
 		//Tue Oct 22 15:00:01 EEST 2013
-		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy"); //$NON-NLS-1$
+		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
 		String fromStr = valid.substring(5, valid.indexOf("until") - 1); //$NON-NLS-1$
 		String toStr = valid.substring(valid.indexOf("until") + 6); //$NON-NLS-1$
 		validFrom = df.parse(fromStr).getTime();
