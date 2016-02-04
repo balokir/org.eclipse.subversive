@@ -13,6 +13,7 @@
 package org.eclipse.team.svn.ui.panel.callback;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.PatternProvider;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
@@ -57,41 +59,32 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
     }
     
 	public void createControlsImpl(Composite parent) {
-		String []baseLines = this.message.split("\n"); //$NON-NLS-1$
 		ArrayList tData = new ArrayList();
-		boolean infoMessagePart = false;
-		String infoMessage = null;
-		for (int i = 0; i < baseLines.length; i++) {
-			int idx1 = baseLines[i].indexOf("https:"); //$NON-NLS-1$
-			if (idx1 != -1) {
-				String serverURL = baseLines[i].substring(idx1).trim();
-				serverURL = serverURL.substring(0, serverURL.length() - 2);
-				String []line = new String[2];
-				line[0] = SVNUIMessages.AskTrustSSLServerPanel_Server;
-				line[1] = serverURL;
-				tData.add(line);
-				infoMessagePart = true;
-			}
-			else if (infoMessagePart) {
-				if (baseLines[i].endsWith(":")) {
-					String []line = new String[2];
-					line[0] = SVNUIMessages.AskTrustSSLServerPanel_Problems;
-					line[1] = infoMessage;
-					tData.add(line);
-					infoMessagePart = false;
-				}
-				else {
-					infoMessage = infoMessage == null ? baseLines[i] : (infoMessage + "\n" + baseLines[i]); //$NON-NLS-1$
-				}
-			}
-			else {
-				int idx = baseLines[i].indexOf(':');
-				String []line = new String[2];
-				line[0] = baseLines[i].substring(0, idx).replaceFirst("\\s*-\\s*", "").trim(); //$NON-NLS-1$
-				line[1] = baseLines[i].substring(idx + 1).trim();
-				tData.add(line);
-			}
-		}
+		Map<String, String> map = SVNUtility.splitCertificateString(this.message);
+		String []line = new String[2];
+		line[0] = SVNUIMessages.AskTrustSSLServerPanel_Server;
+		line[1] = map.get("serverURL"); //$NON-NLS-1$
+		tData.add(line);
+		line = new String[2];
+		line[0] = SVNUIMessages.AskTrustSSLServerPanel_Problems;
+		line[1] = map.get("infoMessage"); //$NON-NLS-1$
+		tData.add(line);
+		line = new String[2];
+		line[0] = "Subject"; //$NON-NLS-1$
+		line[1] = map.get("subject"); //$NON-NLS-1$
+		tData.add(line);
+		line = new String[2];
+		line[0] = "Valid"; //$NON-NLS-1$
+		line[1] = map.get("valid"); //$NON-NLS-1$
+		tData.add(line);
+		line = new String[2];
+		line[0] = "Issuer"; //$NON-NLS-1$
+		line[1] = map.get("issuer"); //$NON-NLS-1$
+		tData.add(line);
+		line = new String[2];
+		line[0] = "Fingerprint"; //$NON-NLS-1$
+		line[1] = map.get("fingerprint"); //$NON-NLS-1$
+		tData.add(line);
 		final String [][]tableData = (String [][])tData.toArray(new String[tData.size()][]);
 		
 		GridData data = null;
