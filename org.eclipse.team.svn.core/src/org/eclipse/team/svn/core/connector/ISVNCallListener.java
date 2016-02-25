@@ -93,6 +93,10 @@ public interface ISVNCallListener {
 	public final String SET_REVISION_PROPERTY = "setRevisionProperty";
 	public final String UPGRADE = "upgrade";
 	public final String PATCH = "patch";
+	public final String GET_CONFIGURATION_EVENT_HANDLER = "getConfigurationEventHandler";
+	public final String SET_CONFIGURATION_EVENT_HANDLER = "setConfigurationEventHandler";
+	public final String VACUUM = "vacuum";
+
 
 	public final String CREATE = "createRepository";
 	public final String DELTIFY = "deltify";

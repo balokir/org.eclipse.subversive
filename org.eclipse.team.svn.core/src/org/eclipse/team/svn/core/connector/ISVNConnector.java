@@ -12,10 +12,13 @@
 package org.eclipse.team.svn.core.connector;
 
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.team.svn.core.connector.SVNConflictResolution.Choice;
 import org.eclipse.team.svn.core.connector.SVNMergeInfo.LogKind;
+import org.eclipse.team.svn.core.connector.configuration.ISVNConfigurationEventHandler;
 
 /**
  * SVN connector wrapper interface
@@ -30,6 +33,8 @@ public interface ISVNConnector {
 	public static final String []EMPTY_LOG_ENTRY_PROPS = new String []{};
 
 	public static final String []DEFAULT_LOG_ENTRY_PROPS = new String []{ SVNProperty.BuiltIn.REV_LOG, SVNProperty.BuiltIn.REV_DATE, SVNProperty.BuiltIn.REV_AUTHOR };
+	
+	public static final Map<String, List<SVNExternalReference>> NO_EXTERNALS_TO_PIN = new HashMap<String, List<SVNExternalReference>>();
 
 	/**
 	 * All available SVN commands options
@@ -205,6 +210,66 @@ public interface ISVNConnector {
 		 * @since 1.8 Inherit properties.
 		 */
 		public static final long INHERIT_PROPERTIES = 0x100000000L;
+
+		/**
+		 * @since 1.9 Report server local changes.
+		 */
+		public static final long LOCAL_SIDE = 0x200000000L;
+
+		/**
+		 * @since 1.9 Do not expand keywords.
+		 */
+		public static final long IGNORE_KEYWORDS = 0x400000000L;
+
+		/**
+		 * @since 1.9 Retrieve information about nodes that are excluded from the working copy.
+		 */
+		public static final long FETCH_EXCLUDED = 0x800000000L;
+
+		/**
+		 * @since 1.9 Retrieve information about node that are not versioned, but are still tree conflicted.
+		 */
+		public static final long FETCH_ACTUAL_ONLY = 0x1000000000L;
+
+		/**
+		 * @since 1.9 Recurs into externals directories.
+		 */
+		public static final long INCLUDE_EXTERNALS = 0x2000000000L;
+
+		/**
+		 * @since 1.9 Process change lists in an operation
+		 */
+		public static final long INCLUDE_CHANGELISTS = 0x4000000000L;
+
+		/**
+		 * @since 1.9 Break locks # no doc available
+		 */
+		public static final long BREAK_LOCKS = 0x8000000000L;
+
+		/**
+		 * @since 1.9 Process timestaps
+		 */
+		public static final long INCLUDE_TIMESTAMPS = 0x10000000000L;
+
+		/**
+		 * @since 1.9 Process DAV cache
+		 */
+		public static final long INCLUDE_DAVCACHE = 0x20000000000L;
+
+		/**
+		 * @since 1.9 Process unused pristines
+		 */
+		public static final long INCLUDE_UNUSED_PRISTINES = 0x40000000000L;
+
+		/**
+		 * @since 1.9 Include properties
+		 */
+		public static final long INCLUDE_PROPERTIES = 0x80000000000L;
+
+		/**
+		 * @since 1.9 Include unversioned
+		 */
+		public static final long INCLUDE_UNVERSIONED = 0x100000000000L;
 		
 		public static String asCommandLine(long options) {
 			StringBuffer retVal = new StringBuffer();
@@ -292,9 +357,9 @@ public interface ISVNConnector {
 
 		public static final long SWITCH = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS | Options.DEPTH_IS_STICKY;
 
-		public static final long STATUS = Options.SERVER_SIDE | Options.INCLUDE_UNCHANGED | Options.INCLUDE_IGNORED | Options.IGNORE_EXTERNALS;
+		public static final long STATUS = Options.SERVER_SIDE | Options.LOCAL_SIDE | Options.INCLUDE_UNCHANGED | Options.INCLUDE_IGNORED | Options.IGNORE_EXTERNALS | Options.DEPTH_IS_STICKY;
 
-		public static final long MERGE = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SIMULATE | Options.RECORD_ONLY | Options.IGNORE_MERGE_HISTORY;
+		public static final long MERGE = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SIMULATE | Options.RECORD_ONLY | Options.IGNORE_MERGE_HISTORY | Options.ALLOW_MIXED_REVISIONS;
 
 		public static final long MERGE_REINTEGRATE = Options.FORCE /*OVR&UPD*/ | Options.SIMULATE;
 
@@ -304,7 +369,7 @@ public interface ISVNConnector {
 
 		public static final long IMPORT = Options.INCLUDE_IGNORED | Options.IGNORE_UNKNOWN_NODE_TYPES | Options.IGNORE_AUTOPROPS;
 
-		public static final long EXPORT = Options.FORCE | Options.IGNORE_EXTERNALS;
+		public static final long EXPORT = Options.FORCE | Options.IGNORE_EXTERNALS | Options.IGNORE_KEYWORDS;
 
 		public static final long DIFF = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SKIP_DELETED | Options.IGNORE_PROPERTY_CHANGES | Options.IGNORE_CONTENT_CHANGES;
 
@@ -316,7 +381,7 @@ public interface ISVNConnector {
 
 		public static final long MOVE_SERVER = Options.FORCE | Options.INTERPRET_AS_CHILD | Options.INCLUDE_PARENTS;
 
-		public static final long COPY_LOCAL = Options.IGNORE_EXTERNALS;
+		public static final long COPY_LOCAL = Options.IGNORE_EXTERNALS | Options.METADATA_ONLY;
 
 		public static final long COPY_SERVER = Options.INTERPRET_AS_CHILD | Options.INCLUDE_PARENTS;
 
@@ -339,6 +404,16 @@ public interface ISVNConnector {
 		public static final long SET_REVISION_PROPERTY = Options.FORCE;
 		
 		public static final long PATCH = Options.IGNORE_WHITESPACE | Options.REVERSE | Options.SIMULATE | Options.REMOVE_TEMPORARY_FILES;
+		
+		public static final long GET_INFO = Options.FETCH_EXCLUDED | Options.FETCH_ACTUAL_ONLY | Options.INCLUDE_EXTERNALS;
+		
+		public static final long REVERT = Options.METADATA_ONLY | Options.INCLUDE_CHANGELISTS;
+		
+		public static final long CLEANUP = Options.BREAK_LOCKS | Options.INCLUDE_TIMESTAMPS | Options.INCLUDE_DAVCACHE | Options.INCLUDE_UNUSED_PRISTINES | Options.INCLUDE_EXTERNALS;
+		
+		public static final long STREAM_FILE_CONTENT = Options.IGNORE_KEYWORDS | Options.INCLUDE_PROPERTIES;
+		
+		public static final long VACUUM = Options.INCLUDE_UNVERSIONED | Options.INCLUDE_IGNORED | Options.INCLUDE_TIMESTAMPS | Options.INCLUDE_TIMESTAMPS | Options.INCLUDE_UNUSED_PRISTINES | Options.INCLUDE_EXTERNALS;
 	}
 
 	/**
@@ -366,6 +441,20 @@ public interface ISVNConnector {
 	 * @throws SVNConnectorException
 	 */
 	public void setConfigDirectory(String configDir) throws SVNConnectorException;
+
+    /**
+     * Set an event handler that will be called every time the
+     * configuration is loaded by this client object.
+     * @since 1.9
+     */
+	public void setConfigurationEventHandler(ISVNConfigurationEventHandler configHandler) throws SVNConnectorException;
+
+    /**
+     * Returns a reference to the installed configuration event
+     * handler. The returned value may be <code>null</code>.
+     * @since 1.9
+     */
+	public ISVNConfigurationEventHandler getConfigurationEventHandler() throws SVNConnectorException;
 
 	/**
 	 * Sets a username to access a repository.
@@ -565,16 +654,25 @@ public interface ISVNConnector {
 
 	/**
 	 * Reverts the state of the selected path to the SVNRevision.Kind.BASE working copy version.
-	 * @param path the path to be reverted
+	 * @param path the paths to be reverted
 	 * @param depth processing depth
 	 * @param changeLists
+	 * @param options @see CommandMasks
 	 * @param monitor operation progress monitor
+	 * 
+	 * Behaves like 1.8 version when options aren't specified
+	 * 
 	 * @throws SVNConnectorException
 	 */
-	public void revert(String path, SVNDepth depth, String []changeLists, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void revert(String []paths, SVNDepth depth, String []changeLists, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	/**
 	 * Tells the list of changes for the provided path including or excluding incoming changes.
+	 * 
+     * Behaves like the 1.9 version with
+     *     <code>LOCAL_SIDE</code> set and
+     *     <code>DEPTH_IS_STICKY</code> not set
+     *     
 	 * @param path the path to check the state of
 	 * @param depth processing depth
 	 * @param options @see CommandMasks
@@ -600,12 +698,20 @@ public interface ISVNConnector {
 	 * Provides a way to make working copy consistent after a crash. 
 	 * @param path the path to be checked
 	 * @param monitor operation progress monitor
+	 * @param options @see CommandMasks
+	 * 
+	 * Behaves like the 1.9 version without <code>INCLUDE_EXTERNALS</code>, and the other flags set
+     * 
 	 * @throws SVNConnectorException
 	 */
-	public void cleanup(String path, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void cleanup(String path, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	/**
-	 * Merges difference between 2 sources into the working copy 
+	 * Merges difference between 2 sources into the working copy
+	 *  
+     * Behaves like the 1.9 version with 
+     * 		<code>ALLOW_MIXED_REVISIONS</code> set
+     * 
 	 * @param reference1 first source reference
 	 * @param reference2 second source reference
 	 * @param localPath local path to merge into
@@ -619,6 +725,10 @@ public interface ISVNConnector {
 
 	/**
 	 * Merges the difference between the repository version of the working copy and the specified source into the local working copy.
+	 * 
+     * Behaves like the 1.9 version with 
+     * 		<code>ALLOW_MIXED_REVISIONS</code> set
+     * 
 	 * @param reference source reference
 	 * @param revisions a set of revisions to calculate difference from
 	 * @param localPath a local working copy path
@@ -777,6 +887,10 @@ public interface ISVNConnector {
 
 	/**
 	 * Exports the repository or working copy content into a "clean" directory without any SVN meta information
+	 * 
+     * Behaves like the 1.9 version with
+     * 		<code>IGNORE_KEYWORDS</code> not set
+     * 
 	 * @param fromReference the source path to export
 	 * @param destPath the destination to export to
 	 * @param nativeEOL which EOL characters to use during export
@@ -883,25 +997,36 @@ public interface ISVNConnector {
 
 	/**
 	 * Returns complete information regarding the specified node
+	 * 
+     * Behaves like the 1.9 version, with 
+     * 		<code>FETCH_EXCLUDED</code> not set, 
+     * 		<code>FETCH_ACTUAL_ONLY</code> set and 
+     * 		<code>INCLUDE_EXTERNALS</code> not set.
+     * 
 	 * @param reference node reference
 	 * @param depth processing depth
+	 * @param options see {@link CommandMasks}
 	 * @param changeLists if non-null, filter paths using changelists
 	 * @param cb callback to receive the retrieved information
 	 * @param monitor operation progress monitor
 	 * @throws SVNConnectorException
 	 */
-	public void getInfo(SVNEntryRevisionReference reference, SVNDepth depth, String []changeLists, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void getInfo(SVNEntryRevisionReference reference, SVNDepth depth, long options, String []changeLists, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	/**
 	 * Writes the specified file content into the specified output stream
 	 * @param reference file reference
-	 * @param bufferSize buffer size to be used while streaming content
+	 * @param options @see CommandMasks
 	 * @param stream the target output stream
 	 * @param monitor operation progress monitor
+	 * @return
+	 * 
+	 * Behaves like 1.8 version without IGNORE_KEYWORDS and INCLUDE_PROPERTIES
+	 * 
 	 * @throws SVNConnectorException
 	 */
-	public void streamFileContent(SVNEntryRevisionReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws SVNConnectorException;
-
+	public SVNProperty []streamFileContent(SVNEntryRevisionReference reference, long options, OutputStream stream, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	
 	/**
 	 * Creates the specified folder directly on the repository 
 	 * @param path the paths to create
@@ -940,10 +1065,20 @@ public interface ISVNConnector {
 	 * @param srcPaths paths to move
 	 * @param dstPath destination path
 	 * @param options see {@link CommandMasks}
+     * @param externalsToPin The set of externals to pin.
+     *            Keys are either local absolute paths (when the source of the
+     *            copy is the working copy) or URLs within the repository
+     *            (when the source is the repository) where an
+     *            <code>svn:externals</code> property is defined.
+     *            Values are lists of parsed {@link SVNExternalReference}
+     *            objects from each external definitions.
+     *            If <code>externalsToPin</code> is set to a value different than <code>ISVNConnector.NO_EXTERNALS_TO_PIN</code>, 
+     *            then the specified externals set will be pinned. If the passed list is empty (and it is not the 
+     *            <code>ISVNConnector.NO_EXTERNALS_TO_PIN</code> constant), then all the existing externals will be pinned.
 	 * @param monitor operation progress monitor
 	 * @throws SVNConnectorException
 	 */
-	public void copyLocal(SVNEntryRevisionReference []srcPaths, String destPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void copyLocal(SVNEntryRevisionReference []srcPaths, String destPath, long options, Map<String, List<SVNExternalReference>> externalsToPin, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	/**
 	 * Copies resources directly in the repository.
@@ -952,11 +1087,21 @@ public interface ISVNConnector {
 	 * @param message the commit message
 	 * @param options see {@link CommandMasks}
 	 * @param revProps the revision properties to set or null
+     * @param externalsToPin The set of externals to pin.
+     *            Keys are either local absolute paths (when the source of the
+     *            copy is the working copy) or URLs within the repository
+     *            (when the source is the repository) where an
+     *            <code>svn:externals</code> property is defined.
+     *            Values are lists of parsed {@link SVNExternalReference}
+     *            objects from each external definitions.
+     *            If <code>externalsToPin</code> is set to a value different than <code>ISVNConnector.NO_EXTERNALS_TO_PIN</code>, 
+     *            then the specified externals set will be pinned. If the passed list is empty (and it is not the 
+     *            <code>ISVNConnector.NO_EXTERNALS_TO_PIN</code> constant), then all the existing externals will be pinned.
 	 * @param monitor operation progress monitor
 	 * @throws SVNConnectorException
 	 */
-	public void copyRemote(SVNEntryRevisionReference []srcPaths, String destPath, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
-
+	public void copyRemote(SVNEntryRevisionReference []srcPaths, String destPath, String message, long options, Map revProps, Map<String, List<SVNExternalReference>> externalsToPin, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	
 	/**
 	 * Removes resources from the working copy.
 	 * @param path paths to remove
@@ -994,16 +1139,18 @@ public interface ISVNConnector {
 	/**
 	 * Annotates changes in a non-binary file on the per-line basis.
 	 * @param reference the resource reference
-	 * @param revisionStart pick up changes from this revision
-	 * @param revisionEnd pick up changes up to this revision
+	 * @param revisionRange start and end revisions to pick up the changes
 	 * @param options see {@link CommandMasks}
+	 * @param diffOptions see {@link DiffOptions}
 	 * @param callback the callback to receive annotated lines
 	 * @param monitor operation progress monitor
 	 * @throws SVNConnectorException
+	 * 
+	 * Works as 1.8 version with the diff options set to their default value.
 	 */
-	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor)
+	public void annotate(SVNEntryReference reference, SVNRevisionRange revisionRange, long options, long diffOptions, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
-
+	
 	/**
 	 * Returns the repository nodes list.
 	 * @param reference the path to enumerate nodes from
@@ -1114,6 +1261,23 @@ public interface ISVNConnector {
 	 */
 	public void patch(String patchPath, String targetPath, int stripCount, long options, ISVNPatchCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	
+    /**
+     * Recursively vacuum a working copy, removing unnecessary data, including unversioned, externals, unused pristines, 
+     * ignored and fixing time stamps.
+
+     * This method will report an error when remove unversioned items or remove ignored items are set, and the working copy
+     * is already locked. This prevents accidental corruption of the working copy if this method is invoked while another client is
+     * performing some other operation on the working copy.
+     * 
+     * @param path The path of the working copy directory.
+     * @param options {@see CommandMasks}
+     * 
+     * @since 1.9
+     */
+	public void vacuum(String path, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	// we do not provide the remote session support interface since it is currently marked as unstable
+    
 	/**
 	 * Disposes of all the native resources allocated by the connector instance. 
 	 */

@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateFailures;
+import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateInfo;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
@@ -367,11 +369,11 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 			return this.showPanel((IRepositoryLocation)context, SVNRepositoryLocation.PROXY_CONNECTION, ((IRepositoryLocation)context).getUrlAsIs());
 		}	
 	    
-		public Answer askTrustSSLServer(final Object context, final String info, final boolean allowPermanently) {
+		public Answer askTrustSSLServer(final Object context, final SSLServerCertificateFailures failures, final SSLServerCertificateInfo info, final boolean allowPermanently) {
             final int []retVal = new int[1];
             UIMonitorUtility.getDisplay().syncExec(new Runnable() {
                 public void run() {
-                    AskTrustSSLServerPanel panel = new AskTrustSSLServerPanel(((IRepositoryLocation)context).getUrlAsIs(), info, allowPermanently);
+                    AskTrustSSLServerPanel panel = new AskTrustSSLServerPanel(((IRepositoryLocation)context).getUrlAsIs(), failures, info, allowPermanently);
                     DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
                 	retVal[0] = dlg.open();
 	            }

@@ -75,6 +75,16 @@ public class SVNLogPath {
 	 * The copy source revision. Contains {@link SVNRevision#INVALID_REVISION_NUMBER} if resource revision is not copied.
 	 */
 	public final long copiedFromRevision;
+	
+	/**
+	 * Tells whether text was modified.
+	 */
+	public final Boolean textWasModified;
+	
+	/**
+	 * Tells whether properties were modified.
+	 */
+	public final Boolean propertiesWereModified;
 
 	/**
 	 * The {@link SVNLogPath} instance could be initialized only once because all fields are final
@@ -88,11 +98,13 @@ public class SVNLogPath {
 	 * @param copiedFromRevision
 	 *            the copy source revision
 	 */
-	public SVNLogPath(String path, ChangeType action, String copiedFromPath, long copiedFromRevision) {
+	public SVNLogPath(String path, ChangeType action, String copiedFromPath, long copiedFromRevision, Boolean textWasModified, Boolean propertiesWereModified) {
 		this.path = path;
 		this.copiedFromRevision = copiedFromRevision;
 		this.copiedFromPath = copiedFromPath;
 		this.action = action;
+		this.textWasModified = textWasModified;
+		this.propertiesWereModified = propertiesWereModified;
 	}
 
 	public String toString() {

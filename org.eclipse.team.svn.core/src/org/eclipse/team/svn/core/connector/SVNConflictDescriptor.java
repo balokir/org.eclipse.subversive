@@ -249,6 +249,13 @@ public class SVNConflictDescriptor {
     
     public final SVNConflictVersion srcRightVersion;
 	
+    // Information about property conflicts. New in 1.9
+//    private String propRejectAbspath;
+//    private byte[] propValueBase;
+//    private byte[] propValueWorking;
+//    private byte[] propValueIncomingOld;
+//    private byte[] propValueIncomingNew;
+    
 	/**
 	 * The {@link SVNConflictDescriptor} instance could be initialized only once because all fields are final
 	 * 

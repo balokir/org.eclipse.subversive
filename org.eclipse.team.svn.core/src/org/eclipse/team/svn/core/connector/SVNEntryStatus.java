@@ -21,7 +21,7 @@ package org.eclipse.team.svn.core.connector;
  * 
  * @author Alexander Gurov
  */
-public class SVNEntryStatus {
+public abstract class SVNEntryStatus {
 	/**
 	 * Possible SVN status kinds
 	 */
@@ -105,7 +105,14 @@ public class SVNEntryStatus {
 	public final SVNEntry.Kind nodeKind;
 
 	/**
-	 * The entry local content status in compare to base revision (see {@link SVNEntryStatus.Kind})
+	 * The status of the node, based on restructuring changes; if the node
+     * has no restructuring changes, it will be set to Kind.NONE (see {@link SVNEntryStatus.Kind})
+	 * @since 1.9
+	 */
+	//public final Kind nodeStatus;
+
+	/**
+	 * The entry local content status in compare to base revision, not including restructuring changes. (see {@link SVNEntryStatus.Kind})
 	 */
 	public final Kind textStatus;
 
