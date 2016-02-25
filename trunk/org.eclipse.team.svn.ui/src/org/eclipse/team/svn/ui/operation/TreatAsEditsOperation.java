@@ -51,7 +51,7 @@ public class TreatAsEditsOperation extends AbstractWorkingCopyOperation {
 				final ISVNConnector proxy = location.acquireSVNProxy();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(TreatAsEditsOperation.this, monitor, null));
+						proxy.revert(new String[] {originalFile.getAbsolutePath()}, SVNDepth.EMPTY, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(TreatAsEditsOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);
 				location.releaseSVNProxy(proxy);

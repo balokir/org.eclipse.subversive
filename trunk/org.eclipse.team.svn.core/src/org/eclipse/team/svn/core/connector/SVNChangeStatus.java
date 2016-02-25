@@ -72,7 +72,20 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	 */
 	public final boolean isFileExternal;
 	
-	/**
+    /**
+     * The depth of the node as recorded in the working copy
+     * @since 1.9
+     */
+    //public final SVNDepth depth;
+
+    /**
+     * The status of the node, Kind.NONE, unless the
+     * node has restructuring changes.
+     * @since 1.9
+     */
+    //public final Kind repositoryNodeStatus;
+
+    /**
 	 * The entry remote content status in compare to base revision (see {@link SVNEntryStatus.Kind})
 	 */
 	public final Kind repositoryTextStatus;
@@ -294,5 +307,34 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	public void setTreeConflicts(SVNConflictDescriptor []treeConflicts) {
 		this.treeConflicts = treeConflicts == null || treeConflicts.length == 0 ? null : treeConflicts;
 	}
+
+    /**
+     * Returns the adjusted status of the item's contents, as
+     * compatible with JavaHL 1.8 and older verions.
+     * @return file status property enum of the "textual" component.
+     * @since 1.9
+     */
+    /*public Kind getTextStatus()
+    {
+        if (nodeStatus == Kind.modified || nodeStatus == Kind.conflicted)
+            return textStatus;
+        return nodeStatus;
+    }*/
+	
+    /**
+     * Returns the adjusted status of the item's contents in the
+     * repository, as compatible with JavaHL 1.8 and older verions.
+     * @return file status property enum of the "textual" component in the
+     * repository.
+     * @since 1.9
+     */
+    /*public Kind getRepositoryTextStatus()
+    {
+        if (repositoryNodeStatus == Kind.modified
+            || repositoryNodeStatus == Kind.conflicted)
+            return repositoryTextStatus;
+        return repositoryNodeStatus;
+    }*/
+	
 
 }

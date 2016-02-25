@@ -48,7 +48,7 @@ public class CopyRemoteResourcesToWcOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + this.entry.path + "@" + this.entry.pegRevision + "\" \"" + FileUtility.getWorkingCopyPath(this.resource) + "\"\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			proxy.copyLocal(new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(this.entry, this.entry.pegRevision)}, FileUtility.getWorkingCopyPath(this.resource), ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));			
+			proxy.copyLocal(new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(this.entry, this.entry.pegRevision)}, FileUtility.getWorkingCopyPath(this.resource), ISVNConnector.Options.NONE, ISVNConnector.NO_EXTERNALS_TO_PIN, new SVNProgressMonitor(this, monitor, null));			
 		} 
 		finally {
 			location.releaseSVNProxy(proxy);

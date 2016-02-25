@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.core.connector;
 
+import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateFailures;
+import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateInfo;
 
 /**
  * Interface that provide ability to ask user about repository credentials
@@ -119,7 +121,7 @@ public interface ISVNCredentialsPrompt {
 			return null;
 		}
 
-		public Answer askTrustSSLServer(Object context, String info, boolean allowPermanently) {
+		public Answer askTrustSSLServer(Object context, SSLServerCertificateFailures failures, SSLServerCertificateInfo info, boolean allowPermanently) {
 			return Answer.ACCEPT_TEMPORARY;
 		}
 	};
@@ -155,7 +157,7 @@ public interface ISVNCredentialsPrompt {
 
 	public boolean promptProxy(Object context);
 
-	public Answer askTrustSSLServer(Object context, String info, boolean allowPermanently);
+	public Answer askTrustSSLServer(Object context, SSLServerCertificateFailures failures, SSLServerCertificateInfo info, boolean allowPermanently);
 
 	public String getSSHPrivateKeyPath();
 

@@ -107,6 +107,21 @@ public interface ISVNManager {
 	 */
 	public void hotCopy(String path, String targetPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
+    /**
+     * make a hot copy of the repository
+     * @param path              the path to the source repository
+     * @param targetPath        the path to the target repository
+     * @param cleanLogs         clean the unused log files in the source
+     *                          repository
+         * @param callback          the callback to receive notifications
+     * @throws ClientException  throw in case of problem
+         * @since 1.9
+     */
+//    public abstract void hotcopy(File path, File targetPath,
+//                        boolean cleanLogs, boolean incremental,
+//                        ReposNotifyCallback callback)
+//                        throws ClientException;
+	
 	/**
 	 * Dumps the data in a repository.
 	 * @param path the repository to dump
@@ -142,6 +157,40 @@ public interface ISVNManager {
 	 */
 	public void load(String path, InputStream dataInput, SVNRevisionRange range, String relativePath, ISVNRepositoryNotificationCallback callback, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
+    /**
+     * load the data of a dump into a repository
+     * @param path              the path to the repository
+     * @param dataInput         the data input source
+         * @param start             the first revision to load
+         * @param end               the last revision to load
+     * @param ignoreUUID        ignore any UUID found in the input stream
+     * @param forceUUID         set the repository UUID to any found in the
+     *                          stream
+     * @param usePreCommitHook  use the pre-commit hook when processing commits
+     * @param usePostCommitHook use the post-commit hook when processing commits
+         * @param validateProps     validate "svn:" revision and node properties
+         * @param ignoreDates       ignore revision datestamps in the dump stream
+     * @param relativePath      the directory in the repository, where the data
+     *                          in put optional.
+     * @param callback          the target for processing messages
+     * @throws ClientException  throw in case of problem
+         * @since 1.9
+         * for 1.8 
+         * <code>validateProps</code> and <code>ignoreDates</code> to
+         * <code>false</code>.
+         * 
+     */
+//    public abstract void load(File path, InputStream dataInput,
+//                                  Revision start, Revision end,
+//                                  boolean ignoreUUID, boolean forceUUID,
+//                                  boolean usePreCommitHook,
+//                                  boolean usePostCommitHook,
+//                                  boolean validateProps,
+//                                  boolean ignoreDates,
+//                                  String relativePath,
+//                                  ReposNotifyCallback callback)
+//        throws ClientException;
+	
 	/**
 	 * List all open transactions in a repository.
 	 * @param path the path to the repository
@@ -203,6 +252,42 @@ public interface ISVNManager {
 	 * @throws SVNConnectorException
 	 */
 	public void verify(String path, SVNRevisionRange range, ISVNRepositoryNotificationCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	
+    /**
+     * Verify the repository at <code>path</code> between revisions
+     * <code>start</code> and <code>end</code>.
+     *<p>
+     * If <code>verifyCallback</code> is <code>null</code>, verification
+     * will stop at the first encountered error. Otherwise, the verification
+     * process may continue, depending on the value returned from the
+     * invocation of <code>verifyCallback</code>.
+     *
+     * @param path              the path to the repository
+     * @param start             the first revision
+     * @param end               the last revision
+     * @param checkNormalization report directory entry and mergeinfo name collisions
+     *                           caused by denormalized Unicode representations
+     * @param metadataOnly      check only metadata, not file contents
+     * @param notifyCallback    the callback to receive notifications
+     * @param verifyCallback    the callback to receive verification status
+     * @throws ClientException If an error occurred.
+     * @since 1.9
+     * 
+     * for 1.8
+     *<b>Note:</b> Behaves like the 1.9 version with
+     *             <code>checkNormailzation</code> and
+     *             <code>metadataOnly</code> set to <code>false</code>
+     *             and <code>verifyCallback</code> set to
+     *             <code>null</code>.
+     * 
+     */
+//    public abstract void verify(File path, Revision start, Revision end,
+//                boolean checkNormalization,
+//                boolean metadataOnly,
+//                ReposNotifyCallback notifyCallback,
+//                ReposVerifyCallback verifyCallback)
+//            throws ClientException;
+	
 	/**
 	 * List all locks in the repository.
 	 * @param path the repository path

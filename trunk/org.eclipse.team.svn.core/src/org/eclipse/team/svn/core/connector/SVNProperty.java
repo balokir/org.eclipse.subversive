@@ -84,10 +84,22 @@ public class SVNProperty {
 		public static final String REV_ORIGINAL_DATE = "svn:original-date"; //$NON-NLS-1$
 
 		/**
-		 * @since 1.2 If set points that lock is required to modify this node.
+		 * If set points that lock is required to modify this node.
+		 * @since 1.2 
 		 */
 		public static final String NEEDS_LOCK = "svn:needs-lock"; //$NON-NLS-1$
+		
+	    /**
+	     * server-side inherited configuration for auto-props
+	     * @since 1.9 
+	     */
+	    public static final String INHERITABLE_AUTO_PROPS = "svn:auto-props";
 
+	    /**
+	     * server-side inherited configuration for global ignore patterns
+	     * @since 1.9 
+	     */
+	    public static final String INHERITABLE_IGNORES = "svn:global-ignores";
 	}
 
 	/**

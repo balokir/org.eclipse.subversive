@@ -456,6 +456,24 @@ public class SVNNotification {
 		 */
 		MOVE_BROKEN(75);
 		
+
+        /** Running cleanup on an external module.
+         * @since New in 1.9. */
+//        cleanup_external ("cleanup external"),
+
+        /** The operation failed because the operation (E.g. commit)
+         * is only valid if the operation includes this path.
+         * @since New in 1.9. */
+//        failed_requires_target ("failed requires target"),
+
+        /** Running info on an external module.
+         * @since New in 1.9. */
+//        info_external ("info external"),
+
+        /** Finalizing commit.
+         * @since New in 1.9. */
+//        commit_finalizing ("commit finalizing");
+		
 		public final int id;
 
 		/*
@@ -523,6 +541,13 @@ public class SVNNotification {
 	 */
 	public final String errMsg;
 
+    /**
+     * A detailed stack of error messages for the item
+     * @see ClientException
+     * @since 1.9
+     */
+//	public final SVNConnectorException.ErrorMessage []errorMessageStack;
+
 	/**
 	 * The entry content state (see {@link NodeStatus}).
 	 */
@@ -542,6 +567,48 @@ public class SVNNotification {
 	 * the state of the lock of the item (see {@link NodeLock}).
 	 */
 	public final NodeLock lockState;
+	
+	
+    /**
+     * The name of the changelist.
+     */
+//    private String changelistName;
+
+    /**
+     * The range of the merge just beginning to occur.
+     */
+//    private RevisionRange mergeRange;
+
+    /**
+     * Similar to {@link #path}, but when not <code>null</code>, the
+     * notification is about a UR>.
+     * @since 1.9
+     */
+//    private String url;
+
+    /**
+     * A common absolute path prefix that can be subtracted from .path.
+     */
+//    private String pathPrefix;
+//
+//    private String propName;
+//
+//    private Map<String, String> revProps;
+//
+//    long oldRevision;
+//
+//    long hunkOriginalStart;
+//
+//    long hunkOriginalLength;
+//
+//    long hunkModifiedStart;
+//
+//    long hunkModifiedLength;
+//
+//    long hunkMatchedLine;
+//
+//    int hunkFuzz;
+//
 
 	public SVNNotification(String path, PerformedAction action, SVNEntry.Kind kind, String mimeType, SVNLock lock, String errMsg, NodeStatus contentState, NodeStatus propState, NodeLock lockState, long revision) {
 		this.path = path;

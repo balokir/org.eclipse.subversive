@@ -130,7 +130,7 @@ public class FileReplaceListener implements IResourceChangeListener {
 					proxy.streamFileContent(new SVNEntryRevisionReference(originalFile.getAbsolutePath(), null, SVNRevision.BASE), 8192, oStream, new SVNProgressMonitor(this, monitor, null));
 					this.processedResources.add(file);
 					originalFile.delete();
-					proxy.revert(originalFile.getAbsolutePath(), SVNDepth.EMPTY, null, new SVNProgressMonitor(this, monitor, null));
+					proxy.revert(new String[] {originalFile.getAbsolutePath()}, SVNDepth.EMPTY, null, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 				}
 				catch (UnreportableException ex) {
 					// do nothing

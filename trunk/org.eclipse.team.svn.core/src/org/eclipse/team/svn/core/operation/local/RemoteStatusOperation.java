@@ -171,7 +171,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 				final SVNChangeStatus svnChangeStatus = it.next();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
+						proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, ISVNConnector.Options.FETCH_ACTUAL_ONLY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
 								svnChangeStatus.setTreeConflicts(info.treeConflicts);
 							}

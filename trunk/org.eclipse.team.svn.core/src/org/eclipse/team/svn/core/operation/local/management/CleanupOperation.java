@@ -56,9 +56,7 @@ public class CleanupOperation extends AbstractWorkingCopyOperation {
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.cleanup(
-						wcPath, 
-						new SVNProgressMonitor(CleanupOperation.this, monitor, null));
+					proxy.cleanup(wcPath, ISVNConnector.Options.INCLUDE_EXTERNALS, new SVNProgressMonitor(CleanupOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);
 			location.releaseSVNProxy(proxy);

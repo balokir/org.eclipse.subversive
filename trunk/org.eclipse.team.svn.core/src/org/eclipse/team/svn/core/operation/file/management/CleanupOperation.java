@@ -60,7 +60,7 @@ public class CleanupOperation extends AbstractFileOperation {
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.cleanup(current, new SVNProgressMonitor(CleanupOperation.this, monitor, null));
+					proxy.cleanup(current, ISVNConnector.Options.INCLUDE_EXTERNALS, new SVNProgressMonitor(CleanupOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			location.releaseSVNProxy(proxy);

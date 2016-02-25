@@ -30,6 +30,11 @@ public class SVNRevisionRange {
 	 * The "to" revision object
 	 */
 	public final SVNRevision to;
+	
+	/**
+	 * @since 1.9
+	 */
+	public final boolean inheritable;
 
 	/**
 	 * The {@link SVNRevisionRange} instance could be initialized only once because all fields are final
@@ -42,8 +47,25 @@ public class SVNRevisionRange {
 	 *             if from or to contains negative value
 	 */
 	public SVNRevisionRange(long from, long to) {
+		this(from, to, true);
+	}
+
+	/**
+	 * The {@link SVNRevisionRange} instance could be initialized only once because all fields are final
+	 * 
+	 * @param from
+	 *            the "from" revision object. Greater or equals to zero.
+	 * @param to
+	 *            the "to" revision object. Greater or equals to zero.
+	 * @param inheritable
+	 * @throws IllegalArgumentException
+	 *             if from or to contains negative value
+	 * @since 1.9
+	 */
+	public SVNRevisionRange(long from, long to, boolean inheritable) {
 		this.from = SVNRevision.fromNumber(from);
 		this.to = SVNRevision.fromNumber(to);
+		this.inheritable = inheritable;
 	}
 
 	/**
@@ -57,6 +79,22 @@ public class SVNRevisionRange {
 	 *             if one of arguments (or both) is null
 	 */
 	public SVNRevisionRange(SVNRevision from, SVNRevision to) {
+		this(from, to, true);
+	}
+
+	/**
+	 * The {@link SVNRevisionRange} instance could be initialized only once because all fields are final
+	 * 
+	 * @param from
+	 *            the "from" revision object. Cannot be <code>null</code>.
+	 * @param to
+	 *            the "to" revision object Cannot be <code>null</code>.
+	 * @param inheritable
+	 * @throws NullPointerException
+	 *             if one of arguments (or both) is null
+	 * @since 1.9
+	 */
+	public SVNRevisionRange(SVNRevision from, SVNRevision to, boolean inheritable) {
 		if (from == null) {
 			throw new NullPointerException("The \"from\" field cannot be initialized with null");
 		}
@@ -65,6 +103,7 @@ public class SVNRevisionRange {
 		}
 		this.from = from;
 		this.to = to;
+		this.inheritable = inheritable;
 	}
 
 	/**
@@ -82,26 +121,35 @@ public class SVNRevisionRange {
 	 *             if the string does not contain a parsable <code>long</code>.
 	 */
 	public SVNRevisionRange(String revisionElement) {
+        this.inheritable = !revisionElement.endsWith("*");
+        if (!this.inheritable) {
+            revisionElement = revisionElement.substring(0, revisionElement.length() - 1);
+        }
+
 		int hyphen = revisionElement.indexOf('-');
 		if (hyphen > 0) {
 			this.from = SVNRevision.fromNumber(Long.parseLong(revisionElement.substring(0, hyphen)));
 			this.to = SVNRevision.fromNumber(Long.parseLong(revisionElement.substring(hyphen + 1)));
 		}
 		else {
-			this.to = this.from = SVNRevision.fromNumber(Long.parseLong(revisionElement.trim()));
+			long rev = Long.parseLong(revisionElement.trim());
+			this.to = SVNRevision.fromNumber(rev);
+			this.from = SVNRevision.fromNumber(rev - 1);
 		}
 	}
 
 	public String toString() {
-		if (this.from.equals(this.to)) {
-			return this.from.toString();
+		if (this.from.equals(this.to) || 
+			this.from.getKind() == SVNRevision.Kind.NUMBER && this.from.getKind() == this.to.getKind() && 
+			((SVNRevision.Number)this.from).getNumber() == ((SVNRevision.Number)this.to).getNumber() - 1) {
+			return this.from.toString() + (this.inheritable ? "" : "*");
 		}
-		return this.from.toString() + '-' + this.to.toString();
+		return this.from.toString() + '-' + this.to.toString() + (this.inheritable ? "" : "*");
 	}
 
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = this.inheritable ? 1 : 2;
 		result = prime * result + this.from.hashCode();
 		result = prime * result + this.to.hashCode();
 		return result;
@@ -116,7 +164,7 @@ public class SVNRevisionRange {
 		}
 
 		SVNRevisionRange other = (SVNRevisionRange) range;
-		return this.from.equals(other.from) && this.to.equals(other.to);
+		return this.from.equals(other.from) && this.to.equals(other.to) && this.inheritable == other.inheritable;
 	}
 
 }

@@ -143,6 +143,32 @@ public class SVNRepositoryNotification {
 		 */
 		VERIFY_REV_STRUCTURE(17);
 
+		
+
+        /**
+         * A revprop shard got packed. @
+         * @since 1.9
+         */
+//        pack_revprops,
+
+        /**
+         * A non-packed revprop shard got removed.
+         * @since 1.9
+         */
+//        cleanup_revprops,
+
+        /**
+         * The repository format got bumped.
+         * @since 1.9
+         */
+//        format_bumped,
+
+        /**
+         * A revision range was copied.
+         * @since 1.9
+         */
+//        hotcopy_rev_range;
+		
 		public final int id;
 		
 		public static boolean isActionKnown(int action) {

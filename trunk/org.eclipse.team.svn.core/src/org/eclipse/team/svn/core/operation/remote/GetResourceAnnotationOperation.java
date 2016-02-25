@@ -20,11 +20,11 @@ import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNAnnotationData;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -98,8 +98,8 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 			try {
 				proxy.annotate(
 						SVNUtility.getEntryReference(resource),
-						this.revisions.from, this.revisions.to,
-						this.options, callback, new SVNProgressMonitor(this, monitor, null));
+						new SVNRevisionRange(this.revisions.from, this.revisions.to),
+						this.options, ISVNConnector.DiffOptions.NONE, callback, new SVNProgressMonitor(this, monitor, null));
 			} catch (SVNConnectorException ex) {
 				/*
 				 * If SVN server doesn't support merged revisions, then we re-call without this option
@@ -110,8 +110,8 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 					this.options &= ~Options.INCLUDE_MERGED_REVISIONS;
 					proxy.annotate(
 							SVNUtility.getEntryReference(resource),
-							this.revisions.from, this.revisions.to,
-							this.options, callback, new SVNProgressMonitor(this, monitor, null));
+							new SVNRevisionRange(this.revisions.from, this.revisions.to),
+							this.options, ISVNConnector.DiffOptions.NONE, callback, new SVNProgressMonitor(this, monitor, null));
 				} else {
 					throw ex;
 				}

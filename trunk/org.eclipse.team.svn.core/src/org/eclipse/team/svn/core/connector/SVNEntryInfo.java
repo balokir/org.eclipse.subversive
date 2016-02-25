@@ -90,9 +90,15 @@ public class SVNEntryInfo {
 	public final long lastChangedRevision;
 
 	/**
-	 * The last change date in in nanoseconds.
+	 * The last change date in in microseconds.
 	 */
 	public final long lastChangedDate;
+	
+	/**
+	 * The last change date in in nanoseconds.
+	 * @since 1.9
+	 */
+	//public final long lastChangedDateNano;
 
 	/**
 	 * The last change author.
