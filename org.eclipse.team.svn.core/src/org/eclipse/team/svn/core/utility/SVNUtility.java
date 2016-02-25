@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -105,8 +106,21 @@ import org.eclipse.team.svn.core.svnstorage.SVNRevisionLink;
 public final class SVNUtility {
 	private static String svnFolderName = null;
 	
-	public static SSLServerCertificateInfo parseCertificateString(String message) throws ParseException {
-		Map<String, String> map = SVNUtility.splitCertificateString(message);
+	public static String formatSSLFingerprint(byte []fingerprint) {
+		String retVal = "";
+		for (byte data : fingerprint) {
+			String part = String.format("%02x", data);
+			retVal += retVal.length() > 0 ? ":" + part : part;
+		}
+		return retVal;
+	}
+	
+	public static String formatSSLValid(Date validFrom, Date validTo) {
+		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
+		return "from " + df.format(validFrom) + " until " + df.format(validTo); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	public static SSLServerCertificateInfo decodeCertificateData(Map<String, String> map) throws ParseException {
 		String serverURL = map.get("serverURL"); //$NON-NLS-1$
 		String issuer = map.get("issuer"); //$NON-NLS-1$
 		String subject = map.get("subject"); //$NON-NLS-1$
@@ -124,7 +138,7 @@ public final class SVNUtility {
 		String toStr = valid.substring(valid.indexOf("until") + 6); //$NON-NLS-1$
 		validFrom = df.parse(fromStr).getTime();
 		validTo = df.parse(toStr).getTime();
-		return new SSLServerCertificateInfo(subject, issuer, validFrom, validTo, fingerprint, Arrays.asList(new String[] {serverURL}), message);
+		return new SSLServerCertificateInfo(subject, issuer, validFrom, validTo, fingerprint, Arrays.asList(new String[] {serverURL}), null);
 	}
 	
 	public static Map<String, String> splitCertificateString(String message) {
@@ -387,7 +401,7 @@ public final class SVNUtility {
 		for (Iterator<SVNChangeStatus> it = statuses.iterator(); it.hasNext() && !monitor.isActivityCancelled(); ) {
 			final SVNChangeStatus svnChangeStatus = it.next();
 			if (svnChangeStatus.hasConflict && svnChangeStatus.treeConflicts == null) {
-				proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
+				proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, ISVNConnector.Options.FETCH_ACTUAL_ONLY, null, new ISVNEntryInfoCallback() {
 					public void next(SVNEntryInfo info) {
 						svnChangeStatus.setTreeConflicts(info.treeConflicts);
 					}
@@ -459,7 +473,7 @@ public final class SVNUtility {
 	
 	public static SVNEntryInfo []info(ISVNConnector proxy, SVNEntryRevisionReference reference, SVNDepth depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNEntryInfo> infos = new ArrayList<SVNEntryInfo>();
-		proxy.getInfo(reference, depth, null, new ISVNEntryInfoCallback() {
+		proxy.getInfo(reference, depth, ISVNConnector.Options.FETCH_ACTUAL_ONLY, null, new ISVNEntryInfoCallback() {
 			public void next(SVNEntryInfo info) {
 				infos.add(info);
 			}

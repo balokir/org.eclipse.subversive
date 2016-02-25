@@ -47,6 +47,14 @@ public class SSLServerCertificateFailures {
 		return (this.failures & mask) == mask;
 	}
 	
+	/**
+	 * Allows to check if there are no failures at all
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return this.failures == 0;
+	}
+	
 	public SSLServerCertificateFailures(int failures) {
 		this.failures = failures;
 	}

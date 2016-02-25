@@ -119,6 +119,10 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AskTrustSSLServerPanel_Value;
 	public static String AskTrustSSLServerPanel_Server;
 	public static String AskTrustSSLServerPanel_Problems;
+	public static String AskTrustSSLServerPanel_MsgNotTrusted;
+	public static String AskTrustSSLServerPanel_MsgHostNameDoNotMatch;
+	public static String AskTrustSSLServerPanel_MsgExpired;
+	public static String AskTrustSSLServerPanel_MsgNotYetValid;
 	public static String AutoPropsPreferencePage_buttonTextAdd;
 	public static String AutoPropsPreferencePage_buttonTextEdit;
 	public static String AutoPropsPreferencePage_buttonTextExport;
