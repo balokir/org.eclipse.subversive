@@ -3,7 +3,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.ui.startup;singleton:=true
-Bundle-Version: 3.0.0.I20150529-1700
+Bundle-Version: 4.0.0.I20160226-1700
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.team.svn.ui.startup.SVNStartupPlugin
 Bundle-Localization: plugin

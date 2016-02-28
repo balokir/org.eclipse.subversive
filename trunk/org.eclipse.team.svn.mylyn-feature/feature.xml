@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.mylyn"
       label="%featureName"
-      version="3.0.0.I20150529-1700"
+      version="4.0.0.I20160226-1700"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -16,8 +16,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/3.0/update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/3.0/update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/4.0/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/4.0/update-site/"/>
    </url>
 
    <requires>
@@ -25,7 +25,7 @@
       <import feature="org.eclipse.mylyn.ide_feature" version="3.0.0" match="compatible"/>
       <import feature="org.eclipse.mylyn.context_feature" version="3.0.0" match="compatible"/>
       <import feature="org.eclipse.mylyn.bugzilla_feature" version="3.0.0" match="compatible"/>
-      <import feature="org.eclipse.team.svn" version="3.0.0.I20150529-1700" match="compatible"/>
+      <import feature="org.eclipse.team.svn" version="4.0.0.I20160226-1700" match="compatible"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.team.ui"/>
@@ -47,7 +47,7 @@
          id="org.eclipse.team.svn.mylyn"
          download-size="20"
          install-size="20"
-         version="3.0.0.I20150529-1700"
+         version="4.0.0.I20160226-1700"
          unpack="false"/>
 
 </feature>
