@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site
-      associateSitesURL="http://download.eclipse.org/technology/subversive/3.0/update-site/associates.xml">
-   <description url="http://download.eclipse.org/technology/subversive/3.0/update-site/">
+      associateSitesURL="http://download.eclipse.org/technology/subversive/4.0/update-site/associates.xml">
+   <description url="http://download.eclipse.org/technology/subversive/4.0/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="features/org.eclipse.team.svn_3.0.4.I20160131-1700.jar" id="org.eclipse.team.svn" version="3.0.4.I20160131-1700">
+   <feature url="features/org.eclipse.team.svn_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn" version="4.0.0.I20160226-1700">
       <category name="Subversive"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.nl1_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.nl1" version="3.0.0.I20150529-1700">
+   <feature url="features/org.eclipse.team.svn.nl1_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.nl1" version="4.0.0.I20160226-1700">
       <category name="Subversive"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="3.0.0.I20150529-1700">
+   <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="4.0.0.I20160226-1700">
       <category name="Subversive"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.mylyn_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.mylyn" version="3.0.0.I20150529-1700">
+   <feature url="features/org.eclipse.team.svn.mylyn_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.mylyn" version="4.0.0.I20160226-1700">
       <category name="Subversive Integration"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.m2e_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.m2e" version="3.0.0.I20150529-1700">
+   <feature url="features/org.eclipse.team.svn.m2e_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.m2e" version="4.0.0.I20160226-1700">
       <category name="Subversive Integration"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.revision.graph_3.0.0.I20150529-1700.jar" id="org.eclipse.team.svn.revision.graph" version="3.0.0.I20150529-1700">
+   <feature url="features/org.eclipse.team.svn.revision.graph_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.revision.graph" version="4.0.0.I20160226-1700">
       <category name="Subversive"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_3.0.4.I20160131-1700.jar" id="org.eclipse.team.svn.source" version="3.0.4.I20160131-1700">
+   <feature url="features/org.eclipse.team.svn.source_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.source" version="4.0.0.I20160226-1700">
       <category name="Subversive Sources"/>
    </feature>
    <category-def name="Subversive" label="Subversive SVN Team Provider Plugin">
