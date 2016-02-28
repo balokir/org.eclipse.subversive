@@ -48,17 +48,17 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider from, SVNRevisionRange []revisions, boolean dryRun, boolean ignoreAncestry, SVNDepth depth) {
 		this(localTo, from, revisions, depth, 
 			(dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE) | 
-			(ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE));
+			(ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE) | ISVNConnector.Options.ALLOW_MIXED_REVISIONS);
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean dryRun, boolean ignoreAncestry, SVNDepth depth) {
 		this(localTo, fromStart, fromEnd, depth, 
 			(dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE) | 
-			(ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE));
+			(ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE) | ISVNConnector.Options.ALLOW_MIXED_REVISIONS);
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider from, boolean dryRun) {
-		this(localTo, from, ISVNConnector.Options.SIMULATE);
+		this(localTo, from, ISVNConnector.Options.SIMULATE | ISVNConnector.Options.ALLOW_MIXED_REVISIONS);
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider from, SVNRevisionRange []revisions, SVNDepth depth, long options) {

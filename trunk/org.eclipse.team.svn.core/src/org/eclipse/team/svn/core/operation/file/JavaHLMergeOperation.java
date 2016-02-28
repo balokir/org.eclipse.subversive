@@ -35,7 +35,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 	protected ISVNNotificationCallback notify;
 	
 	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, boolean dryRun, ISVNNotificationCallback notify) {
-		this(localTo, from1, from2, dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE, notify);
+		this(localTo, from1, from2, (dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE) | ISVNConnector.Options.ALLOW_MIXED_REVISIONS, notify);
 	}
 
 	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, long options, ISVNNotificationCallback notify) {
