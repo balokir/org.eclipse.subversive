@@ -60,7 +60,6 @@ import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
-import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNPropertyCallback;
@@ -74,7 +73,6 @@ import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
@@ -426,16 +424,6 @@ public final class SVNUtility {
 				statuses.add(status);
 			}
 		}, monitor);
-	}
-	
-	public static SVNMergeStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, SVNDepth depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList<SVNMergeStatus> statuses = new ArrayList<SVNMergeStatus>();
-		proxy.mergeStatus(reference, revisions, path, depth, options, new ISVNMergeStatusCallback() {
-			public void next(SVNMergeStatus status) {
-				statuses.add(status);
-			}
-		}, monitor);
-		return statuses.toArray(new SVNMergeStatus[statuses.size()]);
 	}
 	
 	public static SVNEntry []list(ISVNConnector proxy, SVNEntryRevisionReference reference, SVNDepth depth, int direntFields, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {

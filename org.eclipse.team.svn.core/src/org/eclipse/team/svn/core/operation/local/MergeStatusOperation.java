@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNMergeHelper;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -97,7 +98,8 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 		options |= info.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 		ISVNConnector proxy = info.from[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
-			proxy.mergeStatus(mergeRef, info.revisions, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));
+			SVNMergeHelper helper = new SVNMergeHelper(proxy);
+			helper.mergeStatus(mergeRef, info.revisions, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			info.from[idx].getRepositoryLocation().releaseSVNProxy(proxy);
@@ -113,7 +115,8 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 		options |= info.recordOnly ? ISVNConnector.Options.RECORD_ONLY : ISVNConnector.Options.NONE;
 		ISVNConnector proxy = info.fromEnd[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
-			proxy.mergeStatus(startRef, endRef, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));
+			SVNMergeHelper helper = new SVNMergeHelper(proxy);
+			helper.mergeStatus(startRef, endRef, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			info.fromEnd[idx].getRepositoryLocation().releaseSVNProxy(proxy);
@@ -126,7 +129,8 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
 		ISVNConnector proxy = info.from[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
-			proxy.mergeStatus(mergeRef, wcPath, ISVNConnector.Options.NONE, cb, new SVNProgressMonitor(this, monitor, null));
+			SVNMergeHelper helper = new SVNMergeHelper(proxy);
+			helper.mergeStatus(mergeRef, wcPath, ISVNConnector.Options.NONE, cb, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			info.from[idx].getRepositoryLocation().releaseSVNProxy(proxy);

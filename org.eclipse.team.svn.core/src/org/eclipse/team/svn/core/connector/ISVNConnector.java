@@ -835,42 +835,6 @@ public interface ISVNConnector {
 	 */
 	public void dumpChangeLists(String []changeLists, String rootPath, SVNDepth depth, ISVNChangeListCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	//-- the following subset of merge functions could be removed later. So, for now mind them as "for internal usage only".
-	/**
-	 * Same as mergeReintegrate(), but performs merge based on the simulated changes.
-	 */
-	public void merge(SVNEntryReference reference, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
-
-	/**
-	 * Same as mergeReintegrate() with a one source reference, but returns simulated change states.
-	 */
-	public void mergeStatus(SVNEntryReference reference, String mergePath, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
-
-	/**
-	 * Same as merge() with a one source reference, but performs merge based on the simulated changes.
-	 */
-	public void merge(SVNEntryReference reference, SVNRevisionRange[] revisions, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor)
-			throws SVNConnectorException;
-	
-	/**
-	 * Same as merge() with a one source reference, but returns simulated change states.
-	 */
-	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange[] revisions, String path, SVNDepth depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
-			throws SVNConnectorException;
-
-	/**
-	 * Same as merge() with a two source references, but performs merge based on the simulated changes.
-	 */
-	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor)
-		throws SVNConnectorException;
-
-	/**
-	 * Same as merge() with a two source references, but returns simulated change states.
-	 */
-	public void mergeStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String path, SVNDepth depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
-		throws SVNConnectorException;
-	//-- end of "internal usage only" section
-
 	/**
 	 * Import a file or directory into a repository directory
 	 * @param path the path to import resource from
