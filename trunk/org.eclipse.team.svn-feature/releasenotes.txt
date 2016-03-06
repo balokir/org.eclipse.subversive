@@ -5,25 +5,27 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 3.0.4.I20160131-1700 release date: 31 January 2016
+Version 4.0.0.I20160226-1700 release date: 26 February 2016
 
 1. What's New
 
-   The version 3.0.4 is a service release.
+   The version 4.0.0 is a major release. There are API changes, that are incompatible with connectors version 5.0.
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
 	Features:
-	 * Make 'Project Structure' preferences page more compact (bug 486862)
-	 * SVN Plugin does not provide option to set default checkout directory (bug 486009)
+	 * SVN Kit 1.8.12: support for Subversion 1.9 new FSFS repository format. (bug 487147)
+	 * Parse certificate message passed as parameter by SVN 1.8 and earlier clients in order to provide support for SVN 1.9 API (bug 487220)
+	 * "Trust SSL server certificate" dialog should distinguish error codes provided by SVN 1.9 API (bug 488453)
+	 * Introduce SVN 1.9 API support (bug 485022)
+	 * Enable SVN 1.9 features in SVN 1.9 based connector (bug 488472)
+	 * Ensure there is no compatibility issues between plug-in versions with different SVN API supported (bug 488653)
+	 * Refactor and remove deprecated merge API calls (bug 488677)
 	
 	Fixes:
-	 * Typo in "Getting Started" documentation (bug 485185)
-	 * Information in "Trust server certificate" dialog is hard to read (bug 485344)
-	 * "Compare with" dialogs exit with "A path under version control is needed for this operation" error message (bug 485622)
-	 * An exception occurs while moving a resource into a package whose SVN text status is set to "Deleted" (bug 486496)
-	 * "Inappropriate resource state" exception while adding replaced but not yet added folder to source control (bug 486835)
+	 * Move 'Create Patch' action in pop-up menu next to 'Apply Patch' (bug 486907)
+	 * No content for remote variant of deleted file in Synchronize View (bug 488683)
 	
 	
 2. Information
@@ -31,16 +33,16 @@ Version 3.0.4.I20160131-1700 release date: 31 January 2016
 2.1. System Requirements
 
    Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
-    * 4.3
     * 4.4
     * 4.5
+    * 4.6
    
    Subversive supports 
     Migration for Subversion below version 1.6 to version 1.7 and higher,
-    Subversion version 1.7 with SVN Kit 1.7.14 and JavaHL 1.7.9,
-    Subversion version 1.8 with SVN Kit 1.8.11 and JavaHL 1.8.14
+    Subversion version 1.8 with SVN Kit 1.8.11 and JavaHL 1.8.14,
+    Subversion version 1.9 with JavaHL 1.9.2
 
 2.2 Known issues
 
-	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.14 connector]
+	* 
 	

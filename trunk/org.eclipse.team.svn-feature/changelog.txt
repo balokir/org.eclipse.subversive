@@ -8,6 +8,23 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.0.I20160226-1700 [26 February 2016]
+
+Features:
+ * SVN Kit 1.8.12: support for Subversion 1.9 new FSFS repository format. (bug 487147)
+ * Parse certificate message passed as parameter by SVN 1.8 and earlier clients in order to provide support for SVN 1.9 API (bug 487220)
+ * "Trust SSL server certificate" dialog should distinguish error codes provided by SVN 1.9 API (bug 488453)
+ * Introduce SVN 1.9 API support (bug 485022)
+ * Enable SVN 1.9 features in SVN 1.9 based connector (bug 488472)
+ * Ensure there is no compatibility issues between plug-in versions with different SVN API supported (bug 488653)
+ * Refactor and remove deprecated merge API calls (bug 488677)
+
+Fixes:
+ * Move 'Create Patch' action in pop-up menu next to 'Apply Patch' (bug 486907)
+ * No content for remote variant of deleted file in Synchronize View (bug 488683)
+ 
+--------------------------------------------------------------------------------
+
 Version 3.0.4.I20160131-1700 [31 January 2016]
 
 Features:
