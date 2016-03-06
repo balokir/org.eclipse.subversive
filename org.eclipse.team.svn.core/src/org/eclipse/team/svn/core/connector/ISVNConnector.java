@@ -291,7 +291,9 @@ public interface ISVNConnector {
 			" --no-diff-deleted", ""/*DEPTH_IS_STICKY*/, ""/*INTERPRET_AS_CHILD*/, " --keep-local", " --stop-on-copy", " -v", " -g", 
 			" --force", " -v", " --show-copies-as-adds", " --reverse-diff", " --ignore-whitespace", ""/*REMOVE_TEMPORARY_FILES*/, 
 			" --no-auto-props", "", " --allow-mixed-revisions", " --ignore-ancestry", " --ignore-properties", 
-			" --properties-only", " --show-inherited-props"};
+			" --properties-only", " --show-inherited-props", ""/*LOCAL_SIDE*/, ""/*IGNORE_KEYWORDS*/, ""/*FETCH_EXCLUDED*/, 
+			""/*FETCH_ACTUAL_ONLY*/, ""/*INCLUDE_EXTERNALS*/, ""/*INCLUDE_CHANGELISTS*/, ""/*BREAK_LOCKS*/, ""/*INCLUDE_TIMESTAMPS*/, 
+			""/*INCLUDE_DAVCACHE*/, ""/*INCLUDE_UNUSED_PRISTINES*/, ""/*INCLUDE_PROPERTIES*/, ""/*INCLUDE_UNVERSIONED*/};
 	}
 	
 	public static class DiffOptions {
