@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.team.svn.discovery;singleton:=true
+Bundle-Version: 4.0.0.I20160225-1700
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
