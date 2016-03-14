@@ -38,9 +38,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
@@ -134,13 +132,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
 	protected LinkedList fetchQueue;
 	protected LinkedList refreshQueue;
+	protected LinkedList eventQueue;
 	
 	protected long lastMonitorTime;
 	protected Map<IResource, File> changeMonitorMap;
 	
 	protected int suggestedLoadDepth = IResource.DEPTH_INFINITE;
-	
-    private Job prevNotification = null;
 	
 	public void resetExternalChangesMonitor() {
 		this.lastMonitorTime = System.currentTimeMillis();
@@ -191,37 +188,47 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     	}
     }
 
-    public void fireResourceStatesChangedEvent(final ResourceStatesChangedEvent event) {
-		if (event.resources.length > 0) {
-		    // events should be serialized and called asynchronous to caller thread
-	    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
-	    		List<IResourceStatesListener> listenersArray = SVNRemoteStorage.this.resourceStateListeners.get(event.getClass());
-	    		if (listenersArray == null || listenersArray.size() == 0) {
-	    			return;
-	    		}
-		    	final IResourceStatesListener []listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
-				final Job prevNotify = this.prevNotification;
-				Job job = new Job("") { //$NON-NLS-1$
-					protected IStatus run(IProgressMonitor monitor) {
-						if (prevNotify != null) {
-							try {
-								prevNotify.join();
-							} 
-							catch (InterruptedException e) {
-								return Status.CANCEL_STATUS;
+    public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
+    	IResourceStatesListener []listeners = null;
+    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
+    		List<IResourceStatesListener> listenersArray = SVNRemoteStorage.this.resourceStateListeners.get(event.getClass());
+    		if (listenersArray == null || listenersArray.size() == 0) {
+    			return;
+    		}
+	    	listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
+    	}
+		synchronized (this.eventQueue) {
+    		this.eventQueue.add(new Object[] {listeners, event});
+	    	if (this.eventQueue.size() == 1) {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache", SVNMessages.class) { //$NON-NLS-1$
+					public ISchedulingRule getSchedulingRule() {
+						return null;
+					}
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						while (true) {
+							IResourceStatesListener []listeners;
+							ResourceStatesChangedEvent event;
+							synchronized (SVNRemoteStorage.this.eventQueue) {
+								if (monitor.isCanceled() || SVNRemoteStorage.this.eventQueue.size() == 0) {
+									SVNRemoteStorage.this.eventQueue.clear();
+									break;
+								}
+								Object []entry = (Object [])SVNRemoteStorage.this.eventQueue.get(0);
+								listeners = (IResourceStatesListener [])entry[0];
+								event = (ResourceStatesChangedEvent)entry[1];
+							}
+			    	    	for (int i = 0; i < listeners.length && !monitor.isCanceled(); i++) {
+			    	    		listeners[i].resourcesStateChanged(event);
+			    	    	}
+							synchronized (SVNRemoteStorage.this.eventQueue) {
+								SVNRemoteStorage.this.eventQueue.remove(0);
+								if (SVNRemoteStorage.this.eventQueue.size() == 0) {
+									break;
+								}
 							}
 						}
-	
-		    	    	for (int i = 0; i < listeners.length && !monitor.isCanceled(); i++) {
-		    	    		listeners[i].resourcesStateChanged(event);
-		    	    	}
-						
-						return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 					}
-				};
-				job.setSystem(true);
-				job.schedule();
-				this.prevNotification = job;
+				}, false);
 	    	}
 		}
     }
@@ -1482,6 +1489,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
 		this.fetchQueue = new LinkedList();
 		this.refreshQueue = new LinkedList();
+		this.eventQueue = new LinkedList();
 		this.lastMonitorTime = System.currentTimeMillis();
 		this.changeMonitorMap = new HashMap<IResource, File>();
 	}
