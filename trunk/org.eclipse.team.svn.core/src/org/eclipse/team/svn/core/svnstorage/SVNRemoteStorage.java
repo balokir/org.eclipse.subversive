@@ -228,7 +228,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							}
 						}
 					}
-				}, false);
+				}, true);
 	    	}
 		}
     }
