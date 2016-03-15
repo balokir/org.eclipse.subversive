@@ -114,7 +114,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
     public boolean isSupervised(IResource resource) {
-		return FileUtility.isConnected(resource) && !FileUtility.isSVNInternals(resource) && !FileUtility.isIgnored(resource);
+		return FileUtility.isConnected(resource) && !FileUtility.isNotSupervised(resource);
     }
 
     public IResource []members(IResource resource) throws TeamException {
