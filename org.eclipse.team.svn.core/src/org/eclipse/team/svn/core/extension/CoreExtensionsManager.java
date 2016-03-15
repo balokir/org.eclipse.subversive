@@ -209,7 +209,7 @@ public class CoreExtensionsManager {
 	}
 	
 	public ISVNConnectorFactory getSVNConnectorFactory() {
-		String id = this.getOptionProvider().getString(IOptionProvider.SVN_CONNECTOR_ID);
+		String id = this.getOptionProvider().getSVNConnectorId();
 		return this.getSVNConnectorFactory(id);
 	}
 	

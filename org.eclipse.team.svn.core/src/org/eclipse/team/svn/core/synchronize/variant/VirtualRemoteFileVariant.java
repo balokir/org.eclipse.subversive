@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
@@ -34,7 +35,8 @@ public class VirtualRemoteFileVariant extends VirtualRemoteResourceVariant {
 	}
 
 	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
-		if (!IStateFilter.SF_VERSIONED.accept(this.local) || this.local.isCopied()) {
+		if (!this.local.isCopied() && this.local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER &&
+			!IStateFilter.SF_PREREPLACED.accept(this.local)) {
 			this.setContents(new ByteArrayInputStream(new byte[0]), monitor);
 			return;
 		}

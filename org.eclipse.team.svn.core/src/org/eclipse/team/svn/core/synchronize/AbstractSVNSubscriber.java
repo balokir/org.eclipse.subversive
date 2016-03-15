@@ -50,7 +50,6 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -114,7 +113,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
     public boolean isSupervised(IResource resource) {
-		return FileUtility.isConnected(resource) && !FileUtility.isNotSupervised(resource);
+		return FileUtility.isConnected(resource) && !FileUtility.isSVNInternals(resource) && !FileUtility.isIgnored(resource);
     }
 
     public IResource []members(IResource resource) throws TeamException {
@@ -304,7 +303,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 			}
         	IResource []refreshSet = allResources.toArray(new IResource[allResources.size()]);
         	// ensure we cached all locally-known resources
-        	if (CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED)) {
+        	if (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
         		IResource []parents = FileUtility.getParents(refreshSet, false);
             	for (int i = 0; i < parents.length; i++) {
             		try {

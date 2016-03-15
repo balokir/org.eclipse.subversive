@@ -3,15 +3,13 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.core;singleton:=true
-Bundle-Version: 4.0.0.I20160226-1700
+Bundle-Version: 3.0.4.I20160131-1700
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.team.svn.core.SVNTeamPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.team.svn.core,
  org.eclipse.team.svn.core.connector,
- org.eclipse.team.svn.core.connector.ssl,
- org.eclipse.team.svn.core.connector.configuration,
  org.eclipse.team.svn.core.discovery.model,
  org.eclipse.team.svn.core.discovery.util,
  org.eclipse.team.svn.core.extension,

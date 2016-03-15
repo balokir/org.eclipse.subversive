@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
@@ -60,8 +65,7 @@ import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
-import org.eclipse.team.svn.core.extension.options.IOptionProvider;
-import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
@@ -73,7 +77,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
-import org.eclipse.team.svn.core.utility.AsynchronousActiveQueue;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -129,13 +132,15 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map switchedToUrls;
 	protected Map externalsLocations;
 	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
-	protected AsynchronousActiveQueue fetchQueue;
-	protected AsynchronousActiveQueue eventQueue;
+	protected LinkedList fetchQueue;
+	protected LinkedList refreshQueue;
 	
 	protected long lastMonitorTime;
 	protected Map<IResource, File> changeMonitorMap;
 	
 	protected int suggestedLoadDepth = IResource.DEPTH_INFINITE;
+	
+    private Job prevNotification = null;
 	
 	public void resetExternalChangesMonitor() {
 		this.lastMonitorTime = System.currentTimeMillis();
@@ -186,16 +191,39 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     	}
     }
 
-    public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
-    	IResourceStatesListener []listeners = null;
-    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
-    		List<IResourceStatesListener> listenersArray = SVNRemoteStorage.this.resourceStateListeners.get(event.getClass());
-    		if (listenersArray == null || listenersArray.size() == 0) {
-    			return;
-    		}
-	    	listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
-    	}
-    	this.eventQueue.push(listeners, event);
+    public void fireResourceStatesChangedEvent(final ResourceStatesChangedEvent event) {
+		if (event.resources.length > 0) {
+		    // events should be serialized and called asynchronous to caller thread
+	    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
+	    		List<IResourceStatesListener> listenersArray = SVNRemoteStorage.this.resourceStateListeners.get(event.getClass());
+	    		if (listenersArray == null || listenersArray.size() == 0) {
+	    			return;
+	    		}
+		    	final IResourceStatesListener []listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
+				final Job prevNotify = this.prevNotification;
+				Job job = new Job("") { //$NON-NLS-1$
+					protected IStatus run(IProgressMonitor monitor) {
+						if (prevNotify != null) {
+							try {
+								prevNotify.join();
+							} 
+							catch (InterruptedException e) {
+								return Status.CANCEL_STATUS;
+							}
+						}
+	
+		    	    	for (int i = 0; i < listeners.length && !monitor.isCanceled(); i++) {
+		    	    		listeners[i].resourcesStateChanged(event);
+		    	    	}
+						
+						return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+				this.prevNotification = job;
+	    	}
+		}
     }
     
 	public void initialize(Map<String, Object> preferences) throws Exception {
@@ -397,7 +425,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	public ILocalResource asLocalResourceDirty(IResource resource) {
-		if (!CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED)) {
+		if (!CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
 			return this.asLocalResource(resource);
 		}
 		// null resource and workspace root shouldn't be provided
@@ -669,7 +697,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
 		
-		boolean isCacheEnabled = CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED);
+		boolean isCacheEnabled = CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled();
 		if (!isCacheEnabled) {
 			this.localResources.clear();
 		}
@@ -809,7 +837,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		IRepositoryResource baseResource = provider.getRepositoryResource();
 		int offsetFromRoot = resourcePath.segmentCount() - wcPath.segmentCount();
 		SVNDepth svnDepth = depth == IResource.DEPTH_ZERO ? SVNDepth.EMPTY : (depth == IResource.DEPTH_ONE ? SVNDepth.IMMEDIATES : SVNDepth.INFINITY);
-		svnDepth = offsetFromRoot < 1 || !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED) ? SVNDepth.IMMEDIATES : svnDepth;
+		svnDepth = offsetFromRoot < 1 || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() ? SVNDepth.IMMEDIATES : svnDepth;
 		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString(), svnDepth);
 		String desiredUrl = this.makeUrl(target, baseResource);
 		SVNChangeStatus [][]loadTargets = new SVNChangeStatus[1][];
@@ -821,11 +849,112 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		
 		statuses = loadTargets[0];
-		if (retVal != null && hasSVNMeta && statuses.length > 1 && depth != IResource.DEPTH_ZERO && CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED)) {
-			this.fetchQueue.push(statuses, target);
+		if (retVal != null && hasSVNMeta && statuses.length > 1 && depth != IResource.DEPTH_ZERO && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
+			this.scheduleStatusesFetch(statuses, target);
 		}
 		
 		return retVal;
+	}
+	
+	public void scheduleRefresh(IResource []resources, int depth, ResourceStatesChangedEvent pathEvent, ResourceStatesChangedEvent resourcesEvent) {
+		synchronized (this.refreshQueue) {
+			this.refreshQueue.add(new Object[] {resources, Integer.valueOf(depth), pathEvent, resourcesEvent});
+			if (this.refreshQueue.size() == 1) {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache", SVNMessages.class) { //$NON-NLS-1$
+					public ISchedulingRule getSchedulingRule() {
+						return null;
+					}
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						while (true) {
+							IResource []resources;
+							int depth;
+							ResourceStatesChangedEvent pathEvent;
+							ResourceStatesChangedEvent resourcesEvent;
+							synchronized (SVNRemoteStorage.this.refreshQueue) {
+								if (monitor.isCanceled() || SVNRemoteStorage.this.refreshQueue.size() == 0) {
+									SVNRemoteStorage.this.refreshQueue.clear();
+									break;
+								}
+								Object []entry = (Object [])SVNRemoteStorage.this.refreshQueue.get(0);
+								resources = (IResource [])entry[0];
+								depth = (Integer)entry[1];
+								pathEvent = (ResourceStatesChangedEvent)entry[2];
+								resourcesEvent = (ResourceStatesChangedEvent)entry[3];
+							}
+							if (resources != null) {
+								SVNRemoteStorage.instance().refreshLocalResources(resources, depth);
+							}
+							if (pathEvent != null) {
+								SVNRemoteStorage.instance().fireResourceStatesChangedEvent(pathEvent);
+							}
+							if (resourcesEvent != null) {
+								SVNRemoteStorage.instance().fireResourceStatesChangedEvent(resourcesEvent);
+							}
+							synchronized (SVNRemoteStorage.this.refreshQueue) {
+								SVNRemoteStorage.this.refreshQueue.remove(0);
+								if (SVNRemoteStorage.this.refreshQueue.size() == 0) {
+									break;
+								}
+							}
+						}
+					}
+				}, false);
+			}
+		}
+	}
+	
+	protected void scheduleStatusesFetch(SVNChangeStatus []st, IResource target) {
+		synchronized (this.fetchQueue) {
+			this.fetchQueue.add(new Object[] {st, target});
+			if (this.fetchQueue.size() == 1) {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache", SVNMessages.class) { //$NON-NLS-1$
+					public ISchedulingRule getSchedulingRule() {
+						return null;
+					}
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+						while (true) {
+							SVNChangeStatus [] st;
+							IResource target;
+							synchronized (SVNRemoteStorage.this.fetchQueue) {
+								if (monitor.isCanceled() || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() || SVNRemoteStorage.this.fetchQueue.size() == 0) {
+									SVNRemoteStorage.this.fetchQueue.clear(); // if cache is disabled and queue is not empty
+									break;
+								}
+								Object []entry = (Object [])SVNRemoteStorage.this.fetchQueue.get(0);
+								st = (SVNChangeStatus [])entry[0];
+								target = (IResource)entry[1];
+							}
+							this.processEntry(monitor, st, target);
+							synchronized (SVNRemoteStorage.this.fetchQueue) {
+								SVNRemoteStorage.this.fetchQueue.remove(0);
+								if (SVNRemoteStorage.this.fetchQueue.size() == 0) {
+									break;
+								}
+							}
+						}
+					}
+					protected void processEntry(IProgressMonitor monitor, SVNChangeStatus []st, IResource target) {
+						IProject prj = target.getProject();
+						IPath location = prj.getLocation();
+						if (location != null) {
+							int projectEnd = location.toString().length();
+							for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled(); i++) {
+								ProgressMonitorUtility.progress(monitor, i, IProgressMonitor.UNKNOWN);
+								if (st[i] != null && st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
+									IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
+									ProgressMonitorUtility.setTaskInfo(monitor, this, folder.getFullPath().toString());
+									ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
+									if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
+										local.getChildren();
+									}
+								}
+							}
+						}
+					}
+				}, false).setPriority(Job.DECORATE);
+			}
+		}
 	}
 	
 	protected boolean canFetchStatuses(IPath path) {
@@ -887,7 +1016,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					}
 					final SVNConflictDescriptor [][]treeConflicts = new SVNConflictDescriptor[1][];
 					try {
-						proxy.getInfo(new SVNEntryRevisionReference(statuses[i].path), SVNDepth.EMPTY, ISVNConnector.Options.FETCH_ACTUAL_ONLY, null, new ISVNEntryInfoCallback() {
+						proxy.getInfo(new SVNEntryRevisionReference(statuses[i].path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 							public void next(SVNEntryInfo info) {
 								treeConflicts[0] = info.treeConflicts;
 							}
@@ -1351,37 +1480,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		this.switchedToUrls = Collections.synchronizedMap(new LinkedHashMap());
 		this.externalsLocations = new HashMap();
 		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
-    	this.fetchQueue = new AsynchronousActiveQueue("Operation_UpdateSVNCache", new AsynchronousActiveQueue.IRecordHandler() {
-			public void process(IProgressMonitor monitor, IActionOperation op, Object... record) {
-				SVNChangeStatus [] st = (SVNChangeStatus [])record[0];
-				IResource target = (IResource)record[1];
-				IProject prj = target.getProject();
-				IPath location = prj.getLocation();
-				if (location != null) {
-					int projectEnd = location.toString().length();
-					for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED); i++) {
-						ProgressMonitorUtility.progress(monitor, i, IProgressMonitor.UNKNOWN);
-						if (st[i] != null && st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
-							IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
-							ProgressMonitorUtility.setTaskInfo(monitor, op, folder.getFullPath().toString());
-							ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
-							if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
-								local.getChildren();
-							}
-						}
-					}
-				}
-			}
-		}, false);
-    	this.eventQueue = new AsynchronousActiveQueue("Operation_UpdateSVNCache", new AsynchronousActiveQueue.IRecordHandler() {
-			public void process(IProgressMonitor monitor, IActionOperation op, Object... record) {
-				IResourceStatesListener []listeners = (IResourceStatesListener [])record[0];
-				ResourceStatesChangedEvent event = (ResourceStatesChangedEvent)record[1];
-    	    	for (int i = 0; i < listeners.length && !monitor.isCanceled(); i++) {
-    	    		listeners[i].resourcesStateChanged(event);
-    	    	}
-			}
-		}, true);
+		this.fetchQueue = new LinkedList();
+		this.refreshQueue = new LinkedList();
 		this.lastMonitorTime = System.currentTimeMillis();
 		this.changeMonitorMap = new HashMap<IResource, File>();
 	}

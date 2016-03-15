@@ -19,20 +19,15 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -45,6 +40,7 @@ import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -59,6 +55,7 @@ import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNPropertyCallback;
@@ -72,14 +69,13 @@ import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
-import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateInfo;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
-import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
@@ -104,84 +100,6 @@ import org.eclipse.team.svn.core.svnstorage.SVNRevisionLink;
 public final class SVNUtility {
 	private static String svnFolderName = null;
 	
-	public static String formatSSLFingerprint(byte []fingerprint) {
-		String retVal = "";
-		for (byte data : fingerprint) {
-			String part = String.format("%02x", data);
-			retVal += retVal.length() > 0 ? ":" + part : part;
-		}
-		return retVal;
-	}
-	
-	public static String formatSSLValid(Date validFrom, Date validTo) {
-		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
-		return "from " + df.format(validFrom) + " until " + df.format(validTo); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	public static SSLServerCertificateInfo decodeCertificateData(Map<String, String> map) throws ParseException {
-		String serverURL = map.get("serverURL"); //$NON-NLS-1$
-		String issuer = map.get("issuer"); //$NON-NLS-1$
-		String subject = map.get("subject"); //$NON-NLS-1$
-		byte []fingerprint = null;
-		String []parts = map.get("fingerprint").split(":"); //$NON-NLS-1$ //$NON-NLS-2$
-		fingerprint = new byte[parts.length];
-		for (int k = 0; k < parts.length; k++) {
-			fingerprint[k] = Byte.parseByte(parts[k]);
-		}
-		String valid = map.get("valid"); //$NON-NLS-1$
-		long validFrom = 0, validTo = 0;
-		//Tue Oct 22 15:00:01 EEST 2013
-		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
-		String fromStr = valid.substring(5, valid.indexOf("until") - 1); //$NON-NLS-1$
-		String toStr = valid.substring(valid.indexOf("until") + 6); //$NON-NLS-1$
-		validFrom = df.parse(fromStr).getTime();
-		validTo = df.parse(toStr).getTime();
-		return new SSLServerCertificateInfo(subject, issuer, validFrom, validTo, fingerprint, Arrays.asList(new String[] {serverURL}), null);
-	}
-	
-	public static Map<String, String> splitCertificateString(String message) {
-		HashMap<String, String> retVal = new HashMap<String, String>();
-		String []baseLines = message.split("\n"); //$NON-NLS-1$
-		boolean infoMessagePart = false;
-		String infoMessage = null;
-		for (int i = 0; i < baseLines.length; i++) {
-			int idx1 = baseLines[i].indexOf("https:"); //$NON-NLS-1$
-			if (idx1 != -1) {
-				String serverURL = baseLines[i].substring(idx1).trim();
-				serverURL = serverURL.substring(0, serverURL.length() - 2);
-				retVal.put("serverURL", serverURL); //$NON-NLS-1$
-				infoMessagePart = true;
-			}
-			else if (infoMessagePart) {
-				if (baseLines[i].endsWith(":")) {
-					infoMessagePart = false;
-				}
-				else {
-					infoMessage = infoMessage == null ? baseLines[i] : (infoMessage + "\n" + baseLines[i]); //$NON-NLS-1$
-				}
-			}
-			else {
-				int idx = baseLines[i].indexOf(':');
-				String key = baseLines[i].substring(0, idx).replaceFirst("\\s*-\\s*", "").trim(); //$NON-NLS-1$
-				String value = baseLines[i].substring(idx + 1).trim();
-				if ("Subject".equals(key)) { //$NON-NLS-1$
-					retVal.put("subject", value); //$NON-NLS-1$
-				}
-				else if ("Valid".equals(key)) { //$NON-NLS-1$
-					retVal.put("valid", value); //$NON-NLS-1$
-				}
-				else if ("Issuer".equals(key)) { //$NON-NLS-1$
-					retVal.put("issuer", value); //$NON-NLS-1$
-				}
-				else if ("Fingerprint".equals(key)) { //$NON-NLS-1$
-					retVal.put("fingerprint", value); //$NON-NLS-1$
-				}
-			}
-		}
-		retVal.put("infoMessage", infoMessage); //$NON-NLS-1$
-		return retVal;
-	}
-	
 	public static boolean isPriorToSVN17() {
 		return CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_7_x;
 	}
@@ -205,9 +123,9 @@ public final class SVNUtility {
 	
 	public static void initializeRepositoryLocation(IRepositoryLocation location, String url) {
 		location.setStructureEnabled(true);
-		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TRUNK_NAME));
-		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_BRANCHES_NAME));
-		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TAGS_NAME));
+		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName());
+		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName());
+		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName());
 		IPath urlPath = SVNUtility.createPathForSVNUrl(url);
 		if (urlPath.lastSegment().equals(location.getTrunkLocation())) {
 			url = urlPath.removeLastSegments(1).toString();
@@ -399,7 +317,7 @@ public final class SVNUtility {
 		for (Iterator<SVNChangeStatus> it = statuses.iterator(); it.hasNext() && !monitor.isActivityCancelled(); ) {
 			final SVNChangeStatus svnChangeStatus = it.next();
 			if (svnChangeStatus.hasConflict && svnChangeStatus.treeConflicts == null) {
-				proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, ISVNConnector.Options.FETCH_ACTUAL_ONLY, null, new ISVNEntryInfoCallback() {
+				proxy.getInfo(new SVNEntryRevisionReference(svnChangeStatus.path), SVNDepth.EMPTY, null, new ISVNEntryInfoCallback() {
 					public void next(SVNEntryInfo info) {
 						svnChangeStatus.setTreeConflicts(info.treeConflicts);
 					}
@@ -424,6 +342,16 @@ public final class SVNUtility {
 				statuses.add(status);
 			}
 		}, monitor);
+	}
+	
+	public static SVNMergeStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, SVNDepth depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		final ArrayList<SVNMergeStatus> statuses = new ArrayList<SVNMergeStatus>();
+		proxy.mergeStatus(reference, revisions, path, depth, options, new ISVNMergeStatusCallback() {
+			public void next(SVNMergeStatus status) {
+				statuses.add(status);
+			}
+		}, monitor);
+		return statuses.toArray(new SVNMergeStatus[statuses.size()]);
 	}
 	
 	public static SVNEntry []list(ISVNConnector proxy, SVNEntryRevisionReference reference, SVNDepth depth, int direntFields, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
@@ -461,7 +389,7 @@ public final class SVNUtility {
 	
 	public static SVNEntryInfo []info(ISVNConnector proxy, SVNEntryRevisionReference reference, SVNDepth depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNEntryInfo> infos = new ArrayList<SVNEntryInfo>();
-		proxy.getInfo(reference, depth, ISVNConnector.Options.FETCH_ACTUAL_ONLY, null, new ISVNEntryInfoCallback() {
+		proxy.getInfo(reference, depth, null, new ISVNEntryInfoCallback() {
 			public void next(SVNEntryInfo info) {
 				infos.add(info);
 			}
@@ -1000,20 +928,21 @@ public final class SVNUtility {
 	}
 	
     public static boolean isIgnored(IResource resource) {
-        if (FileUtility.isNotSupervised(resource) || 
-    		(resource.isDerived(IResource.CHECK_ANCESTORS) && !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.COMMIT_DERIVED_ENABLED)) || 
-    		Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
+		// Ignore WorkspaceRoot, derived and team-private resources and resources from TeamHints 
+        if (resource instanceof IWorkspaceRoot || resource.isDerived() || 
+        	FileUtility.isSVNInternals(resource) || Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
         	return true;
         }
         try {
-        	for (IIgnoreRecommendations ignore : CoreExtensionsManager.instance().getIgnoreRecommendations()) {
-        		if (ignore.isAcceptableNature(resource) && ignore.isIgnoreRecommended(resource)) {
+        	IIgnoreRecommendations []ignores = CoreExtensionsManager.instance().getIgnoreRecommendations();
+        	for (int i = 0; i < ignores.length; i++) {
+        		if (ignores[i].isAcceptableNature(resource) && ignores[i].isIgnoreRecommended(resource)) {
         			return true;
         		}
         	}
         }
-        catch (CoreException ex) {
-        	throw new RuntimeException(ex);
+        catch (Exception ex) {
+        	// cannot be correctly processed in the caller context
         }
         return false;
     }

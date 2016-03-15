@@ -61,9 +61,9 @@ public class RevertOperation extends AbstractWorkingCopyOperation {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn revert \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.doRecursiveRevert ? " -R" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.revert(new String[] {wcPath}, 
+					proxy.revert(wcPath, 
 								 SVNDepth.infinityOrEmpty(RevertOperation.this.doRecursiveRevert), 
-								 null, ISVNConnector.Options.NONE, new SVNProgressMonitor(RevertOperation.this, monitor, null));
+								 null, new SVNProgressMonitor(RevertOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);
 			location.releaseSVNProxy(proxy);

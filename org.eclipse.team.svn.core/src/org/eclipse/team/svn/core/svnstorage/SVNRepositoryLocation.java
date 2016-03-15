@@ -37,8 +37,6 @@ import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateFailures;
-import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateInfo;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -980,8 +978,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.location = location;
 		}
 
-		public Answer askTrustSSLServer(Object context, SSLServerCertificateFailures failures, SSLServerCertificateInfo info, boolean allowPermanently) {
-        	return this.prompt.askTrustSSLServer(this.location, failures, info, allowPermanently);
+		public Answer askTrustSSLServer(Object location, String info, boolean allowPermanently) {
+        	return this.prompt.askTrustSSLServer(this.location, info, allowPermanently);
 		}
 
 		public String getRealmToSave() {
@@ -1184,9 +1182,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			super(prompt, SVNRepositoryLocation.this);
 		}
 
-		public Answer askTrustSSLServer(Object context, SSLServerCertificateFailures failures, SSLServerCertificateInfo info, boolean allowPermanently) {
+		public ISVNCredentialsPrompt.Answer askTrustSSLServer(IRepositoryLocation location, String info, boolean allowPermanently) {
         	if (!SVNRepositoryLocation.this.trustSiteDefined) {
-        		SVNRepositoryLocation.this.trustSite = super.askTrustSSLServer(SVNRepositoryLocation.this, failures, info, allowPermanently);
+        		SVNRepositoryLocation.this.trustSite = super.askTrustSSLServer(SVNRepositoryLocation.this, info, allowPermanently);
         		if (SVNRepositoryLocation.this.trustSite != ISVNCredentialsPrompt.Answer.REJECT) {
             		SVNRepositoryLocation.this.trustSiteDefined = true;
         		}
