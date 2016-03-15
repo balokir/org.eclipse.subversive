@@ -61,6 +61,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -176,7 +177,7 @@ public class ResourceSelectionComposite extends Composite {
 		for (int i = 0; i < externals.length; i++) {
 			this.externalResources.add(externals[i]);
 		}
-		this.cacheEnabled = CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled();
+		this.cacheEnabled = CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED);
 		this.createControls();
 		this.refreshSelection();
 	}

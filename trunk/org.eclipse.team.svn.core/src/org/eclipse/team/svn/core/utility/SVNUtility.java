@@ -80,6 +80,7 @@ import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateInfo;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
@@ -205,9 +206,9 @@ public final class SVNUtility {
 	
 	public static void initializeRepositoryLocation(IRepositoryLocation location, String url) {
 		location.setStructureEnabled(true);
-		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName());
-		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName());
-		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName());
+		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TRUNK_NAME));
+		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_BRANCHES_NAME));
+		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TAGS_NAME));
 		IPath urlPath = SVNUtility.createPathForSVNUrl(url);
 		if (urlPath.lastSegment().equals(location.getTrunkLocation())) {
 			url = urlPath.removeLastSegments(1).toString();

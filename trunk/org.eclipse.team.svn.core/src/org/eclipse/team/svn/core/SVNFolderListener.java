@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.management.ReconnectProjectOperation;
@@ -68,7 +69,7 @@ public class SVNFolderListener implements IResourceChangeListener {
 							}
 							
 							if (resource.getType() == IResource.PROJECT && delta.getKind() == IResourceDelta.ADDED && delta.getFlags() == IResourceDelta.OPEN &&
-								SVNTeamPlugin.instance().getOptionProvider().isAutomaticProjectShareEnabled() && ((IProject)resource).isOpen()) {
+								SVNTeamPlugin.instance().getOptionProvider().is(IOptionProvider.AUTOMATIC_PROJECT_SHARE_ENABLED) && ((IProject)resource).isOpen()) {
 								
 								/*
 								 * If project is already connected, then don't reconnect it again. 
@@ -85,13 +86,13 @@ public class SVNFolderListener implements IResourceChangeListener {
 									IRepositoryRoot []roots = SVNUtility.findRoots(url, true);
 									IRepositoryLocation location = null;
 									if (roots.length == 0) {
-										String rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName(); //$NON-NLS-1$
+										String rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TRUNK_NAME); //$NON-NLS-1$
 										int idx = url.lastIndexOf(rootNode);
 										if (idx == -1 || !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
-											rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName(); //$NON-NLS-1$
+											rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_BRANCHES_NAME); //$NON-NLS-1$
 											idx = url.lastIndexOf(rootNode);
 											if (idx == -1 || !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
-												rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName(); //$NON-NLS-1$
+												rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TAGS_NAME); //$NON-NLS-1$
 												idx = url.lastIndexOf(rootNode);
 												if (idx != -1 && !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
 													idx = -1;

@@ -23,6 +23,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -153,7 +154,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	
 	protected boolean checkBug281557(IResource source, IProgressMonitor monitor) {
 		//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=281557
-		if (source.getType() == IResource.FILE && SVNTeamPlugin.instance().getOptionProvider().getSVNConnectorId().startsWith("org.eclipse.team.svn.connector.javahl")) {
+		if (source.getType() == IResource.FILE && SVNTeamPlugin.instance().getOptionProvider().getString(IOptionProvider.SVN_CONNECTOR_ID).startsWith("org.eclipse.team.svn.connector.javahl")) {
 			GetPropertiesOperation op = new GetPropertiesOperation(source);
 			this.runOperation(op, monitor);
 			SVNProperty []props = op.getProperties();

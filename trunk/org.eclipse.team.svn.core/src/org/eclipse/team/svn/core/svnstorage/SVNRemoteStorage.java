@@ -63,6 +63,7 @@ import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -432,7 +433,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	public ILocalResource asLocalResourceDirty(IResource resource) {
-		if (!CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
+		if (!CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED)) {
 			return this.asLocalResource(resource);
 		}
 		// null resource and workspace root shouldn't be provided
@@ -704,7 +705,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
 		
-		boolean isCacheEnabled = CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled();
+		boolean isCacheEnabled = CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED);
 		if (!isCacheEnabled) {
 			this.localResources.clear();
 		}
@@ -844,7 +845,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		IRepositoryResource baseResource = provider.getRepositoryResource();
 		int offsetFromRoot = resourcePath.segmentCount() - wcPath.segmentCount();
 		SVNDepth svnDepth = depth == IResource.DEPTH_ZERO ? SVNDepth.EMPTY : (depth == IResource.DEPTH_ONE ? SVNDepth.IMMEDIATES : SVNDepth.INFINITY);
-		svnDepth = offsetFromRoot < 1 || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() ? SVNDepth.IMMEDIATES : svnDepth;
+		svnDepth = offsetFromRoot < 1 || !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED) ? SVNDepth.IMMEDIATES : svnDepth;
 		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString(), svnDepth);
 		String desiredUrl = this.makeUrl(target, baseResource);
 		SVNChangeStatus [][]loadTargets = new SVNChangeStatus[1][];
@@ -856,7 +857,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		
 		statuses = loadTargets[0];
-		if (retVal != null && hasSVNMeta && statuses.length > 1 && depth != IResource.DEPTH_ZERO && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
+		if (retVal != null && hasSVNMeta && statuses.length > 1 && depth != IResource.DEPTH_ZERO && CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED)) {
 			this.scheduleStatusesFetch(statuses, target);
 		}
 		
@@ -924,7 +925,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							SVNChangeStatus [] st;
 							IResource target;
 							synchronized (SVNRemoteStorage.this.fetchQueue) {
-								if (monitor.isCanceled() || !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() || SVNRemoteStorage.this.fetchQueue.size() == 0) {
+								if (monitor.isCanceled() || !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED) || SVNRemoteStorage.this.fetchQueue.size() == 0) {
 									SVNRemoteStorage.this.fetchQueue.clear(); // if cache is disabled and queue is not empty
 									break;
 								}
@@ -946,7 +947,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						IPath location = prj.getLocation();
 						if (location != null) {
 							int projectEnd = location.toString().length();
-							for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled(); i++) {
+							for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED); i++) {
 								ProgressMonitorUtility.progress(monitor, i, IProgressMonitor.UNKNOWN);
 								if (st[i] != null && st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
 									IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
