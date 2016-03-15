@@ -140,4 +140,8 @@ public class UIOptionProvider extends AbstractOptionProvider {
 		return SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME);
 	}
 	
+	protected boolean isCommitDerivedEnabled() {
+		return SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_DERIVED_RESOURCES_NAME);
+	}
+	
 }

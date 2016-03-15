@@ -125,4 +125,8 @@ public abstract class AbstractOptionProvider implements IOptionProvider {
 	protected boolean isPersistentSSHEnabled() {
 		return true;
 	}
+	
+	protected boolean isCommitDerivedEnabled() {
+		return false;
+	}
 }
