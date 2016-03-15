@@ -85,7 +85,7 @@ public class ResourceStatesChangedEvent {
 		for (int i = 0; i < resources.length; i++) {
     		FileUtility.visitNodes(resources[i], new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {
-					if (FileUtility.isSVNInternals(resource) || FileUtility.isIgnored(resource)) {
+					if (FileUtility.isNotSupervised(resource)) {
 						return false;
 					}
 					fullList.add(resource);

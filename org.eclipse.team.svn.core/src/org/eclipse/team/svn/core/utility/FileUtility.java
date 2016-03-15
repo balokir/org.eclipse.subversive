@@ -255,10 +255,12 @@ public final class FileUtility {
     }
     
     /*
-     * If the resource is a derived, team private or linked resource, it is ignored
+     * If the resource is inaccessible, the workspace root, a team private or a linked one, it should not be managed by SVN plug-in
      */
-    public static boolean isIgnored(IResource resource) {
-    	return resource.isDerived() || resource.isTeamPrivateMember() || FileUtility.isLinked(resource); 
+    public static boolean isNotSupervised(IResource resource) {
+    	return 
+    		resource instanceof IWorkspaceRoot || !resource.isAccessible() ||
+    		resource.isTeamPrivateMember() || FileUtility.isLinked(resource); 
     }
     
 	public static String []asPathArray(IResource []resources) {
@@ -408,7 +410,7 @@ public final class FileUtility {
 		// first check all resources that are already accessible (performance optimizations)
 		for (int i = 0; i < roots.length; i++) {
 			//don't check ignored resources
-			if (FileUtility.isIgnored(roots[i])) {//FileUtility.isSVNInternals(roots[i])
+			if (FileUtility.isNotSupervised(roots[i])) {//FileUtility.isSVNInternals(roots[i])
 				continue;
 			}
 			
@@ -656,7 +658,7 @@ public final class FileUtility {
 					toRemove.add(resource);
 					return false;
 				}
-				return !FileUtility.isIgnored(resource);
+				return !FileUtility.isNotSupervised(resource);
 			}
 		}, 
 		IResource.DEPTH_INFINITE, 
@@ -863,7 +865,7 @@ public final class FileUtility {
 		int nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		for (int i = 0; i < roots.length && (monitor == null || !monitor.isCanceled()); i++) {
 			//don't process ignored resources
-			if (FileUtility.isIgnored(roots[i])) {//FileUtility.isSVNInternals(roots[i])
+			if (FileUtility.isNotSupervised(roots[i])) {//FileUtility.isSVNInternals(roots[i])
 				continue;
 			}
 			

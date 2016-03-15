@@ -45,7 +45,6 @@ import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -1001,21 +1000,20 @@ public final class SVNUtility {
 	}
 	
     public static boolean isIgnored(IResource resource) {
-		// Ignore WorkspaceRoot, derived and team-private resources and resources from TeamHints 
-        if (resource instanceof IWorkspaceRoot || resource.isDerived() || 
-        	FileUtility.isSVNInternals(resource) || Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
+        if (FileUtility.isNotSupervised(resource) || 
+    		(resource.isDerived() /*&& !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.COMMIT_DERIVED_ENABLED)*/) || 
+    		Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
         	return true;
         }
         try {
-        	IIgnoreRecommendations []ignores = CoreExtensionsManager.instance().getIgnoreRecommendations();
-        	for (int i = 0; i < ignores.length; i++) {
-        		if (ignores[i].isAcceptableNature(resource) && ignores[i].isIgnoreRecommended(resource)) {
+        	for (IIgnoreRecommendations ignore : CoreExtensionsManager.instance().getIgnoreRecommendations()) {
+        		if (ignore.isAcceptableNature(resource) && ignore.isIgnoreRecommended(resource)) {
         			return true;
         		}
         	}
         }
-        catch (Exception ex) {
-        	// cannot be correctly processed in the caller context
+        catch (CoreException ex) {
+        	throw new RuntimeException(ex);
         }
         return false;
     }
