@@ -185,7 +185,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 		List<IResource> res = new ArrayList<IResource>();
 		IResource[] resources = super.getSelectedResources();
 		for (IResource resource : resources) {
-			if (!FileUtility.isNotSupervised(resource)) {
+			if (!FileUtility.isIgnored(resource)) {
 				res.add(resource);
 			}
 		} 				

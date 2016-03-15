@@ -33,7 +33,7 @@ public class SVNRevision {
 		/**
 		 * First existing revision
 		 */
-		START(0, "START"), //$NON-NLS-1$ /* "UNSPECIFIED" text in SVN 1.9 API instead of "START"*/
+		START(0, "START"), //$NON-NLS-1$
 		/**
 		 * Number-based revision
 		 */
@@ -95,7 +95,6 @@ public class SVNRevision {
 	 * First existing revision
 	 */
 	public static final SVNRevision START = new SVNRevision(Kind.START);
-	// + UNSPECIFIED = START in SVN 1.9
 
 	/**
 	 * Last committed revision, needs working copy
