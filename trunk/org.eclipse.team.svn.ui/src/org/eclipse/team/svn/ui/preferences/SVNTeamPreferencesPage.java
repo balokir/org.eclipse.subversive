@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.compare.internal.TabFolderLayout;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -46,8 +47,10 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.factory.SVNConnectorHelper;
+import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -85,6 +88,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean mailReporterEnabled;
 	protected boolean mailReporterErrorsEnabled;
 	protected boolean commitSelectNewResources;
+	protected boolean commitSelectDerivedResources;
 	protected boolean notSelectMissingResources;
 	protected boolean useSubversionExternalsBehaviour;
 	protected boolean showSelectedResourcesInSyncPane;
@@ -122,6 +126,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button mailReporterEnabledButton;
 	protected Button mailReporterErrorsEnabledButton;
 	protected Button btnResourceSelectionNew;
+	protected Button btnResourceSelectionDerived;
 	protected Button btnResourceNotSelectionMissing;
 	protected Button btnResourceSelectionExternal;
 	protected Button btnResourceSelectionPresentation;
@@ -172,6 +177,10 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, this.mailReporterErrorsEnabled);
 		
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME, this.commitSelectNewResources);
+		if (this.commitSelectDerivedResources != SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_DERIVED_RESOURCES_NAME)) {
+			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(UpdateSubscriber.instance().roots(), IResource.DEPTH_INFINITE, ResourceStatesChangedEvent.CHANGED_NODES));
+		}
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_DERIVED_RESOURCES_NAME, this.commitSelectDerivedResources);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME, this.notSelectMissingResources);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME, this.useSubversionExternalsBehaviour);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME, this.showSelectedResourcesInSyncPane);
@@ -219,6 +228,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_DEFAULT;
 		
 		this.commitSelectNewResources = SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT;
+		this.commitSelectDerivedResources = SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_DERIVED_RESOURCES_DEFAULT;
 		this.notSelectMissingResources = SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME_DEFAULT;
 		this.useSubversionExternalsBehaviour = SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT;
 		this.showSelectedResourcesInSyncPane = SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_DEFAULT;
@@ -269,6 +279,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME);
 		
 		this.commitSelectNewResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME);
+		this.commitSelectDerivedResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_DERIVED_RESOURCES_NAME);
 		this.notSelectMissingResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_MISSING_RESOURCES_NAME);
 		this.useSubversionExternalsBehaviour = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME);
 		this.showSelectedResourcesInSyncPane = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME);
@@ -319,6 +330,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterErrorsEnabledButton.setSelection(this.mailReporterErrorsEnabled);
 		
 		this.btnResourceSelectionNew.setSelection(this.commitSelectNewResources);
+		this.btnResourceSelectionDerived.setSelection(this.commitSelectDerivedResources);
 		this.btnResourceNotSelectionMissing.setSelection(this.notSelectMissingResources);
 		this.btnResourceSelectionExternal.setSelection(this.useSubversionExternalsBehaviour);
 		this.btnResourceSelectionPresentation.setSelection(this.showSelectedResourcesInSyncPane);
@@ -527,6 +539,16 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.btnResourceSelectionNew.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.commitSelectNewResources = SVNTeamPreferencesPage.this.btnResourceSelectionNew.getSelection();
+			}
+		});
+		
+		this.btnResourceSelectionDerived = new Button(group, SWT.CHECK);
+		data = new GridData();
+		this.btnResourceSelectionDerived.setLayoutData(data);
+		this.btnResourceSelectionDerived.setText(SVNUIMessages.MainPreferencePage_resourceSelectionDerived);
+		this.btnResourceSelectionDerived.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamPreferencesPage.this.commitSelectDerivedResources = SVNTeamPreferencesPage.this.btnResourceSelectionDerived.getSelection();
 			}
 		});
 		

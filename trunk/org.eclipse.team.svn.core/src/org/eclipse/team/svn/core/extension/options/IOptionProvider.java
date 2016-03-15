@@ -18,8 +18,6 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 
 /**
- * FIXME Introduce integration API changes
- * 
  * This interface allows us to provide repository management options to IRepositoryLocation instances
  * 
  * @author Alexander Gurov
@@ -57,6 +55,10 @@ public interface IOptionProvider {
 	 * <code>true</code> if auto-share is enabled, <code>false<code> or <code>null</code> otherwise
 	 */
 	public static String AUTOMATIC_PROJECT_SHARE_ENABLED = "automaticProjectShareEnabled"; //$NON-NLS-1$
+	/**
+	 * <code>true</code> if "commit derived resources" option is enabled, <code>false<code> or <code>null</code> otherwise
+	 */
+	public static String COMMIT_DERIVED_ENABLED = "commitDerivedEnabled"; //$NON-NLS-1$
 	
 	public static final IOptionProvider DEFAULT = new AbstractOptionProvider() {
 		public String getId() {

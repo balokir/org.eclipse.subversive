@@ -1001,7 +1001,7 @@ public final class SVNUtility {
 	
     public static boolean isIgnored(IResource resource) {
         if (FileUtility.isNotSupervised(resource) || 
-    		(resource.isDerived(IResource.CHECK_ANCESTORS) /*&& !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.COMMIT_DERIVED_ENABLED)*/) || 
+    		(resource.isDerived(IResource.CHECK_ANCESTORS) && !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.COMMIT_DERIVED_ENABLED)) || 
     		Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
         	return true;
         }
