@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -45,12 +46,12 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 	
 	public AddToSVNWithPropertiesOperation(IResource[] resources, boolean isRecursive) {
 		super(resources, isRecursive);
-		this.doMarkTextFiles = CoreExtensionsManager.instance().getOptionProvider().isTextMIMETypeRequired();
+		this.doMarkTextFiles = CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.TEXT_MIME_TYPE_REQUIRED);
 	}
 	
 	public AddToSVNWithPropertiesOperation(IResourceProvider provider, boolean isRecursive) {
 		super(provider, isRecursive);
-		this.doMarkTextFiles = CoreExtensionsManager.instance().getOptionProvider().isTextMIMETypeRequired();
+		this.doMarkTextFiles = CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.TEXT_MIME_TYPE_REQUIRED);
 	}
 
 	protected void doAdd(IResource current, final ISVNConnector proxy, final IProgressMonitor monitor) throws Exception {

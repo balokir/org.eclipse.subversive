@@ -15,6 +15,7 @@ import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.extension.options.AbstractOptionProvider;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
@@ -22,8 +23,8 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.panel.callback.PromptCredentialsPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -31,7 +32,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class UIOptionProvider implements IOptionProvider {
+public class UIOptionProvider extends AbstractOptionProvider {
 	private SVNTeamModificationValidator modificationValidator = new SVNTeamModificationValidator();
 	public static final String ID = "org.eclipse.team.svn.ui.optionprovider"; //$NON-NLS-1$
 	
@@ -55,44 +56,8 @@ public class UIOptionProvider implements IOptionProvider {
 		op.add(new RefreshRepositoryLocationsOperation(false));
 	}
 	
-	public boolean isAutomaticProjectShareEnabled() {
-		return SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME);
-	}
-	
 	public FileModificationValidator getFileModificationValidator() {
 		return this.modificationValidator;
-	}
-	
-	public String getSVNConnectorId() {
-		return SVNTeamPreferences.getCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME);
-	}
-	
-	public String getDefaultBranchesName() {
-		String retVal = SVNTeamPreferences.getRepositoryString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_BRANCHES_NAME);
-		if (retVal == null || retVal.length() == 0) {
-			retVal = SVNTeamPreferences.REPOSITORY_BRANCHES_DEFAULT;
-		}
-		return retVal;
-	}
-	
-	public String getDefaultTagsName() {
-		String retVal = SVNTeamPreferences.getRepositoryString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_TAGS_NAME);
-		if (retVal == null || retVal.length() == 0) {
-			retVal = SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT;
-		}
-		return retVal;
-	}
-	
-	public String getDefaultTrunkName() {
-		String retVal = SVNTeamPreferences.getRepositoryString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_HEAD_NAME);
-		if (retVal == null || retVal.length() == 0) {
-			retVal = SVNTeamPreferences.REPOSITORY_HEAD_DEFAULT;
-		}
-		return retVal;
-	}
-
-	public boolean isSVNCacheEnabled() {
-		return SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME);
 	}
 	
 	public SVNProperty[] getAutomaticProperties(String template) {
@@ -126,15 +91,52 @@ public class UIOptionProvider implements IOptionProvider {
 		}
 		return new SVNProperty[0];
 	}
-	public boolean isTextMIMETypeRequired() {
-		return SVNTeamPreferences.getPropertiesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.FORCE_TEXT_MIME_NAME);
-	}
 	
 	public String getResource(String key) {
 		return SVNUIMessages.getErrorString(key);
 	}
 
-	public boolean isPersistentSSHEnabled() {
+	protected String getSVNConnectorId() {
+		return SVNTeamPreferences.getCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME);
+	}
+	
+	protected String getDefaultTrunkName() {
+		String retVal = SVNTeamPreferences.getRepositoryString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_HEAD_NAME);
+		if (retVal == null || retVal.length() == 0) {
+			retVal = SVNTeamPreferences.REPOSITORY_HEAD_DEFAULT;
+		}
+		return retVal;
+	}
+
+	protected String getDefaultBranchesName() {
+		String retVal = SVNTeamPreferences.getRepositoryString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_BRANCHES_NAME);
+		if (retVal == null || retVal.length() == 0) {
+			retVal = SVNTeamPreferences.REPOSITORY_BRANCHES_DEFAULT;
+		}
+		return retVal;
+	}
+	
+	protected String getDefaultTagsName() {
+		String retVal = SVNTeamPreferences.getRepositoryString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_TAGS_NAME);
+		if (retVal == null || retVal.length() == 0) {
+			retVal = SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT;
+		}
+		return retVal;
+	}
+	
+	protected boolean isAutomaticProjectShareEnabled() {
+		return SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME);
+	}
+	
+	protected boolean isSVNCacheEnabled() {
+		return SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME);
+	}
+	
+	protected boolean isTextMIMETypeRequired() {
+		return SVNTeamPreferences.getPropertiesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.FORCE_TEXT_MIME_NAME);
+	}
+	
+	protected boolean isPersistentSSHEnabled() {
 		return SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_PERSISTENT_SSH_NAME);
 	}
 	

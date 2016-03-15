@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNDepth;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -245,21 +246,21 @@ public class ShareOperation extends AbstractFileOperation {
 		if (this.location.isStructureEnabled()) {
 			return this.location.getTrunkLocation();
 		}
-		return SVNTeamPlugin.instance().getOptionProvider().getDefaultTrunkName();
+		return SVNTeamPlugin.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TRUNK_NAME);
 	}
 
 	protected String getBranchesName() {
 		if (this.location.isStructureEnabled()) {
 			return this.location.getBranchesLocation();
 		}
-		return SVNTeamPlugin.instance().getOptionProvider().getDefaultBranchesName();
+		return SVNTeamPlugin.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_BRANCHES_NAME);
 	}
 
 	protected String getTagsName() {
 		if (this.location.isStructureEnabled()) {
 			return this.location.getTagsLocation();
 		}
-		return SVNTeamPlugin.instance().getOptionProvider().getDefaultTagsName();
+		return SVNTeamPlugin.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TAGS_NAME);
 	}
 
 }
