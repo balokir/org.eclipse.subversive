@@ -1,0 +1,46 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 3.0.4.I20160131-1700 release date: 31 January 2016
+
+1. What's New
+
+   The version 3.0.4 is a service release.
+   
+   Changes comparatively to the previous release version are listed below. The full list of 
+   changes you can find in Change Log.
+		
+	Features:
+	 * Make 'Project Structure' preferences page more compact (bug 486862)
+	 * SVN Plugin does not provide option to set default checkout directory (bug 486009)
+	
+	Fixes:
+	 * Typo in "Getting Started" documentation (bug 485185)
+	 * Information in "Trust server certificate" dialog is hard to read (bug 485344)
+	 * "Compare with" dialogs exit with "A path under version control is needed for this operation" error message (bug 485622)
+	 * An exception occurs while moving a resource into a package whose SVN text status is set to "Deleted" (bug 486496)
+	 * "Inappropriate resource state" exception while adding replaced but not yet added folder to source control (bug 486835)
+	
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
+    * 4.3
+    * 4.4
+    * 4.5
+   
+   Subversive supports 
+    Migration for Subversion below version 1.6 to version 1.7 and higher,
+    Subversion version 1.7 with SVN Kit 1.7.14 and JavaHL 1.7.9,
+    Subversion version 1.8 with SVN Kit 1.8.11 and JavaHL 1.8.14
+
+2.2 Known issues
+
+	* "Deadlock when JNA is loading" problem on Mac OS X [using SVN Kit 1.7.14 connector]
+	
