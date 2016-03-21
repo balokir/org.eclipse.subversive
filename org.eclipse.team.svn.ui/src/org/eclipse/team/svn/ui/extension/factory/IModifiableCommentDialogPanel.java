@@ -15,11 +15,13 @@ package org.eclipse.team.svn.ui.extension.factory;
  * Allows modification of the commit panel parameters 
  * 
  * @author Alexander Gurov
+ * 
+ * @deprecated use {@link ICommentManager} instead.
  */
 public interface IModifiableCommentDialogPanel extends ICommentDialogPanel {
 	/**
-	 * Changes message in the commit panel
+	 * Changes message in the commit panel.
+	 * Be sure to call it from UI thread and before the actual widget is disposed or you'll get an exception.
 	 */
 	public void setMessage(String message);
-
 }

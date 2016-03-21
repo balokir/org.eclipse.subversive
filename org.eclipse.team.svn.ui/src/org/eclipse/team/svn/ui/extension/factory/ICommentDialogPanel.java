@@ -22,7 +22,8 @@ import org.eclipse.team.svn.ui.panel.IDialogPanel;
 public interface ICommentDialogPanel extends IDialogPanel {
 	
 	/**
-	 * @return Returns comment message
+	 * Returns the comment message from the editor. The call returns valid data outside of the UI thread context too.
+	 * @return 
 	 */
 	public String getMessage();
 	

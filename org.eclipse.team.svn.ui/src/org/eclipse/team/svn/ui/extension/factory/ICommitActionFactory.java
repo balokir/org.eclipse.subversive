@@ -25,6 +25,24 @@ import org.eclipse.ui.IWorkbenchPart;
  * @author Andrej Zachar
  */
 public interface ICommitActionFactory {
+	
+	/**
+	 * Called upon the CommentComposite initialization.
+	 * @param commentManager
+	 */
+	public void initCommentManager(ICommentManager commentManager);
+
+	/**
+	 * Called each time "Ok" button is pressed.
+	 * @param commentManager
+	 */
+	public void confirmMessage(ICommentManager commentManager);
+
+	/**
+	 * Called each time "Cancel" button is pressed.
+	 * @param commentManager
+	 */
+	public void cancelMessage(ICommentManager commentManager);
 
 	/**
 	 * The method provide abilities in extending of the standard Subversive Commit Dialog to more powerful

@@ -14,9 +14,13 @@ package org.eclipse.team.svn.ui.composite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +31,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -42,6 +48,8 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
+import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.extension.factory.ICommentManager;
 import org.eclipse.team.svn.ui.panel.IDialogManager;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
@@ -56,22 +64,10 @@ import org.eclipse.team.svn.ui.verifier.IValidationManager;
  * 
  * @author Alexander Gurov
  */
-public class CommentComposite extends Composite {
+public class CommentComposite extends Composite implements ICommentManager {
 	public static String TEMPORARY_COMMENT = null;
 
 	protected static final String COMMENT_HISTORY_NAME = "comment"; //$NON-NLS-1$
-
-	protected static String PREVIOUS_COMMENTS_HEADER;
-
-	protected static String PREVIOUS_COMMENTS_HINT;
-
-	protected static String TEMPLATE_HEADER;
-
-	protected static String TEMPLATE_HINT;
-
-	protected static String TSVN_LOGTEMPLATE_HEADER;
-
-	protected static String TSVN_LOGTEMPLATE_HINT;
 
 	protected StyledText text;
 
@@ -97,6 +93,9 @@ public class CommentComposite extends Composite {
 
 	protected IDialogManager dialogManager;
 
+	protected Map<String, String> sections = new LinkedHashMap<String, String>();
+	protected Map<String, List<String>> sectionComments = new LinkedHashMap<String, List<String>>();
+	
 	public CommentComposite(Composite parent, IValidationManager validationManager) {
 		this(parent, validationManager, null);
 	}
@@ -106,22 +105,15 @@ public class CommentComposite extends Composite {
 	}
 
 	public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel) {
-		this(parent, null, validationManager, logTemplates, null, 0);
+		this(parent, message, validationManager, logTemplates, null, 0);
 	}
 
 	public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize) {
-		this(parent, null, validationManager, logTemplates, null, minLogSize, 0);
+		this(parent, message, validationManager, logTemplates, null, minLogSize, 0);
 	}
 
 	public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize, int maxLogWidth) {
 		super(parent, SWT.NONE);
-
-		CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNUIMessages.CommentComposite_Previous;
-		CommentComposite.PREVIOUS_COMMENTS_HINT = "    " + SVNUIMessages.CommentComposite_Previous_Hint; //$NON-NLS-1$
-		CommentComposite.TEMPLATE_HEADER = SVNUIMessages.CommentComposite_Template;
-		CommentComposite.TEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_Template_Hint; //$NON-NLS-1$
-		CommentComposite.TSVN_LOGTEMPLATE_HEADER = SVNUIMessages.CommentComposite_LogTemplate;
-		CommentComposite.TSVN_LOGTEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_LogTemplate_Hint; //$NON-NLS-1$
 
 		this.message = message;
 		this.validationManager = validationManager;
@@ -132,13 +124,20 @@ public class CommentComposite extends Composite {
 		this.maxLogWidth = maxLogWidth;
 		this.createControls();
 	}
+	
+	public String getTemporarySavedComment() {
+		return CommentComposite.TEMPORARY_COMMENT;
+	}
 
 	public String getMessage() {
 		return this.message;
 	}
 
 	public void setMessage(String message) {
-		this.text.setText(message);
+		this.message = message;
+		if (this.text != null) {
+			this.text.setText(message);
+		}
 	}
 
 	public String getBugID() {
@@ -157,10 +156,12 @@ public class CommentComposite extends Composite {
 		if (this.bugIdText != null) {
 			this.bugID = this.bugIdText.getText();
 		}
+		ExtensionsManager.getInstance().getCurrentCommitFactory().confirmMessage(this);
 	}
 
 	public void cancelChanges() {
 		CommentComposite.TEMPORARY_COMMENT = this.text.getText().trim().length() == 0 ? null : this.text.getText();
+		ExtensionsManager.getInstance().getCurrentCommitFactory().cancelMessage(this);
 	}
 
 	private void createControls() {
@@ -229,6 +230,11 @@ public class CommentComposite extends Composite {
 				}
 			}
 		});
+		this.text.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				CommentComposite.this.message = CommentComposite.this.text.getText();
+			}
+		});
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(new CommentVerifier(SVNUIMessages.CommentComposite_Comment_Verifier, this.minLogSize));
 		if (this.bugtraqModel != null && this.bugtraqModel.getLogregex() != null) {
@@ -284,12 +290,16 @@ public class CommentComposite extends Composite {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		previousCommentsCombo.setLayoutData(data);
 
+		String logTemplateMessage = this.initCommentsMap();
 		final List commentsList = this.getCommentsList();
 		if (this.message != null && this.message.length() > 0) {
 			this.text.setText(this.message);
 		}
 		else if (CommentComposite.TEMPORARY_COMMENT != null) {
 			this.text.setText(CommentComposite.TEMPORARY_COMMENT);
+		}
+		else {
+			this.text.setText(logTemplateMessage);
 		}
 		this.text.selectAll();
 		List flattenCommentsList = new ArrayList();
@@ -326,53 +336,59 @@ public class CommentComposite extends Composite {
 			this.validationManager.validateContent();
 		}
 	}
-
-	protected List getCommentsList() {
-		List commentsList = new ArrayList();
-
+	
+	protected String initCommentsMap() {
+		String retVal = null;
+		this.addCommentsSection(ICommentManager.PREVIOUS_COMMENTS_HEADER, "    " + SVNUIMessages.CommentComposite_Previous_Hint); //$NON-NLS-1$
+		this.addCommentsToSection(ICommentManager.PREVIOUS_COMMENTS_HEADER, Arrays.asList(this.history.getHistory()));
+		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		boolean logTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME);
 		boolean userTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME);
 
-		if (logTemplatesEnabled && this.logTemplates != null || userTemplatesEnabled) {
-			commentsList.add(CommentComposite.PREVIOUS_COMMENTS_HEADER);
-			this.ignoredStrings.add(CommentComposite.PREVIOUS_COMMENTS_HEADER);
-			if (this.history.getHistory().length > 0) {
-				commentsList.addAll(Arrays.asList(this.history.getHistory()));
-			}
-			else {
-				commentsList.add(CommentComposite.PREVIOUS_COMMENTS_HINT);
-				this.ignoredStrings.add(CommentComposite.PREVIOUS_COMMENTS_HINT);
-			}
-		}
-		else {
-			commentsList.addAll(Arrays.asList(this.history.getHistory()));
-		}
-
 		if (userTemplatesEnabled) {
-			commentsList.add(CommentComposite.TEMPLATE_HEADER);
-			this.ignoredStrings.add(CommentComposite.TEMPLATE_HEADER);
-			String[] templates = FileUtility.decodeStringToArray(SVNTeamPreferences.getCommentTemplatesString(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_NAME));
-			if (templates.length == 0) {
-				commentsList.add(CommentComposite.TEMPLATE_HINT);
-				this.ignoredStrings.add(CommentComposite.TEMPLATE_HINT);
-			}
-			else {
-				commentsList.addAll(new ArrayList(Arrays.asList(templates)));
+			this.addCommentsSection(ICommentManager.TEMPLATE_HEADER, "    " + SVNUIMessages.CommentComposite_Template_Hint); //$NON-NLS-1$
+			String []templates = FileUtility.decodeStringToArray(SVNTeamPreferences.getCommentTemplatesString(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_NAME));
+			this.addCommentsToSection(ICommentManager.TEMPLATE_HEADER, Arrays.asList(templates));
+		}
+		
+		if (this.logTemplates != null && logTemplatesEnabled) {
+			this.addCommentsSection(ICommentManager.TSVN_LOGTEMPLATE_HEADER, "    " + SVNUIMessages.CommentComposite_LogTemplate_Hint); //$NON-NLS-1$
+			this.addCommentsToSection(ICommentManager.TSVN_LOGTEMPLATE_HEADER, this.logTemplates);
+			if (this.logTemplates.size() > 0) {
+				retVal = (String)this.logTemplates.iterator().next();
 			}
 		}
-		if (this.logTemplates != null && logTemplatesEnabled) {
-			commentsList.add(CommentComposite.TSVN_LOGTEMPLATE_HEADER);
-			this.ignoredStrings.add(CommentComposite.TSVN_LOGTEMPLATE_HEADER);
-			if (this.logTemplates.size() > 0) {
-				String mainTemplate = (String) this.logTemplates.iterator().next();
-				this.text.setText(mainTemplate);
-				this.text.selectAll();
-				commentsList.addAll(this.logTemplates);
-			}
-			else {
-				commentsList.add(CommentComposite.TSVN_LOGTEMPLATE_HINT);
-				this.ignoredStrings.add(CommentComposite.TSVN_LOGTEMPLATE_HINT);
+		ExtensionsManager.getInstance().getCurrentCommitFactory().initCommentManager(this);
+		return retVal;
+	}
+	
+	public void addCommentsSection(String sectionHeader, String sectionHint) {
+		sectionHeader = SVNUIMessages.getString(sectionHeader);
+		this.sections.put(sectionHeader, sectionHint);
+		this.sectionComments.put(sectionHeader, new LinkedList<String>());
+	}
+
+	public void addCommentsToSection(String sectionHeader, Collection<String> templates) {
+		sectionHeader = SVNUIMessages.getString(sectionHeader);
+		if (this.sectionComments.containsKey(sectionHeader)) {
+			this.sectionComments.get(sectionHeader).addAll(templates);
+		}
+	}
+
+	protected List getCommentsList() {
+		List commentsList = new ArrayList();
+		
+		for (Map.Entry<String, String> entry : this.sections.entrySet()) {
+			List<String> comments = this.sectionComments.get(entry.getKey());
+			if (this.sections.size() > 1) {
+				commentsList.add(entry.getKey());
+				this.ignoredStrings.add(entry.getKey());
+				if (comments.size() == 0) {
+					commentsList.add(entry.getValue());
+					this.ignoredStrings.add(entry.getValue());
+				}
+				commentsList.addAll(comments);
 			}
 		}
 

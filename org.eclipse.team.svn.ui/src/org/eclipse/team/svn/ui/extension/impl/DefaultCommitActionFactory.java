@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
+import org.eclipse.team.svn.ui.extension.factory.ICommentManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitActionFactory;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.ui.IWorkbenchPart;
@@ -45,9 +46,19 @@ public class DefaultCommitActionFactory implements ICommitActionFactory {
 		};
 	}
 
-	//OVERRIDE
 	public void performAfterCommitTasks(CompositeOperation operation, IRevisionProvider revisionProvider, IActionOperation[] dependsOn, IWorkbenchPart part) {
-			// default implementation do nothing more
+
+	}
+
+	public void initCommentManager(ICommentManager commentManager) {
+	}
+
+	public void confirmMessage(ICommentManager commentManager) {
+		
+	}
+
+	public void cancelMessage(ICommentManager commentManager) {
+		
 	}
 
 	
