@@ -8,6 +8,22 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.0.I20160314-1700 [14 March 2016]
+
+Features:
+ * Set SVN Kit 1.8 as default(initial) connector (bug 489643)
+ * Refactor IOptionProvider so that adding another option does not bring an interface change next time (bug 489644)
+ * Add a setting, that allows to commit derived resources (bug 480041)
+ * Need an extension point to provide comment templates programmatically (bug 419093)
+
+Fixes:
+ * SVNRemoteStorage: resource change listener jobs cause OOM (bug 489143)
+ * Ignored files shown as outgoing additions (bug 392750)
+ * Extensive SVN update checks for generated code (bug 489649)
+ * Refactor copy/pasted queue code in SVNRemoteStorage (bug 489664)
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.0.I20160226-1700 [26 February 2016]
 
 Features:
