@@ -255,12 +255,11 @@ public final class FileUtility {
     }
     
     /*
-     * If the resource is inaccessible, the workspace root, a team private or a linked one, it should not be managed by SVN plug-in
+     * If the resource is the workspace root, a team private or a linked one, it should not be managed by SVN plug-in
      */
     public static boolean isNotSupervised(IResource resource) {
     	return 
-    		resource instanceof IWorkspaceRoot || !resource.isAccessible() ||
-    		resource.isTeamPrivateMember() || FileUtility.isLinked(resource); 
+    		resource instanceof IWorkspaceRoot || resource.isTeamPrivateMember() || FileUtility.isLinked(resource); 
     }
     
 	public static String []asPathArray(IResource []resources) {
