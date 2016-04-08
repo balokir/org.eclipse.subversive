@@ -298,7 +298,7 @@ public class CommentComposite extends Composite implements ICommentManager {
 		else if (CommentComposite.TEMPORARY_COMMENT != null) {
 			this.text.setText(CommentComposite.TEMPORARY_COMMENT);
 		}
-		else {
+		else if (logTemplateMessage != null) {
 			this.text.setText(logTemplateMessage);
 		}
 		this.text.selectAll();
