@@ -8,6 +8,14 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.0.I20160408-1700 [08 April 2016]
+
+Fixes:
+ * ID-SD9I4 Unable To commit - SVN: '0x0040011a: Call Menu Action' operation finished with error: Argument cannot be null (bug 491153)
+ * Deleted files aren't shown in Synchronize view (bug 491078)
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.0.I20160314-1700 [14 March 2016]
 
 Features:
