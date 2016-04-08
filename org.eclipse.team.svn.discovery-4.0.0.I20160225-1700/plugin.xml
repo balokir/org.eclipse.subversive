@@ -45,12 +45,12 @@
 
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.8.14 r1692801). Compatible with SVN 1.7.x-1.8.x. Included binaries: for Windows 32-bit platform only."
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.8.15 r1718365). Compatible with SVN 1.7.x-1.8.x. Included binaries: for Windows 32-bit platform only."
             groupId="org.eclipse.team.svn.discovery-javahl"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl18.win32,org.polarion.eclipse.team.svn.connector.javahl18"
             kind="task"
             license="Apache Software License 1.1"
-            name="Native JavaHL 1.8.14 (32-bit Eclipse for Windows)"
+            name="Native JavaHL 1.8.15 (32-bit Eclipse for Windows)"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/6.0/update-site/"
             platformFilter="(&amp; (osgi.os=win32) (osgi.arch=x86))">
@@ -64,12 +64,12 @@
 
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.8.14 r1692801). Compatible with SVN 1.7.x-1.8.x. Included binaries: for Windows 64-bit platform only."
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.8.15 r1718365). Compatible with SVN 1.7.x-1.8.x. Included binaries: for Windows 64-bit platform only."
             groupId="org.eclipse.team.svn.discovery-javahl"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl18.win64,org.polarion.eclipse.team.svn.connector.javahl18"
             kind="task"
             license="Apache Software License 1.1"
-            name="Native JavaHL 1.8.14 (64-bit Eclipse for Windows)"
+            name="Native JavaHL 1.8.15 (64-bit Eclipse for Windows)"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/6.0/update-site/"
             platformFilter="(&amp; (osgi.os=win32) (osgi.arch=x86_64))">
@@ -104,12 +104,12 @@
 
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.9.2 r1703836). Compatible with SVN 1.8.x-1.9.x. Included binaries: for Windows 32-bit platform only."
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.9.3 r1718519). Compatible with SVN 1.8.x-1.9.x. Included binaries: for Windows 32-bit platform only."
             groupId="org.eclipse.team.svn.discovery-javahl"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl19.win32,org.polarion.eclipse.team.svn.connector.javahl19"
             kind="task"
             license="Apache Software License 1.1"
-            name="Native JavaHL 1.9.2 (32-bit Eclipse for Windows)"
+            name="Native JavaHL 1.9.3 (32-bit Eclipse for Windows)"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/6.0/update-site/"
             platformFilter="(&amp; (osgi.os=win32) (osgi.arch=x86))">
@@ -123,12 +123,12 @@
 
       <connectorDescriptor
             categoryId="org.eclipse.team.svn.discovery.svn.connectors"
-            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.9.2 r1703836). Compatible with SVN 1.8.x-1.9.x. Included binaries: for Windows 64-bit platform only."
+            description="SVN connector based on Subversion binaries (Native JavaHL SVN/1.9.3 r1718519). Compatible with SVN 1.8.x-1.9.x. Included binaries: for Windows 64-bit platform only."
             groupId="org.eclipse.team.svn.discovery-javahl"
             id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.javahl19.win64,org.polarion.eclipse.team.svn.connector.javahl19"
             kind="task"
             license="Apache Software License 1.1"
-            name="Native JavaHL 1.9.2 (64-bit Eclipse for Windows)"
+            name="Native JavaHL 1.9.3 (64-bit Eclipse for Windows)"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/6.0/update-site/"
             platformFilter="(&amp; (osgi.os=win32) (osgi.arch=x86_64))">
