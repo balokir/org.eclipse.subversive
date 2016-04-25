@@ -25,10 +25,8 @@ import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
-import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
-import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
@@ -95,14 +93,6 @@ public class FromDifferenceRepositoryResourceProviderOperation extends AbstractR
 		HashSet<IRepositoryResource> resourcesToDelete = new HashSet<IRepositoryResource>();
 		ArrayList<SVNDiffStatus> statusesList = new ArrayList<SVNDiffStatus>();
 		ISVNConnector proxy = this.location.acquireSVNProxy();
-		final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.newer, this.older});
-		this.protectStep(new IUnprotectedOperation() {
-			public void run(IProgressMonitor monitor) throws Exception {
-				ProgressMonitorUtility.doTaskExternal(op, monitor);
-			}
-		}, monitor, 3);
-		this.newer = op.getRepositoryResources()[0];
-		this.older = op.getRepositoryResources()[1];
 		SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(this.older);
 		SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(this.newer);
 		ProgressMonitorUtility.setTaskInfo(monitor, this, SVNMessages.Progress_Running);

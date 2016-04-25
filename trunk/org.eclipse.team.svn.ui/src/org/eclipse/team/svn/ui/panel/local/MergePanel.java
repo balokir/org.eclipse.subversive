@@ -37,11 +37,9 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
-import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -368,15 +366,10 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	protected void showDetails() {
 		this.saveChangesImpl();
 		
-		LocateResourceURLInHistoryOperation locateFirst = new LocateResourceURLInHistoryOperation(this.getFirstSelection());
-		LocateResourceURLInHistoryOperation locateSecond = null;
-		IRepositoryResourceProvider firstSet = locateFirst;
+		IRepositoryResourceProvider firstSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(this.getFirstSelection());
 		IRepositoryResourceProvider secondSet = null;
-		if (this.mode == MergePanel.MODE_1URL) {
-			firstSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(this.getFirstSelection());
-		}
-		else if (this.mode == MergePanel.MODE_2URL) {
-			secondSet = locateSecond = new LocateResourceURLInHistoryOperation(this.getSecondSelection());
+		if (this.mode == MergePanel.MODE_2URL) {
+			secondSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(this.getSecondSelection());
 		}
 		JavaHLMergeOperation mergeOp = null;
 		if (this.mode == MergePanel.MODE_2URL) {
@@ -424,18 +417,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 			}
 		});
 		
-		if (this.mode != MergePanel.MODE_1URL) {
-			CompositeOperation op = new CompositeOperation(mergeOp.getId(), mergeOp.getMessagesClass());
-			op.add(locateFirst);
-			if (this.mode == MergePanel.MODE_2URL) {
-				op.add(locateSecond);
-			}
-			op.add(mergeOp);
-			UIMonitorUtility.doTaskNowDefault(op, true);
-		}
-		else {
-			UIMonitorUtility.doTaskNowDefault(mergeOp, true);
-		}
+		UIMonitorUtility.doTaskNowDefault(mergeOp, true);
 		
 		if (mergeOp.getExecutionState() == IActionOperation.OK) {
 			Font font = new Font(UIMonitorUtility.getDisplay(), "Courier New", 8, SWT.NORMAL); //$NON-NLS-1$
