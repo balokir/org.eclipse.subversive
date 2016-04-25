@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.team.svn.pde.build"
+      label="%featureName"
+      version="1.0.0.I20120601-1700"
+      provider-name="%providerName">
+
+   <description>
+      SVN fetch task implementation for the Eclipse PDE build.
+   </description>
+
+   <license url="license.html">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/pde-build/1.0/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/pde-build/1.0/update-site/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.pde.build"/>
+      <import plugin="org.apache.ant"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.team.svn.pde.build"
+         download-size="20"
+         install-size="20"
+         version="1.0.0.I20120601-1700"
+         unpack="false"/>
+
+</feature>
