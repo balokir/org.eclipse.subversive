@@ -242,7 +242,8 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 						if (resource == null) {
 							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
 						}
-						if (IStateFilter.SF_ANY_CHANGE.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
+						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+						if (!IStateFilter.SF_NOTEXISTS.accept(local) && IStateFilter.SF_ANY_CHANGE.accept(local)) {
 							localChanges.add(status);
 						}
 						else {
