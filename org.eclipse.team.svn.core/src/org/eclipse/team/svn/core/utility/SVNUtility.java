@@ -470,7 +470,7 @@ public final class SVNUtility {
 	}
 	
 	public static SVNEntryRevisionReference convertRevisionReference(ISVNConnector proxy, SVNEntryRevisionReference entry, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		if (entry.revision != null && entry.pegRevision != null && !entry.revision.equals(entry.pegRevision)) {
+		if (entry.revision != null && entry.pegRevision != null && !entry.revision.equals(entry.pegRevision) && entry.revision.getKind() == SVNRevision.Kind.NUMBER) {
 			SVNEntryInfo []info = SVNUtility.info(proxy, entry, SVNDepth.EMPTY, monitor);
 			if (info != null && info.length > 0 && info[0].url != null) {
 				return new SVNEntryRevisionReference(info[0].url, entry.revision, entry.revision);
