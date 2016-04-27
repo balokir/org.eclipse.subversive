@@ -37,13 +37,11 @@ import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
-import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -219,7 +217,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
 						}
 						String textStatus = SVNRemoteStorage.getTextStatusString(status.propStatus, status.textStatus, false);
-						if (IStateFilter.SF_NEW.accept(resource, textStatus, 0)) {
+						if (!IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.propStatus == SVNEntryStatus.Kind.MODIFIED) {
 							localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
 						}
 					}
@@ -243,12 +241,14 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
 						}
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (!IStateFilter.SF_NOTEXISTS.accept(local) && IStateFilter.SF_ANY_CHANGE.accept(local)) {
-							localChanges.add(status);
-						}
-						else {
+						if (!IStateFilter.SF_ANY_CHANGE.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local)) {
+							// it seems the status is calculated relatively to the working copy, so deletion and addition changes should actually be reversed
+							SVNDiffStatus.Kind change = 
+								status.textStatus == SVNDiffStatus.Kind.ADDED ? 
+								SVNDiffStatus.Kind.DELETED : 
+								(status.textStatus == SVNDiffStatus.Kind.DELETED ? SVNDiffStatus.Kind.ADDED : status.textStatus);
 							String pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + status.pathNext.substring(refNext.path.length());
-							remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, status.textStatus, status.propStatus));
+							remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, change, status.propStatus));
 						}
 					}
 				}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
