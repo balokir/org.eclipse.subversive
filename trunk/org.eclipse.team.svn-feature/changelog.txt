@@ -8,6 +8,18 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.0.I20160427-1700 [27 April 2016]
+
+Fixes:
+ * Incoming addition and deletion statuses are reversed in compare with URL/Revision/Branch/Tag when 1.8 compatible connector is used (bug 492536)
+ * Wrong change direction in compare with URL/Revision/Branch/Tag with 1.8 compatible connectors (bug 492535)
+ * New files and folders aren't displayed in compare with URL/Revision/Branch/Tag when 1.8 compatible connector is used (bug 492534)
+ * Handle peg revision in mergeTwo, diffTwo and diffStatusTwo (bug 492399)
+ * LocateResourceURLInHistoryOperation should use the same code as the one that is used by connectors (bug 492402)
+ * Remove deprecated code related to peg revisions handling (bug 492400)
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.0.I20160408-1700 [08 April 2016]
 
 Fixes:
