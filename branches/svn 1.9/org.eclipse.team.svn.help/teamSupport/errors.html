@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<title>Actions</title>
+	<meta name="copyright"  content="Copyright (c) 2005-2011 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Gurov."/>
+	<LINK REL="STYLESHEET" HREF="../book.css" CHARSET="ISO-8859-1" TYPE="text/css"/>
+</head>
+<body>
+
+	<table cellpadding = "0" cellspacing = "0" border = "0" width = "100%">
+		<tr>
+			<td class="head_picture">
+				<img src="../images/guide_1.gif"/>
+			</td>
+			<td class="head_picture" width="100%"  align="right">
+				<img src="../images/guide_2.gif"/>
+			</td>
+		</tr>
+	</table>
+<h2>Typical SVN errors and solutions</h2>
+
+<table id="errors">
+<tr><th>Code</th><th>Message</th><th>Happens when</th><th>Solution</th></tr>
+<tr><td>E155011</td><td>Commit failed (details follow):<br/>Directory '...' is out of date</td><td>Trying to commit file or folder rename</td><td>Update the working copy which contains the changes recursively starting with its root.</td></tr>
+<tr><td>E155021</td><td>Unsupported working copy format</td><td>Any SVN action over a working copy (synchronize, commit and so on), using an incompatible connector (for example SVN 1.7 connector with SVN 1.6 working copy)</td><td>In order to solve the issue you can:<ul><li>select a compatible connector at <b>Window->Preferences->Team->SVN->SVN Connector</b> if available. If there is no required connector, you can check the <a href="https://www.eclipse.org/subversive/downloads.php">Subversive Connectors update site</a> section;</li><li>upgrade a working copy using context menu action <b>Team->Upgrade Projects...</b> (in case you wish to migrate your project 1.6->1.7 or 1.7->1.8). Please note, that SVN Kit 1.8 connector will work as is with the working copy in SVN 1.7 format and will upgrade it silently.</li></ul></td></tr>
+<tr><td colspan="4">If you want to add a description of any other typical SVN error and its solution, please create the corresponding task <a href="https://bugs.eclipse.org/bugs/enter_bug.cgi?product=Subversive" target="_blank">here</a>.</td></tr>
+</table>
+
+</body>
+</html>
