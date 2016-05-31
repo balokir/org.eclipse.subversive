@@ -45,7 +45,6 @@ import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -80,6 +79,7 @@ import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateInfo;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
+import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
@@ -205,9 +205,9 @@ public final class SVNUtility {
 	
 	public static void initializeRepositoryLocation(IRepositoryLocation location, String url) {
 		location.setStructureEnabled(true);
-		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName());
-		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName());
-		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName());
+		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TRUNK_NAME));
+		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_BRANCHES_NAME));
+		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getString(IOptionProvider.DEFAULT_TAGS_NAME));
 		IPath urlPath = SVNUtility.createPathForSVNUrl(url);
 		if (urlPath.lastSegment().equals(location.getTrunkLocation())) {
 			url = urlPath.removeLastSegments(1).toString();
@@ -469,6 +469,16 @@ public final class SVNUtility {
 		return infos.toArray(new SVNEntryInfo[infos.size()]);
 	}
 	
+	public static SVNEntryRevisionReference convertRevisionReference(ISVNConnector proxy, SVNEntryRevisionReference entry, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		if (entry.revision != null && entry.pegRevision != null && !entry.revision.equals(entry.pegRevision) && entry.revision.getKind() == SVNRevision.Kind.NUMBER) {
+			SVNEntryInfo []info = SVNUtility.info(proxy, entry, SVNDepth.EMPTY, monitor);
+			if (info != null && info.length > 0 && info[0].url != null) {
+				return new SVNEntryRevisionReference(info[0].url, entry.revision, entry.revision);
+			}
+		}
+		return entry;
+	}
+
 	public static String getStatusText(String status) {
 		if (status == null) {
 			status = "NotExists"; //$NON-NLS-1$
@@ -1000,21 +1010,20 @@ public final class SVNUtility {
 	}
 	
     public static boolean isIgnored(IResource resource) {
-		// Ignore WorkspaceRoot, derived and team-private resources and resources from TeamHints 
-        if (resource instanceof IWorkspaceRoot || resource.isDerived() || 
-        	FileUtility.isSVNInternals(resource) || Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
+        if (FileUtility.isNotSupervised(resource) || 
+    		(resource.isDerived(IResource.CHECK_ANCESTORS) && !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.COMMIT_DERIVED_ENABLED)) || 
+    		Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
         	return true;
         }
         try {
-        	IIgnoreRecommendations []ignores = CoreExtensionsManager.instance().getIgnoreRecommendations();
-        	for (int i = 0; i < ignores.length; i++) {
-        		if (ignores[i].isAcceptableNature(resource) && ignores[i].isIgnoreRecommended(resource)) {
+        	for (IIgnoreRecommendations ignore : CoreExtensionsManager.instance().getIgnoreRecommendations()) {
+        		if (ignore.isAcceptableNature(resource) && ignore.isIgnoreRecommended(resource)) {
         			return true;
         		}
         	}
         }
-        catch (Exception ex) {
-        	// cannot be correctly processed in the caller context
+        catch (CoreException ex) {
+        	throw new RuntimeException(ex);
         }
         return false;
     }
