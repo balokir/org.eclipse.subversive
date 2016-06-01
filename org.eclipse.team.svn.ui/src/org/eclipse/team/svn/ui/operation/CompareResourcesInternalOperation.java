@@ -208,16 +208,21 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 			
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				final String rootPath = FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource());
+				String rootPath = 
+						FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource());
+				final String searchPath = 
+					CompareResourcesInternalOperation.this.local.getResource().getType() == IResource.FILE ? 
+					FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource().getParent()) :
+					rootPath;
 				proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE, null, new ISVNEntryStatusCallback() {
 					public void next(SVNChangeStatus status) {
-						IPath tPath = new Path(status.path.substring(rootPath.length()));
+						IPath tPath = new Path(status.path.substring(searchPath.length()));
 						IResource resource = compareRoot.findMember(tPath);
 						if (resource == null) {
 							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
 						}
 						String textStatus = SVNRemoteStorage.getTextStatusString(status.propStatus, status.textStatus, false);
-						if (!IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.propStatus == SVNEntryStatus.Kind.MODIFIED) {
+						if (IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.propStatus == SVNEntryStatus.Kind.MODIFIED) {
 							localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
 						}
 					}
