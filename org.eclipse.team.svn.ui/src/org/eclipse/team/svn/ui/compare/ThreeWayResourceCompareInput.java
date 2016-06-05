@@ -29,9 +29,16 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -75,13 +82,14 @@ import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Implements three way comparison of resource trees
  * 
  * @author Alexander Gurov
  */
-public class ThreeWayResourceCompareInput extends ResourceCompareInput {
+public class ThreeWayResourceCompareInput extends ResourceCompareInput implements IResourceChangeListener {
 	protected ILocalResource local;
 	protected Collection<SVNDiffStatus> localChanges;
 	protected Collection<SVNDiffStatus> remoteChanges;
@@ -97,6 +105,32 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		this.rootLeft.setSelectedRevision(SVNRevision.WORKING);
 		this.rootAncestor = ancestor;
 		this.rootRight = remote;
+	}
+	
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta = event.getDelta();
+		if (delta != null) {
+			IResourceDelta resourceDelta = delta.findMember(this.local.getResource().getFullPath());
+			if (resourceDelta != null) {
+				UIJob job = new UIJob("") { //$NON-NLS-1$
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						if (!isSaveNeeded()) {
+							ThreeWayResourceCompareInput.this.fireInputChange();
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+			}
+		}
+	}
+	
+	protected void handleDispose() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.removeResourceChangeListener(this);
+		
+		super.handleDispose();
 	}
 	
 	protected void fillMenu(IMenuManager manager, TreeSelection selection) {
@@ -229,9 +263,10 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
 		}
 		
-		if (!monitor.isCanceled()) {
-			this.findRootNode(path2node, this.rootLeft, monitor);
-		}
+		this.findRootNode(path2node, this.rootLeft, monitor);
+		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		
 		super.initialize(monitor);
 	}
