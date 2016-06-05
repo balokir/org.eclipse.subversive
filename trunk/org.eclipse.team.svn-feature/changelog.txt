@@ -8,6 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.0.I20160604-1700 [04 June 2016]
+
+Fixes:
+ * Resource label is not refreshed in compare panel (bug 493253)
+   + special thanks to Florent Angebault
+ * Reusing compare editor does not refresh changes (bug 495202)
+   + special thanks to Florent Angebault
+ * Not enough debug info when the project is disconnected (bug 495460)
+ * Compare with latest from repository: no changes found when comparing a modified file (bug 495155)
+   + special thanks to Herbert Linseisen
+ * Exception: Resource 'xxx' does not exist [ID-NN7GD] (bug 494976)
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.0.I20160427-1700 [27 April 2016]
 
 Fixes:
@@ -38,8 +52,10 @@ Features:
 
 Fixes:
  * SVNRemoteStorage: resource change listener jobs cause OOM (bug 489143)
+   + special thanks to Andrey Loskutov
  * Ignored files shown as outgoing additions (bug 392750)
  * Extensive SVN update checks for generated code (bug 489649)
+   + special thanks to Andrey Loskutov
  * Refactor copy/pasted queue code in SVNRemoteStorage (bug 489664)
  
 --------------------------------------------------------------------------------
