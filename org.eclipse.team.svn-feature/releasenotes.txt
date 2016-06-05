@@ -5,7 +5,7 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 4.0.0.I20160226-1700 release date: 26 February 2016
+Version 4.0.0.I20160604-1700 release date: 04 June 2016
 
 1. What's New
 
@@ -22,10 +22,36 @@ Version 4.0.0.I20160226-1700 release date: 26 February 2016
 	 * Enable SVN 1.9 features in SVN 1.9 based connector (bug 488472)
 	 * Ensure there is no compatibility issues between plug-in versions with different SVN API supported (bug 488653)
 	 * Refactor and remove deprecated merge API calls (bug 488677)
+	 * Set SVN Kit 1.8 as default(initial) connector (bug 489643)
+	 * Refactor IOptionProvider so that adding another option does not bring an interface change next time (bug 489644)
+	 * Add a setting, that allows to commit derived resources (bug 480041)
+	 * Need an extension point to provide comment templates programmatically (bug 419093)
 	
 	Fixes:
 	 * Move 'Create Patch' action in pop-up menu next to 'Apply Patch' (bug 486907)
 	 * No content for remote variant of deleted file in Synchronize View (bug 488683)
+	 * Resource label is not refreshed in compare panel (bug 493253)
+	   + special thanks to Florent Angebault
+	 * Reusing compare editor does not refresh changes (bug 495202)
+	   + special thanks to Florent Angebault
+	 * Not enough debug info when the project is disconnected (bug 495460)
+	 * Compare with latest from repository: no changes found when comparing a modified file (bug 495155)
+	   + special thanks to Herbert Linseisen
+	 * Exception: Resource 'xxx' does not exist [ID-NN7GD] (bug 494976)
+	 * Incoming addition and deletion statuses are reversed in compare with URL/Revision/Branch/Tag when 1.8 compatible connector is used (bug 492536)
+	 * Wrong change direction in compare with URL/Revision/Branch/Tag with 1.8 compatible connectors (bug 492535)
+	 * New files and folders aren't displayed in compare with URL/Revision/Branch/Tag when 1.8 compatible connector is used (bug 492534)
+	 * Handle peg revision in mergeTwo, diffTwo and diffStatusTwo (bug 492399)
+	 * LocateResourceURLInHistoryOperation should use the same code as the one that is used by connectors (bug 492402)
+	 * Remove deprecated code related to peg revisions handling (bug 492400)
+	 * ID-SD9I4 Unable To commit - SVN: '0x0040011a: Call Menu Action' operation finished with error: Argument cannot be null (bug 491153)
+	 * Deleted files aren't shown in Synchronize view (bug 491078)
+	 * SVNRemoteStorage: resource change listener jobs cause OOM (bug 489143)
+	   + special thanks to Andrey Loskutov
+	 * Ignored files shown as outgoing additions (bug 392750)
+	 * Extensive SVN update checks for generated code (bug 489649)
+	   + special thanks to Andrey Loskutov
+	 * Refactor copy/pasted queue code in SVNRemoteStorage (bug 489664)
 	
 	
 2. Information
@@ -38,9 +64,9 @@ Version 4.0.0.I20160226-1700 release date: 26 February 2016
     * 4.6
    
    Subversive supports 
-    Migration for Subversion below version 1.6 to version 1.7 and higher,
-    Subversion version 1.8 with SVN Kit 1.8.11 and JavaHL 1.8.14,
-    Subversion version 1.9 with JavaHL 1.9.2
+    Migration for Subversion below version 1.8 to version 1.8 and higher,
+    Subversion version 1.8 with SVN Kit 1.8.12 and JavaHL 1.8.15,
+    Subversion version 1.9 with JavaHL 1.9.3
 
 2.2 Known issues
 

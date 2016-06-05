@@ -3,7 +3,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn;singleton:=true
-Bundle-Version: 4.0.0.I20160427-1700
+Bundle-Version: 4.0.0.I20160604-1700
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui.intro,
