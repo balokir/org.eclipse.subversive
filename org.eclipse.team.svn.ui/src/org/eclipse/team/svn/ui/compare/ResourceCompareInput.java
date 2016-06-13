@@ -195,7 +195,9 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 				this.root = (BaseCompareNode)this.root.getParent();
 			}
 			CompositeOperation op = this.root.getFetcher();
-			ProgressMonitorUtility.doTaskExternal(op, monitor);
+			if (op != null) {
+				ProgressMonitorUtility.doTaskExternal(op, monitor);
+			}
 		}
 		monitor.done();
 		return this.root;
