@@ -164,9 +164,9 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 	
 	public void decorate(Object element, IDecoration decoration) {				
 		try {									
-			// Don't decorate the workspace root
+			// Don't decorate the workspace root or deleted/closed resources
 			IResource resource = this.getResource(element);
-			if (resource != null && resource.getType() == IResource.ROOT) {
+			if (resource != null && (resource.getType() == IResource.ROOT || !resource.isAccessible())) {
 				return;
 			}
 			
@@ -470,7 +470,7 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 	    boolean foundOne = false;
 	    for (int i = 0; i < projects.length; i++) {
 	    	IProject project = projects[i];
-	        if (project != null) {
+	        if (project != null && project.isAccessible()) {
 	            RepositoryProvider provider = RepositoryProvider.getProvider(project);
 				if (provider instanceof SVNTeamProvider) {
 					foundOne = true;
