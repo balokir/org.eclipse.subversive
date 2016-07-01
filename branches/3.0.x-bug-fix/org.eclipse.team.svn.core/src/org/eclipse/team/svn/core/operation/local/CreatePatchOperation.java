@@ -137,7 +137,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 					else if (this.recurse) {
 						FileUtility.visitNodes(resources[i], new IResourceVisitor() {
 							public boolean visit(IResource resource) throws CoreException {
-								if (FileUtility.isIgnored(resource)) {
+								if (monitor.isCanceled() || FileUtility.isNotSupervised(resource)) {
 									return false;
 								}
 								if (resource instanceof IFile) {

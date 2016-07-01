@@ -201,12 +201,37 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 	}
 	
 	protected void fetchStatuses18(final ISVNConnector proxy, final ArrayList<SVNDiffStatus> localChanges, final ArrayList<SVNDiffStatus> remoteChanges, final IProgressMonitor monitor) {
+		final IContainer compareRoot = 
+			CompareResourcesInternalOperation.this.local instanceof ILocalFolder ? 
+			(IContainer)CompareResourcesInternalOperation.this.local.getResource() : 
+			CompareResourcesInternalOperation.this.local.getResource().getParent();
+			
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				final IContainer compareRoot = 
-					CompareResourcesInternalOperation.this.local instanceof ILocalFolder ? 
-					(IContainer)CompareResourcesInternalOperation.this.local.getResource() : 
-					CompareResourcesInternalOperation.this.local.getResource().getParent();
+				String rootPath = 
+						FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource());
+				final String searchPath = 
+					CompareResourcesInternalOperation.this.local.getResource().getType() == IResource.FILE ? 
+					FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource().getParent()) :
+					rootPath;
+				proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE, null, new ISVNEntryStatusCallback() {
+					public void next(SVNChangeStatus status) {
+						IPath tPath = new Path(status.path.substring(searchPath.length()));
+						IResource resource = compareRoot.findMember(tPath);
+						if (resource == null) {
+							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
+						}
+						String textStatus = SVNRemoteStorage.getTextStatusString(status.propStatus, status.textStatus, false);
+						if (IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.propStatus == SVNEntryStatus.Kind.MODIFIED) {
+							localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
+						}
+					}
+				}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
+			}
+		}, monitor, 100, 10);
+		
+		this.protectStep(new IUnprotectedOperation() {
+			public void run(IProgressMonitor monitor) throws Exception {
 				final IPath rootPath = FileUtility.getResourcePath(compareRoot);
 
 				SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), null, SVNRevision.WORKING);
@@ -220,17 +245,20 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 						if (resource == null) {
 							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
 						}
-						if (IStateFilter.SF_ANY_CHANGE.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
-							localChanges.add(status);
-						}
-						else {
+						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+						if (!IStateFilter.SF_ANY_CHANGE.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local)) {
+							// it seems the status is calculated relatively to the working copy, so deletion and addition changes should actually be reversed
+							SVNDiffStatus.Kind change = 
+								status.textStatus == SVNDiffStatus.Kind.ADDED ? 
+								SVNDiffStatus.Kind.DELETED : 
+								(status.textStatus == SVNDiffStatus.Kind.DELETED ? SVNDiffStatus.Kind.ADDED : status.textStatus);
 							String pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + status.pathNext.substring(refNext.path.length());
-							remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, status.textStatus, status.propStatus));
+							remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, change, status.propStatus));
 						}
 					}
 				}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
 			}
-		}, monitor, 100, 50);
+		}, monitor, 100, 40);
 	}
 	
 	protected boolean compareResultOK(CompareEditorInput input) {

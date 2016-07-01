@@ -11,9 +11,6 @@
 
 package org.eclipse.team.svn.ui.decorator;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -164,18 +161,15 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 	
 	public void decorate(Object element, IDecoration decoration) {				
 		try {									
-			// Don't decorate the workspace root
+			// Don't decorate the workspace root or deleted/closed resources
 			IResource resource = this.getResource(element);
-			if (resource != null && resource.getType() == IResource.ROOT) {
+			if (resource != null && (resource.getType() == IResource.ROOT || !resource.isAccessible())) {
 				return;
 			}
 			
 			// Get the mapping for the object and ensure it overlaps with SVN projects
 			ResourceMapping mapping = Utils.getResourceMapping(element);
-			if (mapping == null) {
-				return;
-			}
-			if (!this.isMappedToSVN(mapping)) {
+			if (mapping == null || !this.isMappedToSVN(mapping)) {
 				return;	
 			}
 			
@@ -188,7 +182,7 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 			}
 			
 			// Calculate and apply the decoration		
-			if (tester.isDecorationEnabled(element) && this.isSupervised(element)) {				
+			if (tester.isDecorationEnabled(element) && this.isSupervised(mapping)) {				
 				//check if the element adapts to a single resource					
 				if (resource != null) {
 					this.decorateResource(resource, decoration);	
@@ -425,61 +419,37 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 	}
 	
 	protected String getStatus(ILocalResource local) {
-		if (local.getResource().getType() == IResource.FILE) {
-			return local.getStatus();
-		} else if (this.computeDeep && local.getStatus() == IStateFilter.ST_NORMAL && 
-					FileUtility.checkForResourcesPresenceRecursive(new IResource[] {local.getResource()}, IStateFilter.SF_MODIFIED_NOT_IGNORED)) {
+		if (this.computeDeep && local.getResource().getType() != IResource.FILE && local.getStatus() == IStateFilter.ST_NORMAL && 
+			FileUtility.checkForResourcesPresenceRecursive(new IResource[] {local.getResource()}, IStateFilter.SF_MODIFIED_NOT_IGNORED)) {
 			return IStateFilter.ST_MODIFIED;
 		}					
 		return local.getStatus();
 	}
 	
-	protected boolean isSupervised(Object element) throws CoreException {
-		IResource[] resources = this.getTraversalRoots(element);
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (UpdateSubscriber.instance().isSupervised(resource)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	protected IResource[] getTraversalRoots(Object element) throws CoreException {
-		Set<IResource> result = new HashSet<IResource>();
-		ResourceMapping mapping = Utils.getResourceMapping(element);
-		if (mapping != null) {
-			ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-			for (int i = 0; i < traversals.length; i++) {
-				ResourceTraversal traversal = traversals[i];
-				IResource[] resources = traversal.getResources();
-				for (int j = 0; j < resources.length; j++) {
-					IResource resource = resources[j];
-					result.add(resource);
+	protected boolean isSupervised(ResourceMapping mapping) throws CoreException {
+		for (ResourceTraversal traversal : mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null)) {
+			for (IResource resource : traversal.getResources()) {
+				if (UpdateSubscriber.instance().isSupervised(resource)) {
+					return true;
 				}
 			}
 		}
-		return result.toArray(new IResource[result.size()]);
+		return false;
 	}
 	
 	/*
 	 * Return whether any of the projects of the mapping are mapped to SVN
 	 */
 	protected boolean isMappedToSVN(ResourceMapping mapping) {
-		IProject[] projects = mapping.getProjects();
-	    boolean foundOne = false;
-	    for (int i = 0; i < projects.length; i++) {
-	    	IProject project = projects[i];
-	        if (project != null) {
+	    for (IProject project : mapping.getProjects()) {
+	        if (project != null && project.isAccessible()) {
 	            RepositoryProvider provider = RepositoryProvider.getProvider(project);
 				if (provider instanceof SVNTeamProvider) {
-					foundOne = true;
-	            } else if (provider != null) {
-	            	return false;
+					return true;
 	            }
 	        }
 	    }
-	    return foundOne;
+	    return false;
 	}
 	
 	protected IResource getResource(Object element) {

@@ -26,7 +26,6 @@ import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
-import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
@@ -84,15 +83,6 @@ public class CompareRepositoryResourcesInernalOperation extends AbstractActionOp
 			this.prev = toCompare[0];
 			this.next = toCompare[1];
 		}
-		
-		final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.next, this.prev});
-		this.protectStep(new IUnprotectedOperation() {
-			public void run(IProgressMonitor monitor) throws Exception {
-				ProgressMonitorUtility.doTaskExternal(op, monitor);
-			}
-		}, monitor, 100, 60);
-		this.next = op.getRepositoryResources()[0];
-		this.prev = op.getRepositoryResources()[1];
 		
 		IRepositoryLocation location = this.prev.getRepositoryLocation();
 		final ISVNConnector proxy = location.acquireSVNProxy();

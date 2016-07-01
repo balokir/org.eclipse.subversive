@@ -21,7 +21,6 @@ import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -64,15 +63,10 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 	    AdvancedDialog dialog = new AdvancedDialog(this.getShell(), panel);
 	    if (dialog.open() == 0) {
 			// 2URL mode requires peg as revision
-			LocateResourceURLInHistoryOperation locateFirst = new LocateResourceURLInHistoryOperation(panel.getFirstSelection());
-			LocateResourceURLInHistoryOperation locateSecond = null;
-			IRepositoryResourceProvider firstSet = locateFirst;
+			IRepositoryResourceProvider firstSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(panel.getFirstSelection());
 			IRepositoryResourceProvider secondSet = null;
-			if (panel.getMode() == MergePanel.MODE_1URL) {
-				firstSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(panel.getFirstSelection());
-			}
-			else if (panel.getMode() == MergePanel.MODE_2URL) {
-				secondSet = locateSecond = new LocateResourceURLInHistoryOperation(panel.getSecondSelection());
+			if (panel.getMode() == MergePanel.MODE_2URL) {
+				secondSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(panel.getSecondSelection());
 			}
 			
 			IActionOperation mergeOp = null;
@@ -107,18 +101,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 			else {
 				mergeOp = new ShowMergeViewOperation(resources, firstSet, this.getTargetPart());
 			}
-	    	if (panel.getMode() != MergePanel.MODE_1URL) {
-	    		CompositeOperation op = new CompositeOperation(mergeOp.getId(), mergeOp.getMessagesClass());
-	    		op.add(locateFirst);
-		    	if (panel.getMode() == MergePanel.MODE_2URL) {
-		    		op.add(locateSecond);
-		    	}
-	    		op.add(mergeOp);
-		    	this.runScheduled(op);
-	    	}
-	    	else {
-		    	this.runScheduled(mergeOp);
-	    	}
+	    	this.runScheduled(mergeOp);
 	    }
 	}
 
