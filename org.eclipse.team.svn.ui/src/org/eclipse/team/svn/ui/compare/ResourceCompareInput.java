@@ -123,7 +123,9 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 	}
 	
 	protected void fireInputChange() {
-//		((BaseCompareNode)getCompareResult()).fireChange();
+		if (this.root != null) {
+			this.root.fireChange();
+		}
 	}
 
 	public ResourceCompareInput(CompareConfiguration configuration) {
@@ -192,7 +194,10 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 				(this.root.getKind() & Differencer.CHANGE_TYPE_MASK) != 0) {
 				this.root = (BaseCompareNode)this.root.getParent();
 			}
-			ProgressMonitorUtility.doTaskExternal(this.root.getFetcher(), monitor);
+			CompositeOperation op = this.root.getFetcher();
+			if (op != null) {
+				ProgressMonitorUtility.doTaskExternal(op, monitor);
+			}
 		}
 		monitor.done();
 		return this.root;
@@ -559,27 +564,37 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 		protected void handleDoubleSelect(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
 			CompositeOperation fetchContent = node.getFetcher();
-			if (!fetchContent.isEmpty()) {
-				fetchContent.add(new AbstractActionOperation("Operation_FetchContent", SVNUIMessages.class) { //$NON-NLS-1$
-					protected void runImpl(IProgressMonitor monitor) throws Exception {
-						final Throwable []t = new Throwable[1];
-						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								try {
-									ResourceCompareInput.this.refreshTitles();
-									ResourceCompareViewer.super.handleOpen(event);
-								} 
-								catch (Exception e) {
-									t[0] = e;
+			if (fetchContent != null) {
+				if (!fetchContent.isEmpty()) {
+					fetchContent.add(new AbstractActionOperation("Operation_FetchContent", SVNUIMessages.class) { //$NON-NLS-1$
+						protected void runImpl(IProgressMonitor monitor) throws Exception {
+							final Throwable []t = new Throwable[1];
+							UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+								public void run() {
+									try {
+										ResourceCompareInput.this.refreshTitles();
+										ResourceCompareViewer.super.handleOpen(event);
+									} 
+									catch (Exception e) {
+										t[0] = e;
+									}
 								}
+							});
+							if (t[0] != null ){
+								this.reportStatus(IStatus.ERROR, null, t[0]);
 							}
-						});
-						if (t[0] != null ){
-							this.reportStatus(IStatus.ERROR, null, t[0]);
 						}
+					});
+					UIMonitorUtility.doTaskNowDefault(fetchContent, true);
+				}
+				else {
+					try {
+						ResourceCompareInput.this.refreshTitles();
+					} 
+					catch (Exception e) {
+						// title is ready, no exception expected 
 					}
-				});
-				UIMonitorUtility.doTaskNowDefault(fetchContent, true);
+				}
 			}
 			else { // handle a folder expansion/collapse
 				ISelection selection = this.getSelection();
@@ -642,10 +657,10 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 			super(parent, kind);
 		}
 		
-//		public void fireChange() {
-//			super.fireChange();
-//		}
-//		
+		public void fireChange() {
+			super.fireChange();
+		}
+		
 		protected String detectCharset(InputStream stream) throws Exception {
 			try {
 				IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(stream, this.getName(), IContentDescription.ALL);
@@ -661,7 +676,8 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 			final ResourceElement ancestor = (ResourceElement)this.getAncestor();
 			final ResourceElement right = (ResourceElement)this.getRight();
 			CompositeOperation op = new CompositeOperation(SVNUIMessages.ResourceCompareInput_Fetch, SVNUIMessages.class);
-			
+
+			boolean hasFile = false;
 			if (left != null && left.getType() != ITypedElement.FOLDER_TYPE) {
 				final AbstractGetFileContentOperation fetchOp = left.getFetcher();
 				if (fetchOp != null) {
@@ -672,6 +688,7 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 		                }
 			        }, new IActionOperation[] {fetchOp});
 				}
+				hasFile = true;
 			}
 			if (ancestor != null && ancestor.getType() != ITypedElement.FOLDER_TYPE) {
 				final AbstractGetFileContentOperation fetchOp = ancestor.getFetcher();
@@ -683,6 +700,7 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 		                }
 			        }, new IActionOperation[] {fetchOp});
 				}
+				hasFile = true;
 			}
 			if (right != null && right.getType() != ITypedElement.FOLDER_TYPE) {
 				final AbstractGetFileContentOperation fetchOp = right.getFetcher();
@@ -694,8 +712,9 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 		                }
 			        }, new IActionOperation[] {fetchOp});
 				}
+				hasFile = true;
 			}
-			return op;
+			return hasFile ? op : null;
 		}
 	}
 	

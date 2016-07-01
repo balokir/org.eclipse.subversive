@@ -28,8 +28,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.AsynchronousActiveQueue;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
@@ -39,6 +41,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class ResourceChangeListener implements IResourceChangeListener, ISaveParticipant {
+	protected AsynchronousActiveQueue refreshQueue;
+	
 	public static int INTERESTING_CHANGES = 
 	    IResourceDelta.MOVED_FROM | 
 		IResourceDelta.MOVED_TO |
@@ -47,7 +51,23 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 		IResourceDelta.TYPE;
 
 	public ResourceChangeListener() {
-
+    	this.refreshQueue = new AsynchronousActiveQueue("Operation_UpdateSVNCache", new AsynchronousActiveQueue.IRecordHandler() {
+			public void process(IProgressMonitor monitor, IActionOperation op, Object... record) {
+				IResource []resources = (IResource [])record[0];
+				int depth = ((Integer)record[1]).intValue();
+				ResourceStatesChangedEvent pathEvent = (ResourceStatesChangedEvent)record[2];
+				ResourceStatesChangedEvent resourcesEvent = (ResourceStatesChangedEvent)record[3];
+				if (resources != null) {
+					SVNRemoteStorage.instance().refreshLocalResources(resources, depth);
+				}
+				if (pathEvent != null) {
+					SVNRemoteStorage.instance().fireResourceStatesChangedEvent(pathEvent);
+				}
+				if (resourcesEvent != null) {
+					SVNRemoteStorage.instance().fireResourceStatesChangedEvent(resourcesEvent);
+				}
+			}
+		}, false);
 	}
 
 	public void resourceChanged(final IResourceChangeEvent event) {
@@ -96,8 +116,7 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 				// reset statuses only for changed resources, but notify regarding all and including parents
 				if (modified.size() > 0) {
 					IResource []resources = modified.toArray(new IResource[modified.size()]);
-					SVNRemoteStorage.instance().scheduleRefresh(
-							resources, depth[0], 
+					ResourceChangeListener.this.refreshQueue.push(resources, Integer.valueOf(depth[0]), 
 							new ResourceStatesChangedEvent(FileUtility.getPathNodes(resources), IResource.DEPTH_ZERO, ResourceStatesChangedEvent.PATH_NODES), 
 							new ResourceStatesChangedEvent(resources, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));
 				}

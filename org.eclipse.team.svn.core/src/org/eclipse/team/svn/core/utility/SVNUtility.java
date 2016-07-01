@@ -19,15 +19,20 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -40,7 +45,6 @@ import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -73,6 +77,7 @@ import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
+import org.eclipse.team.svn.core.connector.ssl.SSLServerCertificateInfo;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
@@ -99,6 +104,84 @@ import org.eclipse.team.svn.core.svnstorage.SVNRevisionLink;
  */
 public final class SVNUtility {
 	private static String svnFolderName = null;
+	
+	public static String formatSSLFingerprint(byte []fingerprint) {
+		String retVal = "";
+		for (byte data : fingerprint) {
+			String part = String.format("%02x", data);
+			retVal += retVal.length() > 0 ? ":" + part : part;
+		}
+		return retVal;
+	}
+	
+	public static String formatSSLValid(Date validFrom, Date validTo) {
+		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
+		return "from " + df.format(validFrom) + " until " + df.format(validTo); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	public static SSLServerCertificateInfo decodeCertificateData(Map<String, String> map) throws ParseException {
+		String serverURL = map.get("serverURL"); //$NON-NLS-1$
+		String issuer = map.get("issuer"); //$NON-NLS-1$
+		String subject = map.get("subject"); //$NON-NLS-1$
+		byte []fingerprint = null;
+		String []parts = map.get("fingerprint").split(":"); //$NON-NLS-1$ //$NON-NLS-2$
+		fingerprint = new byte[parts.length];
+		for (int k = 0; k < parts.length; k++) {
+			fingerprint[k] = Byte.parseByte(parts[k]);
+		}
+		String valid = map.get("valid"); //$NON-NLS-1$
+		long validFrom = 0, validTo = 0;
+		//Tue Oct 22 15:00:01 EEST 2013
+		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
+		String fromStr = valid.substring(5, valid.indexOf("until") - 1); //$NON-NLS-1$
+		String toStr = valid.substring(valid.indexOf("until") + 6); //$NON-NLS-1$
+		validFrom = df.parse(fromStr).getTime();
+		validTo = df.parse(toStr).getTime();
+		return new SSLServerCertificateInfo(subject, issuer, validFrom, validTo, fingerprint, Arrays.asList(new String[] {serverURL}), null);
+	}
+	
+	public static Map<String, String> splitCertificateString(String message) {
+		HashMap<String, String> retVal = new HashMap<String, String>();
+		String []baseLines = message.split("\n"); //$NON-NLS-1$
+		boolean infoMessagePart = false;
+		String infoMessage = null;
+		for (int i = 0; i < baseLines.length; i++) {
+			int idx1 = baseLines[i].indexOf("https:"); //$NON-NLS-1$
+			if (idx1 != -1) {
+				String serverURL = baseLines[i].substring(idx1).trim();
+				serverURL = serverURL.substring(0, serverURL.length() - 2);
+				retVal.put("serverURL", serverURL); //$NON-NLS-1$
+				infoMessagePart = true;
+			}
+			else if (infoMessagePart) {
+				if (baseLines[i].endsWith(":")) {
+					infoMessagePart = false;
+				}
+				else {
+					infoMessage = infoMessage == null ? baseLines[i] : (infoMessage + "\n" + baseLines[i]); //$NON-NLS-1$
+				}
+			}
+			else {
+				int idx = baseLines[i].indexOf(':');
+				String key = baseLines[i].substring(0, idx).replaceFirst("\\s*-\\s*", "").trim(); //$NON-NLS-1$
+				String value = baseLines[i].substring(idx + 1).trim();
+				if ("Subject".equals(key)) { //$NON-NLS-1$
+					retVal.put("subject", value); //$NON-NLS-1$
+				}
+				else if ("Valid".equals(key)) { //$NON-NLS-1$
+					retVal.put("valid", value); //$NON-NLS-1$
+				}
+				else if ("Issuer".equals(key)) { //$NON-NLS-1$
+					retVal.put("issuer", value); //$NON-NLS-1$
+				}
+				else if ("Fingerprint".equals(key)) { //$NON-NLS-1$
+					retVal.put("fingerprint", value); //$NON-NLS-1$
+				}
+			}
+		}
+		retVal.put("infoMessage", infoMessage); //$NON-NLS-1$
+		return retVal;
+	}
 	
 	public static boolean isPriorToSVN17() {
 		return CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_7_x;
@@ -397,6 +480,16 @@ public final class SVNUtility {
 		return infos.toArray(new SVNEntryInfo[infos.size()]);
 	}
 	
+	public static SVNEntryRevisionReference convertRevisionReference(ISVNConnector proxy, SVNEntryRevisionReference entry, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		if (entry.revision != null && entry.pegRevision != null && !entry.revision.equals(entry.pegRevision) && entry.revision.getKind() == SVNRevision.Kind.NUMBER) {
+			SVNEntryInfo []info = SVNUtility.info(proxy, entry, SVNDepth.EMPTY, monitor);
+			if (info != null && info.length > 0 && info[0].url != null) {
+				return new SVNEntryRevisionReference(info[0].url, entry.revision, entry.revision);
+			}
+		}
+		return entry;
+	}
+
 	public static String getStatusText(String status) {
 		if (status == null) {
 			status = "NotExists"; //$NON-NLS-1$
@@ -928,21 +1021,20 @@ public final class SVNUtility {
 	}
 	
     public static boolean isIgnored(IResource resource) {
-		// Ignore WorkspaceRoot, derived and team-private resources and resources from TeamHints 
-        if (resource instanceof IWorkspaceRoot || resource.isDerived() || 
-        	FileUtility.isSVNInternals(resource) || Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
+        if (FileUtility.isNotSupervised(resource) || 
+    		(resource.isDerived(IResource.CHECK_ANCESTORS) /*&& !CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.COMMIT_DERIVED_ENABLED)*/) || 
+    		Team.isIgnoredHint(resource) || SVNUtility.isMergeParts(resource)) {
         	return true;
         }
         try {
-        	IIgnoreRecommendations []ignores = CoreExtensionsManager.instance().getIgnoreRecommendations();
-        	for (int i = 0; i < ignores.length; i++) {
-        		if (ignores[i].isAcceptableNature(resource) && ignores[i].isIgnoreRecommended(resource)) {
+        	for (IIgnoreRecommendations ignore : CoreExtensionsManager.instance().getIgnoreRecommendations()) {
+        		if (ignore.isAcceptableNature(resource) && ignore.isIgnoreRecommended(resource)) {
         			return true;
         		}
         	}
         }
-        catch (Exception ex) {
-        	// cannot be correctly processed in the caller context
+        catch (CoreException ex) {
+        	throw new RuntimeException(ex);
         }
         return false;
     }

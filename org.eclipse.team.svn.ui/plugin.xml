@@ -432,15 +432,6 @@
          </enablement>
          
          <action
-               helpContextId="org.eclipse.team.svn.ui.team_create_patch_action_context"
-               label="%CreatePatchAction.label"
-               tooltip="%CreatePatchAction.tooltip"
-               class="org.eclipse.team.svn.ui.action.local.CreatePatchAction"
-               menubarPath="team.main/group1"
-               definitionId="org.eclipse.team.svn.ui.command.CreatePatchCommand"
-               id="org.eclipse.team.svn.ui.action.local.CreatePatchAction">
-         </action>
-         <action
                helpContextId="org.eclipse.team.svn.ui.team_update_action_context"
                label="%UpdateToRevisionAction.label"
                tooltip="%UpdateToRevisionAction.tooltip"
@@ -630,6 +621,15 @@
               icon="icons/common/actions/showhistory.gif">
          </action>
              
+         <action
+               helpContextId="org.eclipse.team.svn.ui.team_create_patch_action_context"
+               label="%CreatePatchAction.label"
+               tooltip="%CreatePatchAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.local.CreatePatchAction"
+               menubarPath="team.main/group6"
+               definitionId="org.eclipse.team.svn.ui.command.CreatePatchCommand"
+               id="org.eclipse.team.svn.ui.action.local.CreatePatchAction">
+         </action>
          <action
 			   label="%SetExternalDefinitionAction.label"
                helpContextId="org.eclipse.team.svn.ui.team_set_external_definition_action_context"

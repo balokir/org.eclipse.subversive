@@ -96,8 +96,8 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 		return super.getBytes(resource);		
 	}	
 
-	public boolean flushBytes(IResource resource, int depth) throws TeamException {							
-		return super.flushBytes(resource, depth);		
+	public boolean flushBytes(IResource resource, int depth) throws TeamException {
+		return resource.isAccessible() ? super.flushBytes(resource, depth) : false;		
 	}
 	
 	public boolean deleteBytes(IResource resource) throws TeamException {	
