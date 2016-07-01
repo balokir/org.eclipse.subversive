@@ -11,9 +11,6 @@
 
 package org.eclipse.team.svn.ui.decorator;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -185,7 +182,7 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 			}
 			
 			// Calculate and apply the decoration		
-			if (tester.isDecorationEnabled(element) && this.isSupervised(element)) {				
+			if (tester.isDecorationEnabled(element) && this.isSupervised(mapping)) {				
 				//check if the element adapts to a single resource					
 				if (resource != null) {
 					this.decorateResource(resource, decoration);	
@@ -429,26 +426,15 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		return local.getStatus();
 	}
 	
-	protected boolean isSupervised(Object element) throws CoreException {
-		for (IResource resource : this.getTraversalRoots(element)) {
-			if (UpdateSubscriber.instance().isSupervised(resource)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	protected IResource[] getTraversalRoots(Object element) throws CoreException {
-		Set<IResource> result = new HashSet<IResource>();
-		ResourceMapping mapping = Utils.getResourceMapping(element);
-		if (mapping != null) {
-			for (ResourceTraversal traversal : mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null)) {
-				for (IResource resource : traversal.getResources()) {
-					result.add(resource);
+	protected boolean isSupervised(ResourceMapping mapping) throws CoreException {
+		for (ResourceTraversal traversal : mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null)) {
+			for (IResource resource : traversal.getResources()) {
+				if (UpdateSubscriber.instance().isSupervised(resource)) {
+					return true;
 				}
 			}
 		}
-		return result.toArray(new IResource[result.size()]);
+		return false;
 	}
 	
 	/*
