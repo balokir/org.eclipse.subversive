@@ -172,10 +172,7 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 			
 			// Get the mapping for the object and ensure it overlaps with SVN projects
 			ResourceMapping mapping = Utils.getResourceMapping(element);
-			if (mapping == null) {
-				return;
-			}
-			if (!this.isMappedToSVN(mapping)) {
+			if (mapping == null || !this.isMappedToSVN(mapping)) {
 				return;	
 			}
 			
@@ -425,19 +422,15 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 	}
 	
 	protected String getStatus(ILocalResource local) {
-		if (local.getResource().getType() == IResource.FILE) {
-			return local.getStatus();
-		} else if (this.computeDeep && local.getStatus() == IStateFilter.ST_NORMAL && 
-					FileUtility.checkForResourcesPresenceRecursive(new IResource[] {local.getResource()}, IStateFilter.SF_MODIFIED_NOT_IGNORED)) {
+		if (this.computeDeep && local.getResource().getType() != IResource.FILE && local.getStatus() == IStateFilter.ST_NORMAL && 
+			FileUtility.checkForResourcesPresenceRecursive(new IResource[] {local.getResource()}, IStateFilter.SF_MODIFIED_NOT_IGNORED)) {
 			return IStateFilter.ST_MODIFIED;
 		}					
 		return local.getStatus();
 	}
 	
 	protected boolean isSupervised(Object element) throws CoreException {
-		IResource[] resources = this.getTraversalRoots(element);
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : this.getTraversalRoots(element)) {
 			if (UpdateSubscriber.instance().isSupervised(resource)) {
 				return true;
 			}
@@ -449,12 +442,8 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		Set<IResource> result = new HashSet<IResource>();
 		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
-			ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-			for (int i = 0; i < traversals.length; i++) {
-				ResourceTraversal traversal = traversals[i];
-				IResource[] resources = traversal.getResources();
-				for (int j = 0; j < resources.length; j++) {
-					IResource resource = resources[j];
+			for (ResourceTraversal traversal : mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null)) {
+				for (IResource resource : traversal.getResources()) {
 					result.add(resource);
 				}
 			}
@@ -466,20 +455,15 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 	 * Return whether any of the projects of the mapping are mapped to SVN
 	 */
 	protected boolean isMappedToSVN(ResourceMapping mapping) {
-		IProject[] projects = mapping.getProjects();
-	    boolean foundOne = false;
-	    for (int i = 0; i < projects.length; i++) {
-	    	IProject project = projects[i];
+	    for (IProject project : mapping.getProjects()) {
 	        if (project != null && project.isAccessible()) {
 	            RepositoryProvider provider = RepositoryProvider.getProvider(project);
 				if (provider instanceof SVNTeamProvider) {
-					foundOne = true;
-	            } else if (provider != null) {
-	            	return false;
+					return true;
 	            }
 	        }
 	    }
-	    return foundOne;
+	    return false;
 	}
 	
 	protected IResource getResource(Object element) {
