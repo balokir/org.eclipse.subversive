@@ -43,178 +43,186 @@ public class SVNMergeHelper {
 	
 	protected void mergeStatus(SVNEntryReference reference1, SVNEntryRevisionReference reference2, SVNRevisionRange []revisions, String path, SVNDepth depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNNotification> tmp = new ArrayList<SVNNotification>();
+		ISVNNotificationCallback oldCb = this.connector.getNotificationCallback();
 		this.connector.setNotificationCallback(new ISVNNotificationCallback() {
 			public void notify(SVNNotification info) {
 				tmp.add(info);
 			}
 		});
-			
-		if (reference2 != null) {
-			this.connector.mergeTwo((SVNEntryRevisionReference)reference1, reference2, path, depth, options, monitor);
-		}
-		else if (revisions != null) {
-			this.connector.merge(reference1, revisions, path, depth, options, monitor);
-		}
-		else {
-			this.connector.mergeReintegrate(reference1, path, options, monitor);
-		}
 		
-		SVNRevision from = reference2 == null ? (revisions != null ? revisions[0].from : SVNRevision.fromNumber(1)) : ((SVNEntryRevisionReference)reference1).revision;
-		SVNRevision to = reference2 == null ? (revisions != null ? revisions[revisions.length - 1].to : reference1.pegRevision) : reference2.revision;
-		if (from.getKind() != SVNRevision.Kind.NUMBER) {
-			SVNLogEntry []entries = SVNUtility.logEntries(this.connector, reference1, from, SVNRevision.fromNumber(1), ISVNConnector.Options.NONE, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, monitor);
-			from = SVNRevision.fromNumber(entries[0].revision);
-		}
-		if (to.getKind() != SVNRevision.Kind.NUMBER) {
-			SVNLogEntry []entries = SVNUtility.logEntries(this.connector, reference2 == null ? reference1 : reference2, to, SVNRevision.fromNumber(1), ISVNConnector.Options.NONE, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, monitor);
-			to = SVNRevision.fromNumber(entries[0].revision);
-		}
-		//tag creation revision greater than last changed revision of CopiedFromURL
-		if (reference2 != null) {
-			if (from.equals(to)) {
-				from = SVNRevision.fromNumber(((SVNRevision.Number)to).getNumber() - 1);
+		try
+		{
+			if (reference2 != null) {
+				this.connector.mergeTwo((SVNEntryRevisionReference)reference1, reference2, path, depth, options, monitor);
 			}
-		}
-		boolean reversed =
-			reference2 == null ? 
-			SVNUtility.compareRevisions(from, to, new SVNEntryRevisionReference(reference1.path, reference1.pegRevision, from), new SVNEntryRevisionReference(reference1.path, reference1.pegRevision, to), this.connector) == 1 :
-			SVNUtility.compareRevisions(from, to, (SVNEntryRevisionReference)reference1, reference2, this.connector) == 1;
-		
-		String startUrlPref = reference1.path;
-		String endUrlPref = reference2 == null ? reference1.path : reference2.path;
-		SVNLogEntry []allMsgs = 
-			reversed ? 
-			SVNUtility.logEntries(this.connector, reference2 == null ? reference1 : this.getValidReference(reference2, from, monitor), from, to, ISVNConnector.Options.DISCOVER_PATHS, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, monitor) : 
-			SVNUtility.logEntries(this.connector, reference2 == null ? reference1 : reference2, to, from, ISVNConnector.Options.DISCOVER_PATHS, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, monitor);
-		long minRev = ((SVNRevision.Number)(reversed ? to : from)).getNumber();
-		for (Iterator<SVNNotification> it = tmp.iterator(); it.hasNext() && !monitor.isActivityCancelled(); ) {
-			SVNNotification state = it.next();
-			SVNEntry.Kind kind = state.kind;
+			else if (revisions != null) {
+				this.connector.merge(reference1, revisions, path, depth, options, monitor);
+			}
+			else {
+				this.connector.mergeReintegrate(reference1, path, options, monitor);
+			}
 			
-			String tPath = state.path.substring(path.length());
-			String startUrl = SVNUtility.normalizeURL(startUrlPref + tPath);
-			String endUrl = SVNUtility.normalizeURL(endUrlPref + tPath);
-			boolean skipped = state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.SKIP;							
-			org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE;
-			org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind pState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE;
-							
-			boolean hasTreeConflict = state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.TREE_CONFLICT;
-			SVNConflictDescriptor treeConflict = null;
-			if (hasTreeConflict) {
-				SVNEntryInfo[] infos = SVNUtility.info(this.connector, new SVNEntryRevisionReference(state.path), SVNDepth.EMPTY, monitor);
-				if (infos.length > 0 && infos[0].treeConflicts != null && infos[0].treeConflicts.length > 0) {
-					treeConflict = infos[0].treeConflicts[0];						
-					kind = infos[0].kind;
-					
-					if (treeConflict.conflictKind == SVNConflictDescriptor.Kind.CONTENT) {
-						cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED;
-					} else {
-						pState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED;
-					}
-				}
-				else {
-					hasTreeConflict = false; // why is there no info available?
+			SVNRevision from = reference2 == null ? (revisions != null ? revisions[0].from : SVNRevision.fromNumber(1)) : ((SVNEntryRevisionReference)reference1).revision;
+			SVNRevision to = reference2 == null ? (revisions != null ? revisions[revisions.length - 1].to : reference1.pegRevision) : reference2.revision;
+			if (from.getKind() != SVNRevision.Kind.NUMBER) {
+				SVNLogEntry []entries = SVNUtility.logEntries(this.connector, reference1, from, SVNRevision.fromNumber(1), ISVNConnector.Options.NONE, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, monitor);
+				from = SVNRevision.fromNumber(entries[0].revision);
+			}
+			if (to.getKind() != SVNRevision.Kind.NUMBER) {
+				SVNLogEntry []entries = SVNUtility.logEntries(this.connector, reference2 == null ? reference1 : reference2, to, SVNRevision.fromNumber(1), ISVNConnector.Options.NONE, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, monitor);
+				to = SVNRevision.fromNumber(entries[0].revision);
+			}
+			//tag creation revision greater than last changed revision of CopiedFromURL
+			if (reference2 != null) {
+				if (from.equals(to)) {
+					from = SVNRevision.fromNumber(((SVNRevision.Number)to).getNumber() - 1);
 				}
 			}
+			boolean reversed =
+				reference2 == null ? 
+				SVNUtility.compareRevisions(from, to, new SVNEntryRevisionReference(reference1.path, reference1.pegRevision, from), new SVNEntryRevisionReference(reference1.path, reference1.pegRevision, to), this.connector) == 1 :
+				SVNUtility.compareRevisions(from, to, (SVNEntryRevisionReference)reference1, reference2, this.connector) == 1;
 			
-			if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.UPDATE_ADD) {
-				cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED;
-			}
-			else if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.UPDATE_DELETE) {
-				cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED;
-			}
-			else if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.UPDATE_UPDATE) {
-				pState = state.propState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CHANGED ? org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED :
-							(state.propState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CONFLICTED ? 
-							org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED : 
-							org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE);
-				cState = 
-					(state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CHANGED || state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.MERGED) ? 
-							org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED : 
-							(state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CONFLICTED ? 
-							org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED : 
-							org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE);
-			}
-			else if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.SKIP) {
-				if (state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.MISSING) {
-					try {
-						SVNRevision pegRev = reference1.pegRevision;
-						if (reference2 != null) {
-							pegRev = reference2.pegRevision;
+			String startUrlPref = reference1.path;
+			String endUrlPref = reference2 == null ? reference1.path : reference2.path;
+			SVNLogEntry []allMsgs = 
+				reversed ? 
+				SVNUtility.logEntries(this.connector, reference2 == null ? reference1 : this.getValidReference(reference2, from, monitor), from, to, ISVNConnector.Options.DISCOVER_PATHS, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, monitor) : 
+				SVNUtility.logEntries(this.connector, reference2 == null ? reference1 : reference2, to, from, ISVNConnector.Options.DISCOVER_PATHS, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, monitor);
+			long minRev = ((SVNRevision.Number)(reversed ? to : from)).getNumber();
+			for (Iterator<SVNNotification> it = tmp.iterator(); it.hasNext() && !monitor.isActivityCancelled(); ) {
+				SVNNotification state = it.next();
+				SVNEntry.Kind kind = state.kind;
+				
+				String tPath = state.path.substring(path.length());
+				String startUrl = SVNUtility.normalizeURL(startUrlPref + tPath);
+				String endUrl = SVNUtility.normalizeURL(endUrlPref + tPath);
+				boolean skipped = state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.SKIP;							
+				org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE;
+				org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind pState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE;
+								
+				boolean hasTreeConflict = state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.TREE_CONFLICT;
+				SVNConflictDescriptor treeConflict = null;
+				if (hasTreeConflict) {
+					SVNEntryInfo[] infos = SVNUtility.info(this.connector, new SVNEntryRevisionReference(state.path), SVNDepth.EMPTY, monitor);
+					if (infos.length > 0 && infos[0].treeConflicts != null && infos[0].treeConflicts.length > 0) {
+						treeConflict = infos[0].treeConflicts[0];						
+						kind = infos[0].kind;
+						
+						if (treeConflict.conflictKind == SVNConflictDescriptor.Kind.CONTENT) {
+							cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED;
+						} else {
+							pState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED;
 						}
-						SVNUtility.info(this.connector, new SVNEntryRevisionReference(endUrl, pegRev, to), SVNDepth.EMPTY, monitor);
-						pState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED;
-						cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED;
-					}
-					catch (Exception ex) {
-						cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED;
-					}
-				}
-				else if (state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.OBSTRUCTED) {
-					cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED;
-				}
-			}
-			
-			if (cState != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE || pState != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE || hasTreeConflict) {
-				long startRevision = SVNRevision.INVALID_REVISION_NUMBER;
-				long endRevision = SVNRevision.INVALID_REVISION_NUMBER;
-				long date = 0;
-				String author = null;
-				String message = null;
-				if (cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED && !reversed || 
-					cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED && reversed ||
-				    (hasTreeConflict && (treeConflict.action == Action.ADD && !reversed || treeConflict.action == Action.DELETE && reversed))) {
-					int idx = this.getLogIndex(allMsgs, endUrl, false);
-					if (idx != -1) {
-						endRevision = allMsgs[idx].revision;
-						date = allMsgs[idx].date;
-						author = allMsgs[idx].author;
-						message = allMsgs[idx].message;
-					}
-				}
-				else if (cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED || cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED || 
-						pState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED ||  pState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED ||
-						(hasTreeConflict && treeConflict.action == Action.MODIFY)) {
-					int idx = this.getLogIndex(allMsgs, endUrl, false);
-					if (idx != -1) {
-						endRevision = allMsgs[idx].revision;
-						date = allMsgs[idx].date;
-						author = allMsgs[idx].author;
-						message = allMsgs[idx].message;
-					}
-					idx = this.getLogIndex(allMsgs, startUrl, true);
-					startRevision = idx != -1 ? Math.max(allMsgs[idx].revision, minRev) : minRev;
-				}
-				else {
-					int idx = this.getLogIndex(allMsgs, endUrl, false);
-					if (idx != -1) {
-						endRevision = allMsgs[idx].revision;
-						date = allMsgs[idx].date;
-						author = allMsgs[idx].author;
-						message = allMsgs[idx].message;
 					}
 					else {
-						idx = this.getLogIndex(allMsgs, startUrl, false);
+						hasTreeConflict = false; // why is there no info available?
+					}
+				}
+				
+				if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.UPDATE_ADD) {
+					cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED;
+				}
+				else if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.UPDATE_DELETE) {
+					cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED;
+				}
+				else if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.UPDATE_UPDATE) {
+					pState = state.propState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CHANGED ? org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED :
+								(state.propState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CONFLICTED ? 
+								org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED : 
+								org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE);
+					cState = 
+						(state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CHANGED || state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.MERGED) ? 
+								org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED : 
+								(state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.CONFLICTED ? 
+								org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED : 
+								org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE);
+				}
+				else if (state.action == org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction.SKIP) {
+					if (state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.MISSING) {
+						try {
+							SVNRevision pegRev = reference1.pegRevision;
+							if (reference2 != null) {
+								pegRev = reference2.pegRevision;
+							}
+							SVNUtility.info(this.connector, new SVNEntryRevisionReference(endUrl, pegRev, to), SVNDepth.EMPTY, monitor);
+							pState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED;
+							cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED;
+						}
+						catch (Exception ex) {
+							cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED;
+						}
+					}
+					else if (state.contentState == org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus.OBSTRUCTED) {
+						cState = org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED;
+					}
+				}
+				
+				if (cState != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE || pState != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE || hasTreeConflict) {
+					long startRevision = SVNRevision.INVALID_REVISION_NUMBER;
+					long endRevision = SVNRevision.INVALID_REVISION_NUMBER;
+					long date = 0;
+					String author = null;
+					String message = null;
+					if (cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED && !reversed || 
+						cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED && reversed ||
+					    (hasTreeConflict && (treeConflict.action == Action.ADD && !reversed || treeConflict.action == Action.DELETE && reversed))) {
+						int idx = this.getLogIndex(allMsgs, endUrl, false);
 						if (idx != -1) {
-							endUrl = startUrl;
 							endRevision = allMsgs[idx].revision;
 							date = allMsgs[idx].date;
 							author = allMsgs[idx].author;
 							message = allMsgs[idx].message;
 						}
 					}
-					idx = this.getLogIndex(allMsgs, startUrl, true);
-					startRevision = idx != -1 ? Math.max(allMsgs[idx].revision, minRev) : minRev;
+					else if (cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED || cState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED || 
+							pState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED ||  pState == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED ||
+							(hasTreeConflict && treeConflict.action == Action.MODIFY)) {
+						int idx = this.getLogIndex(allMsgs, endUrl, false);
+						if (idx != -1) {
+							endRevision = allMsgs[idx].revision;
+							date = allMsgs[idx].date;
+							author = allMsgs[idx].author;
+							message = allMsgs[idx].message;
+						}
+						idx = this.getLogIndex(allMsgs, startUrl, true);
+						startRevision = idx != -1 ? Math.max(allMsgs[idx].revision, minRev) : minRev;
+					}
+					else {
+						int idx = this.getLogIndex(allMsgs, endUrl, false);
+						if (idx != -1) {
+							endRevision = allMsgs[idx].revision;
+							date = allMsgs[idx].date;
+							author = allMsgs[idx].author;
+							message = allMsgs[idx].message;
+						}
+						else {
+							idx = this.getLogIndex(allMsgs, startUrl, false);
+							if (idx != -1) {
+								endUrl = startUrl;
+								endRevision = allMsgs[idx].revision;
+								date = allMsgs[idx].date;
+								author = allMsgs[idx].author;
+								message = allMsgs[idx].message;
+							}
+						}
+						idx = this.getLogIndex(allMsgs, startUrl, true);
+						startRevision = idx != -1 ? Math.max(allMsgs[idx].revision, minRev) : minRev;
+					}
+					if (reversed) {
+						startRevision = endRevision;
+						endRevision = allMsgs[allMsgs.length - 1].revision;
+						date = allMsgs[allMsgs.length - 1].date;
+						author = allMsgs[allMsgs.length - 1].author;
+						message = allMsgs[allMsgs.length - 1].message;
+					}
+					cb.next(new SVNMergeStatus(startUrl, endUrl, state.path, kind, cState, pState, startRevision, endRevision, date, author, message, skipped, hasTreeConflict, treeConflict));
 				}
-				if (reversed) {
-					startRevision = endRevision;
-					endRevision = allMsgs[allMsgs.length - 1].revision;
-					date = allMsgs[allMsgs.length - 1].date;
-					author = allMsgs[allMsgs.length - 1].author;
-					message = allMsgs[allMsgs.length - 1].message;
-				}
-				cb.next(new SVNMergeStatus(startUrl, endUrl, state.path, kind, cState, pState, startRevision, endRevision, date, author, message, skipped, hasTreeConflict, treeConflict));
 			}
+		}
+		finally 
+		{
+			this.connector.setNotificationCallback(oldCb);
 		}
 	}
 	
