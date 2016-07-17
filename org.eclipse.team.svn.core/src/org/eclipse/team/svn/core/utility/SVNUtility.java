@@ -655,18 +655,18 @@ public final class SVNUtility {
 		return new String(Base64.decode(encoded.getBytes()));
 	}
 
-	public synchronized static void addSVNNotifyListener(ISVNConnector proxy, ISVNNotificationCallback listener) {
-		SVNNotificationComposite composite = (SVNNotificationComposite)proxy.getNotificationCallback();
-		if (composite == null) {
+	public static void addSVNNotifyListener(ISVNConnector proxy, ISVNNotificationCallback listener) {
+		ISVNNotificationCallback composite = proxy.getNotificationCallback();
+		if (composite == null || !(composite instanceof SVNNotificationComposite)) {
 			proxy.setNotificationCallback(composite = new SVNNotificationComposite());
 		}
-		composite.add(listener);
+		((SVNNotificationComposite)composite).add(listener);
 	}
 
-	public synchronized static void removeSVNNotifyListener(ISVNConnector proxy, ISVNNotificationCallback listener) {
-		SVNNotificationComposite composite = (SVNNotificationComposite)proxy.getNotificationCallback();
-		if (composite != null) {
-			composite.remove(listener);
+	public static void removeSVNNotifyListener(ISVNConnector proxy, ISVNNotificationCallback listener) {
+		ISVNNotificationCallback composite = proxy.getNotificationCallback();
+		if (composite != null && composite instanceof SVNNotificationComposite) {
+			((SVNNotificationComposite)composite).remove(listener);
 		}
 	}
 	
