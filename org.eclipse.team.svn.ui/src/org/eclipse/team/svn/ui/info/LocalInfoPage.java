@@ -45,7 +45,6 @@ import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * This page allows to view working copy information for local resource
@@ -75,7 +74,7 @@ public class LocalInfoPage extends PropertyPage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(data);
 		
-		this.resource = (IResource)Util.getAdapter(this.getElement(), IResource.class);
+		this.resource = this.getElement().getAdapter(IResource.class);
 		InfoOperation op = new InfoOperation(this.resource);
 		UIMonitorUtility.doTaskBusyDefault(op);
 		
