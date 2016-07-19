@@ -8,6 +8,22 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.1.I20160719-1700 [19 July 2016]
+
+Fixes:
+ * Accessing SVN Info page leads to error message (bug 497364)
+   + special thanks for the contribution to Gan Ming
+ * Excessive synchronization in SVNUtility class (bug 498026)
+ * SVNMergeHelper does not restore a proper ISVNConnector's state [ID-LHNBB] (bug 497687)
+ * Performance overhead in SVNLightweightDecorator (bug 497139)
+ * SVNLightweightDecorator.isMappedToSVN could fail to recognize if project is connected to SVN (bug 497138)
+ * "ResourceException: Resource 'xyz' is not open" error in decorator (bug 497061)
+   + special thanks for the contribution to Andrey Loskutov
+ * Possible NPE in compare (bug 495959)
+   + special thanks for the contribution to Florent Angebault
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.0.I20160604-1700 [04 June 2016]
 
 Fixes:
