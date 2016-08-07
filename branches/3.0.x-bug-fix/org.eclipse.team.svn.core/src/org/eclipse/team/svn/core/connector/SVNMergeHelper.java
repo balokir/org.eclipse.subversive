@@ -43,22 +43,30 @@ public class SVNMergeHelper {
 	
 	protected void mergeStatus(SVNEntryReference reference1, SVNEntryRevisionReference reference2, SVNRevisionRange []revisions, String path, SVNDepth depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNNotification> tmp = new ArrayList<SVNNotification>();
-		this.connector.setNotificationCallback(new ISVNNotificationCallback() {
+		ISVNNotificationCallback listener = new ISVNNotificationCallback() {
 			public void notify(SVNNotification info) {
 				tmp.add(info);
 			}
-		});
-			
-		if (reference2 != null) {
-			this.connector.mergeTwo((SVNEntryRevisionReference)reference1, reference2, path, depth, options, monitor);
-		}
-		else if (revisions != null) {
-			this.connector.merge(reference1, revisions, path, depth, options, monitor);
-		}
-		else {
-			this.connector.mergeReintegrate(reference1, path, options, monitor);
-		}
+		};
+		SVNUtility.addSVNNotifyListener(this.connector, listener);
 		
+		try
+		{
+			if (reference2 != null) {
+				this.connector.mergeTwo((SVNEntryRevisionReference)reference1, reference2, path, depth, options, monitor);
+			}
+			else if (revisions != null) {
+				this.connector.merge(reference1, revisions, path, depth, options, monitor);
+			}
+			else {
+				this.connector.mergeReintegrate(reference1, path, options, monitor);
+			}
+		}
+		finally 
+		{
+			SVNUtility.removeSVNNotifyListener(this.connector, listener);
+		}
+			
 		SVNRevision from = reference2 == null ? (revisions != null ? revisions[0].from : SVNRevision.fromNumber(1)) : ((SVNEntryRevisionReference)reference1).revision;
 		SVNRevision to = reference2 == null ? (revisions != null ? revisions[revisions.length - 1].to : reference1.pegRevision) : reference2.revision;
 		if (from.getKind() != SVNRevision.Kind.NUMBER) {
