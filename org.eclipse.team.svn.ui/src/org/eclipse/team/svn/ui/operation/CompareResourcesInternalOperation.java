@@ -252,7 +252,9 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 								status.textStatus == SVNDiffStatus.Kind.ADDED ? 
 								SVNDiffStatus.Kind.DELETED : 
 								(status.textStatus == SVNDiffStatus.Kind.DELETED ? SVNDiffStatus.Kind.ADDED : status.textStatus);
-							String pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + status.pathNext.substring(refNext.path.length());
+							// TODO could there be a case when relative paths are reported? If so - looks like a bug to me...
+							String pathPrev = status.pathNext.startsWith(refNext.path) ? status.pathNext.substring(refNext.path.length()) : status.pathNext;
+							pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + pathPrev;
 							remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, change, status.propStatus));
 						}
 					}
