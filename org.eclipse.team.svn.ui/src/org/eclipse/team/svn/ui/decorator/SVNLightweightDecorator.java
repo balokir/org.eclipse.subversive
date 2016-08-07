@@ -27,8 +27,10 @@ import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -493,12 +495,17 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+				//SWT.COLOR_TRANSPARENT does not seem to be working when set using plugin.xml definitions
+				Color sample = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+				Color c;
 				SVNLightweightDecorator.this.ignoredFont = current.getFontRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_IGNORED_FONT));
 				SVNLightweightDecorator.this.changedFont = current.getFontRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_OUTGOING_FONT));
 				SVNLightweightDecorator.this.ignoredForegroundColor = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_IGNORED_FOREGROUND_COLOR));
-				SVNLightweightDecorator.this.ignoredBackgroundColor = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_IGNORED_BACKGROUND_COLOR));
+				c = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_IGNORED_BACKGROUND_COLOR));
+				SVNLightweightDecorator.this.ignoredBackgroundColor = c == null || c.equals(sample) ? null : c;
 				SVNLightweightDecorator.this.changedForegroundColor = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_OUTGOING_FOREGROUND_COLOR));
-				SVNLightweightDecorator.this.changedBackgroundColor = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_OUTGOING_BACKGROUND_COLOR));
+				c = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_OUTGOING_BACKGROUND_COLOR));
+				SVNLightweightDecorator.this.changedBackgroundColor = c == null || c.equals(sample) ? null : c;
 			}
 		});
 		

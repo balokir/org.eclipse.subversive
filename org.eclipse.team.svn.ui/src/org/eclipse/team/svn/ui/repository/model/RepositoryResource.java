@@ -21,11 +21,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.connector.SVNLock;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
@@ -283,11 +286,18 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-				RepositoryResource.NOT_RELATED_NODES_FOREGROUND = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_NOT_RELATED_NODES_FOREGROUND_COLOR)).getRGB();
-				RepositoryResource.NOT_RELATED_NODES_BACKGROUND = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_NOT_RELATED_NODES_BACKGROUND_COLOR)).getRGB();
+				//SWT.COLOR_TRANSPARENT does not seem to be working when set using plugin.xml definitions
+				Color sample = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+				Color c;
+				c = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_NOT_RELATED_NODES_FOREGROUND_COLOR));
+				RepositoryResource.NOT_RELATED_NODES_FOREGROUND = c == null ? null : c.getRGB();
+				c = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_NOT_RELATED_NODES_BACKGROUND_COLOR));
+				RepositoryResource.NOT_RELATED_NODES_BACKGROUND = c == null || c.equals(sample) ? null : c.getRGB();
 				RepositoryResource.NOT_RELATED_NODES_FONT = current.getFontRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_NOT_RELATED_NODES_FONT));
-				RepositoryResource.STRUCTURE_DEFINED_NODES_FOREGROUND = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_STRUCTURE_NODES_FOREGROUND_COLOR)).getRGB();
-				RepositoryResource.STRUCTURE_DEFINED_NODES_BACKGROUND = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_STRUCTURE_NODES_BACKGROUND_COLOR)).getRGB();
+				c = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_STRUCTURE_NODES_FOREGROUND_COLOR));
+				RepositoryResource.STRUCTURE_DEFINED_NODES_FOREGROUND = c == null ? null : c.getRGB();
+				c = current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_STRUCTURE_NODES_BACKGROUND_COLOR));
+				RepositoryResource.STRUCTURE_DEFINED_NODES_BACKGROUND = c == null || c.equals(sample) ? null : c.getRGB();
 				RepositoryResource.STRUCTURE_DEFINED_NODES_FONT = current.getFontRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_STRUCTURE_NODES_FONT));
 			}
 		});
