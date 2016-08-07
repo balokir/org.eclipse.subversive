@@ -17,6 +17,13 @@ Features:
  * "Trust SSL server certificate" dialog should distinguish error codes that will be provided by SVN 1.9 API (bug 488453) [without actual API change]
 
 Fixes:
+ * SVNMergeHelper does not restore a proper ISVNConnector's state [ID-LHNBB] (bug 497687)
+ * Excessive synchronization in SVNUtility class (bug 498026)
+ * Accessing SVN Info page leads to error message (bug 497364)
+ * update subversive Icons to fit also dark themes (bug 473419)
+ * Background colors for repository nodes in dark theme by default are wrong (bug 499325)
+ * ID-UL6V1 History View. Compare current with <rev-number> throws StringIndexOutOfBoundsException (bug 498349)
+ * An error within the SVN+SSH credentials storing code (bug 499333)
  * Move 'Create Patch' action in pop-up menu next to 'Apply Patch' (bug 486907)
  * No content for remote variant of deleted file in Synchronize View (bug 488683)
  * SVNRemoteStorage: resource change listener jobs cause OOM (bug 489143)
