@@ -1163,7 +1163,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     			if (settings.isUseKeyFile()) {
     				settings.setPrivateKeyPath(this.prompt.getSSHPrivateKeyPath());
     				settings.setPassPhraseSaved(this.prompt.isSSHPrivateKeyPassphraseSaved());
-    				settings.setPassPhrase(this.getSSHPrivateKeyPassphrase());
+    				settings.setPassPhrase(this.prompt.getSSHPrivateKeyPassphrase());
     			}
     		}
     		if (connectionType == SVNRepositoryLocation.SSL_CONNECTION) {
