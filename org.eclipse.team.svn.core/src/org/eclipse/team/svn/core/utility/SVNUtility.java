@@ -119,23 +119,29 @@ public final class SVNUtility {
 	}
 	
 	public static SSLServerCertificateInfo decodeCertificateData(Map<String, String> map) throws ParseException {
-		String serverURL = map.get("serverURL"); //$NON-NLS-1$
+		String serverURL = map.get("serverURL") != null ? map.get("serverURL") : ""; //$NON-NLS-1$
 		String issuer = map.get("issuer"); //$NON-NLS-1$
 		String subject = map.get("subject"); //$NON-NLS-1$
-		byte []fingerprint = null;
-		String []parts = map.get("fingerprint").split(":"); //$NON-NLS-1$ //$NON-NLS-2$
-		fingerprint = new byte[parts.length];
+		String []parts = map.get("fingerprint") == null ? new String[0] : map.get("fingerprint").split(":"); //$NON-NLS-1$ //$NON-NLS-2$
+		byte []fingerprint = new byte[parts.length];
 		for (int k = 0; k < parts.length; k++) {
-			fingerprint[k] = Byte.parseByte(parts[k]);
+			try {
+				fingerprint[k] = (byte)Integer.parseInt(parts[k], 16);
+			}
+			catch (NumberFormatException ex) {
+				throw new ParseException(parts[k], 0);
+			}
 		}
 		String valid = map.get("valid"); //$NON-NLS-1$
 		long validFrom = 0, validTo = 0;
 		//Tue Oct 22 15:00:01 EEST 2013
-		DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
-		String fromStr = valid.substring(5, valid.indexOf("until") - 1); //$NON-NLS-1$
-		String toStr = valid.substring(valid.indexOf("until") + 6); //$NON-NLS-1$
-		validFrom = df.parse(fromStr).getTime();
-		validTo = df.parse(toStr).getTime();
+		if (valid != null) {
+			DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); //$NON-NLS-1$
+			String fromStr = valid.substring(5, valid.indexOf("until") - 1); //$NON-NLS-1$
+			String toStr = valid.substring(valid.indexOf("until") + 6); //$NON-NLS-1$
+			validFrom = df.parse(fromStr).getTime();
+			validTo = df.parse(toStr).getTime();
+		}
 		return new SSLServerCertificateInfo(subject, issuer, validFrom, validTo, fingerprint, Arrays.asList(new String[] {serverURL}), null);
 	}
 	
