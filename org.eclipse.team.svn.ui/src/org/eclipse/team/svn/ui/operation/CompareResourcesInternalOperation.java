@@ -142,34 +142,41 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		final IContainer compareRoot = 
 			this.local instanceof ILocalFolder ? (IContainer)this.local.getResource() : this.local.getResource().getParent();
 		IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(CompareResourcesInternalOperation.this.local.getResource());
-		final long cmpTargetRevision = resource.getRevision();
+		final long cmpTargetRevision = resource.exists() ? resource.getRevision() : SVNRevision.INVALID_REVISION_NUMBER;
 		final LinkedHashSet<Long> revisions = new LinkedHashSet<Long>();
-		revisions.add(cmpTargetRevision);
 		
-		this.protectStep(new IUnprotectedOperation() {
-			public void run(IProgressMonitor monitor) throws Exception {
-				final String rootPath = FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource());
-				proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE, null, new ISVNEntryStatusCallback() {
-					public void next(SVNChangeStatus status) {
-						IPath tPath = new Path(status.path.substring(rootPath.length()));
-						IResource resource = compareRoot.findMember(tPath);
-						if (resource == null) {
-							resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
+		if (cmpTargetRevision != SVNRevision.INVALID_REVISION_NUMBER) {
+			revisions.add(cmpTargetRevision);
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					final String rootPath = FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource());
+					proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE, null, new ISVNEntryStatusCallback() {
+						public void next(SVNChangeStatus status) {
+							IPath tPath = new Path(status.path.substring(rootPath.length()));
+							IResource resource = compareRoot.findMember(tPath);
+							if (resource == null) {
+								resource = status.nodeKind == SVNEntry.Kind.FILE ? compareRoot.getFile(tPath) : compareRoot.getFolder(tPath);
+							}
+							String textStatus = SVNRemoteStorage.getTextStatusString(status.propStatus, status.textStatus, false);
+							if (IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.propStatus == SVNEntryStatus.Kind.MODIFIED) {
+								localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
+							}
+							textStatus = SVNRemoteStorage.getTextStatusString(status.repositoryPropStatus, status.repositoryTextStatus, true);
+							if ((IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.repositoryTextStatus == SVNEntryStatus.Kind.MODIFIED) && 
+								status.revision != cmpTargetRevision) {
+								resourcesWithChanges.put(resource, status.revision);
+ 								revisions.add(status.revision);
+							}
 						}
-						String textStatus = SVNRemoteStorage.getTextStatusString(status.propStatus, status.textStatus, false);
-						if (IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.propStatus == SVNEntryStatus.Kind.MODIFIED) {
-							localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
-						}
-						textStatus = SVNRemoteStorage.getTextStatusString(status.repositoryPropStatus, status.repositoryTextStatus, true);
-						if ((IStateFilter.SF_ANY_CHANGE.accept(resource, textStatus, 0) || status.repositoryTextStatus == SVNEntryStatus.Kind.MODIFIED) && 
-							status.revision != cmpTargetRevision) {
-							resourcesWithChanges.put(resource, status.revision);
-							revisions.add(status.revision);
-						}
-					}
-				}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
-			}
-		}, monitor, 100, 10);
+					}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
+				}
+			}, monitor, 100, 10);
+		}
+		else
+		{	// compare new unversioned files
+			String path = FileUtility.getWorkingCopyPath(this.local.getResource());
+			localChanges.add(new SVNDiffStatus(path, path, this.local.getResource().getType() == IResource.FILE ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR, SVNEntryStatus.Kind.UNVERSIONED, SVNEntryStatus.Kind.NORMAL));
+		}
 		
 		if (this.remote.getSelectedRevision() != SVNRevision.BASE) {
 			for (final long revision : revisions) {
