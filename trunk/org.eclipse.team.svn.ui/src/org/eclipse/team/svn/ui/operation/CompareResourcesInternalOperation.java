@@ -150,7 +150,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					final String rootPath = FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource());
-					proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE, null, new ISVNEntryStatusCallback() {
+					proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE | ISVNConnector.Options.LOCAL_SIDE, null, new ISVNEntryStatusCallback() {
 						public void next(SVNChangeStatus status) {
 							IPath tPath = new Path(status.path.substring(rootPath.length()));
 							IResource resource = compareRoot.findMember(tPath);
@@ -221,7 +221,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 					CompareResourcesInternalOperation.this.local.getResource().getType() == IResource.FILE ? 
 					FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource().getParent()) :
 					rootPath;
-				proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE, null, new ISVNEntryStatusCallback() {
+				proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE | ISVNConnector.Options.LOCAL_SIDE, null, new ISVNEntryStatusCallback() {
 					public void next(SVNChangeStatus status) {
 						IPath tPath = new Path(status.path.substring(searchPath.length()));
 						IResource resource = compareRoot.findMember(tPath);
