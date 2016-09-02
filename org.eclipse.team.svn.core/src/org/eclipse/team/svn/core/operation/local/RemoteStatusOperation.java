@@ -161,7 +161,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.status(
 							FileUtility.getWorkingCopyPath(current), 
-							SVNDepth.UNKNOWN, ISVNConnector.Options.SERVER_SIDE, null, cb, 
+							SVNDepth.UNKNOWN, ISVNConnector.Options.SERVER_SIDE | ISVNConnector.Options.LOCAL_SIDE, null, cb, 
 							new SVNProgressMonitor(RemoteStatusOperation.this, monitor, null, false));
 				}
 			}, monitor, resources.length);
