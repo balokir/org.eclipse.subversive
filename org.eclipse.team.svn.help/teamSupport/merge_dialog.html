@@ -18,13 +18,74 @@
 		</tr>
 	</table>
 <h2>SVN Merge Dialog</h2>
-	<p>This dialog appears when the user clicks on <i>'Team>Merge...'</i> menu item in the pop-up menu of the resource linked with the repository location, <i>'Merge...'</i> menu item of the <i>'SVN main menu group'</i> or on the <i>'Merge...'</i> button on the <i>'SVN Toolbar'</i>.
-	It's a known fact that the merge functionality differs for SVN 1.4 and SVN 1.5, so the different dialogs are used. The difference is described below.</p>
-	<p><b>Common of SVN 1.4 and SVN 1.5 merges:</b><br/>
-	The common part of the different SVN versions' merge is the '2 URL' merge mode. It allows you to merge the changes between two resources from different URLs simply
-	specifying the appropriate revisions of them. The screen shot of the dialog in '2 URL' mode is shown below:</p>
-	<img border = "0" src="../images/merge_2url.png" alt="'2 URL' merge mode"/>
+	<p>This dialog appears when the user clicks on <i>'Team>Merge...'</i> menu item in the pop-up menu of the resource linked with the repository location, <i>'Merge...'</i> menu item of the <i>'SVN main menu group'</i> or on the <i>'Merge...'</i> button on the <i>'SVN Toolbar'</i>.</p>
+	<p><b>Merge modes:</b><br/>There're three merge modes in total. Two of them accept a single path or URL to pick changes from and one is used to extract changes between a two different paths or URLs. In any of the three modes the target to apply the changes is the working copy in which you're performing the merge. So, let's see how do you actually use them.</p>
+	
+	<p><b>Single path/URL merge:</b><br/>It is typically used in order to merge all the eligible changes into the branch from its immediate ancestor. You can choose to merge all the eligible changes at once, which is called a 'sync' merge in terminology or merge explicitly defined set of changes using revision selection controls, which is called a 'cherrypick' merge.</p>
+	<img border = "0" src="../images/merge_url_15.png" alt="'One URL' merge in SVN 1.5"/>
+	
+	<p>In order to cherrypick an exact set of changes you can specify it manually by using revision ranges and/or enumerations, for example: 11-22, 25, 38. Or you can use alternatively the 'Revision Selection' dialog depicted below. There you just check the changes you need and the dialog will build a change set specification automatically.</p>
+	<img border = "0" src="../images/revision_selection.png" alt="'Revision Selection' dialog"/>
 	<br/>
+	<p>Also please note, that when you select revisions in the 'Revision Selection' dialog - it's intuitive and understandable that all the changes represented by the selected revisions will be merged into the target, but when you enter revision ranges manually you should take into account that revision range defines a difference between the two specified revisions. What is a difference between revisions means exactly? That is simple, lets say, for example, you need to merge all the changes happened after the revision 5000 and up to the revision 5005. In that case you should specify revision range 5000-5005. It means that only changes from 5 revisions (5001, 5002, 5003, 5004 and 5005) will be merged into your code: just like in math when you subtracting two numbers. When you need changes not between a two revisions, but changes starting from a revision and up to a revision, you should decrease a start revision number of the revision range by 1, i.e. if you need all the changes from the revisions 5000-5005, you should specify revision range like this: 4999-5005 and that will include revision 5000 too. 'Revision Selection' dialog automatically decrements lowest selected revision number by 1 in order to make revision selection process be intuitively understandable.<br/>If you need to reverse the merge, for example in order to amend the previously done one, then just select the 'Reversed merge' option.</p>
+	<br/>
+	<table cellpadding="5" cellspacing="0" border="1" width="100%">
+		<tr>
+			<td class="header" align ="center" valign="center">Option</td>
+			<td class="header" align ="center" valign="center">Description</td>
+			<td class="header" align ="center" valign="center">Default</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">URL</td>
+			<td align ="center" valign="center">Specifies the remote resource location</td>
+			<td align ="center" valign="center">'blank'</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">Revisions</td>
+			<td align ="center" valign="center">Specifies revision range to be used in merge.</td>
+			<td align ="center" valign="center">Start from copy</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">Reverse</td>
+			<td align ="center" valign="center">Specifies if the reverse merge should be performed.</td>
+			<td align ="center" valign="center">Disabled</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">Ignore Ancestry</td>
+			<td align ="center" valign="center">Specifies if Subversion&reg; should ignore the ancestry of resources while merging.</td>
+			<td align ="center" valign="center">Disabled</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">Depth</td>
+			<td align ="center" valign="center">Specifies the depth to be covered by merge.</td>
+			<td align ="center" valign="center">Working copy</td>
+		</tr>
+	</table>
+	<br/>
+	<p><b>Reintegrate merge:</b><br/>Reintegrate merge is used to bring changes from a feature branch back into the feature branch's immediate ancestor branch. It allows you to skip the changes that are ones and the same for the branch you are merging into and the branch you are merging from. The dialog for this mode is depicted below:</p>
+	<img border = "0" src="../images/reintegrate.png" alt="'Reintegrate' merge in SVN 1.5"/>
+	<p>The requirements for reintegrate merge are as such: your working copy cannot have any local edits or contain a mixture of revisions. While these are typically best practices for merging anyway, they are strictly required in reintegrate mode. Once a reintegrate merge is done from branch to trunk, the branch is no longer usable for further work. It's not able to correctly absorb new trunk changes, nor can it be properly reintegrated to trunk again. For this reason, if you want to keep working on your feature branch, it is recommended to destroy it and then re-create it from the trunk.</p>
+	<br/>
+	<table cellpadding="5" cellspacing="0" border="1" width="100%">
+		<tr>
+			<td class="header" align ="center" valign="center">Option</td>
+			<td class="header" align ="center" valign="center">Description</td>
+			<td class="header" align ="center" valign="center">Default</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">URL</td>
+			<td align ="center" valign="center">Specifies the remote resource location</td>
+			<td align ="center" valign="center">'blank'</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">Revision</td>
+			<td align ="center" valign="center">Specifies revision to merge to.</td>
+			<td align ="center" valign="center">Head Revision</td>
+		</tr>
+	</table>
+	<p><b>Two paths/URLs merge:</b><br/>In this mode the difference between two source URLs with revisions specified are extracted and then applied to the target which is your working copy. The screen shot of the dialog in '2 URL' mode is shown below:</p>
+	<img border = "0" src="../images/merge_2url.png" alt="'2 URL' merge mode"/>
+	<p>As SVN book states, most merges involve comparing trees that are ancestrally related to one another; therefore, svn merge defaults to this behavior. Occasionally, however, you may want the merge command to compare two unrelated trees. For example, you may have imported two source-code trees representing different vendor releases of a software project. If you ask svn merge to compare the two trees, you'd see the entire first tree being deleted, followed by an add of the entire second tree! In these situations, you'll want svn merge to do a path-based comparison only, ignoring any relations between files and directories. And the 'Ignore ancestry' option allows you to force SVN behave just like svn diff.</p>
 	<br/>
 	<table cellpadding="5" cellspacing="0" border="1" width="100%">
 		<tr>
@@ -64,108 +125,7 @@
 		</tr>
 	</table>
 	<br/>
-	<p><b>SVN 1.4 specific merge:</b><br/>The 'One URL' merge in SVN 1.4 is performed by blending the differences between two revision of the same resource to the working copy.
-	this is how the dialog looks like then:</p>
-	<img border = "0" src="../images/merge_url_14.png" alt="'One URL' merge in SVN 1.4"/>
-	<br/>
-	<br/>
-	<table cellpadding="5" cellspacing="0" border="1" width="100%">
-		<tr>
-			<td class="header" align ="center" valign="center">Option</td>
-			<td class="header" align ="center" valign="center">Description</td>
-			<td class="header" align ="center" valign="center">Default</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">URL</td>
-			<td align ="center" valign="center">Specifies the remote resource location</td>
-			<td align ="center" valign="center">'blank'</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Start revision</td>
-			<td align ="center" valign="center">Specifies the minimum merge range revision number.</td>
-			<td align ="center" valign="center">Head</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Stop revision</td>
-			<td align ="center" valign="center">Specifies the maximum merge range revision number.</td>
-			<td align ="center" valign="center">Head</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Ignore Ancestry</td>
-			<td align ="center" valign="center">Specifies if Subversion&reg; should ignore the ancestry of resources while merging.</td>
-			<td align ="center" valign="center">Disabled</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Depth</td>
-			<td align ="center" valign="center">Specifies the depth to be covered by merge.</td>
-			<td align ="center" valign="center">Working copy</td>
-		</tr>
-	</table>
-	<p><b>SVN 1.5 specific merge:</b><br/>While performing 'One URL' merge in SVN 1.5 the user can not only select start and stop revisions, but
-	exact revision ranges to be used by the merge. The merge can be made for the whole revision range of the resource, from the copy time or the range
-	can be selected manually in the 'Revision Selection' dialog as displayed below:</p>
-	<img border = "0" src="../images/revision_selection.png" alt="'Revision Selection' dialog"/>
-	<br/>
-	<p>Content of all the selected revisions will be merged into the folder you perform merge over. And there is a little difference between selecting revisions in the Revision Selection dialog and entering them manually: when you select revisions - it's intuitive and understandable that all the selected revisions changes will be used while merging, but when you enter revision ranges manually you should take into account that revision range defines a difference between two specified revisions.  What is a difference between revisions means exactly? That is simple, lets say, for example, you need to merge all the changes happened after  the revision 5000 and up to the revision 5005. In that case you should specify revision range 5000-5005. It means that only changes from 5 revisions (5001, 5002, 5003, 5004 and 5005)  will be merged into your code: just like in math when you subtracting two numbers. When you need changes not between a two revisions, but changes starting from a revision and up to a revision, you should descrease a start revision number  of the revision range by 1,  i.e. if you need all the changes from the revisions 5000-5005, you should specify revision range like this: 4999-5005 and that will include revision 5000 too.  Revision Selection dialog automatically decrements lowest selected revision number by 1 in order to make revision selection process intuitively understandable.<br>Also in such mode it's impossible to determine if the merge is reversed, so the checkbox was added to let the user specify this manually. The dialog in 'One URL' mode for SVN 1.5 looks like this:</p>
-	<img border = "0" src="../images/merge_url_15.png" alt="'One URL' merge in SVN 1.5"/>
-	<br/>
-	<br/>
-	<table cellpadding="5" cellspacing="0" border="1" width="100%">
-		<tr>
-			<td class="header" align ="center" valign="center">Option</td>
-			<td class="header" align ="center" valign="center">Description</td>
-			<td class="header" align ="center" valign="center">Default</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">URL</td>
-			<td align ="center" valign="center">Specifies the remote resource location</td>
-			<td align ="center" valign="center">'blank'</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Revisions</td>
-			<td align ="center" valign="center">Specifies revision range to be used in merge.</td>
-			<td align ="center" valign="center">Start from copy</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Reverse</td>
-			<td align ="center" valign="center">Specifies if the reverse merge should be performed.</td>
-			<td align ="center" valign="center">Disabled</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Ignore Ancestry</td>
-			<td align ="center" valign="center">Specifies if Subversion&reg; should ignore the ancestry of resources while merging.</td>
-			<td align ="center" valign="center">Disabled</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Depth</td>
-			<td align ="center" valign="center">Specifies the depth to be covered by merge.</td>
-			<td align ="center" valign="center">Working copy</td>
-		</tr>
-	</table>
-	<br/>
-	<p>The 'Reintegrate' mode is used to allow the Subversion to merge from the branch the changes skipping the ones the same for the
-	version you are merging into and the branch you are merging from. This is how the dialog for 'Reintegrate' mode looks like:</p>
-	<img border = "0" src="../images/reintegrate.png" alt="'Reintegrate' merge in SVN 1.5"/>
-	<br/>
-	<br/>
-	<table cellpadding="5" cellspacing="0" border="1" width="100%">
-		<tr>
-			<td class="header" align ="center" valign="center">Option</td>
-			<td class="header" align ="center" valign="center">Description</td>
-			<td class="header" align ="center" valign="center">Default</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">URL</td>
-			<td align ="center" valign="center">Specifies the remote resource location</td>
-			<td align ="center" valign="center">'blank'</td>
-		</tr>
-		<tr>
-			<td align ="center" valign="center">Revision</td>
-			<td align ="center" valign="center">Specifies revision to merge to.</td>
-			<td align ="center" valign="center">Head Revision</td>
-		</tr>
-	</table>
-	<p>With the <i>'Preview'</i> button the user can inspect the consequences of the merge operation.</p>
+	<p><b>Preview:</b><br/>With the <i>'Preview'</i> button the user can inspect the consequences of the merge operation without applying actual changes to the working copy.</p>
 	<img border="0" src="../images/rel_tops.png" alt="Related topics"/>
 	<br/>
 	<a href="../teamSupport/svn_main_menu.html">SVN main menu group</a>
