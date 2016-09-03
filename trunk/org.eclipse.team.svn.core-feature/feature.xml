@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.core"
       label="%featureName"
-      version="4.0.1.I20160719-1700"
+      version="4.0.2.I20160902-1700"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn.core">
    <install-handler/>
@@ -34,7 +34,7 @@
          id="org.eclipse.team.svn.core"
          download-size="900"
          install-size="900"
-         version="4.0.1.I20160719-1700"
+         version="4.0.2.I20160902-1700"
          unpack="false"/>
 
    <plugin
