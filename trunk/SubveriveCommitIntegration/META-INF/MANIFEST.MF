@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SubveriveCommitIntegration
+Bundle-SymbolicName: SubveriveCommitIntegration;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: subverivecommitintegration.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.team.svn.ui,
+ org.eclipse.team.svn.core
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
