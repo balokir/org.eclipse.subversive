@@ -8,6 +8,21 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.2.I20160902-1700 [02 September 2016]
+
+Fixes:
+ * Documentation is confusing for Merge (bug 487256)
+ * SVN 1.9 requires "local" modifier for status() call in order to work the same way as orevious API versions (bug 500739)
+ * Comparing files from the commit dialog always yields a "no differences" result (bug 497160)
+ * Comparing files from the commit dialog always yields a "no differences" result for unversioned files (bug 500719)
+ * SVN server connection failure with Eclipse Neon (bug 499529)
+ * An error within the SVN+SSH credentials storing code (bug 499333)
+ * ID-UL6V1 History View. Compare current with <rev-number> throws StringIndexOutOfBoundsException (bug 498349)
+ * Background colors for repository nodes in dark theme by default are wrong (bug 499325)
+ * update subversive Icons to fit also dark themes (bug 473419)
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.1.I20160719-1700 [19 July 2016]
 
 Fixes:

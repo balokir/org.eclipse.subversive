@@ -5,53 +5,25 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 4.0.0.I20160604-1700 release date: 04 June 2016
+Version 4.0.2.I20160902-1700 release date: 02 September 2016
 
 1. What's New
 
-   The version 4.0.0 is a major release. There are API changes, that are incompatible with connectors version 5.0.
+   The version 4.0.2 is a service release.
    
    Changes comparatively to the previous release version are listed below. The full list of 
    changes you can find in Change Log.
 		
-	Features:
-	 * SVN Kit 1.8.12: support for Subversion 1.9 new FSFS repository format. (bug 487147)
-	 * Parse certificate message passed as parameter by SVN 1.8 and earlier clients in order to provide support for SVN 1.9 API (bug 487220)
-	 * "Trust SSL server certificate" dialog should distinguish error codes provided by SVN 1.9 API (bug 488453)
-	 * Introduce SVN 1.9 API support (bug 485022)
-	 * Enable SVN 1.9 features in SVN 1.9 based connector (bug 488472)
-	 * Ensure there is no compatibility issues between plug-in versions with different SVN API supported (bug 488653)
-	 * Refactor and remove deprecated merge API calls (bug 488677)
-	 * Set SVN Kit 1.8 as default(initial) connector (bug 489643)
-	 * Refactor IOptionProvider so that adding another option does not bring an interface change next time (bug 489644)
-	 * Add a setting, that allows to commit derived resources (bug 480041)
-	 * Need an extension point to provide comment templates programmatically (bug 419093)
-	
 	Fixes:
-	 * Move 'Create Patch' action in pop-up menu next to 'Apply Patch' (bug 486907)
-	 * No content for remote variant of deleted file in Synchronize View (bug 488683)
-	 * Resource label is not refreshed in compare panel (bug 493253)
-	   + special thanks to Florent Angebault
-	 * Reusing compare editor does not refresh changes (bug 495202)
-	   + special thanks to Florent Angebault
-	 * Not enough debug info when the project is disconnected (bug 495460)
-	 * Compare with latest from repository: no changes found when comparing a modified file (bug 495155)
-	   + special thanks to Herbert Linseisen
-	 * Exception: Resource 'xxx' does not exist [ID-NN7GD] (bug 494976)
-	 * Incoming addition and deletion statuses are reversed in compare with URL/Revision/Branch/Tag when 1.8 compatible connector is used (bug 492536)
-	 * Wrong change direction in compare with URL/Revision/Branch/Tag with 1.8 compatible connectors (bug 492535)
-	 * New files and folders aren't displayed in compare with URL/Revision/Branch/Tag when 1.8 compatible connector is used (bug 492534)
-	 * Handle peg revision in mergeTwo, diffTwo and diffStatusTwo (bug 492399)
-	 * LocateResourceURLInHistoryOperation should use the same code as the one that is used by connectors (bug 492402)
-	 * Remove deprecated code related to peg revisions handling (bug 492400)
-	 * ID-SD9I4 Unable To commit - SVN: '0x0040011a: Call Menu Action' operation finished with error: Argument cannot be null (bug 491153)
-	 * Deleted files aren't shown in Synchronize view (bug 491078)
-	 * SVNRemoteStorage: resource change listener jobs cause OOM (bug 489143)
-	   + special thanks to Andrey Loskutov
-	 * Ignored files shown as outgoing additions (bug 392750)
-	 * Extensive SVN update checks for generated code (bug 489649)
-	   + special thanks to Andrey Loskutov
-	 * Refactor copy/pasted queue code in SVNRemoteStorage (bug 489664)
+	 * Documentation is confusing for Merge (bug 487256)
+	 * SVN 1.9 requires "local" modifier for status() call in order to work the same way as orevious API versions (bug 500739)
+	 * Comparing files from the commit dialog always yields a "no differences" result (bug 497160)
+	 * Comparing files from the commit dialog always yields a "no differences" result for unversioned files (bug 500719)
+	 * SVN server connection failure with Eclipse Neon (bug 499529)
+	 * An error within the SVN+SSH credentials storing code (bug 499333)
+	 * ID-UL6V1 History View. Compare current with <rev-number> throws StringIndexOutOfBoundsException (bug 498349)
+	 * Background colors for repository nodes in dark theme by default are wrong (bug 499325)
+	 * update subversive Icons to fit also dark themes (bug 473419)
 	
 	
 2. Information
