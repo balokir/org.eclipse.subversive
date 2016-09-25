@@ -142,7 +142,10 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		final IContainer compareRoot = 
 			this.local instanceof ILocalFolder ? (IContainer)this.local.getResource() : this.local.getResource().getParent();
 		IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(CompareResourcesInternalOperation.this.local.getResource());
-		final long cmpTargetRevision = resource.exists() ? resource.getRevision() : SVNRevision.INVALID_REVISION_NUMBER;
+		final long cmpTargetRevision =
+			this.remote.getSelectedRevision().getKind() == SVNRevision.Kind.BASE ?
+			this.local.getRevision() :
+			(resource.exists() ? resource.getRevision() : SVNRevision.INVALID_REVISION_NUMBER);
 		final LinkedHashSet<Long> revisions = new LinkedHashSet<Long>();
 		
 		if (cmpTargetRevision != SVNRevision.INVALID_REVISION_NUMBER) {
@@ -150,7 +153,11 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					final String rootPath = FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource());
-					proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE | ISVNConnector.Options.LOCAL_SIDE, null, new ISVNEntryStatusCallback() {
+					long options = ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.LOCAL_SIDE;
+					if (CompareResourcesInternalOperation.this.remote.getSelectedRevision() != SVNRevision.BASE) {
+						options |= ISVNConnector.Options.SERVER_SIDE;
+					}
+					proxy.status(rootPath, SVNDepth.INFINITY, options, null, new ISVNEntryStatusCallback() {
 						public void next(SVNChangeStatus status) {
 							IPath tPath = new Path(status.path.substring(rootPath.length()));
 							IResource resource = compareRoot.findMember(tPath);
@@ -221,7 +228,11 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 					CompareResourcesInternalOperation.this.local.getResource().getType() == IResource.FILE ? 
 					FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource().getParent()) :
 					rootPath;
-				proxy.status(rootPath, SVNDepth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.SERVER_SIDE | ISVNConnector.Options.LOCAL_SIDE, null, new ISVNEntryStatusCallback() {
+				long options = ISVNConnector.Options.IGNORE_EXTERNALS | ISVNConnector.Options.LOCAL_SIDE;
+				if (CompareResourcesInternalOperation.this.remote.getSelectedRevision() != SVNRevision.BASE) {
+					options |= ISVNConnector.Options.SERVER_SIDE;
+				}
+				proxy.status(rootPath, SVNDepth.INFINITY, options, null, new ISVNEntryStatusCallback() {
 					public void next(SVNChangeStatus status) {
 						IPath tPath = new Path(status.path.substring(searchPath.length()));
 						IResource resource = compareRoot.findMember(tPath);
