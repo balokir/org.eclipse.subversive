@@ -13,6 +13,10 @@ package org.eclipse.team.svn.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -48,17 +52,24 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
-
+	private static ScheduledExecutorService sPool;
+	private static ScheduledFuture sf;
+	private static ArrayList<IResource> deleteQueue;
+	
+	static {
+		SVNTeamMoveDeleteHook.sPool = Executors.newScheduledThreadPool(1);
+		SVNTeamMoveDeleteHook.deleteQueue = new ArrayList<IResource>();
+	}
+	
 	public SVNTeamMoveDeleteHook() {
-
 	}
 
 	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor) {
-		return this.doDelete(tree, file, updateFlags, monitor);
+		return this.doScheduledDelete(tree, file, updateFlags, monitor);
 	}
 
 	public boolean deleteFolder(IResourceTree tree, final IFolder folder, int updateFlags, IProgressMonitor monitor) {
-		return this.doDelete(tree, folder, updateFlags, monitor);
+		return this.doScheduledDelete(tree, folder, updateFlags, monitor);
 	}
 	
 	public boolean moveFile(final IResourceTree tree, final IFile source, final IFile destination, int updateFlags, IProgressMonitor monitor) {
@@ -182,47 +193,61 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		});
 	}
 	
-	protected boolean doDelete(final IResourceTree tree, final IResource resource, int updateFlags, IProgressMonitor monitor) {
+	// It is to slow to access working copy on per-file basis when the projects are large enough, but the workflow of the actual operation heavily depends 
+	//	on how the calling code is implemented. So, there are cases when recursive deletes are performed one by one and JDT is the fine example of such an approach.
+	//	So, in order to reduce overhead we'll try to group the files using a reasonable timeout.
+	protected boolean doScheduledDelete(IResourceTree tree, IResource resource, int updateFlags, IProgressMonitor monitor) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(resource);
 		}
-		
-	    final DeleteResourceOperation mainOp = new DeleteResourceOperation(resource);
-	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {resource});
-		op.add(saveOp);
-		
-		if ((updateFlags & IResource.KEEP_HISTORY) != 0) {
-			op.add(new SaveToLocalHistoryOperation(tree, resource));
-		}
-	    	    
-	    op.add(mainOp);
-	    	  
-	    op.add(new AbstractActionOperation("Operation_TrackDeleteResult", SVNMessages.class) {			 //$NON-NLS-1$
-			@Override
-			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				if (mainOp.getExecutionState() == IActionOperation.OK) {
-					if (resource.getType() == IResource.FILE) {
-						tree.deletedFile((IFile)resource);
-					}
-					/*
-					 * As we don't delete folder from file system because of .svn folder,
-					 * we don't call corresponding tree.deletedFolder
-					 */					 					
-//					else if (resource.getType() == IResource.FOLDER) {
-//						tree.deletedFolder((IFolder)resource);
-//					}
-				} else if (mainOp.getExecutionState() == IActionOperation.ERROR) {
-					tree.failed(mainOp.getStatus());
-				}
+
+		// since the tree object  is valid in the context of the call only, do it now!
+		if (resource.getType() == IResource.FILE) {
+			if ((updateFlags & IResource.KEEP_HISTORY) != 0) {
+				tree.addToLocalHistory((IFile)resource);
 			}
-		});
-	    	    
-		op.add(new RestoreProjectMetaOperation(saveOp));
-	    op.add(new RefreshResourcesOperation(new IResource[] {resource}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
-	    this.runOperation(op, monitor);
+			tree.deletedFile((IFile)resource);
+		}
+		else /*if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_6_x)*/ {
+			tree.deletedFolder((IFolder)resource);
+		}
 		
+		synchronized (SVNTeamMoveDeleteHook.deleteQueue) {
+			SVNTeamMoveDeleteHook.deleteQueue.add(resource);
+			if (SVNTeamMoveDeleteHook.deleteQueue.size() > 1 && SVNTeamMoveDeleteHook.sf != null) {
+				// if the timer is started already, then cancel it in order to reset the scheduled start time
+				SVNTeamMoveDeleteHook.sf.cancel(false);
+				SVNTeamMoveDeleteHook.sf = null;
+			}
+			if (SVNTeamMoveDeleteHook.deleteQueue.size() > 0) {
+				// if there are files to delete
+				SVNTeamMoveDeleteHook.sf = SVNTeamMoveDeleteHook.sPool.schedule(new Runnable() {
+					public void run() {
+						IResource []resources;
+						synchronized (SVNTeamMoveDeleteHook.deleteQueue) {
+							resources = SVNTeamMoveDeleteHook.deleteQueue.toArray(new IResource[SVNTeamMoveDeleteHook.deleteQueue.size()]);
+							SVNTeamMoveDeleteHook.deleteQueue.clear();
+						}
+						if (resources.length > 0) {
+							resources = FileUtility.shrinkChildNodes(resources);
+							
+							DeleteResourceOperation mainOp = new DeleteResourceOperation(resources);
+						    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+							SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+							op.add(saveOp);
+						    op.add(mainOp);
+							op.add(new RestoreProjectMetaOperation(saveOp));
+						    op.add(new RefreshResourcesOperation(resources, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_CACHE));
+
+							IActionOperation wrappedOperation = SVNTeamPlugin.instance().getOptionProvider().getLoggedOperationFactory().getLogged(op);
+						    
+						    ProgressMonitorUtility.doTaskScheduledDefault(wrappedOperation);
+						}
+					}
+				}, 200, TimeUnit.MILLISECONDS);
+			}
+		}
 		return true;
 	}
 	
