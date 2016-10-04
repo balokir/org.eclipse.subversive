@@ -19,12 +19,10 @@
 	</table>
 <h3>Note for Linux users</h3>
 	<p>The SVN Connectors' plug-in doesn't contain binaries of JavaHL library for Linux OS.
-	So if you want to use JavaHL connector to access the repository, you should build the
-	library by yourself or use already built for Linux OS one.</p>
-	<p>Also you should pay special attention, that JVM uses the value of LD_LIBRARY_PATH to look for used libraries,
-	so the JavaHL library must be there also. But if you want to have it in another place you should let the JVM know about this.</br>
-	The easiest way is to add a following line to eclipse.ini as any line after -vmargs: "-Djava.library.path=<i>input
-	here the path to the library</i>".</br>
-	Also you can use any other appropriable to do this.</p>
+	So if you want to use the JavaHL connector to access SVN, you should build the
+	library by yourself or install the pre-built one from the software repository.</p>
+	<p>Also you should pay special attention to the fact, that JVM uses the value of LD_LIBRARY_PATH environment variable to look for the libraries to load.
+	So the path to the JavaHL binaries must be included here as well, otherwise you'll have to edit your <i>eclipse.ini</i> file to let the JVM know of the actual place.</br>
+	In order to do so you just need to add the following line to eclipse.ini after the "-vmargs" line: "-Djava.library.path=<i>input here the path to the library</i>".</br></p>
 </body>
 </html>
