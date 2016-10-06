@@ -18,27 +18,37 @@
 		</tr>
 	</table>
 <h3>Subversive modules</h3>
-	<p>There are two main plug-ins in the Subversive project: Core and UI. As you can see from the following picture contributors may implement their own SVN Client Library plug-ins and Subversive will use them automatically after its installation into the Eclipse IDE. Also Subversive provides reuse abilities to the external plug-ins designed for automated or interactive work.</p>
-	<img border="0" src="../../images/modules.png" alt="Subversive modules"/>
-	<p>Subversive Core module provides flexible and easy to use API which allows user to interact with all SVN functionality in simple and similar way. At the same time interface simplicity does not make performance impact and user is able to build powerful and high-performance applications on top of the Subversive Core base. Subversive Core is tested in the headless environment and is a solid ground for creation of automated applications.</p>
-	Subversive UI module is stable and usable. Most significant benefits are:
+	<p>There are two main plug-ins in the Subversive project: Core and UI. As you can see from the following diagram, there are several ways to extend Subversive:</p>
 	<ul>
-		<li>Usability optimizations (pop-up menu enablement's, controls layout etc.)</li>
-		<li>Detailed description on each UI form</li>
-		<li>"On the fly" data validation in dialogs and wizards</li>
-		<li>Eclipse IDE-like style</li>
-		<li>Extensibility</li>
+	<li>contributors may choose to implement their own SVN Client library plug-in and Subversive will use it automatically after it is installed into the Eclipse IDE;</li>
+	<li>there is a way to create an automated application using the Core module's API;</li>
+	<li>and there are ways to extend Subversive UI in order to cover the tasks you need.</li>
 	</ul>
-	<p>Last benefit allows users create their own UI extensions for the Subversive. Such extensions can be tracker integrations or any other application that require SVN client base. Additionally the Subversive UI has several extension points which allows contribute into:</p>
+	<img border="0" src="../../images/modules.png" alt="Subversive modules"/>
+	<p>Subversive Core module provides flexible and easy to use API which allows user to interact with all the SVN functionality in an easy to use way. At the same time interface the simplicity does not impact performance in any way and the programmer is able to build a powerful and high-performance application on top of the Subversive Core base. Subversive Core is tested in the headless environment and is a solid ground for creation of an automated application.<br/>
+	Subversive UI module is designed with regards to usability and has a reach functionality. The most notable features are:</p>
+	<ul>
+		<li>Improved usability of menus and forms (pop-up menu enablement's, controls layout etc.);</li>
+		<li>Detailed descriptions on each UI form;</li>
+		<li>"On the fly" data validation in dialogs and wizards;</li>
+		<li>Strictly respecting Eclipse UI concepts;</li>
+		<li>Extensibility.</li>
+	</ul>
+	<p>The term 'extensibility' includes extension points for the following features:</p>
 	<ul>
 		<li>Synchronize View actions</li>
-		<li>Checkout action</li>
-		<li>Share Project action</li>
-		<li>Commit action</li>
-		<li>Resources decoration</li>
-		<li>History View multiline comment</li>
+		<li>Checkout functionality</li>
+		<li>Share Project functionality</li>
+		<li>Commit action (including dialog and workflow)</li>
+		<li>Resource decorations</li>
+		<li>History View's multiline comment viewer</li>
 		<li>Error reporting</li>
+		<li>Crash recovery</li>
+		<li>Core module options</li>
+		<li>SVN Client library</li>
+		<li>Resource ignore rules</li>
+		<li>SVN properties support</li>
 	</ul>
-	<p>This list can be extended. Comments and suggestions from community regarding enhancement of the Subversive integration abilities, creation new extension points and APIs, are welcome.</p>
+	<p>And that is not all. We do accept community's proposals on how to improve API and extension points, so that the plug-in will truly become adaptable to a different tasks that could be found out there in the world.</p>
 </body>
 </html>
