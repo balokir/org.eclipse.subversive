@@ -197,15 +197,62 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		}		
 	}
 	
-	protected void decorateModel(Object element, IDecoration decoration, SynchronizationStateTester tester) throws CoreException {
+	protected void decorateModel(final Object element, IDecoration decoration, SynchronizationStateTester tester) throws CoreException {
 		//TODO how to limit depth according to "Compute deep outgoing state" properties ?
-		int stateFlags = tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING, new NullProgressMonitor());
-		if (this.indicateRemote) {
-			decoration.addOverlay(SVNLightweightDecorator.OVR_VERSIONED);	
-		}									
-		if ((stateFlags & IThreeWayDiff.OUTGOING) != 0) {
-			decoration.addPrefix(this.outgoingChars != null ? (this.outgoingChars + " ") : "");	 //$NON-NLS-1$ //$NON-NLS-2$
-		}				
+		final int stateFlags = tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.DIRECTION_MASK, new NullProgressMonitor());
+		if ((stateFlags & IThreeWayDiff.DIRECTION_MASK) == IThreeWayDiff.CONFLICTING && this.indicateConflicted) {			
+			if (this.indicateConflicted) {
+				decoration.addOverlay(SVNLightweightDecorator.OVR_CONFLICTED);
+			}
+			else if (this.indicateModified) {
+				decoration.addOverlay(SVNLightweightDecorator.OVR_MODIFIED);
+			}
+			else if (this.indicateRemote) {
+				decoration.addOverlay(SVNLightweightDecorator.OVR_VERSIONED);
+			}
+		}
+		else if ((stateFlags & IDiff.ADD) != 0) {
+			//new state also recognized as added, then it should be before added
+			if (this.indicateAdded) {
+				decoration.addOverlay(SVNLightweightDecorator.OVR_ADDED);
+			}
+		}
+		else if ((stateFlags & IDiff.REMOVE) != 0) {
+			decoration.addOverlay(SVNLightweightDecorator.OVR_DELETED);
+		}
+		else if ((stateFlags & IDiff.CHANGE) != 0) {
+			if (this.indicateModified) {
+				decoration.addOverlay(SVNLightweightDecorator.OVR_MODIFIED);
+			}
+			else if (this.indicateRemote) {
+				decoration.addOverlay(SVNLightweightDecorator.OVR_VERSIONED);
+			}
+		}
+		else if (this.indicateRemote) {
+			decoration.addOverlay(SVNLightweightDecorator.OVR_VERSIONED);
+		}
+		
+		if (this.useFonts && (stateFlags & (IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE)) != 0) {
+			decoration.setBackgroundColor(this.changedBackgroundColor);
+			decoration.setForegroundColor(this.changedForegroundColor);
+			decoration.setFont(this.changedFont);
+		}
+		
+		this.decorator.decorateText(
+			decoration, 
+			this.getFormat(IResource.FOLDER),			
+			new IVariableContentProvider() {
+				public String getValue(IVariable var) {
+					if (var.equals(TextVariableSetProvider.VAR_ADDED_FLAG)) {
+						return (stateFlags & IDiff.ADD) != 0 ? SVNLightweightDecorator.this.addedChars : ""; //$NON-NLS-1$
+					}
+					else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {					
+						return (stateFlags & IThreeWayDiff.OUTGOING) != 0 ? SVNLightweightDecorator.this.outgoingChars : ""; //$NON-NLS-1$
+					}
+					return var.toString();
+				}
+			}
+		);
 		tester.elementDecorated(element, new TeamStateDescription(stateFlags));
 	}
 	
@@ -307,7 +354,7 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		
 		this.decorator.decorateText(
 			decoration, 
-			this.getFormat(resource),			
+			this.getFormat(resource.getType()),			
 			new IVariableContentProvider() {
 				public String getValue(IVariable var) {
 					if (var.equals(TextVariableSetProvider.VAR_ADDED_FLAG)) {
@@ -411,10 +458,10 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		return resource.getType() != IResource.FILE;
 	}
 	
-	protected IVariable[] getFormat(IResource resource) {
-		if (resource.getType() == IResource.FOLDER) {
+	protected IVariable[] getFormat(int type) {
+		if (type == IResource.FOLDER) {
 			return this.folderFormat;
-		} else if (resource.getType() == IResource.PROJECT) {
+		} else if (type == IResource.PROJECT) {
 			return this.projectFormat;
 		}  		
 		return this.fileFormat;
