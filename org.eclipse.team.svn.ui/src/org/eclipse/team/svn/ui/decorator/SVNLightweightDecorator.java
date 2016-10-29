@@ -189,7 +189,7 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 				if (resource != null) {
 					this.decorateResource(resource, decoration);	
 				} else {
-					this.decorateModel(element, decoration, tester);						
+					this.decorateModel(element, mapping, decoration, tester);						
 				}			
 	        }				
 		} catch (Throwable ex) {			
@@ -197,9 +197,22 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		}		
 	}
 	
-	protected void decorateModel(final Object element, IDecoration decoration, SynchronizationStateTester tester) throws CoreException {
+	protected void decorateModel(final Object element, ResourceMapping mapping, IDecoration decoration, SynchronizationStateTester tester) throws CoreException {
 		//TODO how to limit depth according to "Compute deep outgoing state" properties ?
-		final int stateFlags = tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.DIRECTION_MASK, new NullProgressMonitor());
+		int changeFlag = IDiff.NO_CHANGE;
+		for (ResourceTraversal traversal : mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null)) {
+			if (changeFlag == IDiff.NO_CHANGE) {
+				for (IResource resource : traversal.getResources()) {
+					if (UpdateSubscriber.instance().isSupervised(resource) && 
+						IStateFilter.SF_ANY_CHANGE.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
+						changeFlag = IDiff.CHANGE;
+						break;
+					}
+				}
+			}
+		}
+		
+		final int stateFlags = changeFlag | tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.DIRECTION_MASK, new NullProgressMonitor());
 		if ((stateFlags & IThreeWayDiff.DIRECTION_MASK) == IThreeWayDiff.CONFLICTING && this.indicateConflicted) {			
 			if (this.indicateConflicted) {
 				decoration.addOverlay(SVNLightweightDecorator.OVR_CONFLICTED);
