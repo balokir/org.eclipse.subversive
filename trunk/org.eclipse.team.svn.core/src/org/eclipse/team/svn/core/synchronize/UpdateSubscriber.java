@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Andrey Loskutov - Performance improvements for UpdateSubscriber (bug 506760)
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.synchronize;
