@@ -91,6 +91,10 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		}
 		final IResource []scope = rStatusOp.getScope();
 		IChangeStateProvider provider = new IChangeStateProvider() {
+			private SVNEntry.Kind kind;
+			private SVNRevision rev;
+			private IResource exact;
+			
 			public long getChangeDate() {
 				return current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastChangedDate : current.reposLastCmtDate;
 			}
@@ -98,8 +102,11 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				return current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastCommitAuthor : current.reposLastCmtAuthor;
 			}
 			public SVNRevision.Number getChangeRevision() {
-				long changeRev = current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastChangedRevision : current.reposLastCmtRevision;
-				return changeRev == SVNRevision.INVALID_REVISION_NUMBER ? null : (SVNRevision.Number)SVNRevision.fromNumber(changeRev);
+				if (this.rev == null) {
+					long changeRev = current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastChangedRevision : current.reposLastCmtRevision;
+					this.rev = changeRev == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.INVALID_REVISION : (SVNRevision.Number)SVNRevision.fromNumber(changeRev);
+				}
+				return this.rev == SVNRevision.INVALID_REVISION ? null : (SVNRevision.Number)this.rev;
 			}
 			public Kind getTextChangeType() {
 				return current.repositoryTextStatus;
@@ -108,8 +115,11 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				return current.repositoryPropStatus;
 			}
 			public SVNEntry.Kind getNodeKind() {
-				SVNEntry.Kind kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
-				return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.reposKind, true) : kind;
+				if (this.kind == null) {
+					this.kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
+					this.kind = this.kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.reposKind, true) : this.kind;
+				}
+				return this.kind;
 			}
 			public String getLocalPath() {
 				return current.path;
@@ -124,7 +134,10 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				return current.isSwitched;
 			}
 			public IResource getExact(IResource []set) {
-				return FileUtility.selectOneOf(scope, set);
+				if (this.exact == null) {
+					this.exact = FileUtility.selectOneOf(scope, set);
+				}
+				return this.exact;
 			}
 			public SVNConflictDescriptor getTreeConflictDescriptor() {
 				return current.treeConflicts == null ? null : current.treeConflicts[0];
