@@ -74,7 +74,7 @@ public class LocalInfoPage extends PropertyPage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(data);
 		
-		this.resource = this.getElement().getAdapter(IResource.class);
+		this.resource = (IResource)this.getElement().getAdapter(IResource.class);
 		InfoOperation op = new InfoOperation(this.resource);
 		UIMonitorUtility.doTaskBusyDefault(op);
 		
