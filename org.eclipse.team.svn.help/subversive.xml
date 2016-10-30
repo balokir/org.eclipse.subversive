@@ -4,7 +4,6 @@
 
 <toc label="About Subversive and Subversive User Guide" href="gettingStarted/subversive.html">
 	<topic label="Subversive unique features" href="gettingStarted/aboutSubversive/features.html"/>
-	<topic label="Requirements" href="gettingStarted/aboutSubversive/requirements.html"/>
 	<topic label="Subversive installation instructions" href="gettingStarted/aboutSubversive/install.html"/>
 	<topic label="Subversive update instructions" href="gettingStarted/aboutSubversive/update_eclipse.html"/>
 	<topic label="Subversive modules" href="gettingStarted/aboutSubversive/modules.html"/>
