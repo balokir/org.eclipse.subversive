@@ -8,6 +8,7 @@
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
  *    Gabor Liptak - Speedup Pattern's usage
+ *    Andrey Loskutov - Performance improvements for FileUtility (bug 506757)
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.utility;
