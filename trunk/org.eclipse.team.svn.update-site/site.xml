@@ -10,9 +10,6 @@
    <feature url="features/org.eclipse.team.svn.nl1_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.nl1" version="4.0.0.I20160226-1700">
       <category name="Subversive"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="4.0.0.I20160226-1700">
-      <category name="Subversive"/>
-   </feature>
    <feature url="features/org.eclipse.team.svn.mylyn_4.0.0.I20160226-1700.jar" id="org.eclipse.team.svn.mylyn" version="4.0.0.I20160226-1700">
       <category name="Subversive Integration"/>
    </feature>
