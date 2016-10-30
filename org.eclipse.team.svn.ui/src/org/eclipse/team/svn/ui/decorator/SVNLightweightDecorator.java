@@ -185,7 +185,9 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 			
 			// Calculate and apply the decoration		
 			if (tester.isDecorationEnabled(element) && this.isSupervised(mapping)) {				
-				//check if the element adapts to a single resource					
+				if (this.fileFormat == null) {
+					this.loadConfiguration();
+				}			
 				if (resource != null) {
 					this.decorateResource(resource, decoration);	
 				} else {
@@ -212,19 +214,22 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 			}
 		}
 		
-		final int stateFlags = changeFlag | tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.DIRECTION_MASK, new NullProgressMonitor());
-		if ((stateFlags & IThreeWayDiff.DIRECTION_MASK) == IThreeWayDiff.CONFLICTING && this.indicateConflicted) {			
-			if (this.indicateConflicted) {
-				decoration.addOverlay(SVNLightweightDecorator.OVR_CONFLICTED);
-			}
-			else if (this.indicateModified) {
-				decoration.addOverlay(SVNLightweightDecorator.OVR_MODIFIED);
-			}
-			else if (this.indicateRemote) {
-				decoration.addOverlay(SVNLightweightDecorator.OVR_VERSIONED);
-			}
-		}
-		else if ((stateFlags & IDiff.ADD) != 0) {
+		final int stateFlags = changeFlag | tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING, new NullProgressMonitor());
+		// the conflicting part does not seem to be the right one, since in the working set there could be both outgoing and incoming changes simultaneously, 
+		//	any of which by itself does not produce a conflict
+//		if ((stateFlags & IThreeWayDiff.DIRECTION_MASK) == IThreeWayDiff.CONFLICTING && this.indicateConflicted) {			
+//			if (this.indicateConflicted) {
+//				decoration.addOverlay(SVNLightweightDecorator.OVR_CONFLICTED);
+//			}
+//			else if (this.indicateModified) {
+//				decoration.addOverlay(SVNLightweightDecorator.OVR_MODIFIED);
+//			}
+//			else if (this.indicateRemote) {
+//				decoration.addOverlay(SVNLightweightDecorator.OVR_VERSIONED);
+//			}
+//		}
+//		else 
+		if ((stateFlags & IDiff.ADD) != 0) {
 			//new state also recognized as added, then it should be before added
 			if (this.indicateAdded) {
 				decoration.addOverlay(SVNLightweightDecorator.OVR_ADDED);
@@ -284,10 +289,6 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 		int mask = local.getChangeMask();
 		
 		if (!IStateFilter.SF_NOTEXISTS.accept(resource, localStatus, mask)) {						
-			if (this.fileFormat == null) {
-				this.loadConfiguration();
-				localStatus = this.getStatus(local);
-			}			
 			this.decorateResourceImpl(remote, local, resource, localStatus, mask, decoration);
 		}				
 	}
