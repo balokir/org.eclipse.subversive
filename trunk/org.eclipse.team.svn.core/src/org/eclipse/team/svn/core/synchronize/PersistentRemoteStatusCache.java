@@ -7,13 +7,14 @@
  *
  * Contributors:
  *    Igor Burilo - Initial API and implementation
+ *    Andrey Loskutov - Performance improvements for RemoteStatusCache
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.synchronize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -62,12 +63,21 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 		if (!(resource instanceof IContainer)) {
     		return FileUtility.NO_CHILDREN;
 		}
-		Set<IResource> members = new HashSet<IResource>(Arrays.asList(this.members(resource)));
+		IResource[] known = members(resource);
+		List<IResource> members;
+		if (known.length == 0) {
+			members = new ArrayList<IResource>();
+		} else {
+			members = new ArrayList<IResource>(Arrays.asList(known));
+		}
 		if (RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID) != null) {
 			IContainer container = (IContainer)resource;
 			GetAllResourcesOperation op = new GetAllResourcesOperation(container);
 			ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
-			members.addAll(Arrays.asList(op.getChildren()));
+			IResource[] children = op.getChildren();
+			if (children.length > 0) {
+				members.addAll(Arrays.asList(children));
+			}
 		}
 		return members.toArray(new IResource[members.size()]);
 	}

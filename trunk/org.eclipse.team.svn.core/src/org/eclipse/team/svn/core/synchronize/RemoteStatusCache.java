@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Andrey Loskutov - Performance improvements for RemoteStatusCache
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.synchronize;
@@ -97,19 +98,28 @@ public class RemoteStatusCache extends ResourceVariantByteStore implements IRemo
 
 	public synchronized IResource []members(IResource resource) {
 		Set<?> members = this.resourceChildrenMap.get(resource.getFullPath());
-		return members == null ? new IResource[0] : members.toArray(new IResource[members.size()]);
+		return members == null ? FileUtility.NO_CHILDREN : members.toArray(new IResource[members.size()]);
 	}
 
 	public synchronized IResource []allMembers(IResource resource) {
 		if (!(resource instanceof IContainer)) {
     		return FileUtility.NO_CHILDREN;
 		}
-		List<IResource> members = new ArrayList<IResource>(Arrays.asList(this.members(resource)));
+		IResource[] known = this.members(resource);
+		List<IResource> members;
+		if (known.length == 0) {
+			members = new ArrayList<IResource>();
+		} else {
+			members = new ArrayList<IResource>(Arrays.asList(known));
+		}
 		if (RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID) != null) {
 			IContainer container = (IContainer)resource;
 			GetAllResourcesOperation op = new GetAllResourcesOperation(container);
 			ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
-			members.addAll(Arrays.asList(op.getChildren()));
+			IResource[] children = op.getChildren();
+			if (children.length > 0) {
+				members.addAll(Arrays.asList(children));
+			}
 		}
 		return members.toArray(new IResource[members.size()]);
 	}
