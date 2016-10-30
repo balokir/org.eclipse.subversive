@@ -8,6 +8,7 @@
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
  *    Gabor Liptak - Speedup Pattern's usage
+ *    Andrey Loskutov - Performance improvements for SVNUtility
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.utility;
@@ -36,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -1328,9 +1330,11 @@ public final class SVNUtility {
 		return fromDate.getDate() > toDate.getDate() ? 1 : (fromDate.getDate() == toDate.getDate() ? 0 : -1);
 	}
 
+	private static final Pattern MERGE_PART = Pattern.compile("r\\d+"); //$NON-NLS-1$ 
+	
 	private static boolean isMergeParts(IResource resource) {
 		String ext = resource.getFileExtension();
-		return ext != null && ext.matches("r(\\d)+"); //$NON-NLS-1$
+		return ext != null && SVNUtility.MERGE_PART.matcher(ext).matches();
 	}
 	    
 	private static Map combineLocationsByUUID(Map repository2Resources) throws Exception{
