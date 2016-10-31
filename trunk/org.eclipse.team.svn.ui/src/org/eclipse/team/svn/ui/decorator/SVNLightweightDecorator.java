@@ -200,23 +200,10 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 	}
 	
 	protected void decorateModel(final Object element, ResourceMapping mapping, IDecoration decoration, SynchronizationStateTester tester) throws CoreException {
-		//TODO how to limit depth according to "Compute deep outgoing state" properties ?
-		int changeFlag = IDiff.NO_CHANGE;
-		for (ResourceTraversal traversal : mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null)) {
-			if (changeFlag == IDiff.NO_CHANGE) {
-				for (IResource resource : traversal.getResources()) {
-					if (UpdateSubscriber.instance().isSupervised(resource) && 
-						IStateFilter.SF_ANY_CHANGE.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
-						changeFlag = IDiff.CHANGE;
-						break;
-					}
-				}
-			}
-		}
-		
-		final int stateFlags = changeFlag | tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING, new NullProgressMonitor());
-		// the conflicting part does not seem to be the right one, since in the working set there could be both outgoing and incoming changes simultaneously, 
-		//	any of which by itself does not produce a conflict
+		//TODO how to limit depth according to "Compute deep outgoing state" properties ? (Subscriber itself already reports the model element's state after a deep calculation)
+		final int stateFlags = tester.getState(element, IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING, new NullProgressMonitor());
+		// for model nodes the resulting state is integral of all the states of the included resources
+		//	so, it is unreasonable to try to decorate conflicts, additions and removals except as a 'CHANGE' state only
 //		if ((stateFlags & IThreeWayDiff.DIRECTION_MASK) == IThreeWayDiff.CONFLICTING && this.indicateConflicted) {			
 //			if (this.indicateConflicted) {
 //				decoration.addOverlay(SVNLightweightDecorator.OVR_CONFLICTED);
@@ -228,17 +215,17 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 //				decoration.addOverlay(SVNLightweightDecorator.OVR_VERSIONED);
 //			}
 //		}
+//		else if ((stateFlags & IDiff.ADD) != 0) {
+//			//new state also recognized as added, then it should be before added
+//			if (this.indicateAdded) {
+//				decoration.addOverlay(SVNLightweightDecorator.OVR_ADDED);
+//			}
+//		}
+//		else if ((stateFlags & IDiff.REMOVE) != 0) {
+//			decoration.addOverlay(SVNLightweightDecorator.OVR_DELETED);
+//		}
 //		else 
-		if ((stateFlags & IDiff.ADD) != 0) {
-			//new state also recognized as added, then it should be before added
-			if (this.indicateAdded) {
-				decoration.addOverlay(SVNLightweightDecorator.OVR_ADDED);
-			}
-		}
-		else if ((stateFlags & IDiff.REMOVE) != 0) {
-			decoration.addOverlay(SVNLightweightDecorator.OVR_DELETED);
-		}
-		else if ((stateFlags & IDiff.CHANGE) != 0) {
+		if ((stateFlags & (IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE)) != 0) {
 			if (this.indicateModified) {
 				decoration.addOverlay(SVNLightweightDecorator.OVR_MODIFIED);
 			}
@@ -261,13 +248,14 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 			this.getFormat(IResource.FOLDER),			
 			new IVariableContentProvider() {
 				public String getValue(IVariable var) {
-					if (var.equals(TextVariableSetProvider.VAR_ADDED_FLAG)) {
-						return (stateFlags & IDiff.ADD) != 0 ? SVNLightweightDecorator.this.addedChars : ""; //$NON-NLS-1$
-					}
-					else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {					
+//					if (var.equals(TextVariableSetProvider.VAR_ADDED_FLAG)) {
+//						return (stateFlags & IDiff.ADD) != 0 ? SVNLightweightDecorator.this.addedChars : ""; //$NON-NLS-1$
+//					}
+//					else 
+					if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {					
 						return (stateFlags & IThreeWayDiff.OUTGOING) != 0 ? SVNLightweightDecorator.this.outgoingChars : ""; //$NON-NLS-1$
 					}
-					return var.toString();
+					return "";
 				}
 			}
 		);
