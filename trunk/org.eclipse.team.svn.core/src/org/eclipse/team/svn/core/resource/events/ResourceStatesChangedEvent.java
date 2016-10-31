@@ -15,12 +15,14 @@ package org.eclipse.team.svn.core.resource.events;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.IQueuedElement;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Basic "resources changed event" implementation 
@@ -93,10 +95,9 @@ public class ResourceStatesChangedEvent implements IQueuedElement<ResourceStates
 					}
 					// Don't descent into ignored folders, but do not check for 
 					// every *file* because isIgnored() is not for free
-					//	TODO validate this condition further
-//					if (resource instanceof IContainer && SVNUtility.isIgnored(resource)) {
-//						return false;
-//					}
+					if (resource instanceof IContainer && SVNUtility.isIgnored(resource)) {
+						return false;
+					}
 					fullList.add(resource);
 					return true;
 				}
