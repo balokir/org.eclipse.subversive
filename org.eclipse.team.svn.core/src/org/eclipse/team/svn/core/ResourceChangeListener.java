@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -37,6 +38,7 @@ import org.eclipse.team.svn.core.utility.AsynchronousActiveQueue;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.IQueuedElement;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Workspace resource changes listener
@@ -151,11 +153,16 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 						if (!FileUtility.isConnected(resource)) {
 						    return false;
 						}
-
 						IResource toAdd = null;
 						IResource svnFolder = FileUtility.getSVNFolder(resource);
 						if (svnFolder != null) {
 							toAdd = svnFolder.getParent();
+							return false;
+						}
+						if (resource instanceof IFolder && SVNUtility.isIgnored(resource)) {
+							if (SVNTeamPlugin.instance().isDebugging()) {
+								System.out.println("Ignoring: " + resource.getLocation());
+							}
 							return false;
 						}
 						if (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.REMOVED) {
@@ -169,6 +176,12 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 							}
 						}
 						if (toAdd != null) {
+							if (SVNUtility.isIgnored(toAdd)) {
+								if (SVNTeamPlugin.instance().isDebugging()) {
+									System.out.println("Ignoring: " + toAdd.getLocation());
+								}
+								return false;
+							}
 							modified.add(toAdd);
 							if (toAdd.getType() != IResource.FILE) {
 								depth[0] = IResource.DEPTH_INFINITE;
