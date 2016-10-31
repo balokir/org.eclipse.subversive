@@ -255,7 +255,8 @@ public class SVNLightweightDecorator extends LabelProvider implements ILightweig
 					if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {					
 						return (stateFlags & IThreeWayDiff.OUTGOING) != 0 ? SVNLightweightDecorator.this.outgoingChars : ""; //$NON-NLS-1$
 					}
-					return "";
+					String retVal = var.toString();
+					return retVal.equals(SVNLightweightDecorator.this.outgoingChars) ? retVal : "";
 				}
 			}
 		);
