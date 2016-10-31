@@ -7,9 +7,12 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Andrey Loskutov - [scalability] SVN update takes hours if "Synchronize" view is opened
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.resource.events;
+
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -35,4 +38,46 @@ public class ProjectStatesChangedEvent extends ResourceStatesChangedEvent {
 		this.newState = newState;
 	}
 
+	@Override
+	public boolean canMerge(ResourceStatesChangedEvent e) {
+		if (e instanceof ProjectStatesChangedEvent) {			
+			return super.canMerge(e) && this.newState == ((ProjectStatesChangedEvent)e).newState;
+		}
+		return false;
+	}
+	
+	@Override
+	public ProjectStatesChangedEvent merge(ResourceStatesChangedEvent event) {
+		IProject [] arr = new IProject[this.resources.length + event.resources.length];
+		System.arraycopy(this.resources, 0, arr, 0, this.resources.length);
+		System.arraycopy(event.resources, 0, arr, this.resources.length, event.resources.length);
+		return new ProjectStatesChangedEvent(arr, this.newState);
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + this.newState;
+		result = prime * result + Arrays.hashCode(this.resources);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof ProjectStatesChangedEvent)) {
+			return false;
+		}
+		ProjectStatesChangedEvent other = (ProjectStatesChangedEvent) obj;
+		if (this.newState != other.newState) {
+			return false;
+		}
+		if (!Arrays.equals(this.resources, other.resources)) {
+			return false;
+		}
+		return true;
+	}
 }

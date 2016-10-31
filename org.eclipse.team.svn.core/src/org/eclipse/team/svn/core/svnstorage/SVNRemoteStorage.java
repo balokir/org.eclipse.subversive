@@ -8,6 +8,7 @@
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
  *    Panagiotis Korros - [patch] bug fix: .svn folder is deleted by subversive
+ *    Andrey Loskutov - [scalability] SVN update takes hours if "Synchronize" view is opened
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.svnstorage;
@@ -75,6 +76,7 @@ import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.utility.AsynchronousActiveQueue;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.IQueuedElement;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
@@ -129,8 +131,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map switchedToUrls;
 	protected Map externalsLocations;
 	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
-	protected AsynchronousActiveQueue fetchQueue;
-	protected AsynchronousActiveQueue eventQueue;
+	protected AsynchronousActiveQueue<SvnChange> fetchQueue;
+	protected AsynchronousActiveQueue<ResourceStatesChangedEvent> eventQueue;
 	
 	protected long lastMonitorTime;
 	protected Map<IResource, File> changeMonitorMap;
@@ -187,15 +189,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     }
 
     public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
-    	IResourceStatesListener []listeners = null;
-    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
-    		List<IResourceStatesListener> listenersArray = SVNRemoteStorage.this.resourceStateListeners.get(event.getClass());
-    		if (listenersArray == null || listenersArray.size() == 0) {
-    			return;
-    		}
-	    	listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
+    	if (event.getSize() == 0) {
+    		return;
     	}
-    	this.eventQueue.push(listeners, event);
+		synchronized (this.resourceStateListeners) {
+	    	List<IResourceStatesListener> listeners = this.resourceStateListeners.get(event.getClass());
+	    	if (listeners == null || listeners.isEmpty()) {
+	    		return;
+	    	}
+		}
+    	this.eventQueue.push(event);
     }
     
 	public void initialize(Map<String, Object> preferences) throws Exception {
@@ -395,7 +398,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		
 		return retVal == null ? members : (IResource [])retVal.toArray(new IResource[retVal.size()]);
 	}
-	
+
 	public ILocalResource asLocalResourceDirty(IResource resource) {
 		if (!CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED)) {
 			return this.asLocalResource(resource);
@@ -822,7 +825,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		
 		statuses = loadTargets[0];
 		if (retVal != null && hasSVNMeta && statuses.length > 1 && depth != IResource.DEPTH_ZERO && CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED)) {
-			this.fetchQueue.push(statuses, target);
+			this.fetchQueue.push(new SvnChange(statuses, target));
 		}
 		
 		return retVal;
@@ -1345,21 +1348,78 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return changeMask;
 	}
 	
+	private static class SvnChange implements IQueuedElement<SvnChange> {
+		
+		public final SVNChangeStatus [] st;
+		public final IResource target;
+		
+		public SvnChange(SVNChangeStatus[] st, IResource target) {
+			this.st = st;
+			this.target = target;
+		}
+		
+		/**
+		 * Can't be skipped because we don't look into SVNChangeStatus elements
+		 * for equality (it does not have a simple and fast equals())
+		 */
+		public boolean canSkip() {
+			return false;
+		}
+		
+		/**
+		 * Not re-implemented by purpose, to make every change different
+		 */
+		@Override
+		public final boolean equals(Object obj) {
+			return super.equals(obj);
+		}
+
+		/**
+		 * Not re-implemented by purpose, to make every change different
+		 */
+		@Override
+		public final int hashCode() {
+			return super.hashCode();
+		}
+
+		public boolean canMerge(SvnChange d) {
+			return this.target.equals(d.target);
+		}
+
+		public SvnChange merge(SvnChange d) {
+			SVNChangeStatus [] result = new SVNChangeStatus[this.st.length + d.st.length];
+			System.arraycopy(this.st, 0, result, 0, this.st.length);
+			System.arraycopy(d.st, 0, result, this.st.length, d.st.length);
+			return new SvnChange(result, this.target);
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder out = new StringBuilder();
+			out.append("SvnChange [");
+			out.append("size: ").append(this.st.length);
+			out.append(", target: ");
+			out.append(this.target);
+			out.append("]");
+			return out.toString();
+		}
+	}
+
 	private SVNRemoteStorage() {
 		super();
 		this.localResources = new HashMap(500);
 		this.switchedToUrls = Collections.synchronizedMap(new LinkedHashMap());
 		this.externalsLocations = new HashMap();
 		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
-    	this.fetchQueue = new AsynchronousActiveQueue("Operation_UpdateSVNCache", new AsynchronousActiveQueue.IRecordHandler() {
-			public void process(IProgressMonitor monitor, IActionOperation op, Object... record) {
-				SVNChangeStatus [] st = (SVNChangeStatus [])record[0];
-				IResource target = (IResource)record[1];
+    	this.fetchQueue = new AsynchronousActiveQueue<SvnChange>("Operation_UpdateSVNCache", new AsynchronousActiveQueue.IRecordHandler<SvnChange>() {
+			public void process(IProgressMonitor monitor, IActionOperation op, SvnChange record) {
+				SVNChangeStatus [] st = record.st;
+				IResource target = record.target;
 				IProject prj = target.getProject();
 				IPath location = prj.getLocation();
 				if (location != null) {
 					int projectEnd = location.toString().length();
-					for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().is(IOptionProvider.SVN_CACHE_ENABLED); i++) {
+					for (int i = 0; i < st.length && !monitor.isCanceled(); i++) {
 						ProgressMonitorUtility.progress(monitor, i, IProgressMonitor.UNKNOWN);
 						if (st[i] != null && st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
 							IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
@@ -1373,14 +1433,21 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				}
 			}
 		}, false);
-    	this.eventQueue = new AsynchronousActiveQueue("Operation_UpdateSVNCache", new AsynchronousActiveQueue.IRecordHandler() {
-			public void process(IProgressMonitor monitor, IActionOperation op, Object... record) {
-				IResourceStatesListener []listeners = (IResourceStatesListener [])record[0];
-				ResourceStatesChangedEvent event = (ResourceStatesChangedEvent)record[1];
+    	this.eventQueue = new AsynchronousActiveQueue<ResourceStatesChangedEvent>("Operation_UpdateSVNCache", new AsynchronousActiveQueue.IRecordHandler<ResourceStatesChangedEvent>() {
+			public void process(IProgressMonitor monitor, IActionOperation op, ResourceStatesChangedEvent event) {
+		    	IResourceStatesListener [] listeners;
+		    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
+		    		List<IResourceStatesListener> listenersList = SVNRemoteStorage.this.resourceStateListeners.get(event.getClass());
+		    		if (listenersList == null || listenersList.size() == 0) {
+		    			return;
+		    		}
+			    	listeners = listenersList.toArray(new IResourceStatesListener[listenersList.size()]);
+		    	}
     	    	for (int i = 0; i < listeners.length && !monitor.isCanceled(); i++) {
     	    		listeners[i].resourcesStateChanged(event);
     	    	}
 			}
+
 		}, true);
 		this.lastMonitorTime = System.currentTimeMillis();
 		this.changeMonitorMap = new HashMap<IResource, File>();

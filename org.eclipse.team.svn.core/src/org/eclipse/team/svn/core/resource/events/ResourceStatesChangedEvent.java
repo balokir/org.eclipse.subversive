@@ -7,10 +7,12 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Andrey Loskutov - [scalability] SVN update takes hours if "Synchronize" view is opened
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.resource.events;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
@@ -18,13 +20,14 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.IQueuedElement;
 
 /**
  * Basic "resources changed event" implementation 
  * 
  * @author Alexander Gurov
  */
-public class ResourceStatesChangedEvent {
+public class ResourceStatesChangedEvent implements IQueuedElement<ResourceStatesChangedEvent> {
 	public static final int CHANGED_NODES = 0;
 	public static final int PATH_NODES = 1;
 	public final IResource []resources;
@@ -88,6 +91,12 @@ public class ResourceStatesChangedEvent {
 					if (FileUtility.isNotSupervised(resource)) {
 						return false;
 					}
+					// Don't descent into ignored folders, but do not check for 
+					// every *file* because isIgnored() is not for free
+					//	TODO validate this condition further
+//					if (resource instanceof IContainer && SVNUtility.isIgnored(resource)) {
+//						return false;
+//					}
 					fullList.add(resource);
 					return true;
 				}
@@ -105,4 +114,71 @@ public class ResourceStatesChangedEvent {
 		return false;
 	}
 	
+	public int getSize(){
+		return this.resources.length;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + this.depth;
+		result = prime * result + Arrays.hashCode(this.resources);
+		result = prime * result + this.type;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof ResourceStatesChangedEvent)) {
+			return false;
+		}
+		ResourceStatesChangedEvent other = (ResourceStatesChangedEvent) obj;
+		if (this.depth != other.depth) {
+			return false;
+		}
+		if (this.type != other.type) {
+			return false;
+		}
+		if (!Arrays.equals(this.resources, other.resources)) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean canSkip() {
+		return true;
+	}
+	
+	public boolean canMerge(ResourceStatesChangedEvent e){
+		return this.depth == e.depth && this.type == e.type;
+	}
+	
+	public ResourceStatesChangedEvent merge(ResourceStatesChangedEvent event){
+		IResource [] arr = new IResource[this.resources.length + event.resources.length];
+		System.arraycopy(this.resources, 0, arr, 0, this.resources.length);
+		System.arraycopy(event.resources, 0, arr, this.resources.length, event.resources.length);
+		return new ResourceStatesChangedEvent(arr, this.depth, this.type);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ResourceStatesChangedEvent [depth=");
+		builder.append(this.depth);
+		builder.append(", size=");
+		builder.append(this.resources.length);
+		builder.append(", ");
+		builder.append(", type=");
+		builder.append(this.type);
+		builder.append(", ");
+		builder.append("resources=");
+		builder.append(Arrays.toString(this.resources));
+		builder.append("]");
+		return builder.toString();
+	}
+
 }
