@@ -257,20 +257,16 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			return;
 		}
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
-			if (IStateFilter.SF_ONREPOSITORY.accept(local) && this.logMessages == null){
+		if (!resource.isAccessible() || !FileUtility.isConnected(resource) || !resource.exists() || IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
+			this.disconnectView();
+		}
+		else if (event.contains(resource)) {
+			if (IStateFilter.SF_ONREPOSITORY.accept(local)) {
 				this.refreshChanges(ISVNHistoryView.REFRESH_ALL);
 			}
 			else if (resource instanceof IFile) {
 				this.refreshChanges(ISVNHistoryView.REFRESH_LOCAL);
 			}
-			if ((event.contains(resource) || event.contains(resource.getProject())) &&
-				(!resource.exists() || !FileUtility.isConnected(resource))) {
-				this.disconnectView();
-			}
-		}
-		else {
-			this.disconnectView();
 		}
 	}
 	
