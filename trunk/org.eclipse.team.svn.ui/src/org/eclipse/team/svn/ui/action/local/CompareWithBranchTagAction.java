@@ -76,7 +76,7 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 			if (dlg.open() == 0 && panel.getResourceToCompareWith() != null){
 				remote = panel.getResourceToCompareWith();
 				String diffFile = panel.getDiffFile();
-				CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
+				CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote, false, false, panel.getDiffOptions());
 				mainOp.setDiffFile(diffFile);
 				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				op.add(mainOp);

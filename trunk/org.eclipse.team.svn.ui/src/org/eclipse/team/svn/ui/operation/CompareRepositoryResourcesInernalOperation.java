@@ -47,25 +47,18 @@ public class CompareRepositoryResourcesInernalOperation extends AbstractActionOp
 	protected IRepositoryResourceProvider provider;
 	protected boolean forceReuse;
 	protected String forceId;
+	protected long options;
 
-	public CompareRepositoryResourcesInernalOperation(IRepositoryResource prev, IRepositoryResource next) {
-		this(prev, next, false);
-	}
-	
-	public CompareRepositoryResourcesInernalOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse) {
+	public CompareRepositoryResourcesInernalOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse, long options) {
 		super("Operation_CompareRepository", SVNUIMessages.class); //$NON-NLS-1$
 		this.prev = prev;
 		this.next = next;
 		this.forceReuse = forceReuse;
+		this.options = options;
 	}
 	
-	public CompareRepositoryResourcesInernalOperation(IRepositoryResourceProvider provider) {
-		this(null, null, false);
-		this.provider = provider;
-	}
-
-	public CompareRepositoryResourcesInernalOperation(IRepositoryResourceProvider provider, boolean forceReuse) {
-		this(null, null, forceReuse);
+	public CompareRepositoryResourcesInernalOperation(IRepositoryResourceProvider provider, boolean forceReuse, long options) {
+		this(null, null, forceReuse, options);
 		this.provider = provider;
 	}
 
@@ -94,10 +87,10 @@ public class CompareRepositoryResourcesInernalOperation extends AbstractActionOp
 				SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesInernalOperation.this.prev);
 				SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesInernalOperation.this.next);
 				if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
-					SVNUtility.diffStatus(proxy, statuses, refPrev, new SVNRevisionRange(refPrev.revision, refNext.revision), SVNDepth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesInernalOperation.this, monitor, null, false));
+					SVNUtility.diffStatus(proxy, statuses, refPrev, new SVNRevisionRange(refPrev.revision, refNext.revision), SVNDepth.INFINITY, CompareRepositoryResourcesInernalOperation.this.options, new SVNProgressMonitor(CompareRepositoryResourcesInernalOperation.this, monitor, null, false));
 				}
 				else {
-					SVNUtility.diffStatus(proxy, statuses, refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesInernalOperation.this, monitor, null, false));
+					SVNUtility.diffStatus(proxy, statuses, refPrev, refNext, SVNDepth.INFINITY, CompareRepositoryResourcesInernalOperation.this.options, new SVNProgressMonitor(CompareRepositoryResourcesInernalOperation.this, monitor, null, false));
 				}
 			}
 		}, monitor, 100, 20);

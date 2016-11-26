@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -51,6 +52,10 @@ public class CompareResourcesOperation extends CompositeOperation {
 	}
 	
 	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog) {
+		this(local, remote, forceReuse, showInDialog, ISVNConnector.Options.NONE);
+	}
+	
+	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog, long options) {
 		super("Operation_CompareLocal", SVNUIMessages.class); //$NON-NLS-1$
 		this.local = local;
 		this.remote = remote;
@@ -58,7 +63,7 @@ public class CompareResourcesOperation extends CompositeOperation {
 		final RunExternalCompareOperation externalCompareOp = new RunExternalCompareOperation(local, remote, SVNTeamDiffViewerPage.loadDiffViewerSettings());
 		this.add(externalCompareOp);
 		
-		this.internalCompareOp = new CompareResourcesInternalOperation(local, remote, forceReuse, showInDialog) {
+		this.internalCompareOp = new CompareResourcesInternalOperation(local, remote, forceReuse, showInDialog, options) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (!externalCompareOp.isExecuted()) {
 					super.runImpl(monitor);

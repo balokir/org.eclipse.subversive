@@ -14,11 +14,13 @@ package org.eclipse.team.svn.ui.panel.remote;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
@@ -41,6 +43,8 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 	protected BranchTagSelectionComposite selectionComposite;
 	protected DiffFormatComposite diffFormatComposite;
 	protected Label resultText;
+	protected long options;
+	protected Button ignoreAncestryButton;
 	
 	protected IRepositoryResource resourceToCompareWith;
 	
@@ -69,6 +73,12 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);
         this.selectionComposite.setCurrentRevision(this.currentRevision);
+        
+		data = new GridData();
+        this.ignoreAncestryButton = new Button(parent, SWT.CHECK);
+        this.ignoreAncestryButton.setLayoutData(data);
+        this.ignoreAncestryButton.setText(SVNUIMessages.MergePanel_Button_IgnoreAncestry);
+        this.ignoreAncestryButton.setSelection((this.options & ISVNConnector.Options.IGNORE_ANCESTRY) != 0);
         
         this.diffFormatComposite = new DiffFormatComposite(parent, this);
                        
@@ -141,8 +151,13 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 		return this.selectionComposite.getSelectedResource();
 	}
 
+	public long getDiffOptions() {
+		return this.options;
+	}
+	
 	protected void saveChangesImpl() {
 		this.selectionComposite.saveChanges();
+    	this.options |= this.ignoreAncestryButton.getSelection() ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 	}
 	
 	protected void cancelChangesImpl() {

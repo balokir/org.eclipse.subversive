@@ -39,7 +39,7 @@ public class CompareAction extends AbstractRepositoryTeamAction {
         panel.setFilterCurrent(true);
         DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
         if (dlg.open() == 0) {
-        	this.doCompare(first, panel.getSelectedResource());
+        	this.doCompare(first, panel.getSelectedResource(), panel.getDiffOptions());
         }
     }
 
@@ -52,7 +52,7 @@ public class CompareAction extends AbstractRepositoryTeamAction {
         return isCompareFoldersAllowed || resources[0] instanceof IRepositoryFile;
     }
     
-    protected void doCompare(IRepositoryResource first, IRepositoryResource second) {
+    protected void doCompare(IRepositoryResource first, IRepositoryResource second, long options) {
     	try {
     		if (second.getRevision() > first.getRevision()) {
     			IRepositoryResource tmp = second;
@@ -63,7 +63,7 @@ public class CompareAction extends AbstractRepositoryTeamAction {
     	catch (SVNConnectorException ex) {
     		UILoggedOperation.reportError("Compare", ex);
     	}
-        this.runScheduled(new CompareRepositoryResourcesOperation(second, first));
+        this.runScheduled(new CompareRepositoryResourcesOperation(second, first, false, options));
     }
 
 }
