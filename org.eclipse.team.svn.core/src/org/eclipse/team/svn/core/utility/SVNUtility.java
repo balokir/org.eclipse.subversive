@@ -73,6 +73,7 @@ import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -679,15 +680,50 @@ public final class SVNUtility {
 	}
 	
 	public static void reorder(SVNDiffStatus []statuses, final boolean parent2Child) {
-		Arrays.sort(statuses, new Comparator<SVNDiffStatus>() {
+		/*
+		 * Resources are reported in reverse for tree deletions and in averse for tree additions. Next, when we 
+		 * virtually have a replacement of trees, in actuality we would get two sequences reported: one for deletion and 
+		 * one for addition. The reason, I suspect is that there could be a node kind change with file replaced with folder and otherwise.
+		 * So, we should ensure we take into account the actual action type when reordering the nodes and deletions should go first 
+		 * in case they're followed by additions of the nodes with the same paths.
+		 */
+		SVNDiffStatus []tStatuses = new SVNDiffStatus [statuses.length];
+		System.arraycopy(statuses, 0, tStatuses, 0, statuses.length);
+		Arrays.sort(tStatuses, new Comparator<SVNDiffStatus>() {
 			public int compare(SVNDiffStatus d1, SVNDiffStatus d2) {
-				return parent2Child ? d1.pathPrev.compareTo(d2.pathPrev) : d2.pathPrev.compareTo(d1.pathPrev);
+				int retVal = parent2Child ? d1.pathPrev.compareTo(d2.pathPrev) : d2.pathPrev.compareTo(d1.pathPrev);
+				if (retVal == 0 && d1.textStatus != d2.textStatus) {
+					if (d1.textStatus == SVNEntryStatus.Kind.DELETED) {
+						return parent2Child ? -1 : 1;
+					}
+					if (d2.textStatus == SVNEntryStatus.Kind.DELETED) {
+						return parent2Child ? 1 : -1;
+					}
+				}
+				return retVal;
 			}
 			
 			public boolean equals(Object obj) {
 				return false;
 			}
 		});
+		for (int i = 0, k = 0; i < tStatuses.length; i++) {
+			// skip if the node reference is already copied by [deletions shift]
+			if (tStatuses[i] != null) {
+				statuses[k] = tStatuses[i];
+				k++;
+				if (tStatuses[i].textStatus == SVNEntryStatus.Kind.DELETED) {
+					for (int m = i + 1; m < tStatuses.length; m++) {
+						// shift prefixed deletions next to their prefix
+						if (tStatuses[m] != null && tStatuses[m].textStatus == SVNEntryStatus.Kind.DELETED && tStatuses[m].pathPrev.indexOf(tStatuses[i].pathPrev) == 0) {
+							statuses[k] = tStatuses[m];
+							k++;
+							tStatuses[m] = null;
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public static void reorder(SVNChangeStatus []statuses, final boolean parent2Child) {
