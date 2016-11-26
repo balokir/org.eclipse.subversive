@@ -7,14 +7,18 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Florent Angebault - Exclude from compare view files with identical content in case they're reported
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.operation;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
@@ -258,6 +262,8 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 				final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
 				// does not work with BASE working copy revision (not implemented yet exception)
 				// NOTE SVN Kit 1.8.14 loses some statuses [when the folder was removed then added, for example]
+				final FakeOutputStream diffPathCollector = new FakeOutputStream();
+				proxy.diffTwo(refPrev, refNext, rootPath.toFile().getAbsolutePath(), diffPathCollector, SVNDepth.INFINITY, CompareResourcesInternalOperation.this.options, null, ISVNConnector.DiffOptions.NONE, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
 				proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, CompareResourcesInternalOperation.this.options, null, new ISVNDiffStatusCallback() {
 					public void next(SVNDiffStatus status) {
 						IPath tPath = new Path(status.pathPrev);
@@ -275,8 +281,10 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 								(status.textStatus == SVNDiffStatus.Kind.DELETED ? SVNDiffStatus.Kind.ADDED : status.textStatus);
 							// TODO could there be a case when relative paths are reported? If so - looks like a bug to me...
 							String pathPrev = status.pathNext.startsWith(refNext.path) ? status.pathNext.substring(refNext.path.length()) : status.pathNext;
-							pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + pathPrev;
-							remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, change, status.propStatus));
+							if (status.nodeKind == SVNEntry.Kind.DIR || diffPathCollector.contains(pathPrev)) {
+								pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + pathPrev;
+								remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, change, status.propStatus));
+							}
 						}
 					}
 				}, new SVNProgressMonitor(CompareResourcesInternalOperation.this, monitor, null, false));
@@ -309,4 +317,51 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		}
 		return false;
 	}
+	
+	/**
+	 * Workaround.
+	 * 
+	 * This {@link OutputStream} parses the output of "svn diff" and only catches paths from
+	 * the lines beginning with "Index: ".
+	 * 
+	 * @author fangebault
+	 */
+	private static class FakeOutputStream extends OutputStream {
+
+		boolean lineStart = true;
+		boolean indexLine = false;
+		Set<String> paths = new LinkedHashSet<String>();
+		StringBuilder w = new StringBuilder();
+		
+		@Override
+		public void write(int b) throws IOException {
+			char c = (char) b;
+			if (c == 'I' && this.lineStart) {
+				this.indexLine = true;
+				this.w.append(c);
+			} else if (c == '\n' || c == '\r') {
+				if (this.indexLine) {
+					this.paths.add("/" + this.w.toString().substring("Index: ".length()));
+					this.w.replace(0, this.w.length(), "");
+				}
+				this.lineStart = true;
+				this.indexLine = false;
+			} else {
+				this.lineStart = false;
+				if (this.indexLine) {
+					this.w.append(c);
+				}
+			}
+		}
+		
+		private Set<String> getPaths() {
+			return this.paths;
+		}
+		
+		public boolean contains(String path) {
+			return this.getPaths().contains(path);
+		}
+ 	
+	}
+	
 }
