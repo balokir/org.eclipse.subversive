@@ -70,8 +70,9 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 	protected boolean showInDialog;
 	protected boolean forceReuse;
 	protected String forceId;
-		
-	public CompareResourcesInternalOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog) {
+	protected long options;
+	
+	public CompareResourcesInternalOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog, long options) {
 		super("Operation_CompareLocal", SVNUIMessages.class); //$NON-NLS-1$
 		this.local = local;
 		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
@@ -79,6 +80,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		this.remote = remote;
 		this.showInDialog = showInDialog;
 		this.forceReuse = forceReuse;
+		this.options = options;
 	}
 
 	public void setForceId(String forceId) {
@@ -194,7 +196,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 						final SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(resource);
 						final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
 						final String prevRootURL = resource.getUrl();
-						proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, null, new ISVNDiffStatusCallback() {
+						proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, CompareResourcesInternalOperation.this.options, null, new ISVNDiffStatusCallback() {
 							public void next(SVNDiffStatus status) {
 								IPath tPath = new Path(status.pathPrev.substring(prevRootURL.length()));
 								IResource resource = compareRoot.findMember(tPath);
@@ -255,7 +257,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 				SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), null, SVNRevision.WORKING);
 				final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
 				// does not work with BASE working copy revision (not implemented yet exception)
-				proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, ISVNConnector.Options.NONE, null, new ISVNDiffStatusCallback() {
+				proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, CompareResourcesInternalOperation.this.options, null, new ISVNDiffStatusCallback() {
 					public void next(SVNDiffStatus status) {
 						IPath tPath = new Path(status.pathPrev);
 						tPath = tPath.removeFirstSegments(rootPath.segmentCount());

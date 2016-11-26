@@ -51,7 +51,7 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 		if (dialog.open() == 0) {
 			remote = panel.getSelectedResource();
 			String diffFile = panel.getDiffFile();
-			CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
+			CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote, false, false, panel.getDiffOptions());
 			mainOp.setDiffFile(diffFile);
 			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);

@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.RunExternalRepositoryCompareOperation;
@@ -30,13 +31,13 @@ public class CompareRepositoryResourcesOperation extends CompositeOperation {
 
 	protected CompareRepositoryResourcesInernalOperation internalCompare;
 	
-	public CompareRepositoryResourcesOperation(IRepositoryResourceProvider provider, boolean forceReuse) {
+	public CompareRepositoryResourcesOperation(IRepositoryResourceProvider provider, boolean forceReuse, long options) {
 		super("Operation_CompareRepository", SVNUIMessages.class); //$NON-NLS-1$		
 		
 		final RunExternalRepositoryCompareOperation externalCompare = new RunExternalRepositoryCompareOperation(provider, SVNTeamDiffViewerPage.loadDiffViewerSettings());
 		this.add(externalCompare);
 		
-		this.internalCompare = new CompareRepositoryResourcesInernalOperation(provider, forceReuse) {
+		this.internalCompare = new CompareRepositoryResourcesInernalOperation(provider, forceReuse, options) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (!externalCompare.isExecuted()) {
 					super.runImpl(monitor);	
@@ -46,16 +47,16 @@ public class CompareRepositoryResourcesOperation extends CompositeOperation {
 		this.add(this.internalCompare, new IActionOperation[]{externalCompare});
 	}	
 	
-	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse) {
-		this(new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(new IRepositoryResource[] {prev, next}), forceReuse);
+	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse, long options) {
+		this(new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(new IRepositoryResource[] {prev, next}), forceReuse, options);
 	}
 	
 	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next) {
-		this(prev, next, false);
+		this(prev, next, false, ISVNConnector.Options.NONE);
 	}
 	
 	public CompareRepositoryResourcesOperation(IRepositoryResourceProvider provider) {
-		this(provider, false);
+		this(provider, false, ISVNConnector.Options.NONE);
 	}
 
 	public void setForceId(String forceId) {

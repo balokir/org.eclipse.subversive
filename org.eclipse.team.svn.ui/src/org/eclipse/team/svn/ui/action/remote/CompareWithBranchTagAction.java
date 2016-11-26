@@ -48,7 +48,7 @@ public class CompareWithBranchTagAction extends CompareAction {
     		CompareBranchTagPanel panel = new CompareBranchTagPanel(first, this.type, branchTagResources);
     		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
     		if (dlg.open() == 0 && panel.getResourceToCompareWith() != null){
-    			this.doCompare(first, panel.getResourceToCompareWith());
+    			this.doCompare(first, panel.getResourceToCompareWith(), panel.getDiffOptions());
     		}	
         }
 	}
