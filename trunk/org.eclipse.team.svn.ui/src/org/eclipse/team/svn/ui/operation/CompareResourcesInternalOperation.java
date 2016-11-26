@@ -257,6 +257,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 				SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), null, SVNRevision.WORKING);
 				final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
 				// does not work with BASE working copy revision (not implemented yet exception)
+				// NOTE SVN Kit 1.8.14 loses some statuses [when the folder was removed then added, for example]
 				proxy.diffStatusTwo(refPrev, refNext, SVNDepth.INFINITY, CompareResourcesInternalOperation.this.options, null, new ISVNDiffStatusCallback() {
 					public void next(SVNDiffStatus status) {
 						IPath tPath = new Path(status.pathPrev);

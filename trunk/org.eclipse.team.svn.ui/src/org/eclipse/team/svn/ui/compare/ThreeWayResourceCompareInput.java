@@ -15,10 +15,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -239,34 +237,26 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput implement
 	
 	public void initialize(IProgressMonitor monitor) throws Exception {
 		Map<String, SVNDiffStatus> localChanges = new HashMap<String, SVNDiffStatus>();
-		Map<String, SVNDiffStatus> remoteChanges = new HashMap<String, SVNDiffStatus>();
-		HashSet<String> allChangesSet = new HashSet<String>();
+		SVNDiffStatus []rChanges = this.remoteChanges.toArray(new SVNDiffStatus[this.remoteChanges.size()]);
+		SVNUtility.reorder(rChanges, true);
 		for (Iterator<SVNDiffStatus> it = this.localChanges.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			SVNDiffStatus status = it.next();
-			allChangesSet.add(status.pathPrev);
 			localChanges.put(status.pathPrev, status);
 		}
-		for (Iterator<SVNDiffStatus> it = this.remoteChanges.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
-			SVNDiffStatus status = it.next();
-			String localPath = this.getLocalPath(SVNUtility.decodeURL(status.pathPrev), this.rootAncestor);
-			allChangesSet.add(localPath);
-			remoteChanges.put(localPath, status);
-		}
-		String []allChanges = allChangesSet.toArray(new String[allChangesSet.size()]);
-		Arrays.sort(allChanges);
-		HashMap path2node = new HashMap();
 		
+		HashMap path2node = new HashMap();
 		String message = SVNUIMessages.ResourceCompareInput_CheckingDelta;
-		for (int i = 0; i < allChanges.length && !monitor.isCanceled(); i++) {
-			monitor.subTask(BaseMessages.format(message, new Object[] {allChanges[i]}));
-			this.makeBranch(allChanges[i], localChanges.get(allChanges[i]), remoteChanges.get(allChanges[i]), path2node, monitor);
-			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
+		for (int i = 0; i < rChanges.length && !monitor.isCanceled(); i++) {
+			SVNDiffStatus status = rChanges[i];
+			String localPath = this.getLocalPath(SVNUtility.decodeURL(status.pathPrev), this.rootAncestor);
+			monitor.subTask(BaseMessages.format(message, new Object[] {localPath}));
+			this.makeBranch(localPath, localChanges.get(localPath), status, path2node, monitor);
+			ProgressMonitorUtility.progress(monitor, i, rChanges.length);
 		}
 		
 		this.findRootNode(path2node, this.rootLeft, monitor);
 		
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		
 		super.initialize(monitor);
 	}
@@ -277,7 +267,9 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput implement
 		SVNEntry.Kind nodeKind = localKind == SVNEntry.Kind.NONE && stRemote != null ? this.getNodeKind(stRemote, false) : localKind;
 		ILocalResource local = this.getLocalResource(localPath, nodeKind == SVNEntry.Kind.FILE);
 		// 2) skip all ignored resources that does not have real remote variants
-		if ((stRemote != null || !IStateFilter.SF_IGNORED.accept(local)) && !path2node.containsKey(SVNUtility.createPathForSVNUrl(SVNRemoteStorage.instance().asRepositoryResource(local.getResource()).getUrl()))) {
+		if ((stRemote != null || !IStateFilter.SF_IGNORED.accept(local))) {
+			// the check "if present in path2node" was removed because it is actually an acceptable situation (in case when file was deleted and the folder with the same name was created in its place, for example)
+			//	so, the node could be added twice with different states
 			if (local.isCopied() && IStateFilter.SF_ADDED.accept(local) && !local.getResource().equals(this.local.getResource())) {
 				// 3) if node is moved and is not a root node traverse all children
 				FileUtility.checkForResourcesPresenceRecursive(new IResource[] {local.getResource()}, new IStateFilter.AbstractStateFilter() {
