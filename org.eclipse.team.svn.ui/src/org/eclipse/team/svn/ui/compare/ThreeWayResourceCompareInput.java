@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -237,11 +238,13 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput implement
 	
 	public void initialize(IProgressMonitor monitor) throws Exception {
 		Map<String, SVNDiffStatus> localChanges = new HashMap<String, SVNDiffStatus>();
+		HashSet<String> localOnly = new HashSet<String>();
 		SVNDiffStatus []rChanges = this.remoteChanges.toArray(new SVNDiffStatus[this.remoteChanges.size()]);
 		SVNUtility.reorder(rChanges, true);
 		for (Iterator<SVNDiffStatus> it = this.localChanges.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			SVNDiffStatus status = it.next();
 			localChanges.put(status.pathPrev, status);
+			localOnly.add(status.pathPrev);
 		}
 		
 		HashMap path2node = new HashMap();
@@ -249,9 +252,13 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput implement
 		for (int i = 0; i < rChanges.length && !monitor.isCanceled(); i++) {
 			SVNDiffStatus status = rChanges[i];
 			String localPath = this.getLocalPath(SVNUtility.decodeURL(status.pathPrev), this.rootAncestor);
+			localOnly.remove(localPath);
 			monitor.subTask(BaseMessages.format(message, new Object[] {localPath}));
 			this.makeBranch(localPath, localChanges.get(localPath), status, path2node, monitor);
 			ProgressMonitorUtility.progress(monitor, i, rChanges.length);
+		}
+		for (String localPath : localOnly) {
+			this.makeBranch(localPath, localChanges.get(localPath), null, path2node, monitor);
 		}
 		
 		this.findRootNode(path2node, this.rootLeft, monitor);
