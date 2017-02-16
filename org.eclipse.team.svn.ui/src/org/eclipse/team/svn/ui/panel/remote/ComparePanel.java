@@ -22,6 +22,7 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DiffFormatComposite;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionPanel;
+import org.eclipse.team.svn.ui.utility.InputHistory;
 
 /**
  * Compare operation repository resource selection panel
@@ -33,6 +34,7 @@ public class ComparePanel extends AbstractRepositoryResourceSelectionPanel {
 	protected DiffFormatComposite diffFormatComposite;
 	protected long options;
 	protected Button ignoreAncestryButton;
+	protected InputHistory ignoreHistory;
 	
     public ComparePanel(IRepositoryResource baseResource) {    	
     	super(baseResource, SVNRevision.INVALID_REVISION_NUMBER, SVNUIMessages.ComparePanel_Title, SVNUIMessages.ComparePanel_Description, "compareUrl", SVNUIMessages.ComparePanel_Selection_Title, SVNUIMessages.ComparePanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_BASE); //$NON-NLS-1$
@@ -59,7 +61,8 @@ public class ComparePanel extends AbstractRepositoryResourceSelectionPanel {
         this.ignoreAncestryButton = new Button(parent, SWT.CHECK);
         this.ignoreAncestryButton.setLayoutData(data);
         this.ignoreAncestryButton.setText(SVNUIMessages.MergePanel_Button_IgnoreAncestry);
-        this.ignoreAncestryButton.setSelection((this.options & ISVNConnector.Options.IGNORE_ANCESTRY) != 0);
+        this.ignoreHistory = new InputHistory("ignoreAncestry", InputHistory.TYPE_BOOLEAN, (this.options & ISVNConnector.Options.IGNORE_ANCESTRY) != 0); //$NON-NLS-1$
+        this.ignoreAncestryButton.setSelection((Boolean)this.ignoreHistory.getValue());
 		
 		this.diffFormatComposite = new DiffFormatComposite(parent, this);			
 	}
@@ -75,6 +78,7 @@ public class ComparePanel extends AbstractRepositoryResourceSelectionPanel {
 	protected void saveChangesImpl() {
 		super.saveChangesImpl();
     	this.options |= this.ignoreAncestryButton.getSelection() ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
+    	this.ignoreHistory.setValue(this.ignoreAncestryButton.getSelection());
 	}
 	
 }
