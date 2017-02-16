@@ -8,6 +8,17 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.4.I20170216-1700 [16 February 2017]
+
+Features:
+ * Remember last choice for the "ignore ancestry option" in compare dialogs (bug 512313)
+
+Fixes:
+ * Reusing compare editor does not refresh changes (bug 495202)
+ * New files and folders aren't displayed in compare with URL/Revision/Branch/Tag when 1.8 compatible connector is used (bug 492534)
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.3.I20161129-1700 [29 November 2016]
 
 Fixes:
