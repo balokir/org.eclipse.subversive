@@ -27,12 +27,11 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
  * 
  * @author Alexander Gurov
  */
-public class UserInputHistory {
+public class UserInputHistory extends InputHistory {
     
     protected static final String HISTORY_NAME_BASE = "history."; //$NON-NLS-1$
     protected final static String ENCODING = "UTF-8";
     
-    protected String name;
     protected int depth;
     protected List history;
 
@@ -41,7 +40,7 @@ public class UserInputHistory {
     }
 
     public UserInputHistory(String name, int depth) {
-        this.name = name;
+    	super(name, InputHistory.TYPE_STRING, null);
         this.depth = depth;
         
         this.loadHistoryLines();
@@ -54,10 +53,6 @@ public class UserInputHistory {
         	}
         	this.saveHistoryLines();
         }
-    }
-    
-    public String getName() {
-        return this.name;
     }
     
     public int getDepth() {
@@ -82,12 +77,12 @@ public class UserInputHistory {
     
     public void clear() {
         this.history.clear();
-        this.saveHistoryLines();
+        super.clear();
     }
 
     protected void loadHistoryLines() {
         this.history = new ArrayList();
-        String historyData = SVNTeamUIPlugin.instance().getPreferenceStore().getString(UserInputHistory.HISTORY_NAME_BASE + this.name);
+        String historyData = (String)this.value;
         if (historyData != null && historyData.length() > 0) {
             String []historyArray = historyData.split(";"); //$NON-NLS-1$
             for (int i = 0; i < historyArray.length; i++) {
@@ -112,7 +107,7 @@ public class UserInputHistory {
 			}
             result += result.length() == 0 ? str : (";" + str); //$NON-NLS-1$
         }
-        SVNTeamUIPlugin.instance().getPreferenceStore().setValue(UserInputHistory.HISTORY_NAME_BASE + this.name, result);
+        this.setValue(result);
     }
     
 }
