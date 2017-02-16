@@ -108,11 +108,8 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 			IEditorPart part = editorRefs[i].getEditor(false);
 			if (part instanceof IReusableEditor && !part.isDirty() && compare.getClass().equals(part.getEditorInput().getClass())) {
 				ResourceCompareInput existing = (ResourceCompareInput)part.getEditorInput();
-				if (compare.equals(existing)) {
-					page.activate(part);
-					return;
-				}
-				else if (forceReuse || existing.getForceId() != null && existing.getForceId().equals(compare.getForceId())) {
+				if (forceReuse || compare.equals(existing) || 
+					existing.getForceId() != null && existing.getForceId().equals(compare.getForceId())) {
 					CompareUI.reuseCompareEditor(compare, (IReusableEditor)part);
 					page.activate(part);
 					return;
