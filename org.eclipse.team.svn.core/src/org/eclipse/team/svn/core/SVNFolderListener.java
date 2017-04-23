@@ -69,7 +69,8 @@ public class SVNFolderListener implements IResourceChangeListener {
 							}
 							
 							if (resource.getType() == IResource.PROJECT && delta.getKind() == IResourceDelta.ADDED && delta.getFlags() == IResourceDelta.OPEN &&
-								SVNTeamPlugin.instance().getOptionProvider().is(IOptionProvider.AUTOMATIC_PROJECT_SHARE_ENABLED) && ((IProject)resource).isOpen()) {
+								((IProject)resource).isOpen() && SVNUtility.hasSVNFolderInOrAbove(resource) && // prevent UI plug-in activation when it is unnecessary
+								SVNTeamPlugin.instance().getOptionProvider().is(IOptionProvider.AUTOMATIC_PROJECT_SHARE_ENABLED)) {
 								
 								/*
 								 * If project is already connected, then don't reconnect it again. 
