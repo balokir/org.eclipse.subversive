@@ -132,19 +132,21 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		workspace.addResourceChangeListener(SVNTeamUIPlugin.this.pcListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 		
 		IPreferenceStore store = this.getPreferenceStore();
-		if (store.getBoolean(SVNTeamPreferences.FIRST_STARTUP) || this.isConnectorsRequired()) {
+		if (store.getBoolean(SVNTeamPreferences.FIRST_STARTUP)) {
 			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
 			this.savePreferences();
-			// If we enable the decorator in the XML, the SVN plugin will be loaded
+			// If we enable the decorator in the XML, the SVN plug-in will be loaded
 			// on startup even if the user never uses SVN. Therefore, we enable the 
-			// decorator on the first start of the SVN plugin since this indicates that 
+			// decorator on the first start of the SVN plug-in since this indicates that 
 			// the user has done something with SVN. Subsequent startups will load
-			// the SVN plugin unless the user disables the decorator. In this case,
+			// the SVN plug-in unless the user disables the decorator. In this case,
 			// we will not re-enable since we only enable automatically on the first startup.
 			PlatformUI.getWorkbench().getDecoratorManager().setEnabled(SVNLightweightDecorator.ID, true);
-			
-			//run discovery connectors
-			this.discoveryConnectors();	
+		}
+		
+		if (this.connectorsAreRequired()) {
+			//run connectors discovery feature
+			this.discoveryConnectors();
 		}
 		
 		this.timer.scheduleAtFixedRate(new TimerTask() {
@@ -154,16 +156,15 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		}, 1000, 1000);
 	}
 	
-	protected boolean isConnectorsRequired() {
-		boolean svnProjectFound = false;
-		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			svnProjectFound |= projects[i].findMember(SVNUtility.getSVNFolderName()) != null || FileUtility.isConnected(projects[i]);
-			if (svnProjectFound) {
-				break;
+	protected boolean connectorsAreRequired() {
+		if (!CoreExtensionsManager.isExtensionsRegistered(CoreExtensionsManager.SVN_CONNECTOR)) {
+			for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+				if (SVNUtility.hasSVNFolderInOrAbove(project) || FileUtility.isConnected(project)) {
+					return true;
+				}
 			}
 		}
-		return svnProjectFound && !CoreExtensionsManager.isExtensionsRegistered(CoreExtensionsManager.SVN_CONNECTOR);
+		return false;
 	}
 	
 	public void discoveryConnectors() {

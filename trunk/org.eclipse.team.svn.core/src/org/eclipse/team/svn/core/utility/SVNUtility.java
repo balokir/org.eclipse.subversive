@@ -579,12 +579,31 @@ public final class SVNUtility {
 		}
 	}
 	
-	public static synchronized String getSVNFolderName() {
+	public static String getSVNFolderName() {
 		if (SVNUtility.svnFolderName == null) {
 			String name = FileUtility.getEnvironmentVariables().get("SVN_ASP_DOT_NET_HACK") != null ? "_svn" : ".svn"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			SVNUtility.svnFolderName = System.getProperty("javasvn.admindir", name); //$NON-NLS-1$
 		}
 		return SVNUtility.svnFolderName;
+	}
+	
+	public static boolean hasSVNFolderInOrAbove(IResource resource) {
+		IPath location = FileUtility.getResourcePath(resource);
+		return location != null && SVNUtility.hasSVNFolderInOrAbove(location.toFile());
+	}
+	
+	public static boolean hasSVNFolderInOrAbove(File node) {
+		String svnFolderName = SVNUtility.getSVNFolderName();
+		node = node.isFile() ? node.getParentFile() : node;
+		
+		do {
+			if (new File(node, svnFolderName).exists()) {
+				return true;
+			}
+		}
+		while ((node = node.getParentFile()) != null);
+		
+		return false;
 	}
 	
 	public static String getResourceParent(IRepositoryResource resource) {
