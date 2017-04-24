@@ -226,8 +226,19 @@ public final class FileUtility {
 		}
 	}
 	
+	public static String []normalizePaths(String []paths) {
+		for (int i = 0; i < paths.length; i++) {
+			paths[i] = FileUtility.normalizePath(paths[i]);
+		}
+		return paths;
+	}
+	
 	public static String normalizePath(String path) {
-		return FileUtility.isWindows() ? path.replace('/', '\\') : path.replace('\\', '/');
+		if (path == null) {
+			return path;
+		}
+		// if not URL and windows, then replace to back slashes
+		return FileUtility.isWindows() && path.indexOf("://") == -1 ? path.replace('/', '\\') : path.replace('\\', '/');
 	}
 	
 	public static boolean isWindows() {

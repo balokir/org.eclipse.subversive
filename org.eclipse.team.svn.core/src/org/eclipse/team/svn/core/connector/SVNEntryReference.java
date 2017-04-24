@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.core.connector;
 
+import org.eclipse.team.svn.core.utility.FileUtility;
+
 /**
  * Copy source information container
  * 
@@ -50,7 +52,7 @@ public class SVNEntryReference {
 	 *            the source peg revision
 	 */
 	public SVNEntryReference(String path, SVNRevision pegRevision) {
-		this.path = path;
+		this.path = FileUtility.normalizePath(path);
 		this.pegRevision = pegRevision;
 	}
 
