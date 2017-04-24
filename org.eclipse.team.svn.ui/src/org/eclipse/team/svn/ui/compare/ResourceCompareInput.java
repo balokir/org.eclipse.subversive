@@ -120,11 +120,14 @@ public abstract class ResourceCompareInput extends SaveableCompareEditorInput {
 	}
 	
 	protected void fireInputChange() {
-		if (this.root != null) {
-			this.root.fireChange();
-		}
+// SavableCompareEditorInput:166 for whatever reason closes the editor on change notification
+//	509192: Saving changes in compare editor closes the editor (structural compare)
+//	https://bugs.eclipse.org/bugs/show_bug.cgi?id=509192	
+//		if (this.root != null) {
+//			this.root.fireChange();
+//		}
 	}
-
+	
 	public ResourceCompareInput(CompareConfiguration configuration) {
 		super(configuration, UIMonitorUtility.getActivePage());
 	}
