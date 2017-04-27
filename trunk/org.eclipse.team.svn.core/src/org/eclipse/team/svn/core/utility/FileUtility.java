@@ -226,11 +226,18 @@ public final class FileUtility {
 		}
 	}
 	
-	public static String []normalizePaths(String []paths) {
+	public static String []normalizePathsJavaHL(String []paths) {
 		for (int i = 0; i < paths.length; i++) {
 			paths[i] = FileUtility.normalizePath(paths[i]);
 		}
 		return paths;
+	}
+	
+	public static String normalizePathJavaHL(String path) {
+		if (path == null) {
+			return path;
+		}
+		return path.replace('\\', '/');
 	}
 	
 	public static String normalizePath(String path) {
