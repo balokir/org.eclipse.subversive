@@ -8,6 +8,15 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 4.0.6.I20181122-1700 [22 November 2018]
+
+Fixes:
+ * 0x00400103: Compare with Revision' operation finished with error: Path is not an immediate child of the specified directory (bug 509424)
+ * Saving changes in compare editor closes the editor (structural compare) (bug 509192)
+ * Add/Open Project activates SVN Discovery Dialog (bug 514587)
+ 
+--------------------------------------------------------------------------------
+
 Version 4.0.4.I20170216-1700 [16 February 2017]
 
 Features:
