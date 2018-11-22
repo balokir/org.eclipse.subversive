@@ -258,6 +258,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 			public void run(IProgressMonitor monitor) throws Exception {
 				final IPath rootPath = FileUtility.getResourcePath(compareRoot);
 
+				final boolean isFile = CompareResourcesInternalOperation.this.local.getResource().getType() == IResource.FILE;
 				SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(CompareResourcesInternalOperation.this.local.getResource()), null, SVNRevision.WORKING);
 				final SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesInternalOperation.this.remote);
 				// does not work with BASE working copy revision (not implemented yet exception)
@@ -280,9 +281,13 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 								SVNDiffStatus.Kind.DELETED : 
 								(status.textStatus == SVNDiffStatus.Kind.DELETED ? SVNDiffStatus.Kind.ADDED : status.textStatus);
 							// TODO could there be a case when relative paths are reported? If so - looks like a bug to me...
-							String pathPrev = status.pathNext.startsWith(refNext.path) ? status.pathNext.substring(refNext.path.length()) : status.pathNext;
-							if (status.nodeKind == SVNEntry.Kind.DIR || diffPathCollector.contains(pathPrev)) {
-								pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + pathPrev;
+							String diffPathEntry = 
+								status.pathNext.startsWith(refNext.path) && !status.pathNext.equals(refNext.path) ? 
+								status.pathNext.substring(refNext.path.length()) : 
+								("/" + resource.getName()); // isFile or wrong path issue?
+							if (status.nodeKind == SVNEntry.Kind.DIR || diffPathCollector.contains(diffPathEntry)) {
+								String relativePart = isFile ? "" : diffPathEntry;
+								String pathPrev = CompareResourcesInternalOperation.this.ancestor.getUrl() + relativePart;
 								remoteChanges.add(new SVNDiffStatus(pathPrev, status.pathNext, status.nodeKind, change, status.propStatus));
 							}
 						}
