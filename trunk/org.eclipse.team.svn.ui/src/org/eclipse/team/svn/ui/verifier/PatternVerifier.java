@@ -12,8 +12,8 @@
 package org.eclipse.team.svn.ui.verifier;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.internal.core.StringMatcher;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 
