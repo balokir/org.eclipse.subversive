@@ -11,12 +11,12 @@
 
 package org.eclipse.team.svn.tests.core.file;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -25,31 +25,34 @@ import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
+import org.junit.Test;
 
 /**
  * Abstract file operation test
  * 
  * @author Sergiy Logvin
  */
-public abstract class AbstractOperationTestCase extends TestCase {
+public abstract class AbstractOperationTestCase {
+
+	@Test
 	public void testOperation() {
 		this.assertOperation(this.getOperation());
 	}
-	
+
 	protected abstract IActionOperation getOperation();
-	
+
 	protected File getFirstFolder() {
 		return TestWorkflow.FIRST_FOLDER;
 	}
-	
+
 	protected File getSecondFolder() {
 		return TestWorkflow.SECOND_FOLDER;
 	}
-	
+
 	protected File[] getBothFolders() {
-		return new File[] {this.getFirstFolder(), this.getSecondFolder()};
+		return new File[] { this.getFirstFolder(), this.getSecondFolder() };
 	}
-	
+
 	protected File[] getListFiles() {
 		return TestWorkflow.FIRST_FOLDER.getParentFile().listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
@@ -57,13 +60,13 @@ public abstract class AbstractOperationTestCase extends TestCase {
 			}
 		});
 	}
-	
+
 	protected File[] getListFilesRecursive() {
 		List<File> allFiles = new ArrayList<File>();
 		this.getFilesRecursiveImpl(this.getListFiles(), allFiles);
 		return allFiles.toArray(new File[allFiles.size()]);
 	}
-	
+
 	protected void getFilesRecursiveImpl(File[] roots, List<File> allFiles) {
 		for (int i = 0; i < roots.length; i++) {
 			allFiles.add(roots[i]);
@@ -76,20 +79,19 @@ public abstract class AbstractOperationTestCase extends TestCase {
 			}
 		}
 	}
-	
+
 	protected IRepositoryLocation getLocation() {
 		return SVNFileStorage.instance().getRepositoryLocations()[0];
 	}
-	
+
 	protected void assertOperation(IActionOperation op) {
 		IStatus operationStatus = op.run(new NullProgressMonitor()).getStatus();
 		if (operationStatus.isOK()) {
 			assertTrue(op.getOperationName(), true);
-		}
-		else {
+		} else {
 			String trace = ReportPartsFactory.getStackTrace(operationStatus);
 			assertTrue(operationStatus.getMessage() + trace, false);
-		}		
+		}
 	}
 
 }

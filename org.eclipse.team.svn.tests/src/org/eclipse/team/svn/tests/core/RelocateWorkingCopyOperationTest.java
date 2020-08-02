@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.tests.core;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -21,44 +24,46 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
-
 /**
  * RelocateWorkingCopyOperation test
  *
  * @author Sergiy Logvin
  */
 public abstract class RelocateWorkingCopyOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() { 
-        return new AbstractLockingTestOperation("RelocateWorkingCopyOperation Test") {
-            protected void runImpl(IProgressMonitor monitor) throws Exception { 
-                IRepositoryLocation newLocation = RelocateWorkingCopyOperationTest.this.getLocation();
-                String old = newLocation.getUrl();
-                newLocation.setUrl("http://testurl");
-                
-                CompositeOperation op = new CompositeOperation("Relocate Test", SVNMessages.class);
-                FindRelatedProjectsOperation scannerOp = new FindRelatedProjectsOperation(newLocation);
-                op.add(scannerOp);
-                op.add(new RelocateWorkingCopyOperation(scannerOp, newLocation), new IActionOperation[] {scannerOp});
-                op.run(monitor);
-                IRepositoryResource remote = null;
-                try {
-                	remote = SVNRemoteStorage.instance().asRepositoryResource(RelocateWorkingCopyOperationTest.this.getFirstProject().getFolder("src"));
-                }
-                catch (IllegalArgumentException ex) {
-                	// do nothing
-                }
-                assertFalse("RelocateWorkingCopyOperation Test",  remote != null && remote.exists());
-                
-                newLocation.setUrl(old);
-                op = new CompositeOperation("Relocate Test", SVNMessages.class);
-                scannerOp = new FindRelatedProjectsOperation(newLocation);
-                op.add(scannerOp);
-                op.add(new RelocateWorkingCopyOperation(scannerOp, newLocation), new IActionOperation[] {scannerOp});
-                op.run(monitor);
-                remote = SVNRemoteStorage.instance().asRepositoryResource(RelocateWorkingCopyOperationTest.this.getFirstProject().getFolder("src"));
-                assertTrue("RelocateWorkingCopyOperation Test",  remote != null && remote.exists());
-            };
-        };
-    }
-    
+	@Override
+	protected IActionOperation getOperation() {
+		return new AbstractLockingTestOperation("RelocateWorkingCopyOperation Test") {
+			@Override
+			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				IRepositoryLocation newLocation = RelocateWorkingCopyOperationTest.this.getLocation();
+				String old = newLocation.getUrl();
+				newLocation.setUrl("http://testurl");
+
+				CompositeOperation op = new CompositeOperation("Relocate Test", SVNMessages.class);
+				FindRelatedProjectsOperation scannerOp = new FindRelatedProjectsOperation(newLocation);
+				op.add(scannerOp);
+				op.add(new RelocateWorkingCopyOperation(scannerOp, newLocation), new IActionOperation[] { scannerOp });
+				op.run(monitor);
+				IRepositoryResource remote = null;
+				try {
+					remote = SVNRemoteStorage.instance().asRepositoryResource(
+							RelocateWorkingCopyOperationTest.this.getFirstProject().getFolder("src"));
+				} catch (IllegalArgumentException ex) {
+					// do nothing
+				}
+				assertFalse("RelocateWorkingCopyOperation Test", remote != null && remote.exists());
+
+				newLocation.setUrl(old);
+				op = new CompositeOperation("Relocate Test", SVNMessages.class);
+				scannerOp = new FindRelatedProjectsOperation(newLocation);
+				op.add(scannerOp);
+				op.add(new RelocateWorkingCopyOperation(scannerOp, newLocation), new IActionOperation[] { scannerOp });
+				op.run(monitor);
+				remote = SVNRemoteStorage.instance()
+						.asRepositoryResource(RelocateWorkingCopyOperationTest.this.getFirstProject().getFolder("src"));
+				assertTrue("RelocateWorkingCopyOperation Test", remote != null && remote.exists());
+			};
+		};
+	}
+
 }

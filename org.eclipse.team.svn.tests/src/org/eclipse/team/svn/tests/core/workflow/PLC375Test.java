@@ -27,40 +27,48 @@ import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
 import org.eclipse.team.svn.tests.core.TestWorkflow;
 
 /**
- * Reproducing steps, which are described in PLC-375 defect (Committing new folder 
- * with the name of deleted file finishes with error) 
+ * Reproducing steps, which are described in PLC-375 defect (Committing new
+ * folder with the name of deleted file finishes with error)
  *
  * @author Sergiy Logvin
  */
 public class PLC375Test extends TestWorkflow {
-    public void testPLC375() {
-        new ShareNewProjectOperationTest() {}.testOperation();
-        new AddOperationTest() {}.testOperation();
-        new CommitOperationTest() {}.testOperation();
-        new AbstractOperationTestCase() {
-            protected IActionOperation getOperation() {
-                return new AbstractLockingTestOperation("PLC375Test") {
-                    protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream (getSecondProject().getLocation().toString() + "/123");
-                            fos.write(12345);                             
-                        }                        
-                        finally {
-                            fos.close();
-                        }
-                        IResource []forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
-                        new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
-                        FileUtility.deleteRecursive(getSecondProject().getFile("123").getLocation().toFile());
-                        forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ANY_CHANGE);
-                        new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
-                        File dir = new File(getSecondProject().getLocation().toString() + "/123");
-                        dir.mkdir();
-                        forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
-                        new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
-                    }
-                };
-            }
-        }.testOperation();
-    }
+	// NIC test suite?
+	public void testPLC375() {
+		new ShareNewProjectOperationTest() {
+		}.testOperation();
+		new AddOperationTest() {
+		}.testOperation();
+		new CommitOperationTest() {
+		}.testOperation();
+		new AbstractOperationTestCase() {
+			@Override
+			protected IActionOperation getOperation() {
+				return new AbstractLockingTestOperation("PLC375Test") {
+					@Override
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						FileOutputStream fos = null;
+						try {
+							fos = new FileOutputStream(getSecondProject().getLocation().toString() + "/123");
+							fos.write(12345);
+						} finally {
+							fos.close();
+						}
+						IResource[] forCommit = FileUtility
+								.getResourcesRecursive(new IResource[] { getSecondProject() }, IStateFilter.SF_ADDED);
+						new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
+						FileUtility.deleteRecursive(getSecondProject().getFile("123").getLocation().toFile());
+						forCommit = FileUtility.getResourcesRecursive(new IResource[] { getSecondProject() },
+								IStateFilter.SF_ANY_CHANGE);
+						new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
+						File dir = new File(getSecondProject().getLocation().toString() + "/123");
+						dir.mkdir();
+						forCommit = FileUtility.getResourcesRecursive(new IResource[] { getSecondProject() },
+								IStateFilter.SF_ADDED);
+						new CommitOperation(forCommit, "test PLC375", false, false).run(monitor);
+					}
+				};
+			}
+		}.testOperation();
+	}
 }

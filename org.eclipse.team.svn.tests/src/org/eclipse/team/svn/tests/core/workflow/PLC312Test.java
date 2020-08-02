@@ -22,27 +22,37 @@ import org.eclipse.team.svn.tests.core.AddOperationTest;
 import org.eclipse.team.svn.tests.core.CommitOperationTest;
 import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
 import org.eclipse.team.svn.tests.core.TestWorkflow;
+import org.junit.Test;
+
 /**
- * Reproducing steps, which are described in PLC-312 defect (Exception in 
- * Add to SVN ignore operation) 
+ * Reproducing steps, which are described in PLC-312 defect (Exception in Add to
+ * SVN ignore operation)
  *
  * @author Sergiy Logvin
  */
 public class PLC312Test extends TestWorkflow {
-    public void testPLC312() {
-        new ShareNewProjectOperationTest() {}.testOperation();
-        new AddOperationTest() {}.testOperation();
-        new CommitOperationTest() {}.testOperation();
-        new AbstractOperationTestCase() {
-            protected IActionOperation getOperation() {
-                return new AbstractLockingTestOperation("PLC312Test") {
-                    protected void runImpl(IProgressMonitor monitor) throws Exception {                        
-                        FileUtility.copyAll(getFirstProject().getFolder("src").getLocation().toFile(), getSecondProject().getFolder("web").getLocation().toFile(), monitor);
-                        IResource[] ignoreResource = new IResource[] {getFirstProject().getFile("src/web/site.css")};
-                        new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "").run(monitor);
-                    };
-                };
-            }            
-        }.testOperation();
-    }
+	@Test
+	public void testPLC312() {
+		// NIC test suite?
+		new ShareNewProjectOperationTest() {
+		}.testOperation();
+		new AddOperationTest() {
+		}.testOperation();
+		new CommitOperationTest() {
+		}.testOperation();
+		new AbstractOperationTestCase() {
+			@Override
+			protected IActionOperation getOperation() {
+				return new AbstractLockingTestOperation("PLC312Test") {
+					@Override
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						FileUtility.copyAll(getFirstProject().getFolder("src").getLocation().toFile(),
+								getSecondProject().getFolder("web").getLocation().toFile(), monitor);
+						IResource[] ignoreResource = new IResource[] { getFirstProject().getFile("src/web/site.css") };
+						new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "").run(monitor);
+					};
+				};
+			}
+		}.testOperation();
+	}
 }

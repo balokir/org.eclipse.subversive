@@ -21,8 +21,10 @@ import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
  * @author Alexander Gurov
  */
 public abstract class ClearLocalStatusesOperationTest extends AbstractOperationTestCase {
+
+	@Override
 	protected IActionOperation getOperation() {
-		return new ClearLocalStatusesOperation(new IResource[] {this.getFirstProject(), this.getSecondProject()});
+		return new ClearLocalStatusesOperation(new IResource[] { this.getFirstProject(), this.getSecondProject() });
 	}
 
 }

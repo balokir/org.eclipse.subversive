@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.tests.core;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,26 +21,23 @@ import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
+import org.junit.Test;
 
 /**
  * Tests for the abstract class.
  * 
  * @author Alessandro Nistico
  */
-public abstract class AbstractOperationTest extends TestCase {
-	
-	public void allTests() {
-		testSetOperationName();
-		testGetExecutionState();
-		testRun();
-		testGetShortErrorMessage();
-	}
+public abstract class AbstractOperationTest {
 
+	@Test
 	public void testSetOperationName() {
 		AbstractActionOperation op = new AbstractActionOperation("old name", SVNMessages.class) {
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			}
 
+			@Override
 			public ISchedulingRule getSchedulingRule() {
 				return null;
 			}
@@ -50,13 +47,16 @@ public abstract class AbstractOperationTest extends TestCase {
 		assertEquals("new name", op.getOperationName());
 	}
 
+	@Test
 	public void testGetExecutionState() {
 		// test the failure of an execution
 		AbstractActionOperation op = new AbstractActionOperation("name", SVNMessages.class) {
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				throw new Exception();
 			}
 
+			@Override
 			public ISchedulingRule getSchedulingRule() {
 				return null;
 			}
@@ -65,9 +65,11 @@ public abstract class AbstractOperationTest extends TestCase {
 		assertEquals(AbstractActionOperation.ERROR, op.getExecutionState());
 	}
 
+	@Test
 	public void testRun() {
 		// test the cancellation of an execution
 		AbstractActionOperation op = new AbstractActionOperation("name", SVNMessages.class) {
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				monitor.setCanceled(true);
 				reportStatus(new IStatus() {
@@ -109,6 +111,7 @@ public abstract class AbstractOperationTest extends TestCase {
 				});
 			}
 
+			@Override
 			public ISchedulingRule getSchedulingRule() {
 				return null;
 			}
@@ -133,22 +136,30 @@ public abstract class AbstractOperationTest extends TestCase {
 		op.run(new NullProgressMonitor());
 	}
 
+	@Test
 	public void testGetShortErrorMessage() {
 		String expected = "SVN: 'op name' operation finished with error: Throwable";
 		class MockAbstractActionOperation extends AbstractActionOperation {
 			public MockAbstractActionOperation() {
 				super("op name", SVNMessages.class);
 			}
+
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			}
+
+			@Override
 			public ISchedulingRule getSchedulingRule() {
 				return null;
-			}			
+			}
+
+			@Override
 			public String getShortErrorMessage(Throwable t) {
 				return super.getShortErrorMessage(t);
 			}
-		};
-		MockAbstractActionOperation op = new MockAbstractActionOperation(); 
+		}
+		;
+		MockAbstractActionOperation op = new MockAbstractActionOperation();
 		assertEquals(expected, op.getShortErrorMessage(new Throwable("Throwable")));
 	}
 }

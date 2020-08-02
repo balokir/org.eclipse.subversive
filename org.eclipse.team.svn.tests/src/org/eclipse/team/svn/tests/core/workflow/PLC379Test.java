@@ -32,48 +32,58 @@ import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
 import org.eclipse.team.svn.tests.core.TestWorkflow;
 
 /**
- * Reproducing steps, which are described in PLC-379 defect (Incorrect commit of 
- * the file with the name added to svn:ignore in another workspace) 
+ * Reproducing steps, which are described in PLC-379 defect (Incorrect commit of
+ * the file with the name added to svn:ignore in another workspace)
  *
  * @author Sergiy Logvin
  */
-public class PLC379Test  extends TestWorkflow {
-    public void testPLC379() {  
-        new ShareNewProjectOperationTest() {}.testOperation();
-        new AddOperationTest() {}.testOperation();
-        new CommitOperationTest() {}.testOperation();
-        new AbstractOperationTestCase() {
-            protected IActionOperation getOperation() {
-                return new AbstractLockingTestOperation("PLC379Test") {
-                    protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getSecondProject().getName(), false), SVNDepth.INFINITY, true).run(monitor);
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream (getFirstProject().getLocation().toString() + "/123");
-                            fos.write("some contents".getBytes());                            
-                        }                        
-                        finally {
-                            fos.close();
-                        } 
-                        IResource []forAddition = new IResource[] {getFirstProject().getFile("123")};
-                        new AddToSVNOperation(forAddition).run(monitor);
-                        IResource []forCommit = new IResource[] {getFirstProject().getFile("123")};
-                        new CommitOperation(forCommit, "PLC379Test", false, false).run(monitor); 
-                                                
-                        try {
-                            fos = new FileOutputStream (ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getLocation().toString() + "/123");
-                            fos.write("some other contents".getBytes());                             
-                        }                        
-                        finally {
-                            fos.close();
-                        }
-                        IResource[] ignoreResource = new IResource[] {ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getFile("123")};
-                        new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "").run(monitor);
-                        IResource []forUpdate = new IResource[] {ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getFile("123")};
-                        new UpdateOperation(forUpdate, true).run(monitor);                        
-                    }
-                };
-            }
-        }.testOperation();
-    }
+public class PLC379Test extends TestWorkflow {
+	// NIC test suite?
+	public void testPLC379() {
+		new ShareNewProjectOperationTest() {
+		}.testOperation();
+		new AddOperationTest() {
+		}.testOperation();
+		new CommitOperationTest() {
+		}.testOperation();
+		new AbstractOperationTestCase() {
+			@Override
+			protected IActionOperation getOperation() {
+				return new AbstractLockingTestOperation("PLC379Test") {
+					@Override
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation())
+								.asRepositoryContainer(getSecondProject().getName(), false), SVNDepth.INFINITY, true)
+										.run(monitor);
+						FileOutputStream fos = null;
+						try {
+							fos = new FileOutputStream(getFirstProject().getLocation().toString() + "/123");
+							fos.write("some contents".getBytes());
+						} finally {
+							fos.close();
+						}
+						IResource[] forAddition = new IResource[] { getFirstProject().getFile("123") };
+						new AddToSVNOperation(forAddition).run(monitor);
+						IResource[] forCommit = new IResource[] { getFirstProject().getFile("123") };
+						new CommitOperation(forCommit, "PLC379Test", false, false).run(monitor);
+
+						try {
+							fos = new FileOutputStream(
+									ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getLocation().toString()
+											+ "/123");
+							fos.write("some other contents".getBytes());
+						} finally {
+							fos.close();
+						}
+						IResource[] ignoreResource = new IResource[] {
+								ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getFile("123") };
+						new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "").run(monitor);
+						IResource[] forUpdate = new IResource[] {
+								ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getFile("123") };
+						new UpdateOperation(forUpdate, true).run(monitor);
+					}
+				};
+			}
+		}.testOperation();
+	}
 }

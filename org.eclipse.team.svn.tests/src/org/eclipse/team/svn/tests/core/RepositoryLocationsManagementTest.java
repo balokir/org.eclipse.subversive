@@ -11,23 +11,24 @@
 
 package org.eclipse.team.svn.tests.core;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Manage repository locations using SVNRemoteStorage test
  * 
  * @author Alexander Gurov
  */
-public abstract class RepositoryLocationsManagementTest extends TestCase {
-
+public abstract class RepositoryLocationsManagementTest {
+	@Test
 	public void testLocationsManagement() {
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		IRepositoryLocation location = storage.newRepositoryLocation();
-		
+
 		location.setUrl("http://testurl");
 		location.setLabel("Label");
 		location.setPassword("password");
@@ -36,50 +37,42 @@ public abstract class RepositoryLocationsManagementTest extends TestCase {
 		location.setTrunkLocation("trunk");
 		location.setBranchesLocation("branches");
 		location.setUsername("username");
-		
+
 		storage.addRepositoryLocation(location);
-		
+
 		try {
 			storage.saveConfiguration();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		String reference = storage.repositoryLocationAsReference(location, LocationReferenceTypeEnum.ALL);
-		
+
 		IRepositoryLocation refTest = storage.newRepositoryLocation(reference);
-		
-		assertTrue(
-			"Location reference",
-			location.getId().equals(refTest.getId()) &&
-			location.getBranchesLocation().equals(refTest.getBranchesLocation()) &&
-			location.getLabel().equals(refTest.getLabel()) &&
-			location.getName().equals(refTest.getName()) &&
-			location.getTagsLocation().equals(refTest.getTagsLocation()) &&
-			location.getTrunkLocation().equals(refTest.getTrunkLocation()) &&
-			location.getUrl().equals(refTest.getUrl())
-		);
-		
+
+		assertTrue("Location reference", location.getId().equals(refTest.getId())
+				&& location.getBranchesLocation().equals(refTest.getBranchesLocation())
+				&& location.getLabel().equals(refTest.getLabel()) && location.getName().equals(refTest.getName())
+				&& location.getTagsLocation().equals(refTest.getTagsLocation())
+				&& location.getTrunkLocation().equals(refTest.getTrunkLocation())
+				&& location.getUrl().equals(refTest.getUrl()));
+
 		storage.removeRepositoryLocation(location);
-		
+
 		try {
 			storage.saveConfiguration();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		refTest = storage.newRepositoryLocation(reference);
-		
-		assertTrue(
-			"Location reference",
-			location.getId().equals(refTest.getId()) &&
-			location.getBranchesLocation().equals(refTest.getBranchesLocation()) &&
-			location.getLabel().equals(refTest.getLabel()) &&
-			location.getName().equals(refTest.getName()) &&
-			location.getTagsLocation().equals(refTest.getTagsLocation()) &&
-			location.getTrunkLocation().equals(refTest.getTrunkLocation()) &&
-			location.getUrl().equals(refTest.getUrl())
-		);
+
+		assertTrue("Location reference", location.getId().equals(refTest.getId())
+				&& location.getBranchesLocation().equals(refTest.getBranchesLocation())
+				&& location.getLabel().equals(refTest.getLabel()) && location.getName().equals(refTest.getName())
+				&& location.getTagsLocation().equals(refTest.getTagsLocation())
+				&& location.getTrunkLocation().equals(refTest.getTrunkLocation())
+				&& location.getUrl().equals(refTest.getUrl()));
 	}
-	
+
 }

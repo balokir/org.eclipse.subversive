@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.tests.core.file;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -28,14 +30,14 @@ import org.eclipse.team.svn.tests.core.file.property.SetPropertyOperationTest;
  */
 public class MultipleCommitTest extends AbstractOperationTestCase {
 
+	@Override
 	protected IActionOperation getOperation() {
 		return new AbstractFileOperation("Commit", SVNMessages.class, this.getListFilesRecursive()) {
 
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				new SetPropertyOperation(this.operableData(), 
-						SetPropertyOperationTest.TEST_PROPERTY_NAME, 
-						SetPropertyOperationTest.TEST_PROPERTY_VALUE.getBytes(),
-						false).run(monitor);
+				new SetPropertyOperation(this.operableData(), SetPropertyOperationTest.TEST_PROPERTY_NAME,
+						SetPropertyOperationTest.TEST_PROPERTY_VALUE.getBytes(), false).run(monitor);
 				LocalStatusOperation op = new LocalStatusOperation(this.operableData(), false);
 				op.run(monitor);
 				assertTrue(op.getStatuses().length > 0);
@@ -43,10 +45,8 @@ public class MultipleCommitTest extends AbstractOperationTestCase {
 				op = new LocalStatusOperation(this.operableData(), false);
 				op.run(monitor);
 				assertTrue(op.getStatuses().length == 1);
-				new SetPropertyOperation(this.operableData(), 
-						SetPropertyOperationTest.TEST_PROPERTY_NAME, 
-						SetPropertyOperationTest.TEST_PROPERTY_VALUE.getBytes(),
-						false).run(monitor);
+				new SetPropertyOperation(this.operableData(), SetPropertyOperationTest.TEST_PROPERTY_NAME,
+						SetPropertyOperationTest.TEST_PROPERTY_VALUE.getBytes(), false).run(monitor);
 				op = new LocalStatusOperation(this.operableData(), false);
 				op.run(monitor);
 				assertTrue(op.getStatuses().length > 0);

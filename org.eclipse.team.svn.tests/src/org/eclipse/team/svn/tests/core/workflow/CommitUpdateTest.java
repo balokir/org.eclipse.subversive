@@ -10,11 +10,7 @@
  *******************************************************************************/
 
 package org.eclipse.team.svn.tests.core.workflow;
-import java.io.File;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.tests.core.AbstractOperationTestCase;
 import org.eclipse.team.svn.tests.core.AddOperationTest;
 import org.eclipse.team.svn.tests.core.CommitOperationTest;
 import org.eclipse.team.svn.tests.core.CreateRemoteFolderOperationTest;
@@ -22,31 +18,32 @@ import org.eclipse.team.svn.tests.core.DisconnectOperationTest;
 import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
 import org.eclipse.team.svn.tests.core.TestWorkflow;
 import org.eclipse.team.svn.tests.core.UpdateOperationTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Test for the one of possible consecution of the core operations 
+ * Test for the one of possible consecution of the core operations
  *
  * @author Sergiy Logvin
  */
+@RunWith(Suite.class)
+@SuiteClasses({ ShareNewProjectOperationTest.class, AddOperationTest.class, CommitOperationTest.class,
+		CreateRemoteFolderOperationTest.class, UpdateOperationTest.class, DisconnectOperationTest.class })
 public class CommitUpdateTest extends TestWorkflow {
-    
-    public void testCommitUpdateWorkflow() {
-        new ShareNewProjectOperationTest() {}.testOperation();
-		new AddOperationTest() {}.testOperation();
-		new CommitOperationTest() {}.testOperation();
-		new CreateRemoteFolderOperationTest() {}.testOperation();
-		new UpdateOperationTest() {}.testOperation();
-		new AbstractOperationTestCase() {
-            protected IActionOperation getOperation() {
-                return new AbstractLockingTestOperation("CommitUpdateWorkflowTest") {
-                    protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        File testFolder = getFirstProject().getFolder("src/testFolder").getLocation().toFile();
-                        CommitUpdateTest.assertTrue("CommitUpdateWorkflowTest", testFolder.exists());                        
-                    }                    
-                };
-            }		    
-		}.testOperation();
-		new DisconnectOperationTest() {}.testOperation();
-    }
+
+	// NIC what about this test case?
+//		new AbstractOperationTestCase() {
+//			@Override
+//			protected IActionOperation getOperation() {
+//				return new AbstractLockingTestOperation("CommitUpdateWorkflowTest") {
+//					@Override
+//					protected void runImpl(IProgressMonitor monitor) throws Exception {
+//						File testFolder = getFirstProject().getFolder("src/testFolder").getLocation().toFile();
+//						assertTrue("CommitUpdateWorkflowTest", testFolder.exists());
+//					}
+//				};
+//			}
+//		}.testOperation();
 
 }
