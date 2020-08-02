@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.tests.core.file.management;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -27,21 +29,24 @@ import org.eclipse.team.svn.tests.core.file.AbstractOperationTestCase;
  * @author Sergiy Logvin
  */
 public class RelocateOperationTest extends AbstractOperationTestCase {
-	 protected void runImpl(IProgressMonitor monitor) throws Exception { 
-         
-     }
+	protected void runImpl(IProgressMonitor monitor) throws Exception {
 
+	}
+
+	@Override
 	protected IActionOperation getOperation() {
 		return new AbstractFileOperation("Relocate", SVNMessages.class, this.getBothFolders()) {
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNFileStorage storage = SVNFileStorage.instance();
 				IRepositoryLocation newLocation = RelocateOperationTest.this.getLocation();
 				String old = newLocation.getUrl();
 				new RelocateOperation(this.operableData(), "http://testurl").run(monitor);
-				IRepositoryResource remote = storage.asRepositoryResource(RelocateOperationTest.this.getFirstFolder(), true);
+				IRepositoryResource remote = storage.asRepositoryResource(RelocateOperationTest.this.getFirstFolder(),
+						true);
 				new RelocateOperation(this.operableData(), old).run(monitor);
 				remote = storage.asRepositoryResource(RelocateOperationTest.this.getFirstFolder(), true);
-				assertTrue("Relocate Operation Test",  remote.exists());
+				assertTrue("Relocate Operation Test", remote.exists());
 			}
 		};
 	}

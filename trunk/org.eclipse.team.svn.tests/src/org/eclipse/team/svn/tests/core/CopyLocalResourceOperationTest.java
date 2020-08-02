@@ -23,13 +23,14 @@ import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceOperation;
  * @author Sergiy Logvin
  */
 public abstract class CopyLocalResourceOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        IResource source = this.getSecondProject().getFile("site.xml");
-        File newFolder = new File(this.getSecondProject().getLocation().toString() + "/web");
-        newFolder.mkdirs();
-        this.refreshProjects();
-        IResource destination = this.getSecondProject().getFile("web/site.xml");
-        return new CopyResourceOperation(source, destination);
+	@Override
+	protected IActionOperation getOperation() {
+		IResource source = this.getSecondProject().getFile("site.xml");
+		File newFolder = new File(this.getSecondProject().getLocation().toString() + "/web");
+		newFolder.mkdirs();
+		this.refreshProjects();
+		IResource destination = this.getSecondProject().getFile("web/site.xml");
+		return new CopyResourceOperation(source, destination);
 	}
-    
+
 }

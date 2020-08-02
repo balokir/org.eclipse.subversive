@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.tests.core.file;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,15 +29,16 @@ import org.eclipse.team.svn.core.operation.file.GetFileContentOperation;
  */
 public class GetFileContentOperationTest extends AbstractOperationTestCase {
 
+	@Override
 	protected IActionOperation getOperation() {
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(this.getFirstFolder().getPath() + "/maven.xml");
+		} catch (IOException e) {
+			assertFalse(e.getMessage(), true);
 		}
-		catch(IOException e) {
-			AbstractOperationTestCase.assertFalse(e.getMessage(), true);
-		}
-		return new GetFileContentOperation(new File(this.getFirstFolder().getPath() + "/plugin.properties"), SVNRevision.HEAD, SVNRevision.HEAD, out);
+		return new GetFileContentOperation(new File(this.getFirstFolder().getPath() + "/plugin.properties"),
+				SVNRevision.HEAD, SVNRevision.HEAD, out);
 	}
 
 }

@@ -11,12 +11,14 @@
 
 package org.eclipse.team.svn.tests.core.workflow;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -34,51 +36,61 @@ import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
 import org.eclipse.team.svn.tests.core.TestWorkflow;
 
 /**
- * Reproducing steps, which are described in PLC-314 defect (Add to SVN incorrectly 
- * interact with svn:ignore) 
+ * Reproducing steps, which are described in PLC-314 defect (Add to SVN
+ * incorrectly interact with svn:ignore)
  *
  * @author Sergiy Logvin
  */
 public class PLC314Test extends TestWorkflow {
-    public void testPLC366() {
-        new ShareNewProjectOperationTest() {}.testOperation();
-        new AddOperationTest() {}.testOperation();
-        new CommitOperationTest() {}.testOperation();
-        new AbstractOperationTestCase() {
-            protected IActionOperation getOperation() {
-                return new AbstractLockingTestOperation("PLC314Test") {
-                    protected void runImpl(IProgressMonitor monitor) throws Exception {                        
-                        FileUtility.copyAll(getFirstProject().getFolder("src").getLocation().toFile(), getSecondProject().getFolder("web").getLocation().toFile(), monitor);
-                        IResource[] ignoreResource = new IResource[] {getFirstProject().getFile("src/web"), getFirstProject().getFile("src/web/site.css"), getFirstProject().getFile("src/web/site.xsl")};
-                        new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "").run(monitor);
-                        new AddToSVNOperation(new IResource[] {getFirstProject().getFile("src/web/site.css")}).run(monitor);
-                        SVNRemoteStorage storage = SVNRemoteStorage.instance(); 
-                        IResource current = getFirstProject().getFile("src/web/site.css");                        
-                        IResource parent = current.getParent();
-                		String name = current.getName();
-                		IRepositoryLocation location = storage.getRepositoryLocation(parent);
-                		ISVNConnector proxy = location.acquireSVNProxy();
+	// NIC test suite?
+	public void testPLC366() {
+		new ShareNewProjectOperationTest() {
+		}.testOperation();
+		new AddOperationTest() {
+		}.testOperation();
+		new CommitOperationTest() {
+		}.testOperation();
+		new AbstractOperationTestCase() {
+			@Override
+			protected IActionOperation getOperation() {
+				return new AbstractLockingTestOperation("PLC314Test") {
+					@Override
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						FileUtility.copyAll(getFirstProject().getFolder("src").getLocation().toFile(),
+								getSecondProject().getFolder("web").getLocation().toFile(), monitor);
+						IResource[] ignoreResource = new IResource[] { getFirstProject().getFile("src/web"),
+								getFirstProject().getFile("src/web/site.css"),
+								getFirstProject().getFile("src/web/site.xsl") };
+						new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "").run(monitor);
+						new AddToSVNOperation(new IResource[] { getFirstProject().getFile("src/web/site.css") })
+								.run(monitor);
+						SVNRemoteStorage storage = SVNRemoteStorage.instance();
+						IResource current = getFirstProject().getFile("src/web/site.css");
+						IResource parent = current.getParent();
+						String name = current.getName();
+						IRepositoryLocation location = storage.getRepositoryLocation(parent);
+						ISVNConnector proxy = location.acquireSVNProxy();
 
-                		SVNProperty data = null;
-                		try {
-                    		data = proxy.getProperty(new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(parent)), BuiltIn.IGNORE, null, new SVNProgressMonitor(this, monitor, null));
-                		}
-                		finally {
-                		    location.releaseSVNProxy(proxy);
-                		}
-                		
-                		String ignoreValue = data == null ? "" : data.value;
-                		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true);
-                		while (tok.hasMoreTokens()) {
-                		    String oneOf = tok.nextToken();                		    
-                			if (oneOf.equals(name)) {
-                			    assertTrue("Name of added to SVN resource was not deleted (PLC314Test)", false);              			    
-                			}                			
-                		}
-                    };
-                };
-            }            
-        }.testOperation();
-    }
+						SVNProperty data = null;
+						try {
+							data = proxy.getProperty(
+									new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(parent)),
+									BuiltIn.IGNORE, null, new SVNProgressMonitor(this, monitor, null));
+						} finally {
+							location.releaseSVNProxy(proxy);
+						}
+
+						String ignoreValue = data == null ? "" : data.value;
+						StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true);
+						while (tok.hasMoreTokens()) {
+							String oneOf = tok.nextToken();
+							if (oneOf.equals(name)) {
+								assertTrue("Name of added to SVN resource was not deleted (PLC314Test)", false);
+							}
+						}
+					};
+				};
+			}
+		}.testOperation();
+	}
 }
-

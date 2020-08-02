@@ -25,14 +25,17 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * @author Sergiy Logvin
  */
 public class AddToSVNIgnoreOperationTest extends AbstractOperationTestCase {
-
+//NIC duplicated class?
+	@Override
 	protected IActionOperation getOperation() {
 		try {
-			FileUtility.copyFile(new File(this.getFirstFolder().getPath() + "/src"), new File(this.getSecondFolder().getPath() + "/bumprev.sh"), new NullProgressMonitor());
+			FileUtility.copyFile(new File(this.getFirstFolder().getPath() + "/src"),
+					new File(this.getSecondFolder().getPath() + "/bumprev.sh"), new NullProgressMonitor());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new AddToSVNIgnoreOperation(new File[] {new File (this.getFirstFolder().getPath() + "/src/bumprev.sh")}, IRemoteStorage.IGNORE_NAME, "");
+		return new AddToSVNIgnoreOperation(new File[] { new File(this.getFirstFolder().getPath() + "/src/bumprev.sh") },
+				IRemoteStorage.IGNORE_NAME, "");
 	}
 
 }

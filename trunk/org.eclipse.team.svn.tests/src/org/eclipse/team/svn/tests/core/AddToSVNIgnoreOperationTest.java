@@ -24,14 +24,17 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * @author Sergiy Logvin
  */
 public abstract class AddToSVNIgnoreOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        try {
-            FileUtility.copyFile(this.getFirstProject().getFolder("src").getLocation().toFile(), this.getSecondProject().getFile("bumprev.sh").getLocation().toFile(), new NullProgressMonitor());
-        } catch (Exception e) {            
-            e.printStackTrace();
-        }        
-        IResource[] ignoreResource = new IResource[] {this.getFirstProject().getFile("src/bumprev.sh")};
-        return new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "");
-    }
+
+	@Override
+	protected IActionOperation getOperation() {
+		try {
+			FileUtility.copyFile(this.getFirstProject().getFolder("src").getLocation().toFile(),
+					this.getSecondProject().getFile("bumprev.sh").getLocation().toFile(), new NullProgressMonitor());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		IResource[] ignoreResource = new IResource[] { this.getFirstProject().getFile("src/bumprev.sh") };
+		return new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "");
+	}
 
 }

@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.tests.core.file.property;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -25,35 +28,37 @@ import org.eclipse.team.svn.tests.core.file.AbstractOperationTestCase;
  * @author Sergiy Logvin
  */
 public class GetPropertyOpertionTest extends AbstractOperationTestCase {
-	
+
 	protected boolean removed;
-	
+
 	public GetPropertyOpertionTest(boolean removed) {
 		this.removed = removed;
 	}
-	
+
+	@Override
 	protected IActionOperation getOperation() {
 		return new AbstractFileOperation("Get Properties Operation Test", SVNMessages.class, this.getListFiles()) {
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				GetPropertiesOperation getOp = new GetPropertiesOperation(GetPropertyOpertionTest.this.getFirstFolder());
+				GetPropertiesOperation getOp = new GetPropertiesOperation(
+						GetPropertyOpertionTest.this.getFirstFolder());
 				getOp.run(monitor);
 				boolean containsTestProperty = false;
-				SVNProperty []properties = getOp.getProperties();
+				SVNProperty[] properties = getOp.getProperties();
 				for (int i = 0; i < properties.length; i++) {
-					if (properties[i].name.equals(SetPropertyOperationTest.TEST_PROPERTY_NAME) &&
-							properties[i].value.equals(SetPropertyOperationTest.TEST_PROPERTY_VALUE)) {
+					if (properties[i].name.equals(SetPropertyOperationTest.TEST_PROPERTY_NAME)
+							&& properties[i].value.equals(SetPropertyOperationTest.TEST_PROPERTY_VALUE)) {
 						containsTestProperty = true;
 						break;
 					}
 				}
 				if (GetPropertyOpertionTest.this.removed) {
 					assertFalse(containsTestProperty);
-				}
-				else {
+				} else {
 					assertTrue(containsTestProperty);
 				}
 			}
 		};
 	}
-	
+
 }

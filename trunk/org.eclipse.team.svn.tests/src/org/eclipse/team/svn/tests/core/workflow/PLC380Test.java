@@ -31,43 +31,53 @@ import org.eclipse.team.svn.tests.core.AbstractOperationTestCase;
 import org.eclipse.team.svn.tests.core.TestWorkflow;
 
 /**
- * Reproducing steps, which are described in PLC-380 defect (File updating 
- * error when repository contains an empty copy of it) 
+ * Reproducing steps, which are described in PLC-380 defect (File updating error
+ * when repository contains an empty copy of it)
  *
  * @author Sergiy Logvin
  */
 public class PLC380Test extends TestWorkflow {
-    public void testPLC380() {        
-        new AbstractOperationTestCase() {
-            protected IActionOperation getOperation() {
-                return new AbstractLockingTestOperation("PLC380Test") {
-                    protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream (getSecondProject().getLocation().toString() + "/123");
-                            fos.write("some contents".getBytes());                            
-                        }                        
-                        finally {
-                            fos.close();
-                        }
-                        new ShareProjectOperation(new IProject[] {getSecondProject()}, getLocation(), null, "Share Project test").run(monitor);
-                        IResource []forAddition = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_NEW);
-                        new AddToSVNOperation(forAddition).run(monitor);
-                        IResource []forCommit = FileUtility.getResourcesRecursive(new IResource[] {getSecondProject()}, IStateFilter.SF_ADDED);
-                        new CommitOperation(forCommit, "test PLC380", false, false).run(monitor);
-                        new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getSecondProject().getName(), false), SVNDepth.INFINITY, true).run(monitor);                        
-                        try {
-                            fos = new FileOutputStream (getFirstProject().getLocation().toString() + "/123");
-                            fos.write("".getBytes());                             
-                        }                        
-                        finally {
-                            fos.close();
-                        }
-                        new CommitOperation(new IResource[] {getFirstProject().getFile("123")}, "test PLC380", false, false).run(monitor);
-                        new UpdateOperation(new IResource[] {ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getFile("123")}, true).run(monitor);                        
-                    }
-                };
-            }
-        }.testOperation();
-    }
+	// NIC test suite?
+	public void testPLC380() {
+		new AbstractOperationTestCase() {
+			@Override
+			protected IActionOperation getOperation() {
+				return new AbstractLockingTestOperation("PLC380Test") {
+					@Override
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						FileOutputStream fos = null;
+						try {
+							fos = new FileOutputStream(getSecondProject().getLocation().toString() + "/123");
+							fos.write("some contents".getBytes());
+						} finally {
+							fos.close();
+						}
+						new ShareProjectOperation(new IProject[] { getSecondProject() }, getLocation(), null,
+								"Share Project test").run(monitor);
+						IResource[] forAddition = FileUtility
+								.getResourcesRecursive(new IResource[] { getSecondProject() }, IStateFilter.SF_NEW);
+						new AddToSVNOperation(forAddition).run(monitor);
+						IResource[] forCommit = FileUtility
+								.getResourcesRecursive(new IResource[] { getSecondProject() }, IStateFilter.SF_ADDED);
+						new CommitOperation(forCommit, "test PLC380", false, false).run(monitor);
+						new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation())
+								.asRepositoryContainer(getSecondProject().getName(), false), SVNDepth.INFINITY, true)
+										.run(monitor);
+						try {
+							fos = new FileOutputStream(getFirstProject().getLocation().toString() + "/123");
+							fos.write("".getBytes());
+						} finally {
+							fos.close();
+						}
+						new CommitOperation(new IResource[] { getFirstProject().getFile("123") }, "test PLC380", false,
+								false).run(monitor);
+						new UpdateOperation(
+								new IResource[] {
+										ResourcesPlugin.getWorkspace().getRoot().getProjects()[2].getFile("123") },
+								true).run(monitor);
+					}
+				};
+			}
+		}.testOperation();
+	}
 }

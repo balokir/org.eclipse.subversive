@@ -10,27 +10,28 @@
  *******************************************************************************/
 package org.eclipse.team.svn.tests.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
+import org.junit.Test;
 
 /**
  * @author Alessandro Nistico
  */
-public class AbstractGetFileContentOperationTest extends TestCase {
-
+public class AbstractGetFileContentOperationTest {
+	@Test
 	public void testGetSetContent() {
 		try {
 			final byte[] data = "Hello!".getBytes("US-ASCII");
-			AbstractGetFileContentOperation op = new AbstractGetFileContentOperation(
-					"Test") {
-				protected void runImpl(IProgressMonitor monitor)
-						throws Exception {
+			AbstractGetFileContentOperation op = new AbstractGetFileContentOperation("Test") {
+				@Override
+				protected void runImpl(IProgressMonitor monitor) throws Exception {
 				}
 			};
 

@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.tests.core;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -28,56 +31,69 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public abstract class SVNUtilityTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
 		return new AbstractLockingTestOperation("SVN Utility") {
+			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-			    SVNRemoteStorage storage = SVNRemoteStorage.instance();
-			    IProject prj1 = SVNUtilityTest.this.getFirstProject();
-			    IProject prj2 = SVNUtilityTest.this.getSecondProject();			    
-			    
-			    String url = "http://test/location/url";
-			    String urlEncoded = SVNUtility.encodeURL(url);
-			    String decodedUrl = SVNUtility.decodeURL(urlEncoded);
-			    assertTrue("SVNUtility.decodeURL", decodedUrl.equals(url));
-			    
-			    url = "http://test//location//url";
-			    url = SVNUtility.normalizeURL(url);
-			    assertTrue ("SVNUtility.normalizeURL", url.equals("http://test/location/url"));
-			    
-			    assertTrue("SVNUtility.isValidRepositoryLocation", SVNUtility.validateRepositoryLocation(SVNRemoteStorage.instance().getRepositoryLocations()[0], new SVNNullProgressMonitor()) == null);
-				
+				SVNRemoteStorage storage = SVNRemoteStorage.instance();
+				IProject prj1 = SVNUtilityTest.this.getFirstProject();
+				IProject prj2 = SVNUtilityTest.this.getSecondProject();
+
+				String url = "http://test/location/url";
+				String urlEncoded = SVNUtility.encodeURL(url);
+				String decodedUrl = SVNUtility.decodeURL(urlEncoded);
+				assertTrue("SVNUtility.decodeURL", decodedUrl.equals(url));
+
+				url = "http://test//location//url";
+				url = SVNUtility.normalizeURL(url);
+				assertTrue("SVNUtility.normalizeURL", url.equals("http://test/location/url"));
+
+				assertTrue("SVNUtility.isValidRepositoryLocation",
+						SVNUtility.validateRepositoryLocation(SVNRemoteStorage.instance().getRepositoryLocations()[0],
+								new SVNNullProgressMonitor()) == null);
+
 				assertTrue("SVNUtility.getConnectedToSVNInfo", SVNUtility.getSVNInfoForNotConnected(prj1) != null);
 				assertTrue("SVNUtility.getConnectedToSVNInfo", SVNUtility.getSVNInfoForNotConnected(prj2) != null);
-				
+
 				assertFalse("SVNUtility.isIgnored", SVNUtility.isIgnored(prj1));
 				assertFalse("SVNUtility.isIgnored", SVNUtility.isIgnored(prj2));
-								 
+
 				IRepositoryResource remote1 = SVNRemoteStorage.instance().asRepositoryResource(prj1);
 				IRepositoryResource remote2 = SVNRemoteStorage.instance().asRepositoryResource(prj2);
-				IRepositoryResource []remoteProjectSet = new IRepositoryResource[] {remote1, remote2};				
-				assertTrue("SVNUtility.asURLArray", (SVNUtility.asURLArray(remoteProjectSet, false)).length == remoteProjectSet.length);
-				
+				IRepositoryResource[] remoteProjectSet = new IRepositoryResource[] { remote1, remote2 };
+				assertTrue("SVNUtility.asURLArray",
+						(SVNUtility.asURLArray(remoteProjectSet, false)).length == remoteProjectSet.length);
+
 				IResource local1 = prj1;
 				IResource local2 = prj2;
-				IResource []localProjectSet = new IResource[] {local1, local2};				
-				assertTrue("SVNUtility.splitWorkingCopies", SVNUtility.splitWorkingCopies(localProjectSet).size() == localProjectSet.length);
-				
+				IResource[] localProjectSet = new IResource[] { local1, local2 };
+				assertTrue("SVNUtility.splitWorkingCopies",
+						SVNUtility.splitWorkingCopies(localProjectSet).size() == localProjectSet.length);
+
 				Map<?, ?> repositoryLocations = SVNUtility.splitRepositoryLocations(remoteProjectSet);
-				assertTrue("SVNUtility.splitRepositoryLocations", repositoryLocations.size() == 1 && repositoryLocations.containsKey(remote1.getRepositoryLocation()));
-				
+				assertTrue("SVNUtility.splitRepositoryLocations", repositoryLocations.size() == 1
+						&& repositoryLocations.containsKey(remote1.getRepositoryLocation()));
+
 				Map<?, ?> locations = SVNUtility.splitRepositoryLocations(localProjectSet);
-				assertTrue("SVNUtility.splitRepositoryLocations", locations.size() == 1 && locations.containsKey(SVNRemoteStorage.instance().asRepositoryResource(local1).getRepositoryLocation()));
-				
-				IRepositoryResource []remoteProjectParents = SVNUtility.getCommonParents(remoteProjectSet);
-				assertTrue("SVNUtility.getCommonParents", remoteProjectParents[0].equals(remote1.getParent()) && remoteProjectParents.length == 1);
-				
-				IRepositoryResource remoteFile1 = storage.asRepositoryResource(prj1.getFile("src/org/eclipse/team/svn/test/core/AddOperationTest.java"));
-				IRepositoryResource remoteFile2 = storage.asRepositoryResource(prj1.getFile("src/org/eclipse/team/svn/test/core/CheckoutOperationTest.java"));
-				IRepositoryResource remoteFolder = storage.asRepositoryResource(prj1.getFolder("src/org/eclipse/team/svn/test/core"));				
-				IRepositoryResource [] shrinked = SVNUtility.shrinkChildNodes(new IRepositoryResource[] {remoteFile1, remoteFile2, remoteFolder});
-				assertTrue("SVNUtility.shrinkChildNodes", shrinked.length == 1 && shrinked[0] == remoteFolder);					
+				assertTrue("SVNUtility.splitRepositoryLocations", locations.size() == 1 && locations
+						.containsKey(SVNRemoteStorage.instance().asRepositoryResource(local1).getRepositoryLocation()));
+
+				IRepositoryResource[] remoteProjectParents = SVNUtility.getCommonParents(remoteProjectSet);
+				assertTrue("SVNUtility.getCommonParents",
+						remoteProjectParents[0].equals(remote1.getParent()) && remoteProjectParents.length == 1);
+
+				IRepositoryResource remoteFile1 = storage
+						.asRepositoryResource(prj1.getFile("src/org/eclipse/team/svn/test/core/AddOperationTest.java"));
+				IRepositoryResource remoteFile2 = storage.asRepositoryResource(
+						prj1.getFile("src/org/eclipse/team/svn/test/core/CheckoutOperationTest.java"));
+				IRepositoryResource remoteFolder = storage
+						.asRepositoryResource(prj1.getFolder("src/org/eclipse/team/svn/test/core"));
+				IRepositoryResource[] shrinked = SVNUtility
+						.shrinkChildNodes(new IRepositoryResource[] { remoteFile1, remoteFile2, remoteFolder });
+				assertTrue("SVNUtility.shrinkChildNodes", shrinked.length == 1 && shrinked[0] == remoteFolder);
 			}
 		};
 	}
-	
+
 }
