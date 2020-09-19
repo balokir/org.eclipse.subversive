@@ -20,9 +20,10 @@ import org.eclipse.team.svn.core.operation.local.UpdateOperation;
  * 
  * @author Alexander Gurov
  */
-public abstract class UpdateOperationTest extends AbstractOperationTestCase {
+public class UpdateOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-		return new UpdateOperation(new IResource[] {this.getFirstProject(), this.getSecondProject()}, true);
+		return new UpdateOperation(new IResource[] { this.getFirstProject(), this.getSecondProject() }, true);
 	}
 
 }

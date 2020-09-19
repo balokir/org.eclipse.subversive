@@ -20,9 +20,11 @@ import org.eclipse.team.svn.core.operation.local.management.ReconnectProjectOper
  *
  * @author Sergiy Logvin
  */
-public abstract class ReconnectExistingProjectOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        return new ReconnectProjectOperation(new IProject[] {this.getFirstProject(), this.getSecondProject()}, this.getLocation());
-    }
+public class ReconnectExistingProjectOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		return new ReconnectProjectOperation(new IProject[] { this.getFirstProject(), this.getSecondProject() },
+				this.getLocation());
+	}
 
 }

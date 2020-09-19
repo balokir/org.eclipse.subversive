@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  *
  * @author Sergiy Logvin
  */
-public abstract class BranchTagOperationTest extends AbstractOperationTestCase {
+public class BranchTagOperationTest extends AbstractOperationTestCase {
 
 	@Override
 	protected IActionOperation getOperation() {

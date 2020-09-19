@@ -20,9 +20,11 @@ import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperatio
  * 
  * @author Alexander Gurov
  */
-public abstract class ShareNewProjectOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        return new ShareProjectOperation(new IProject[] {this.getFirstProject(), this.getSecondProject()}, this.getLocation(), null, "Share Project test");
-    }
+public class ShareNewProjectOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		return new ShareProjectOperation(new IProject[] { this.getFirstProject(), this.getSecondProject() },
+				this.getLocation(), null, "Share Project test");
+	}
 
 }

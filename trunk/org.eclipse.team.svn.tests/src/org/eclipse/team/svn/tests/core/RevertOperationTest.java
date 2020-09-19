@@ -25,28 +25,29 @@ import org.eclipse.team.svn.core.operation.local.RevertOperation;
  * 
  * @author Alexander Gurov
  */
-public abstract class RevertOperationTest extends AbstractOperationTestCase {
+public class RevertOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
 		IProject prj = this.getFirstProject();
-		
+
 		IFile file = prj.getFile("testProject.xml");
-		
+
 		try {
 			file.appendContents(new ByteArrayInputStream("data".getBytes()), true, false, null);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		prj = this.getSecondProject();
 		IFile file1 = prj.getFile("site.xml");
-		
+
 		try {
-		    file1.appendContents(new ByteArrayInputStream("data".getBytes()), true, false, null);
+			file1.appendContents(new ByteArrayInputStream("data".getBytes()), true, false, null);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
-		
-		return new RevertOperation(new IResource[] {file, file1}, false);
+
+		return new RevertOperation(new IResource[] { file, file1 }, false);
 	}
 
 }

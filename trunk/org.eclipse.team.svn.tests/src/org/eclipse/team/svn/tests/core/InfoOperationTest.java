@@ -19,9 +19,10 @@ import org.eclipse.team.svn.core.operation.local.InfoOperation;
  *
  * @author Sergiy Logvin
  */
-public abstract class InfoOperationTest extends AbstractOperationTestCase {
+public class InfoOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-	    return new InfoOperation(this.getFirstProject().getFile("maven.xml"));
+		return new InfoOperation(this.getFirstProject().getFile("maven.xml"));
 	}
-	
+
 }

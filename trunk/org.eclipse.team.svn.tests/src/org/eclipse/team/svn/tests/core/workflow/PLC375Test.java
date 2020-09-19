@@ -35,12 +35,9 @@ import org.eclipse.team.svn.tests.core.TestWorkflow;
 public class PLC375Test extends TestWorkflow {
 	// NIC test suite?
 	public void testPLC375() {
-		new ShareNewProjectOperationTest() {
-		}.testOperation();
-		new AddOperationTest() {
-		}.testOperation();
-		new CommitOperationTest() {
-		}.testOperation();
+		new ShareNewProjectOperationTest().testOperation();
+		new AddOperationTest().testOperation();
+		new CommitOperationTest().testOperation();
 		new AbstractOperationTestCase() {
 			@Override
 			protected IActionOperation getOperation() {

@@ -20,9 +20,10 @@ import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
  * 
  * @author Alexander Gurov
  */
-public abstract class RemoteStatusOperationTest extends AbstractOperationTestCase {
+public class RemoteStatusOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-		return new RemoteStatusOperation(new IResource[] {this.getFirstProject(), this.getSecondProject()});
+		return new RemoteStatusOperation(new IResource[] { this.getFirstProject(), this.getSecondProject() });
 	}
 
 }

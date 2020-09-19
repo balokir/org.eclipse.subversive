@@ -22,9 +22,12 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * 
  * @author Alexander Gurov
  */
-public abstract class AddOperationTest extends AbstractOperationTestCase {
+public class AddOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-	    IResource []scheduledForAddition = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_NEW, IResource.DEPTH_ONE);
+		IResource[] scheduledForAddition = FileUtility.getResourcesRecursive(
+				new IResource[] { this.getFirstProject(), this.getSecondProject() }, IStateFilter.SF_NEW,
+				IResource.DEPTH_ONE);
 		return new AddToSVNOperation(scheduledForAddition, true);
 	}
 

@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
  * 
  * @author Alexander Gurov
  */
-public abstract class ClearLocalStatusesOperationTest extends AbstractOperationTestCase {
+public class ClearLocalStatusesOperationTest extends AbstractOperationTestCase {
 
 	@Override
 	protected IActionOperation getOperation() {

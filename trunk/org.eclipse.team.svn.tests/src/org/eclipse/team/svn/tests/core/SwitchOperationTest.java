@@ -23,11 +23,14 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  *
  * @author Sergiy Logvin
  */
-public abstract class SwitchOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        IResource project = this.getFirstProject();
-        IRepositoryResource switchDestination = this.getLocation().asRepositoryContainer(SVNUtility.getProposedBranchesLocation(this.getLocation()) + "/" + project.getName(), false);
-        return new SwitchOperation(new IResource[] {project}, new IRepositoryResource[] {switchDestination}, SVNDepth.INFINITY, false, true);
+public class SwitchOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		IResource project = this.getFirstProject();
+		IRepositoryResource switchDestination = this.getLocation().asRepositoryContainer(
+				SVNUtility.getProposedBranchesLocation(this.getLocation()) + "/" + project.getName(), false);
+		return new SwitchOperation(new IResource[] { project }, new IRepositoryResource[] { switchDestination },
+				SVNDepth.INFINITY, false, true);
 	}
-   
+
 }

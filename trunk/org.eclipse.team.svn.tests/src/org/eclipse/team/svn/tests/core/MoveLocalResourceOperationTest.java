@@ -19,9 +19,11 @@ import org.eclipse.team.svn.core.operation.local.refactor.MoveResourceOperation;
  *
  * @author Sergiy Logvin
  */
-public abstract class MoveLocalResourceOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        return new MoveResourceOperation(this.getFirstProject().getFile("maven.xml"), this.getSecondProject().getFile(".sitebuild/maven.xml"));
-	}    
-    
+public class MoveLocalResourceOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		return new MoveResourceOperation(this.getFirstProject().getFile("maven.xml"),
+				this.getSecondProject().getFile(".sitebuild/maven.xml"));
+	}
+
 }

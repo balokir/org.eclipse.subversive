@@ -75,12 +75,9 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		new ShareNewProjectOperationTest() {
-		}.testOperation();
-		new AddOperationTest() {
-		}.testOperation();
-		new CommitOperationTest() {
-		}.testOperation();
+		new ShareNewProjectOperationTest().testOperation();
+		new AddOperationTest().testOperation();
+		new CommitOperationTest().testOperation();
 		File newFolder = new File(this.getFirstProject().getLocation().toString() + "/testFolder");
 		newFolder.mkdir();
 		newFolder = new File(this.getSecondProject().getLocation().toString() + "/testFolder");

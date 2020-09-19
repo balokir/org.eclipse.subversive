@@ -21,18 +21,17 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Alexander Gurov
  */
 @RunWith(Suite.class)
-@SuiteClasses({ AbstractGetFileContentOperationTest.class, AbstractOperationTest.class,
-		RepositoryLocationsManagementTest.class, ShareNewProjectOperationTest.class, FileUtilityTest.class,
-		SVNUtilityTest.class, AddOperationTest.class, AddToSVNIgnoreOperationTest.class, CommitOperationTest.class,
-		BranchTagOperationTest.class, SwitchOperationTest.class, CheckoutOperationTest.class,
-		CleanupOperationTest.class, GetAllResourcesOperationTest.class, ClearLocalStatusesOperationTest.class,
-		GetLogMessagesOperationTest.class, RemoteStatusOperationTest.class, RevertOperationTest.class,
-		CreateRemoteFolderOperationTest.class, RenameRemoteResourceOperationTest.class,
-		GetFileContentOperationTest.class, GetRemoteContentsOperationTest.class,
-		GetResourceAnnotationOperationTest.class, InfoOperationTest.class, MoveLocalResourceOperationTest.class,
-		DeleteRemoteResourceOperationTest.class, UpdateOperationTest.class, DisconnectWithoutDropOperationTest.class,
-		ReconnectExistingProjectOperationTest.class, CopyLocalResourceOperationTest.class,
-		DeleteLocalResourceOperationTest.class, DisconnectOperationTest.class,
+@SuiteClasses({ AbstractOperationTest.class, RepositoryLocationsManagementTest.class,
+		ShareNewProjectOperationTest.class, FileUtilityTest.class, SVNUtilityTest.class, AddOperationTest.class,
+		AddToSVNIgnoreOperationTest.class, CommitOperationTest.class, BranchTagOperationTest.class,
+		SwitchOperationTest.class, CheckoutOperationTest.class, CleanupOperationTest.class,
+		GetAllResourcesOperationTest.class, ClearLocalStatusesOperationTest.class, GetLogMessagesOperationTest.class,
+		RemoteStatusOperationTest.class, RevertOperationTest.class, CreateRemoteFolderOperationTest.class,
+		RenameRemoteResourceOperationTest.class, GetFileContentOperationTest.class,
+		GetRemoteContentsOperationTest.class, GetResourceAnnotationOperationTest.class, InfoOperationTest.class,
+		MoveLocalResourceOperationTest.class, DeleteRemoteResourceOperationTest.class, UpdateOperationTest.class,
+		DisconnectWithoutDropOperationTest.class, ReconnectExistingProjectOperationTest.class,
+		CopyLocalResourceOperationTest.class, DeleteLocalResourceOperationTest.class, DisconnectOperationTest.class,
 		DiscardRepositoryLocationsOperationTest.class })
 public class CoreTest extends TestWorkflow {
 	// test suite (no further code required)

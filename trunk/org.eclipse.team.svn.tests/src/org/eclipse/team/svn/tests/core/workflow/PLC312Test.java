@@ -34,12 +34,9 @@ public class PLC312Test extends TestWorkflow {
 	@Test
 	public void testPLC312() {
 		// NIC test suite?
-		new ShareNewProjectOperationTest() {
-		}.testOperation();
-		new AddOperationTest() {
-		}.testOperation();
-		new CommitOperationTest() {
-		}.testOperation();
+		new ShareNewProjectOperationTest().testOperation();
+		new AddOperationTest().testOperation();
+		new CommitOperationTest().testOperation();
 		new AbstractOperationTestCase() {
 			@Override
 			protected IActionOperation getOperation() {
