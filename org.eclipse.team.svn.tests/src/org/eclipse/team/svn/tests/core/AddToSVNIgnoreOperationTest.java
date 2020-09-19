@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  *
  * @author Sergiy Logvin
  */
-public abstract class AddToSVNIgnoreOperationTest extends AbstractOperationTestCase {
+public class AddToSVNIgnoreOperationTest extends AbstractOperationTestCase {
 
 	@Override
 	protected IActionOperation getOperation() {

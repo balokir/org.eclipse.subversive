@@ -22,10 +22,13 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  *
  * @author Sergiy Logvin
  */
-public abstract class GetResourceAnnotationOperationTest extends AbstractOperationTestCase {
+public class GetResourceAnnotationOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-	    SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		return new GetResourceAnnotationOperation(storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml")), new SVNRevisionRange(SVNRevision.fromNumber(0), SVNRevision.HEAD));
+		SVNRemoteStorage storage = SVNRemoteStorage.instance();
+		return new GetResourceAnnotationOperation(
+				storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml")),
+				new SVNRevisionRange(SVNRevision.fromNumber(0), SVNRevision.HEAD));
 	}
 
 }

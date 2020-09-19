@@ -20,9 +20,10 @@ import org.eclipse.team.svn.core.operation.local.management.DisconnectOperation;
  * 
  * @author Alexander Gurov
  */
-public abstract class DisconnectOperationTest extends AbstractOperationTestCase {
+public class DisconnectOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-		return new DisconnectOperation(new IProject[] {this.getFirstProject(), this.getSecondProject()}, true);
+		return new DisconnectOperation(new IProject[] { this.getFirstProject(), this.getSecondProject() }, true);
 	}
 
 }

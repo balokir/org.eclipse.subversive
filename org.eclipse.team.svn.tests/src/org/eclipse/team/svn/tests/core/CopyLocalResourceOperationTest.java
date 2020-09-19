@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceOperation;
  *
  * @author Sergiy Logvin
  */
-public abstract class CopyLocalResourceOperationTest extends AbstractOperationTestCase {
+public class CopyLocalResourceOperationTest extends AbstractOperationTestCase {
 	@Override
 	protected IActionOperation getOperation() {
 		IResource source = this.getSecondProject().getFile("site.xml");

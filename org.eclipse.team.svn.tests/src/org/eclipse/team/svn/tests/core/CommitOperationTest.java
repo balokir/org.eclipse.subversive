@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * 
  * @author Alexander Gurov
  */
-public abstract class CommitOperationTest extends AbstractOperationTestCase {
+public class CommitOperationTest extends AbstractOperationTestCase {
 	@Override
 	protected IActionOperation getOperation() {
 		IResource[] scheduledForCommit = FileUtility.getResourcesRecursive(

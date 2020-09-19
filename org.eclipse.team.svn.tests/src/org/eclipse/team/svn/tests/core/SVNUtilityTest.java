@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public abstract class SVNUtilityTest extends AbstractOperationTestCase {
+public class SVNUtilityTest extends AbstractOperationTestCase {
 	@Override
 	protected IActionOperation getOperation() {
 		return new AbstractLockingTestOperation("SVN Utility") {

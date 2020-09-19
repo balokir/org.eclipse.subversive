@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public abstract class CheckoutOperationTest extends AbstractOperationTestCase {
+public class CheckoutOperationTest extends AbstractOperationTestCase {
 	@Override
 	protected IActionOperation getOperation() {
 		IRepositoryResource trunk = SVNUtility.getProposedTrunk(this.getLocation());

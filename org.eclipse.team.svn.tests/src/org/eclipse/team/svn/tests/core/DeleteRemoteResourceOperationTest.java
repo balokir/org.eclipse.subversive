@@ -22,18 +22,19 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  * 
  * @author Alexander Gurov
  */
-public abstract class DeleteRemoteResourceOperationTest extends AbstractOperationTestCase {
+public class DeleteRemoteResourceOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-	    SVNRemoteStorage storage = SVNRemoteStorage.instance();
+		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 
-	    IProject prj = this.getFirstProject();
+		IProject prj = this.getFirstProject();
 		IRepositoryResource remote1 = storage.asRepositoryResource(prj.getFile("testProject.xml"));
 		IRepositoryResource remote2 = storage.asRepositoryResource(prj.getFolder("src/testFolder2"));
-		
-	    prj = this.getSecondProject();
-		IRepositoryResource remote3 = storage.asRepositoryResource(prj.getFile("bumprev.sh"));		
-		
-		return new DeleteResourcesOperation(new IRepositoryResource[] {remote1, remote2, remote3}, "test delete");
+
+		prj = this.getSecondProject();
+		IRepositoryResource remote3 = storage.asRepositoryResource(prj.getFile("bumprev.sh"));
+
+		return new DeleteResourcesOperation(new IRepositoryResource[] { remote1, remote2, remote3 }, "test delete");
 	}
 
 }

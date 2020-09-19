@@ -20,9 +20,10 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  *
  * @author Sergiy Logvin
  */
-public abstract class GetFileContentOperationTest extends AbstractOperationTestCase {
+public class GetFileContentOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-	    SVNRemoteStorage storage = SVNRemoteStorage.instance();
+		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		return new GetFileContentOperation(storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml")));
 	}
 

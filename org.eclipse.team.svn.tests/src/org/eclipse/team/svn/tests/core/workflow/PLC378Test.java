@@ -29,50 +29,52 @@ import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
 import org.eclipse.team.svn.tests.core.TestWorkflow;
 
 /**
- * Reproducing steps, which are described in PLC-378 defect (Incorrect commit of 
- * the file with already existing name) 
+ * Reproducing steps, which are described in PLC-378 defect (Incorrect commit of
+ * the file with already existing name)
  *
  * @author Sergiy Logvin
  */
 public class PLC378Test extends TestWorkflow {
-    public void testPLC378() {  
-        new ShareNewProjectOperationTest() {}.testOperation();
-        new AddOperationTest() {}.testOperation();
-        new CommitOperationTest() {}.testOperation();
-        new AbstractOperationTestCase() {
-            protected IActionOperation getOperation() {
-                return new AbstractLockingTestOperation("PLC378Test") {
-                    protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        new CheckoutAsOperation("CopyProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getFirstProject().getName(), false), SVNDepth.INFINITY, true).run(monitor);
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream (getFirstProject().getLocation().toString() + "/testFile");
-                            fos.write("testFile contents".getBytes());                            
-                        }                        
-                        finally {
-                            fos.close();
-                        } 
-                        IResource []forAddition = new IResource[] {getFirstProject().getFile("testFile")};
-                        new AddToSVNOperation(forAddition).run(monitor);
-                        IResource []forCommit = new IResource[] {getFirstProject().getFile("testFile")};
-                        new CommitOperation(forCommit, "PLC378Test", false, false).run(monitor); 
-                                                
-                        try {
-                            fos = new FileOutputStream (getSecondProject().getLocation().toString() + "/testFile");
-                            fos.write("some other testFile contents".getBytes());                             
-                        }                        
-                        finally {
-                            fos.close();
-                        }
-                        forAddition = new IResource[] {getSecondProject().getFile("testFile")};
-                        new AddToSVNOperation(forAddition).run(monitor);
-                        forCommit = new IResource[] {getSecondProject().getFile("testFile")};
-                        new CommitOperation(forCommit, "PLC378Test", false, false).run(monitor);
-                        IResource []forUpdate = new IResource[] {getSecondProject().getFile("testFile")};
-                        new UpdateOperation(forUpdate, true).run(monitor);                        
-                    }
-                };
-            }
-        }.testOperation();
-    }
+	public void testPLC378() {
+		new ShareNewProjectOperationTest().testOperation();
+		new AddOperationTest().testOperation();
+		new CommitOperationTest().testOperation();
+		new AbstractOperationTestCase() {
+			@Override
+			protected IActionOperation getOperation() {
+				return new AbstractLockingTestOperation("PLC378Test") {
+					@Override
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						new CheckoutAsOperation("CopyProject", SVNUtility.getProposedTrunk(getLocation())
+								.asRepositoryContainer(getFirstProject().getName(), false), SVNDepth.INFINITY, true)
+										.run(monitor);
+						FileOutputStream fos = null;
+						try {
+							fos = new FileOutputStream(getFirstProject().getLocation().toString() + "/testFile");
+							fos.write("testFile contents".getBytes());
+						} finally {
+							fos.close();
+						}
+						IResource[] forAddition = new IResource[] { getFirstProject().getFile("testFile") };
+						new AddToSVNOperation(forAddition).run(monitor);
+						IResource[] forCommit = new IResource[] { getFirstProject().getFile("testFile") };
+						new CommitOperation(forCommit, "PLC378Test", false, false).run(monitor);
+
+						try {
+							fos = new FileOutputStream(getSecondProject().getLocation().toString() + "/testFile");
+							fos.write("some other testFile contents".getBytes());
+						} finally {
+							fos.close();
+						}
+						forAddition = new IResource[] { getSecondProject().getFile("testFile") };
+						new AddToSVNOperation(forAddition).run(monitor);
+						forCommit = new IResource[] { getSecondProject().getFile("testFile") };
+						new CommitOperation(forCommit, "PLC378Test", false, false).run(monitor);
+						IResource[] forUpdate = new IResource[] { getSecondProject().getFile("testFile") };
+						new UpdateOperation(forUpdate, true).run(monitor);
+					}
+				};
+			}
+		}.testOperation();
+	}
 }

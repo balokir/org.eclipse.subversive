@@ -23,7 +23,7 @@ import org.junit.Test;
  * 
  * @author Alexander Gurov
  */
-public abstract class RepositoryLocationsManagementTest {
+public class RepositoryLocationsManagementTest {
 	@Test
 	public void testLocationsManagement() {
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();

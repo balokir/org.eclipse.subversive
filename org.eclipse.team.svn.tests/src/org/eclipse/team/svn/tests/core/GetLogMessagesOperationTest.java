@@ -21,13 +21,15 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  * 
  * @author Alexander Gurov
  */
-public abstract class GetLogMessagesOperationTest extends AbstractOperationTestCase {
+public class GetLogMessagesOperationTest extends AbstractOperationTestCase {
+	@Override
 	protected IActionOperation getOperation() {
-	    SVNRemoteStorage storage = SVNRemoteStorage.instance();
-	    GetLogMessagesOperation mainOp = new GetLogMessagesOperation(storage.asRepositoryResource(this.getFirstProject()));
-	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-	    op.add(mainOp);
-	    op.add(new GetLogMessagesOperation(storage.asRepositoryResource(this.getSecondProject())));
+		SVNRemoteStorage storage = SVNRemoteStorage.instance();
+		GetLogMessagesOperation mainOp = new GetLogMessagesOperation(
+				storage.asRepositoryResource(this.getFirstProject()));
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+		op.add(mainOp);
+		op.add(new GetLogMessagesOperation(storage.asRepositoryResource(this.getSecondProject())));
 		return op;
 	}
 

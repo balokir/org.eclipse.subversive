@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.operation.local.management.CleanupOperation;
  * 
  * @author Alexander Gurov
  */
-public abstract class CleanupOperationTest extends AbstractOperationTestCase {
+public class CleanupOperationTest extends AbstractOperationTestCase {
 	@Override
 	protected IActionOperation getOperation() {
 		return new CleanupOperation(new IResource[] { this.getFirstProject(), this.getSecondProject() });

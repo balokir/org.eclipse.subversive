@@ -48,12 +48,9 @@ public class SVNTeamMoveDeleteHookTest extends TestWorkflow {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		new ShareNewProjectOperationTest() {
-		}.testOperation();
-		new AddOperationTest() {
-		}.testOperation();
-		new CommitOperationTest() {
-		}.testOperation();
+		new ShareNewProjectOperationTest().testOperation();
+		new AddOperationTest().testOperation();
+		new CommitOperationTest().testOperation();
 	}
 
 	@Test

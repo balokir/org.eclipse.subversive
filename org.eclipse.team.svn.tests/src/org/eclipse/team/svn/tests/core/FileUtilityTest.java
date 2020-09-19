@@ -29,7 +29,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * 
  * @author Alexander Gurov
  */
-public abstract class FileUtilityTest extends AbstractOperationTestCase {
+public class FileUtilityTest extends AbstractOperationTestCase {
 
 	@Override
 	protected IActionOperation getOperation() {

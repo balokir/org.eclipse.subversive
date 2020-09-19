@@ -21,11 +21,13 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  *
  * @author Sergiy Logvin
  */
-public abstract class RenameRemoteResourceOperationTest extends AbstractOperationTestCase{
-    protected IActionOperation getOperation() {
-        SVNRemoteStorage storage = SVNRemoteStorage.instance();
-        IRepositoryResource forRename = storage.asRepositoryResource(this.getFirstProject().getFolder("src/testFolder"));
-		return new RenameResourceOperation(forRename, "testFolder2", "RenameRemoteResourceOperation Test");		
-    }
-    
+public class RenameRemoteResourceOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		SVNRemoteStorage storage = SVNRemoteStorage.instance();
+		IRepositoryResource forRename = storage
+				.asRepositoryResource(this.getFirstProject().getFolder("src/testFolder"));
+		return new RenameResourceOperation(forRename, "testFolder2", "RenameRemoteResourceOperation Test");
+	}
+
 }

@@ -28,7 +28,7 @@ import org.junit.Test;
  * 
  * @author Alessandro Nistico
  */
-public abstract class AbstractOperationTest {
+public class AbstractOperationTest {
 
 	@Test
 	public void testSetOperationName() {

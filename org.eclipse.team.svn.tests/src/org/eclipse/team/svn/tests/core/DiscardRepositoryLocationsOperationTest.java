@@ -20,9 +20,10 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
  *
  * @author Sergiy Logvin
  */
-public abstract class DiscardRepositoryLocationsOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        return new DiscardRepositoryLocationsOperation(new IRepositoryLocation[] {this.getLocation()});
-    }  
+public class DiscardRepositoryLocationsOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		return new DiscardRepositoryLocationsOperation(new IRepositoryLocation[] { this.getLocation() });
+	}
 
 }

@@ -19,9 +19,10 @@ import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperatio
  *
  * @author Sergiy Logvin
  */
-public abstract class DeleteLocalResourceOperationTest extends AbstractOperationTestCase {
-    protected IActionOperation getOperation() {
-        return new DeleteResourceOperation (this.getFirstProject().getFile("maven.xml"));
-    }
-    
+public class DeleteLocalResourceOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		return new DeleteResourceOperation(this.getFirstProject().getFile("maven.xml"));
+	}
+
 }

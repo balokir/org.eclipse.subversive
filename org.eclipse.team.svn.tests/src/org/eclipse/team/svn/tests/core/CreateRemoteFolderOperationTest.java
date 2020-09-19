@@ -21,11 +21,12 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  *
  * @author Sergiy Logvin
  */
-public abstract class CreateRemoteFolderOperationTest extends AbstractOperationTestCase{
-    protected IActionOperation getOperation() {
-        SVNRemoteStorage storage = SVNRemoteStorage.instance();
-        IRepositoryResource parent = storage.asRepositoryResource(this.getFirstProject().getFolder("src"));
-		return new CreateFolderOperation(parent, "testFolder", "");		
-    }
-    
+public class CreateRemoteFolderOperationTest extends AbstractOperationTestCase {
+	@Override
+	protected IActionOperation getOperation() {
+		SVNRemoteStorage storage = SVNRemoteStorage.instance();
+		IRepositoryResource parent = storage.asRepositoryResource(this.getFirstProject().getFolder("src"));
+		return new CreateFolderOperation(parent, "testFolder", "");
+	}
+
 }
