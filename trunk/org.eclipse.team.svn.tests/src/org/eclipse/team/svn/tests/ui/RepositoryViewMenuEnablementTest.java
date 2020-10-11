@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.ui;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,10 +36,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.tests.TestPlugin;
-import org.eclipse.team.svn.tests.core.AddOperationTest;
-import org.eclipse.team.svn.tests.core.CommitOperationTest;
-import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
-import org.eclipse.team.svn.tests.core.TestWorkflow;
+import org.eclipse.team.svn.tests.workflow.ActionOperationWorkflowBuilder;
 import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
 import org.eclipse.team.svn.ui.action.local.management.CleanupAction;
 import org.eclipse.team.svn.ui.action.remote.BranchAction;
@@ -62,6 +60,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
 import org.eclipse.ui.IActionDelegate;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -69,15 +68,19 @@ import org.junit.Test;
  *
  * @author Sergiy Logvin
  */
-public class RepositoryViewMenuEnablementTest extends TestWorkflow {
-	@Override
+public class RepositoryViewMenuEnablementTest {
+
+	@BeforeClass
+	public static void beforeAll() {
+		ResourceBundle bundle = TestPlugin.instance().getResourceBundle();
+		boolean workbenchEnabled = "true".equals(bundle.getString("UI.WorkbenchEnabled"));
+		assumeTrue(workbenchEnabled);
+	}
+
 	@Before
 	public void setUp() throws Exception {
-		super.setUp();
-
-		new ShareNewProjectOperationTest().testOperation();
-		new AddOperationTest().testOperation();
-		new CommitOperationTest().testOperation();
+		ActionOperationWorkflowBuilder workflowBuilder = new ActionOperationWorkflowBuilder();
+		workflowBuilder.buildShareAddCommitWorkflow().execute();
 		File newFolder = new File(this.getFirstProject().getLocation().toString() + "/testFolder");
 		newFolder.mkdir();
 		newFolder = new File(this.getSecondProject().getLocation().toString() + "/testFolder");
