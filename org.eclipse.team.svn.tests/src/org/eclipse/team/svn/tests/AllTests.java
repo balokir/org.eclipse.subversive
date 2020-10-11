@@ -11,17 +11,16 @@
 
 package org.eclipse.team.svn.tests;
 
-import org.eclipse.team.svn.tests.core.CoreTest;
-import org.eclipse.team.svn.tests.core.workflow.CommitUpdateTest;
-import org.eclipse.team.svn.tests.core.workflow.PLC312Test;
-import org.eclipse.team.svn.tests.core.workflow.PLC314Test;
-import org.eclipse.team.svn.tests.core.workflow.PLC350Test;
-import org.eclipse.team.svn.tests.core.workflow.PLC366Test;
-import org.eclipse.team.svn.tests.core.workflow.PLC375Test;
-import org.eclipse.team.svn.tests.core.workflow.PLC378Test;
-import org.eclipse.team.svn.tests.core.workflow.PLC379Test;
-import org.eclipse.team.svn.tests.core.workflow.PLC380Test;
+import org.eclipse.team.svn.tests.core.AbstractOperationTest;
+import org.eclipse.team.svn.tests.core.ParameterizedOperationTest;
+import org.eclipse.team.svn.tests.core.RepositoryLocationsManagementTest;
+import org.eclipse.team.svn.tests.core.StateFilterTest;
+import org.eclipse.team.svn.tests.ui.DecoratorVariablesTest;
+import org.eclipse.team.svn.tests.ui.JavaViewMenuEnablementTest;
+import org.eclipse.team.svn.tests.ui.RepositoryViewMenuEnablementTest;
 import org.eclipse.team.svn.tests.ui.SVNTeamMoveDeleteHookTest;
+import org.eclipse.team.svn.tests.ui.UIMonitorUtilityTest;
+import org.eclipse.team.svn.tests.workflow.ParameterizedWorkflowTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,18 +31,10 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Alexander Gurov
  */
 @RunWith(Suite.class)
-@SuiteClasses({ CoreTest.class, CommitUpdateTest.class, SVNTeamMoveDeleteHookTest.class, PLC312Test.class,
-		PLC314Test.class, PLC350Test.class, PLC366Test.class, PLC375Test.class, PLC378Test.class, PLC379Test.class,
-		PLC380Test.class })
+@SuiteClasses({ AbstractOperationTest.class, DecoratorVariablesTest.class, JavaViewMenuEnablementTest.class,
+		ParameterizedOperationTest.class, ParameterizedWorkflowTest.class, RepositoryLocationsManagementTest.class,
+		RepositoryViewMenuEnablementTest.class, StateFilterTest.class, SVNTeamMoveDeleteHookTest.class,
+		UIMonitorUtilityTest.class })
 public class AllTests {
-	// NIC conditional tests?
-//	ResourceBundle bundle = TestPlugin.instance().getResourceBundle();
-//	boolean workbenchEnabled = "true".equals(bundle.getString("UI.WorkbenchEnabled"));
-//
-//
-//	if (workbenchEnabled) {
-//		suite.addTestSuite(RepositoryViewMenuEnablementTest.class);
-//		suite.addTestSuite(JavaViewMenuEnablementTest.class);
-//	}
-
+	// no implementation needed
 }

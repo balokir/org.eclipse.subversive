@@ -6,21 +6,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Sergiy Logvin (Polarion Software) - initial API and implementation
+ *    Alexander Gurov - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.tests.core.file;
+package org.eclipse.team.svn.tests.workflow;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
-import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.operation.remote.CreateFolderOperation;
 import org.eclipse.team.svn.core.operation.remote.DeleteResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -33,25 +37,50 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.tests.TestPlugin;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test workfolow
+ * Test operation workflow
  * 
- * @author Sergiy Logvin
+ * @author Alexander Gurov
+ * @author Nicolas Peifer
  */
-public abstract class TestWorkflow {
-	protected static File FIRST_FOLDER;
-	protected static File SECOND_FOLDER;
-
+@RunWith(Parameterized.class)
+public class ParameterizedWorkflowTest {
 	protected IRepositoryLocation location;
+	private static ActionOperationWorkflowBuilder workflowBuilder = new ActionOperationWorkflowBuilder();
+
+	@Parameter
+	public ActionOperationWorkflow workflow;
+
+	@Parameters(name = "#{index}: {0}")
+	public static Collection<ActionOperationWorkflow> createTestData() {
+		List<ActionOperationWorkflow> result = new ArrayList<ActionOperationWorkflow>();
+		result.add(workflowBuilder.buildCoreWorkflow());
+		result.add(workflowBuilder.buildCommitUpdateWorkflow());
+		result.add(workflowBuilder.buildPlc312Workflow());
+		result.add(workflowBuilder.buildPlc314Workflow());
+		result.add(workflowBuilder.buildPlc350Workflow());
+		result.add(workflowBuilder.buildPlc366Workflow());
+		result.add(workflowBuilder.buildPlc375Workflow());
+		result.add(workflowBuilder.buildPlc378Workflow());
+		result.add(workflowBuilder.buildPlc379Workflow());
+		result.add(workflowBuilder.buildPlc380Workflow());
+		result.add(workflowBuilder.buildFileWorkflow());
+		return result;
+	}
 
 	@Before
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 
 		ResourceBundle bundle = TestPlugin.instance().getResourceBundle();
 
-		SVNFileStorage storage = SVNFileStorage.instance();
-		HashMap preferences = new HashMap();
+		SVNRemoteStorage storage = SVNRemoteStorage.instance();
+		HashMap<String, Object> preferences = new HashMap<String, Object>();
 		preferences.put(ISVNStorage.PREF_STATE_INFO_LOCATION, TestPlugin.instance().getStateLocation());
 		storage.initialize(preferences);
 
@@ -94,12 +123,29 @@ public abstract class TestWorkflow {
 				new NullProgressMonitor());
 		FileUtility.copyAll(root.getLocation().toFile(), new File(demoDataLocation + prj2Name),
 				new NullProgressMonitor());
-		TestWorkflow.FIRST_FOLDER = new File(root.getLocation().toFile().getPath() + "/" + prj1Name);
-		TestWorkflow.SECOND_FOLDER = new File(root.getLocation().toFile().getPath() + "/" + prj2Name);
+
+		IProject prj = root.getProject(prj1Name);
+		prj.create(null);
+		prj.open(null);
+		FileUtility.removeSVNMetaInformation(prj, new NullProgressMonitor());
+		prj.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		SVNRemoteStorage.instance().refreshLocalResources(new IResource[] { prj }, IResource.DEPTH_INFINITE);
+
+		prj = root.getProject(prj2Name);
+		prj.create(null);
+		prj.open(null);
+		FileUtility.removeSVNMetaInformation(prj, new NullProgressMonitor());
+		prj.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		SVNRemoteStorage.instance().refreshLocalResources(new IResource[] { prj }, IResource.DEPTH_INFINITE);
+	}
+
+	@Test
+	public void test() {
+		workflow.execute();
 	}
 
 	@After
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		this.cleanupTestEnvironment();
 	}
 

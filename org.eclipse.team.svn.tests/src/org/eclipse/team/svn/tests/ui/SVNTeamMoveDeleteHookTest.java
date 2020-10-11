@@ -31,10 +31,7 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.tests.TestPlugin;
-import org.eclipse.team.svn.tests.core.AddOperationTest;
-import org.eclipse.team.svn.tests.core.CommitOperationTest;
-import org.eclipse.team.svn.tests.core.ShareNewProjectOperationTest;
-import org.eclipse.team.svn.tests.core.TestWorkflow;
+import org.eclipse.team.svn.tests.workflow.ActionOperationWorkflowBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,14 +40,11 @@ import org.junit.Test;
  *
  * @author Sergiy Logvin
  */
-public class SVNTeamMoveDeleteHookTest extends TestWorkflow {
-	@Override
+public class SVNTeamMoveDeleteHookTest {
 	@Before
 	public void setUp() throws Exception {
-		super.setUp();
-		new ShareNewProjectOperationTest().testOperation();
-		new AddOperationTest().testOperation();
-		new CommitOperationTest().testOperation();
+		ActionOperationWorkflowBuilder workflowBuilder = new ActionOperationWorkflowBuilder();
+		workflowBuilder.buildShareAddCommitWorkflow().execute();
 	}
 
 	@Test
