@@ -145,7 +145,7 @@ public class LocalOperationFactory {
 
 	public IActionOperation createReconnectExistingProjectOperation() {
 		return new ReconnectProjectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
-				TestUtil.getLocation());
+				TestUtil.getRepositoryLocation());
 	}
 
 	public IActionOperation createRemoteStatusOperation() {
@@ -177,13 +177,13 @@ public class LocalOperationFactory {
 
 	public IActionOperation createShareNewProjectOperation() {
 		return new ShareProjectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
-				TestUtil.getLocation(), null, "Share Project test");
+				TestUtil.getRepositoryLocation(), null, "Share Project test");
 	}
 
 	public IActionOperation createSwitchOperation() {
 		IResource project = TestUtil.getFirstProject();
-		IRepositoryResource switchDestination = TestUtil.getLocation().asRepositoryContainer(
-				SVNUtility.getProposedBranchesLocation(TestUtil.getLocation()) + "/" + project.getName(), false);
+		IRepositoryResource switchDestination = TestUtil.getRepositoryLocation().asRepositoryContainer(
+				SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation()) + "/" + project.getName(), false);
 		return new SwitchOperation(new IResource[] { project }, new IRepositoryResource[] { switchDestination },
 				SVNDepth.INFINITY, false, true);
 	}
@@ -299,7 +299,7 @@ public class LocalOperationFactory {
 		return new AbstractLockingTestOperation("RelocateWorkingCopyOperation Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				IRepositoryLocation newLocation = TestUtil.getLocation();
+				IRepositoryLocation newLocation = TestUtil.getRepositoryLocation();
 				String old = newLocation.getUrl();
 				newLocation.setUrl("http://testurl");
 

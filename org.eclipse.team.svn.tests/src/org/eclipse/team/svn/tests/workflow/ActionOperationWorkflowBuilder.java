@@ -39,6 +39,9 @@ import org.eclipse.team.svn.tests.core.RemoteOperationFactory;
 import org.eclipse.team.svn.tests.core.file.FileOperationFactory;
 import org.eclipse.team.svn.tests.core.misc.AbstractLockingTestOperation;
 import org.eclipse.team.svn.tests.core.misc.TestUtil;
+import org.eclipse.team.svn.tests.workflow.repository.FileTestRepositoryManager;
+import org.eclipse.team.svn.tests.workflow.repository.RemoteTestRepositoryManager;
+import org.eclipse.team.svn.tests.workflow.repository.TestRepositoryManager;
 
 /**
  * 
@@ -49,6 +52,16 @@ public class ActionOperationWorkflowBuilder {
 	private FileOperationFactory fileOperationFactory = new FileOperationFactory();
 	private LocalOperationFactory localOperationFactory = new LocalOperationFactory();
 	private RemoteOperationFactory remoteOperationFactory = new RemoteOperationFactory();
+
+	public ActionOperationWorkflowBuilder() throws Exception {
+		// very important setup
+		TestRepositoryManager testRepositoryManager = new RemoteTestRepositoryManager();
+		testRepositoryManager.createRepository();
+
+		testRepositoryManager = new FileTestRepositoryManager();
+		testRepositoryManager.createRepository();
+		// NIC or do we need recreation for each method?
+	}
 
 	public ActionOperationWorkflow buildCommitUpdateWorkflow() {
 		return new ActionOperationWorkflow(localOperationFactory.createShareNewProjectOperation(),
@@ -79,26 +92,31 @@ public class ActionOperationWorkflowBuilder {
 		return new AbstractLockingTestOperation("PLC350Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				IRepositoryResource branchedTrunk = new SVNRepositoryFolder(TestUtil.getLocation(),
-						SVNUtility.getProposedBranchesLocation(TestUtil.getLocation()) + "/trunk", SVNRevision.HEAD);
-				IRepositoryResource taggedTrunk = new SVNRepositoryFolder(TestUtil.getLocation(),
-						SVNUtility.getProposedTagsLocation(TestUtil.getLocation()) + "/trunk", SVNRevision.HEAD);
+				IRepositoryResource branchedTrunk = new SVNRepositoryFolder(TestUtil.getRepositoryLocation(),
+						SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation()) + "/trunk",
+						SVNRevision.HEAD);
+				IRepositoryResource taggedTrunk = new SVNRepositoryFolder(TestUtil.getRepositoryLocation(),
+						SVNUtility.getProposedTagsLocation(TestUtil.getRepositoryLocation()) + "/trunk",
+						SVNRevision.HEAD);
 				if (branchedTrunk.exists()) {
 					FileUtility.deleteRecursive(new File(branchedTrunk.getUrl()));
 				}
 				if (taggedTrunk.exists()) {
 					FileUtility.deleteRecursive(new File(taggedTrunk.getUrl()));
 				}
-				IRepositoryResource branchTagResource = SVNUtility.getProposedTrunk(TestUtil.getLocation());
+				IRepositoryResource branchTagResource = SVNUtility.getProposedTrunk(TestUtil.getRepositoryLocation());
 				new PreparedBranchTagOperation("Branch", new IRepositoryResource[] { branchTagResource },
-						SVNUtility.getProposedBranches(TestUtil.getLocation()), "test branch", false).run(monitor);
-				branchedTrunk = new SVNRepositoryFolder(TestUtil.getLocation(),
-						SVNUtility.getProposedBranchesLocation(TestUtil.getLocation()) + "/trunk", SVNRevision.HEAD);
+						SVNUtility.getProposedBranches(TestUtil.getRepositoryLocation()), "test branch", false)
+								.run(monitor);
+				branchedTrunk = new SVNRepositoryFolder(TestUtil.getRepositoryLocation(),
+						SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation()) + "/trunk",
+						SVNRevision.HEAD);
 				assertTrue("PLC350Test", branchedTrunk.exists());
 				new PreparedBranchTagOperation("Tag", new IRepositoryResource[] { branchTagResource },
-						SVNUtility.getProposedTags(TestUtil.getLocation()), "test tag", false).run(monitor);
-				taggedTrunk = new SVNRepositoryFolder(TestUtil.getLocation(),
-						SVNUtility.getProposedTagsLocation(TestUtil.getLocation()) + "/trunk", SVNRevision.HEAD);
+						SVNUtility.getProposedTags(TestUtil.getRepositoryLocation()), "test tag", false).run(monitor);
+				taggedTrunk = new SVNRepositoryFolder(TestUtil.getRepositoryLocation(),
+						SVNUtility.getProposedTagsLocation(TestUtil.getRepositoryLocation()) + "/trunk",
+						SVNRevision.HEAD);
 				assertTrue("PLC350Test", taggedTrunk.exists());
 			}
 		};
@@ -180,8 +198,8 @@ public class ActionOperationWorkflowBuilder {
 		return new AbstractLockingTestOperation("PLC366Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				new ShareProjectOperation(new IProject[] { TestUtil.getSecondProject() }, TestUtil.getLocation(), null,
-						"Share Project test").run(monitor);
+				new ShareProjectOperation(new IProject[] { TestUtil.getSecondProject() },
+						TestUtil.getRepositoryLocation(), null, "Share Project test").run(monitor);
 				IResource[] forAddition = FileUtility
 						.getResourcesRecursive(new IResource[] { TestUtil.getSecondProject() }, IStateFilter.SF_NEW);
 				new AddToSVNOperation(forAddition).run(monitor);
@@ -248,9 +266,10 @@ public class ActionOperationWorkflowBuilder {
 		return new AbstractLockingTestOperation("PLC378Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				new CheckoutAsOperation("CopyProject", SVNUtility.getProposedTrunk(TestUtil.getLocation())
-						.asRepositoryContainer(TestUtil.getFirstProject().getName(), false), SVNDepth.INFINITY, true)
-								.run(monitor);
+				new CheckoutAsOperation(
+						"CopyProject", SVNUtility.getProposedTrunk(TestUtil.getRepositoryLocation())
+								.asRepositoryContainer(TestUtil.getFirstProject().getName(), false),
+						SVNDepth.INFINITY, true).run(monitor);
 				FileOutputStream fos = null;
 				try {
 					fos = new FileOutputStream(TestUtil.getFirstProject().getLocation().toString() + "/testFile");
@@ -295,9 +314,10 @@ public class ActionOperationWorkflowBuilder {
 		return new AbstractLockingTestOperation("PLC379Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(TestUtil.getLocation())
-						.asRepositoryContainer(TestUtil.getSecondProject().getName(), false), SVNDepth.INFINITY, true)
-								.run(monitor);
+				new CheckoutAsOperation(
+						"TestProject", SVNUtility.getProposedTrunk(TestUtil.getRepositoryLocation())
+								.asRepositoryContainer(TestUtil.getSecondProject().getName(), false),
+						SVNDepth.INFINITY, true).run(monitor);
 				FileOutputStream fos = null;
 				try {
 					fos = new FileOutputStream(TestUtil.getFirstProject().getLocation().toString() + "/123");
@@ -349,17 +369,18 @@ public class ActionOperationWorkflowBuilder {
 				} finally {
 					fos.close();
 				}
-				new ShareProjectOperation(new IProject[] { TestUtil.getSecondProject() }, TestUtil.getLocation(), null,
-						"Share Project test").run(monitor);
+				new ShareProjectOperation(new IProject[] { TestUtil.getSecondProject() },
+						TestUtil.getRepositoryLocation(), null, "Share Project test").run(monitor);
 				IResource[] forAddition = FileUtility
 						.getResourcesRecursive(new IResource[] { TestUtil.getSecondProject() }, IStateFilter.SF_NEW);
 				new AddToSVNOperation(forAddition).run(monitor);
 				IResource[] forCommit = FileUtility
 						.getResourcesRecursive(new IResource[] { TestUtil.getSecondProject() }, IStateFilter.SF_ADDED);
 				new CommitOperation(forCommit, "test PLC380", false, false).run(monitor);
-				new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(TestUtil.getLocation())
-						.asRepositoryContainer(TestUtil.getSecondProject().getName(), false), SVNDepth.INFINITY, true)
-								.run(monitor);
+				new CheckoutAsOperation(
+						"TestProject", SVNUtility.getProposedTrunk(TestUtil.getRepositoryLocation())
+								.asRepositoryContainer(TestUtil.getSecondProject().getName(), false),
+						SVNDepth.INFINITY, true).run(monitor);
 				try {
 					fos = new FileOutputStream(TestUtil.getFirstProject().getLocation().toString() + "/123");
 					fos.write("".getBytes());
