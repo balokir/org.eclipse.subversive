@@ -3,16 +3,13 @@ package org.eclipse.team.svn.tests.core.misc;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -117,46 +114,15 @@ public class TestUtil {
 		}
 	}
 
-	public static IRepositoryLocation getLocation() {
-		if (SVNFileStorage.instance().getRepositoryLocations().length == 0) {
-			try {
-				setUpRemoteRepository();
-			} catch (Exception e) {
-				// NIC Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return SVNFileStorage.instance().getRepositoryLocations()[0];
-	}
-
-	private static void setUpRemoteRepository() throws Exception {
-		// NIC cloned + adapted code from TestWorkflow.setUp()
-		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		HashMap<String, Object> preferences = new HashMap<String, Object>();
-		preferences.put(ISVNStorage.PREF_STATE_INFO_LOCATION, TestPlugin.instance().getStateLocation());
-		storage.initialize(preferences);
-
-		IRepositoryLocation location = storage.newRepositoryLocation();
-		ResourceBundle bundle = TestPlugin.instance().getResourceBundle();
-		location.setUrl(bundle.getString("Repository.URL"));
-		location.setTrunkLocation(bundle.getString("Repository.Trunk"));
-		location.setBranchesLocation(bundle.getString("Repository.Branches"));
-		location.setTagsLocation(bundle.getString("Repository.Tags"));
-		location.setStructureEnabled(true);
-		location.setLabel(bundle.getString("Repository.Label"));
-		location.setUsername(bundle.getString("Repository.Username"));
-		location.setPassword(bundle.getString("Repository.Password"));
-		location.setPasswordSaved("true".equals(bundle.getString("Repository.SavePassword")));
-
-		storage.addRepositoryLocation(location);
-
-	}
-
 	public static boolean isSVNInternals(File file) {
 		if (SVNUtility.getSVNFolderName().equals(file.getName())) {
 			return true;
 		}
 		File parent = file.getParentFile();
 		return parent == null ? false : isSVNInternals(parent);
+	}
+
+	public static IRepositoryLocation getRepositoryLocation() {
+		return SVNRemoteStorage.instance().getRepositoryLocations()[0];
 	}
 }

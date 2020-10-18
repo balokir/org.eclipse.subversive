@@ -94,18 +94,18 @@ public class FileOperationFactory {
 		SVNFileStorage storage = SVNFileStorage.instance();
 		IRepositoryResource branchTagResource = storage.asRepositoryResource(TestUtil.getFirstProjectFolder(), true);
 		PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch",
-				new IRepositoryResource[] { branchTagResource }, SVNUtility.getProposedBranches(TestUtil.getLocation()),
+				new IRepositoryResource[] { branchTagResource }, SVNUtility.getProposedBranches(TestUtil.getRepositoryLocation()),
 				"test branch", false);
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] { branchTagResource },
-				SVNUtility.getProposedTags(TestUtil.getLocation()), "test branch", false));
+				SVNUtility.getProposedTags(TestUtil.getRepositoryLocation()), "test branch", false));
 		return op;
 	}
 
 	public IActionOperation createCheckoutAsOperation() {
-		IRepositoryResource from = TestUtil.getLocation()
-				.asRepositoryContainer(SVNUtility.getProposedTrunkLocation(TestUtil.getLocation()) + "/"
+		IRepositoryResource from = TestUtil.getRepositoryLocation()
+				.asRepositoryContainer(SVNUtility.getProposedTrunkLocation(TestUtil.getRepositoryLocation()) + "/"
 						+ TestUtil.getFirstProjectFolder().getName(), false);
 		CompositeOperation composite = new CompositeOperation("Checkout", SVNMessages.class);
 		for (int i = 0; i < 10; i++) {
@@ -196,8 +196,8 @@ public class FileOperationFactory {
 	}
 
 	public IActionOperation createSwitchOperation() {
-		IRepositoryResource switchDestination = TestUtil.getLocation()
-				.asRepositoryContainer(SVNUtility.getProposedBranchesLocation(TestUtil.getLocation()) + "/"
+		IRepositoryResource switchDestination = TestUtil.getRepositoryLocation()
+				.asRepositoryContainer(SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation()) + "/"
 						+ TestUtil.getFirstProjectFolder().getName(), false);
 		return new SwitchOperation(TestUtil.getFirstProjectFolder(), switchDestination, true);
 	}
@@ -220,7 +220,7 @@ public class FileOperationFactory {
 				return folder.getName();
 			}
 		};
-		return new ShareOperation(TestUtil.getBothFolders(), TestUtil.getLocation(), folderNameMapper, "rootName",
+		return new ShareOperation(TestUtil.getBothFolders(), TestUtil.getRepositoryLocation(), folderNameMapper, "rootName",
 				ShareOperation.LAYOUT_DEFAULT, true, "Share Project test", true);
 
 	}
@@ -269,7 +269,7 @@ public class FileOperationFactory {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNFileStorage storage = SVNFileStorage.instance();
-				IRepositoryLocation newLocation = TestUtil.getLocation();
+				IRepositoryLocation newLocation = TestUtil.getRepositoryLocation();
 				String old = newLocation.getUrl();
 				new RelocateOperation(this.operableData(), "http://testurl").run(monitor);
 				IRepositoryResource remote = storage.asRepositoryResource(TestUtil.getFirstProjectFolder(), true);

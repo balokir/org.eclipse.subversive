@@ -23,7 +23,7 @@ import org.eclipse.team.svn.tests.core.misc.TestUtil;
 
 public class RemoteOperationFactory {
 	public IActionOperation createCheckoutOperation() {
-		IRepositoryResource trunk = SVNUtility.getProposedTrunk(TestUtil.getLocation());
+		IRepositoryResource trunk = SVNUtility.getProposedTrunk(TestUtil.getRepositoryLocation());
 		CheckoutAsOperation mainOp = new CheckoutAsOperation(TestUtil.getFirstProject().getName(),
 				trunk.asRepositoryContainer(TestUtil.getFirstProject().getName(), false), SVNDepth.INFINITY, true);
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
@@ -37,12 +37,12 @@ public class RemoteOperationFactory {
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		IRepositoryResource branchTagResource = storage.asRepositoryResource(TestUtil.getFirstProject());
 		PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch",
-				new IRepositoryResource[] { branchTagResource }, SVNUtility.getProposedBranches(TestUtil.getLocation()),
+				new IRepositoryResource[] { branchTagResource }, SVNUtility.getProposedBranches(TestUtil.getRepositoryLocation()),
 				"test branch", false);
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] { branchTagResource },
-				SVNUtility.getProposedTags(TestUtil.getLocation()), "test branch", false));
+				SVNUtility.getProposedTags(TestUtil.getRepositoryLocation()), "test branch", false));
 		return op;
 	}
 
@@ -82,7 +82,7 @@ public class RemoteOperationFactory {
 	}
 
 	public IActionOperation createDiscardRepositoryOperation() {
-		return new DiscardRepositoryLocationsOperation(new IRepositoryLocation[] { TestUtil.getLocation() });
+		return new DiscardRepositoryLocationsOperation(new IRepositoryLocation[] { TestUtil.getRepositoryLocation() });
 	}
 
 	public IActionOperation createGetResourceAnnotationOperation() {
