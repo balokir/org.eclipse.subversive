@@ -44,8 +44,7 @@ public class ParameterizedOperationTest {
 	public IActionOperation operation;
 
 	@Parameters(name = "#{index}: {0}")
-	public static Collection<IActionOperation> createTestData()
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public static Collection<IActionOperation> createTestData() throws Exception {
 
 		TestUtil.refreshProjects();
 		Object[] operationFactories = { new FileOperationFactory(), new RemoteOperationFactory() };
