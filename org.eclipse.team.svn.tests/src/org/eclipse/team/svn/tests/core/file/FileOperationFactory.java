@@ -51,11 +51,18 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.tests.core.misc.TestUtil;
+import org.eclipse.team.svn.tests.workflow.repository.FileTestRepositoryManager;
+import org.eclipse.team.svn.tests.workflow.repository.TestRepositoryManager;
 
 public class FileOperationFactory {
 
 	private static final String TEST_PROPERTY_NAME = "test-property";
 	private static final String TEST_PROPERTY_VALUE = "test-value";
+
+	public FileOperationFactory() throws Exception {
+		TestRepositoryManager testRepositoryManager = new FileTestRepositoryManager();
+		testRepositoryManager.createRepository();
+	}
 
 	public IActionOperation createAddToSvnIgnoreOperation() {
 		try {
@@ -94,8 +101,8 @@ public class FileOperationFactory {
 		SVNFileStorage storage = SVNFileStorage.instance();
 		IRepositoryResource branchTagResource = storage.asRepositoryResource(TestUtil.getFirstProjectFolder(), true);
 		PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch",
-				new IRepositoryResource[] { branchTagResource }, SVNUtility.getProposedBranches(TestUtil.getRepositoryLocation()),
-				"test branch", false);
+				new IRepositoryResource[] { branchTagResource },
+				SVNUtility.getProposedBranches(TestUtil.getRepositoryLocation()), "test branch", false);
 		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] { branchTagResource },
@@ -220,8 +227,8 @@ public class FileOperationFactory {
 				return folder.getName();
 			}
 		};
-		return new ShareOperation(TestUtil.getBothFolders(), TestUtil.getRepositoryLocation(), folderNameMapper, "rootName",
-				ShareOperation.LAYOUT_DEFAULT, true, "Share Project test", true);
+		return new ShareOperation(TestUtil.getBothFolders(), TestUtil.getRepositoryLocation(), folderNameMapper,
+				"rootName", ShareOperation.LAYOUT_DEFAULT, true, "Share Project test", true);
 
 	}
 
