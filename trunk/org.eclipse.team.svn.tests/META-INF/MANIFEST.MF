@@ -11,11 +11,7 @@ Bundle-ClassPath: .
 Export-Package: org.eclipse.team.svn.tests,
  org.eclipse.team.svn.tests.ui,
  org.eclipse.team.svn.tests.core,
- org.eclipse.team.svn.tests.core.workflow,
- org.eclipse.team.svn.tests.core.file,
- org.eclipse.team.svn.tests.core.file.refactor,
- org.eclipse.team.svn.tests.core.file.property,
- org.eclipse.team.svn.tests.core.file.management
+ org.eclipse.team.svn.tests.core.file
 Require-Bundle: org.eclipse.core.runtime, 
  org.eclipse.team.svn.core,
  org.eclipse.team.svn.ui,
