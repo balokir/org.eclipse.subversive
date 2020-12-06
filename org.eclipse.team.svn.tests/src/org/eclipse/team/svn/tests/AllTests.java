@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.tests;
 
 import org.eclipse.team.svn.tests.core.AbstractOperationTest;
-import org.eclipse.team.svn.tests.core.ParameterizedOperationTest;
 import org.eclipse.team.svn.tests.core.RepositoryLocationsManagementTest;
 import org.eclipse.team.svn.tests.core.StateFilterTest;
 import org.eclipse.team.svn.tests.ui.DecoratorVariablesTest;
@@ -32,7 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ AbstractOperationTest.class, DecoratorVariablesTest.class, JavaViewMenuEnablementTest.class,
-		ParameterizedOperationTest.class, ParameterizedWorkflowTest.class, RepositoryLocationsManagementTest.class,
+		 ParameterizedWorkflowTest.class, RepositoryLocationsManagementTest.class,
 		RepositoryViewMenuEnablementTest.class, StateFilterTest.class, SVNTeamMoveDeleteHookTest.class,
 		UIMonitorUtilityTest.class })
 public class AllTests {
