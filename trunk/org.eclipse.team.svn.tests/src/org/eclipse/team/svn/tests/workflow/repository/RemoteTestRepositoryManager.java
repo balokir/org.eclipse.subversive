@@ -29,7 +29,7 @@ public class RemoteTestRepositoryManager extends FileTestRepositoryManager {
 	}
 
 	private void initProject(IProject project) throws CoreException {
-		project.create(null);
+		project.create(null);// NIC HÄ???
 		project.open(null);
 		FileUtility.removeSVNMetaInformation(project, new NullProgressMonitor());
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());

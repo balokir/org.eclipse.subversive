@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -14,14 +15,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNDepth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
-import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.CommitOperation;
@@ -43,7 +42,6 @@ import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperatio
 import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.MoveResourceOperation;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -53,155 +51,164 @@ import org.eclipse.team.svn.tests.core.misc.AbstractLockingTestOperation;
 import org.eclipse.team.svn.tests.core.misc.TestUtil;
 
 public class LocalOperationFactory {
-	public IActionOperation createAddToSvnOperation() {
-		IResource[] scheduledForAddition = FileUtility.getResourcesRecursive(
-				new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() }, IStateFilter.SF_NEW,
-				IResource.DEPTH_ONE);
-		return new AddToSVNOperation(scheduledForAddition, true);
+	public Supplier<IActionOperation> createAddToSvnOperation() {
+		return () -> {
+			IResource[] scheduledForAddition = FileUtility.getResourcesRecursive(
+					new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() }, IStateFilter.SF_NEW,
+					IResource.DEPTH_ONE);
+			return new AddToSVNOperation(scheduledForAddition, true);
+		};
 	}
 
-	public IActionOperation createAddToSvnIgnoreOperation() {
-		try {
-			FileUtility.copyFile(TestUtil.getFirstProject().getFolder("src").getLocation().toFile(),
-					TestUtil.getSecondProject().getFile("bumprev.sh").getLocation().toFile(),
-					new NullProgressMonitor());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		IResource[] ignoreResource = new IResource[] { TestUtil.getFirstProject().getFile("src/bumprev.sh") };
-		return new AddToSVNIgnoreOperation(ignoreResource, IRemoteStorage.IGNORE_NAME, "");
+	public Supplier<IActionOperation> createCleanupOperation() {
+		return () -> new CleanupOperation(new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() });
 	}
 
-	public IActionOperation createCleanupOperation() {
-		return new CleanupOperation(new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() });
-	}
-
-	public IActionOperation createClearLocalStatusesOperation() {
-		return new ClearLocalStatusesOperation(
+	public Supplier<IActionOperation> createClearLocalStatusesOperation() {
+		return () -> new ClearLocalStatusesOperation(
 				new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() });
 	}
 
-	public IActionOperation createCommitOperation() {
+	public Supplier<IActionOperation> createCommitOperation() {
 		IResource[] scheduledForCommit = FileUtility.getResourcesRecursive(
 				new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() }, IStateFilter.SF_ADDED);
-		return new CommitOperation(scheduledForCommit, "test commit", true, false);
+		return () -> new CommitOperation(scheduledForCommit, "test commit", true, false);
 	}
 
-	public IActionOperation createCopyLocalResourceOperation() {
-		IResource source = TestUtil.getSecondProject().getFile("site.xml");
-		File newFolder = new File(TestUtil.getSecondProject().getLocation().toString() + "/web");
-		newFolder.mkdirs();
-		TestUtil.refreshProjects();
-		IResource destination = TestUtil.getSecondProject().getFile("web/site.xml");
-		return new CopyResourceOperation(source, destination);
+	public Supplier<IActionOperation> createCopyLocalResourceOperation() {
+		return () -> {
+			IResource source = TestUtil.getSecondProject().getFile("site.xml");
+			File newFolder = new File(TestUtil.getSecondProject().getLocation().toString() + "/web");
+			newFolder.mkdirs();
+			TestUtil.refreshProjects();
+			IResource destination = TestUtil.getSecondProject().getFile("web/site.xml");
+			return new CopyResourceOperation(source, destination);
+		};
 	}
 
-	public IActionOperation createDeleteLocalResourceOperation() {
-		return new DeleteResourceOperation(TestUtil.getFirstProject().getFile("maven.xml"));
+	public Supplier<IActionOperation> createDeleteLocalResourceOperation() {
+		return () -> new DeleteResourceOperation(TestUtil.getFirstProject().getFile("maven.xml"));
 	}
 
-	public IActionOperation createDisconnectWithDropOperation() {
-		return new DisconnectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
+	public Supplier<IActionOperation> createDisconnectWithDropOperation() {
+		return () -> new DisconnectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
 				true);
 	}
 
-	public IActionOperation createDisconnectWithoutDropOperation() {
-		return new DisconnectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
+	public Supplier<IActionOperation> createDisconnectWithoutDropOperation() {
+		return () -> new DisconnectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
 				false);
 	}
 
-	public IActionOperation createGetAllResourcesOperation() {
-		GetAllResourcesOperation mainOp = new GetAllResourcesOperation(TestUtil.getFirstProject());
-		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-		op.add(mainOp);
-		op.add(new GetAllResourcesOperation(TestUtil.getSecondProject()));
-		return op;
+	public Supplier<IActionOperation> createGetAllResourcesOperation() {
+		return () -> {
+			GetAllResourcesOperation mainOp = new GetAllResourcesOperation(TestUtil.getFirstProject());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+			op.add(mainOp);
+			op.add(new GetAllResourcesOperation(TestUtil.getSecondProject()));
+			return op;
+		};
 	}
 
-	public IActionOperation createGetRemoteContentsOperation() {
-		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		IResource local = TestUtil.getFirstProject().getFile("maven.xml");
-		IRepositoryResource remote = storage.asRepositoryResource(TestUtil.getFirstProject().getFile("maven.xml"));
-		HashMap<String, String> remote2local = new HashMap<String, String>();
-		remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(local));
-		return new GetRemoteContentsOperation(new IResource[] { local }, new IRepositoryResource[] { remote },
-				remote2local, true);
+	public Supplier<IActionOperation> createGetRemoteContentsOperation() {
+		return () -> {
+			SVNRemoteStorage storage = SVNRemoteStorage.instance();
+			IResource local = TestUtil.getFirstProject().getFile("maven.xml");
+			IRepositoryResource remote = storage.asRepositoryResource(TestUtil.getFirstProject().getFile("maven.xml"));
+			HashMap<String, String> remote2local = new HashMap<String, String>();
+			remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(local));
+			return new GetRemoteContentsOperation(new IResource[] { local }, new IRepositoryResource[] { remote },
+					remote2local, true);
+		};
 	}
 
-	public IActionOperation createInfoOperation() {
-		return new InfoOperation(TestUtil.getFirstProject().getFile("maven.xml"));
+	public Supplier<IActionOperation> createInfoOperation() {
+		return () -> new InfoOperation(TestUtil.getFirstProject().getFile("maven.xml"));
 	}
 
-	public IActionOperation createLockOperation() {
-		IResource remote1 = TestUtil.getFirstProject().getFile("maven.xml");
-		IResource remote2 = TestUtil.getSecondProject().getFile("bumprev.sh");
-		return new LockOperation(new IResource[] { remote1, remote2 }, "LockOperation test", true);
+	public Supplier<IActionOperation> createLockOperation() {
+		return () -> {
+			IResource remote1 = TestUtil.getFirstProject().getFile("maven.xml");
+			IResource remote2 = TestUtil.getSecondProject().getFile("bumprev.sh");
+			return new LockOperation(new IResource[] { remote1, remote2 }, "LockOperation test", true);
+		};
 	}
 
-	public IActionOperation createMoveLocalResourceOperation() {
-		return new MoveResourceOperation(TestUtil.getFirstProject().getFile("maven.xml"),
+	public Supplier<IActionOperation> createMoveLocalResourceOperation() {
+		return () -> new MoveResourceOperation(TestUtil.getFirstProject().getFile("maven.xml"),
 				TestUtil.getSecondProject().getFile(".sitebuild/maven.xml"));
 	}
 
-	public IActionOperation createReconnectExistingProjectOperation() {
-		return new ReconnectProjectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
+	public Supplier<IActionOperation> createReconnectExistingProjectOperation() {
+		return () -> new ReconnectProjectOperation(
+				new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
 				TestUtil.getRepositoryLocation());
 	}
 
-	public IActionOperation createRemoteStatusOperation() {
-		return new RemoteStatusOperation(new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() });
+	public Supplier<IActionOperation> createRemoteStatusOperation() {
+		return () -> new RemoteStatusOperation(
+				new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() });
 	}
 
-	public IActionOperation createRevertOperation() {
-		IProject prj = TestUtil.getFirstProject();
+	public Supplier<IActionOperation> createRevertOperation() {
+		return () -> {
+			IProject prj = TestUtil.getFirstProject();
 
-		IFile file = prj.getFile("testProject.xml");
+			IFile file = prj.getFile("testProject.xml");
 
-		try {
-			file.appendContents(new ByteArrayInputStream("data".getBytes()), true, false, null);
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		}
+			try {
+				file.appendContents(new ByteArrayInputStream("data".getBytes()), true, false, null);
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
 
-		prj = TestUtil.getSecondProject();
-		IFile file1 = prj.getFile("site.xml");
+			prj = TestUtil.getSecondProject();
+			IFile file1 = prj.getFile("site.xml");
 
-		try {
-			file1.appendContents(new ByteArrayInputStream("data".getBytes()), true, false, null);
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		}
-
-		return new RevertOperation(new IResource[] { file, file1 }, false);
+			try {
+				file1.appendContents(new ByteArrayInputStream("data".getBytes()), true, false, null);
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
+			return new RevertOperation(new IResource[] { file, file1 }, false);
+		};
 	}
 
-	public IActionOperation createShareNewProjectOperation() {
-		return new ShareProjectOperation(new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
+	public Supplier<IActionOperation> createShareNewProjectOperation() {
+		return () -> new ShareProjectOperation(
+				new IProject[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
 				TestUtil.getRepositoryLocation(), null, "Share Project test");
 	}
 
-	public IActionOperation createSwitchOperation() {
-		IResource project = TestUtil.getFirstProject();
-		IRepositoryResource switchDestination = TestUtil.getRepositoryLocation().asRepositoryContainer(
-				SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation()) + "/" + project.getName(), false);
-		return new SwitchOperation(new IResource[] { project }, new IRepositoryResource[] { switchDestination },
-				SVNDepth.INFINITY, false, true);
+	public Supplier<IActionOperation> createSwitchOperation() {
+		return () -> {
+			IResource project = TestUtil.getFirstProject();
+			IRepositoryResource switchDestination = TestUtil.getRepositoryLocation().asRepositoryContainer(
+					SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation()) + "/" + project.getName(),
+					false);
+			return new SwitchOperation(new IResource[] { project }, new IRepositoryResource[] { switchDestination },
+					SVNDepth.INFINITY, false, true);
+		};
 	}
 
-	public IActionOperation createUnlockOperation() {
-		IResource remote1 = TestUtil.getFirstProject().getFile("maven.xml");
-		IResource remote2 = TestUtil.getSecondProject().getFile("bumprev.sh");
-		return new UnlockOperation(new IResource[] { remote1, remote2 });
+	public Supplier<IActionOperation> createUnlockOperation() {
+		return () -> {
+			IResource remote1 = TestUtil.getFirstProject().getFile("maven.xml");
+			IResource remote2 = TestUtil.getSecondProject().getFile("bumprev.sh");
+			return new UnlockOperation(new IResource[] { remote1, remote2 });
+		};
 	}
 
-	public IActionOperation createUpdateOperation() {
-		return new UpdateOperation(new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() }, true);
+	public Supplier<IActionOperation> createUpdateOperation() {
+		return () -> new UpdateOperation(new IResource[] { TestUtil.getFirstProject(), TestUtil.getSecondProject() },
+				true);
 	}
 
-	public IActionOperation createFileUtilityTestOperation() {
-		return new AbstractLockingTestOperation("File Utility") {
+	public Supplier<IActionOperation> createFileUtilityTestOperation() {
+		return () -> new AbstractLockingTestOperation("File Utility") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				// NIC \\data - WTF?
 				String name = FileUtility.formatResourceName("http://testurl\\data");
 				IResource prj1 = TestUtil.getFirstProject();
 				IResource prj2 = TestUtil.getSecondProject();
@@ -227,6 +234,7 @@ public class LocalOperationFactory {
 				final int[] cntr = new int[1];
 				cntr[0] = 0;
 				FileUtility.visitNodes(prj1, new IResourceVisitor() {
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						if (FileUtility.isNotSupervised(resource)) {
 							return false;
@@ -236,6 +244,7 @@ public class LocalOperationFactory {
 					}
 				}, IResource.DEPTH_INFINITE);
 				FileUtility.visitNodes(prj2, new IResourceVisitor() {
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						if (FileUtility.isNotSupervised(resource)) {
 							return false;
@@ -295,8 +304,8 @@ public class LocalOperationFactory {
 		};
 	}
 
-	public IActionOperation createRelocateWorkingCopyOperation() {
-		return new AbstractLockingTestOperation("RelocateWorkingCopyOperation Test") {
+	public Supplier<IActionOperation> createRelocateWorkingCopyOperation() {
+		return () -> new AbstractLockingTestOperation("RelocateWorkingCopyOperation Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				IRepositoryLocation newLocation = TestUtil.getRepositoryLocation();
@@ -329,8 +338,8 @@ public class LocalOperationFactory {
 		};
 	}
 
-	public IActionOperation createSvnUtilityTestOperation() {
-		return new AbstractLockingTestOperation("SVN Utility") {
+	public Supplier<IActionOperation> createSvnUtilityTestOperation() {
+		return () -> new AbstractLockingTestOperation("SVN Utility") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNRemoteStorage storage = SVNRemoteStorage.instance();
