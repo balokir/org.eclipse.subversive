@@ -1,6 +1,8 @@
 package org.eclipse.team.svn.tests.workflow;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -9,26 +11,24 @@ import org.eclipse.team.svn.tests.core.misc.TestUtil;
 import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 
 public class ActionOperationWorkflow {
-	private IActionOperation[] actionOperations;
+	private Supplier<IActionOperation>[] actionOperations;
 
-	public ActionOperationWorkflow(IActionOperation... actionOperations) {
+	public ActionOperationWorkflow(Supplier<IActionOperation>... actionOperations) {
 		this.actionOperations = actionOperations;
 	}
 
 	public void execute() {
 		TestUtil.refreshProjects();
-		for (IActionOperation operation : actionOperations) {
-			executeAndValidate(operation);
+		for (Supplier<IActionOperation> operation : actionOperations) {
+			executeAndValidate(operation.get());
 		}
 	}
 
 	private void executeAndValidate(IActionOperation op) {
 		IStatus operationStatus = op.run(new NullProgressMonitor()).getStatus();
-		if (operationStatus.isOK()) {
-			assertTrue(op.getOperationName(), true);
-		} else {
+		if (!operationStatus.isOK()) {
 			String trace = ReportPartsFactory.getStackTrace(operationStatus);
-			assertTrue(operationStatus.getMessage() + trace, false);
+			fail(operationStatus.getMessage() + trace);
 		}
 	}
 }

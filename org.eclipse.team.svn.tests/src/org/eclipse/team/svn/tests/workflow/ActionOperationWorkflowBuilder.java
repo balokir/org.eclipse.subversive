@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.StringTokenizer;
+import java.util.function.Supplier;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -55,11 +56,12 @@ public class ActionOperationWorkflowBuilder {
 
 	public ActionOperationWorkflowBuilder() throws Exception {
 		// very important setup
-		TestRepositoryManager testRepositoryManager = new RemoteTestRepositoryManager();
+		TestRepositoryManager remoteTestRepoManager = new RemoteTestRepositoryManager();
+		remoteTestRepoManager.createRepository();
+
+		TestRepositoryManager testRepositoryManager = new FileTestRepositoryManager();
 		testRepositoryManager.createRepository();
 
-		testRepositoryManager = new FileTestRepositoryManager();
-		testRepositoryManager.createRepository();
 		// NIC or do we need recreation for each method?
 	}
 
@@ -88,8 +90,8 @@ public class ActionOperationWorkflowBuilder {
 				createLockingOperationForPlc350Test());
 	}
 
-	private IActionOperation createLockingOperationForPlc350Test() {
-		return new AbstractLockingTestOperation("PLC350Test") {
+	private Supplier<IActionOperation> createLockingOperationForPlc350Test() {
+		return () -> new AbstractLockingTestOperation("PLC350Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				IRepositoryResource branchedTrunk = new SVNRepositoryFolder(TestUtil.getRepositoryLocation(),
@@ -122,8 +124,8 @@ public class ActionOperationWorkflowBuilder {
 		};
 	}
 
-	private IActionOperation createCustomLockingOperation() {
-		return new AbstractLockingTestOperation("CommitUpdateWorkflowTest") {
+	private Supplier<IActionOperation> createCustomLockingOperation() {
+		return () -> new AbstractLockingTestOperation("CommitUpdateWorkflowTest") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				File testFolder = TestUtil.getFirstProject().getFolder("src/testFolder").getLocation().toFile();
@@ -133,8 +135,8 @@ public class ActionOperationWorkflowBuilder {
 		};
 	}
 
-	private IActionOperation createLockingOperationForPlc314Test() {
-		return new AbstractLockingTestOperation("PLC314Test") {
+	private Supplier<IActionOperation> createLockingOperationForPlc314Test() {
+		return () -> new AbstractLockingTestOperation("PLC314Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				FileUtility.copyAll(TestUtil.getFirstProject().getFolder("src").getLocation().toFile(),
@@ -172,8 +174,8 @@ public class ActionOperationWorkflowBuilder {
 		};
 	}
 
-	private IActionOperation createCustomAddToSvnIgnoreOperation() {
-		return new AbstractLockingTestOperation("PLC312Test") {
+	private Supplier<IActionOperation> createCustomAddToSvnIgnoreOperation() {
+		return () -> new AbstractLockingTestOperation("PLC312Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				FileUtility.copyAll(TestUtil.getFirstProject().getFolder("src").getLocation().toFile(),
@@ -194,8 +196,8 @@ public class ActionOperationWorkflowBuilder {
 		return new ActionOperationWorkflow(createLockingOperationForPlc366Test());
 	}
 
-	private IActionOperation createLockingOperationForPlc366Test() {
-		return new AbstractLockingTestOperation("PLC366Test") {
+	private Supplier<IActionOperation> createLockingOperationForPlc366Test() {
+		return () -> new AbstractLockingTestOperation("PLC366Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				new ShareProjectOperation(new IProject[] { TestUtil.getSecondProject() },
@@ -229,8 +231,8 @@ public class ActionOperationWorkflowBuilder {
 				createLockingOperationForPlc375Test());
 	}
 
-	private IActionOperation createLockingOperationForPlc375Test() {
-		return new AbstractLockingTestOperation("PLC375Test") {
+	private Supplier<IActionOperation> createLockingOperationForPlc375Test() {
+		return () -> new AbstractLockingTestOperation("PLC375Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				FileOutputStream fos = null;
@@ -262,8 +264,8 @@ public class ActionOperationWorkflowBuilder {
 				createLockingOperationForPlc378Test());
 	}
 
-	private IActionOperation createLockingOperationForPlc378Test() {
-		return new AbstractLockingTestOperation("PLC378Test") {
+	private Supplier<IActionOperation> createLockingOperationForPlc378Test() {
+		return () -> new AbstractLockingTestOperation("PLC378Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				new CheckoutAsOperation(
@@ -310,8 +312,8 @@ public class ActionOperationWorkflowBuilder {
 				createLockingOperationForPlc379Test());
 	}
 
-	private IActionOperation createLockingOperationForPlc379Test() {
-		return new AbstractLockingTestOperation("PLC379Test") {
+	private Supplier<IActionOperation> createLockingOperationForPlc379Test() {
+		return () -> new AbstractLockingTestOperation("PLC379Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				new CheckoutAsOperation(
@@ -358,8 +360,8 @@ public class ActionOperationWorkflowBuilder {
 		return new ActionOperationWorkflow(createLockingOperationForPlc380Test());
 	}
 
-	private IActionOperation createLockingOperationForPlc380Test() {
-		return new AbstractLockingTestOperation("PLC380Test") {
+	private Supplier<IActionOperation> createLockingOperationForPlc380Test() {
+		return () -> new AbstractLockingTestOperation("PLC380Test") {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				FileOutputStream fos = null;
@@ -424,10 +426,10 @@ public class ActionOperationWorkflowBuilder {
 		return new ActionOperationWorkflow(localOperationFactory.createShareNewProjectOperation(),
 				localOperationFactory.createFileUtilityTestOperation(),
 				localOperationFactory.createSvnUtilityTestOperation(), localOperationFactory.createAddToSvnOperation(),
-				localOperationFactory.createAddToSvnIgnoreOperation(), localOperationFactory.createCommitOperation(),
-				remoteOperationFactory.createBranchTagOperation(), localOperationFactory.createSwitchOperation(),
-				remoteOperationFactory.createCheckoutOperation(), localOperationFactory.createCleanupOperation(),
-				localOperationFactory.createGetAllResourcesOperation(),
+				// NIC add to svn ignore!
+				localOperationFactory.createCommitOperation(), remoteOperationFactory.createBranchTagOperation(),
+				localOperationFactory.createSwitchOperation(), remoteOperationFactory.createCheckoutOperation(),
+				localOperationFactory.createCleanupOperation(), localOperationFactory.createGetAllResourcesOperation(),
 				localOperationFactory.createClearLocalStatusesOperation(),
 				remoteOperationFactory.createGetLogMessagesOperation(),
 				localOperationFactory.createRemoteStatusOperation(), localOperationFactory.createRevertOperation(),

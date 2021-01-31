@@ -28,6 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * Default test suite factory
  * 
  * @author Alexander Gurov
+ * @author Nicolas Peifer
  */
 @RunWith(Suite.class)
 @SuiteClasses({ AbstractOperationTest.class, DecoratorVariablesTest.class, JavaViewMenuEnablementTest.class,

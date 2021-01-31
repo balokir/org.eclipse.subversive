@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -64,114 +65,128 @@ public class FileOperationFactory {
 		testRepositoryManager.createRepository();
 	}
 
-	public IActionOperation createAddToSvnIgnoreOperation() {
-		try {
-			FileUtility.copyFile(new File(TestUtil.getFirstProjectFolder().getPath() + "/src"),
-					new File(TestUtil.getSecondProjectFolder().getPath() + "/bumprev.sh"), new NullProgressMonitor());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new AddToSVNIgnoreOperation(
-				new File[] { new File(TestUtil.getFirstProjectFolder().getPath() + "/src/bumprev.sh") },
-				IRemoteStorage.IGNORE_NAME, "");
-	}
-
-	public IActionOperation createAddToSvnOperation() {
-		List<File> toCommit = new ArrayList<File>();
-		File[] files = TestUtil.getFirstProjectFolder().listFiles();
-		for (int i = 0; i < files.length; i++) {
-			if (!TestUtil.isSVNInternals(files[i])) {
-				toCommit.add(files[i]);
+	public Supplier<IActionOperation> createAddToSvnIgnoreOperation() {
+		return () -> {
+			try {
+				FileUtility.copyFile(new File(TestUtil.getFirstProjectFolder().getPath() + "/src"),
+						new File(TestUtil.getSecondProjectFolder().getPath() + "/bumprev.sh"),
+						new NullProgressMonitor());
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		}
-		files = TestUtil.getSecondProjectFolder().listFiles();
-		for (int i = 0; i < files.length; i++) {
-			if (!TestUtil.isSVNInternals(files[i])) {
-				toCommit.add(files[i]);
+			return new AddToSVNIgnoreOperation(
+					new File[] { new File(TestUtil.getFirstProjectFolder().getPath() + "/src/bumprev.sh") },
+					IRemoteStorage.IGNORE_NAME, "");
+		};
+	}
+
+	public Supplier<IActionOperation> createAddToSvnOperation() {
+		return () -> {
+			List<File> toCommit = new ArrayList<File>();
+			File[] files = TestUtil.getFirstProjectFolder().listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (!TestUtil.isSVNInternals(files[i])) {
+					toCommit.add(files[i]);
+				}
 			}
-		}
-
-		AddToSVNOperation mainOp = new AddToSVNOperation(toCommit.toArray(new File[toCommit.size()]), true);
-		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-		op.add(mainOp);
-		return op;
-	}
-
-	public IActionOperation createBranchTagOperation() {
-		SVNFileStorage storage = SVNFileStorage.instance();
-		IRepositoryResource branchTagResource = storage.asRepositoryResource(TestUtil.getFirstProjectFolder(), true);
-		PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch",
-				new IRepositoryResource[] { branchTagResource },
-				SVNUtility.getProposedBranches(TestUtil.getRepositoryLocation()), "test branch", false);
-		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
-		op.add(mainOp);
-		op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] { branchTagResource },
-				SVNUtility.getProposedTags(TestUtil.getRepositoryLocation()), "test branch", false));
-		return op;
-	}
-
-	public IActionOperation createCheckoutAsOperation() {
-		IRepositoryResource from = TestUtil.getRepositoryLocation()
-				.asRepositoryContainer(SVNUtility.getProposedTrunkLocation(TestUtil.getRepositoryLocation()) + "/"
-						+ TestUtil.getFirstProjectFolder().getName(), false);
-		CompositeOperation composite = new CompositeOperation("Checkout", SVNMessages.class);
-		for (int i = 0; i < 10; i++) {
-			File to = new File(TestUtil.getFirstProjectFolder().getPath() + "_checkout_" + i);
-			CheckoutAsOperation op = new CheckoutAsOperation(to, from, SVNDepth.INFINITY, false, true);
-			composite.add(op);
-		}
-		return composite;
-	}
-
-	public IActionOperation createCommitOperation() {
-		List<File> toCommit = new ArrayList<File>();
-		File[] files = TestUtil.getFirstProjectFolder().listFiles();
-		for (int i = 0; i < files.length; i++) {
-			if (!TestUtil.isSVNInternals(files[i])) {
-				toCommit.add(files[i]);
+			files = TestUtil.getSecondProjectFolder().listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (!TestUtil.isSVNInternals(files[i])) {
+					toCommit.add(files[i]);
+				}
 			}
-		}
-		files = TestUtil.getSecondProjectFolder().listFiles();
-		for (int i = 0; i < files.length; i++) {
-			if (!TestUtil.isSVNInternals(files[i])) {
-				toCommit.add(files[i]);
-			}
-		}
 
-		return new CommitOperation(toCommit.toArray(new File[toCommit.size()]), "test commit", true, false);
+			AddToSVNOperation mainOp = new AddToSVNOperation(toCommit.toArray(new File[toCommit.size()]), true);
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+			op.add(mainOp);
+			return op;
+		};
 	}
 
-	public IActionOperation createCreatePatchOperation() {
-		return new CreatePatchOperation(TestUtil.getFirstProjectFolder(),
+	public Supplier<IActionOperation> createBranchTagOperation() {
+		return () -> {
+			SVNFileStorage storage = SVNFileStorage.instance();
+			IRepositoryResource branchTagResource = storage.asRepositoryResource(TestUtil.getFirstProjectFolder(),
+					true);
+			PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch",
+					new IRepositoryResource[] { branchTagResource },
+					SVNUtility.getProposedBranches(TestUtil.getRepositoryLocation()), "test branch", false);
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
+			op.add(mainOp);
+			op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] { branchTagResource },
+					SVNUtility.getProposedTags(TestUtil.getRepositoryLocation()), "test branch", false));
+			return op;
+		};
+	}
+
+	public Supplier<IActionOperation> createCheckoutAsOperation() {
+		return () -> {
+			IRepositoryResource from = TestUtil.getRepositoryLocation()
+					.asRepositoryContainer(SVNUtility.getProposedTrunkLocation(TestUtil.getRepositoryLocation()) + "/"
+							+ TestUtil.getFirstProjectFolder().getName(), false);
+			CompositeOperation composite = new CompositeOperation("Checkout", SVNMessages.class);
+			for (int i = 0; i < 10; i++) {
+				File to = new File(TestUtil.getFirstProjectFolder().getPath() + "_checkout_" + i);
+				CheckoutAsOperation op = new CheckoutAsOperation(to, from, SVNDepth.INFINITY, false, true);
+				composite.add(op);
+			}
+			return composite;
+		};
+	}
+
+	public Supplier<IActionOperation> createCommitOperation() {
+		return () -> {
+			List<File> toCommit = new ArrayList<File>();
+			File[] files = TestUtil.getFirstProjectFolder().listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (!TestUtil.isSVNInternals(files[i])) {
+					toCommit.add(files[i]);
+				}
+			}
+			files = TestUtil.getSecondProjectFolder().listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (!TestUtil.isSVNInternals(files[i])) {
+					toCommit.add(files[i]);
+				}
+			}
+			return new CommitOperation(toCommit.toArray(new File[toCommit.size()]), "test commit", true, false);
+		};
+	}
+
+	public Supplier<IActionOperation> createCreatePatchOperation() {
+		return () -> new CreatePatchOperation(TestUtil.getFirstProjectFolder(),
 				TestUtil.getSecondProjectFolder() + "/test.patch", true, true, true, true);
 	}
 
-	public IActionOperation createGetAllFilesOperation() {
-		return new GetAllFilesOperation(TestUtil.getFirstProjectFolder());
+	public Supplier<IActionOperation> createGetAllFilesOperation() {
+		return () -> new GetAllFilesOperation(TestUtil.getFirstProjectFolder());
 	}
 
-	public IActionOperation createGetFileContentOperation() {
-		OutputStream out = null;
-		try {
-			out = new FileOutputStream(TestUtil.getFirstProjectFolder().getPath() + "/maven.xml");
-		} catch (IOException e) {
-			assertFalse(e.getMessage(), true);
-		}
-		return new GetFileContentOperation(new File(TestUtil.getFirstProjectFolder().getPath() + "/plugin.properties"),
-				SVNRevision.HEAD, SVNRevision.HEAD, out);
+	public Supplier<IActionOperation> createGetFileContentOperation() {
+		return () -> {
+			OutputStream out = null;
+			try {
+				out = new FileOutputStream(TestUtil.getFirstProjectFolder().getPath() + "/maven.xml");
+			} catch (IOException e) {
+				assertFalse(e.getMessage(), true);
+			}
+			return new GetFileContentOperation(
+					new File(TestUtil.getFirstProjectFolder().getPath() + "/plugin.properties"), SVNRevision.HEAD,
+					SVNRevision.HEAD, out);
+		};
 	}
 
-	public IActionOperation createLocalStatusOperation() {
-		return new LocalStatusOperation(new File[] { TestUtil.getFirstProjectFolder() }, true);
+	public Supplier<IActionOperation> createLocalStatusOperation() {
+		return () -> new LocalStatusOperation(new File[] { TestUtil.getFirstProjectFolder() }, true);
 	}
 
-	public IActionOperation createLockOperation() {
-		return new LockOperation(new File[] { new File(TestUtil.getFirstProjectFolder() + "/maven.xml") },
+	public Supplier<IActionOperation> createLockOperation() {
+		return () -> new LockOperation(new File[] { new File(TestUtil.getFirstProjectFolder() + "/maven.xml") },
 				"Lock Operation Test", true);
 	}
 
-	public IActionOperation createMultipleCommitOperation() {
-		return new AbstractFileOperation("Commit", SVNMessages.class, TestUtil.getListFilesRecursive()) {
+	public Supplier<IActionOperation> createMultipleCommitOperation() {
+		return () -> new AbstractFileOperation("Commit", SVNMessages.class, TestUtil.getListFilesRecursive()) {
 
 			@Override
 			public void runImpl(IProgressMonitor monitor) throws Exception {
@@ -194,55 +209,58 @@ public class FileOperationFactory {
 		};
 	}
 
-	public IActionOperation createRemoteStatusOperation() {
-		return new RemoteStatusOperation(TestUtil.getBothFolders(), true);
+	public Supplier<IActionOperation> createRemoteStatusOperation() {
+		return () -> new RemoteStatusOperation(TestUtil.getBothFolders(), true);
 	}
 
-	public IActionOperation createRevertOperation() {
-		return new RevertOperation(TestUtil.getWorkspaceFiles(), true);
+	public Supplier<IActionOperation> createRevertOperation() {
+		return () -> new RevertOperation(TestUtil.getWorkspaceFiles(), true);
 	}
 
-	public IActionOperation createSwitchOperation() {
-		IRepositoryResource switchDestination = TestUtil.getRepositoryLocation()
-				.asRepositoryContainer(SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation()) + "/"
-						+ TestUtil.getFirstProjectFolder().getName(), false);
-		return new SwitchOperation(TestUtil.getFirstProjectFolder(), switchDestination, true);
+	public Supplier<IActionOperation> createSwitchOperation() {
+		return () -> {
+			IRepositoryResource switchDestination = TestUtil.getRepositoryLocation()
+					.asRepositoryContainer(SVNUtility.getProposedBranchesLocation(TestUtil.getRepositoryLocation())
+							+ "/" + TestUtil.getFirstProjectFolder().getName(), false);
+			return new SwitchOperation(TestUtil.getFirstProjectFolder(), switchDestination, true);
+		};
 	}
 
-	public IActionOperation createUnlockOperation() {
-		return new UnlockOperation(new File[] { new File(TestUtil.getFirstProjectFolder() + "/maven.xml") });
+	public Supplier<IActionOperation> createUnlockOperation() {
+		return () -> new UnlockOperation(new File[] { new File(TestUtil.getFirstProjectFolder() + "/maven.xml") });
 	}
 
-	public IActionOperation createUpdateOperation() {
-		return new UpdateOperation(TestUtil.getBothFolders(), SVNRevision.HEAD, true);
+	public Supplier<IActionOperation> createUpdateOperation() {
+		return () -> new UpdateOperation(TestUtil.getBothFolders(), SVNRevision.HEAD, true);
 	}
 
-	public IActionOperation createDisconnectOperation() {
-		return new DisconnectOperation(new File[] { TestUtil.getFirstProjectFolder().getParentFile() });
+	public Supplier<IActionOperation> createDisconnectOperation() {
+		return () -> new DisconnectOperation(new File[] { TestUtil.getFirstProjectFolder().getParentFile() });
 	}
 
-	public IActionOperation createShareOperation() {
+	public Supplier<IActionOperation> createShareOperation() {
 		ShareOperation.IFolderNameMapper folderNameMapper = new ShareOperation.IFolderNameMapper() {
+			@Override
 			public String getRepositoryFolderName(File folder) {
 				return folder.getName();
 			}
 		};
-		return new ShareOperation(TestUtil.getBothFolders(), TestUtil.getRepositoryLocation(), folderNameMapper,
+		return () -> new ShareOperation(TestUtil.getBothFolders(), TestUtil.getRepositoryLocation(), folderNameMapper,
 				"rootName", ShareOperation.LAYOUT_DEFAULT, true, "Share Project test", true);
 
 	}
 
-	public IActionOperation createCleanupOperation() {
-		return new CleanupOperation(TestUtil.getBothFolders());
+	public Supplier<IActionOperation> createCleanupOperation() {
+		return () -> new CleanupOperation(TestUtil.getBothFolders());
 	}
 
-	public IActionOperation createSetPropertyOperation() {
-		return new SetPropertyOperation(TestUtil.getListFilesRecursive(), TEST_PROPERTY_NAME,
+	public Supplier<IActionOperation> createSetPropertyOperation() {
+		return () -> new SetPropertyOperation(TestUtil.getListFilesRecursive(), TEST_PROPERTY_NAME,
 				TEST_PROPERTY_VALUE.getBytes(), false);
 	}
 
-	public IActionOperation createGetPropertyOperation(final boolean removed) {
-		return new AbstractFileOperation("Get Properties Operation Test", SVNMessages.class,
+	public Supplier<IActionOperation> createGetPropertyOperation(final boolean removed) {
+		return () -> new AbstractFileOperation("Get Properties Operation Test", SVNMessages.class,
 				TestUtil.getWorkspaceFiles()) {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -266,13 +284,13 @@ public class FileOperationFactory {
 		};
 	}
 
-	public IActionOperation createRemovePropertyOperation() {
-		return new RemovePropertyOperation(new File[] { TestUtil.getFirstProjectFolder() },
+	public Supplier<IActionOperation> createRemovePropertyOperation() {
+		return () -> new RemovePropertyOperation(new File[] { TestUtil.getFirstProjectFolder() },
 				new String[] { TEST_PROPERTY_NAME }, false);
 	}
 
-	public IActionOperation createRelocateOperation() {
-		return new AbstractFileOperation("Relocate", SVNMessages.class, TestUtil.getBothFolders()) {
+	public Supplier<IActionOperation> createRelocateOperation() {
+		return () -> new AbstractFileOperation("Relocate", SVNMessages.class, TestUtil.getBothFolders()) {
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNFileStorage storage = SVNFileStorage.instance();
@@ -287,19 +305,20 @@ public class FileOperationFactory {
 		};
 	}
 
-	public IActionOperation createCopyOperation() {
-		return new CopyOperation(new File[] { new File(TestUtil.getFirstProjectFolder().getPath() + "/maven.xml") },
+	public Supplier<IActionOperation> createCopyOperation() {
+		return () -> new CopyOperation(
+				new File[] { new File(TestUtil.getFirstProjectFolder().getPath() + "/maven.xml") },
 				new File(TestUtil.getFirstProjectFolder().getPath() + "/src"), true);
 	}
 
-	public IActionOperation createMoveOperation() {
-		return new MoveOperation(
+	public Supplier<IActionOperation> createMoveOperation() {
+		return () -> new MoveOperation(
 				new File[] { new File(TestUtil.getFirstProjectFolder().getPath() + "/build.properties") },
 				new File(TestUtil.getFirstProjectFolder().getPath() + "/src"), true);
 	}
 
-	public IActionOperation createDeleteOperation() {
-		return new DeleteOperation(
+	public Supplier<IActionOperation> createDeleteOperation() {
+		return () -> new DeleteOperation(
 				new File[] { new File(TestUtil.getFirstProjectFolder().getPath() + "/src/build.properties"),
 						new File(TestUtil.getFirstProjectFolder().getPath() + "/src/maven.xml") });
 	}
