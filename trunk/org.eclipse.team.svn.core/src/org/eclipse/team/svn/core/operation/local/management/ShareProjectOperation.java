@@ -54,11 +54,11 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	public static final int LAYOUT_DEFAULT = 0;
 	public static final int LAYOUT_SINGLE = 1;
 	public static final int LAYOUT_MULTIPLE = 2;
-	
+
 	public interface IFolderNameMapper {
 		public String getRepositoryFolderName(IProject project);
 	}
-	
+
 	protected IRepositoryLocation location;
 	protected IFolderNameMapper mapper;
 	protected int shareLayout;
@@ -67,20 +67,23 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	protected String commitComment;
 	protected IShareProjectPrompt shareProjectPrompt;
 	protected boolean ignoreExternals;
-	
-	public ShareProjectOperation(IProject []projects, IRepositoryLocation location, IFolderNameMapper mapper) {
+
+	public ShareProjectOperation(IProject[] projects, IRepositoryLocation location, IFolderNameMapper mapper) {
 		this(projects, location, mapper, null);
 	}
-	
-	public ShareProjectOperation(IProject []projects, IRepositoryLocation location, IFolderNameMapper mapper, String commitComment) {
+
+	public ShareProjectOperation(IProject[] projects, IRepositoryLocation location, IFolderNameMapper mapper,
+			String commitComment) {
 		this(projects, location, mapper, null, ShareProjectOperation.LAYOUT_DEFAULT, true, commitComment);
 	}
 
-	public ShareProjectOperation(IProject []projects, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled) {
+	public ShareProjectOperation(IProject[] projects, IRepositoryLocation location, IFolderNameMapper mapper,
+			String rootName, int shareLayout, boolean managementFoldersEnabled) {
 		this(projects, location, mapper, rootName, shareLayout, managementFoldersEnabled, null);
 	}
-	
-	public ShareProjectOperation(IProject []projects, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
+
+	public ShareProjectOperation(IProject[] projects, IRepositoryLocation location, IFolderNameMapper mapper,
+			String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
 		super("Operation_ShareProject", SVNMessages.class, projects); //$NON-NLS-1$
 		this.mapper = mapper;
 		this.location = location;
@@ -89,173 +92,194 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		this.managementFoldersEnabled = managementFoldersEnabled;
 		this.commitComment = commitComment;
 	}
-	
+
 	public void setIngoreExternals(boolean ignoreExternals) {
 		this.ignoreExternals = ignoreExternals;
 	}
-	
+
 	public void setSharePrompt(IShareProjectPrompt prompt) {
 		this.shareProjectPrompt = prompt;
 	}
-	
-	public static String getTargetUrl(IRepositoryLocation location, int shareLayout, String projectName, String rootName, boolean managementFoldersEnabled) {
-		return SVNUtility.normalizeURL(ShareProjectOperation.getTargetUrlImpl(location, shareLayout, projectName, rootName, managementFoldersEnabled));
+
+	public static String getTargetUrl(IRepositoryLocation location, int shareLayout, String projectName,
+			String rootName, boolean managementFoldersEnabled) {
+		return SVNUtility.normalizeURL(ShareProjectOperation.getTargetUrlImpl(location, shareLayout, projectName,
+				rootName, managementFoldersEnabled));
 	}
-	
+
 	public static String getDefaultComment(IProject project, IRepositoryResource remote) {
-		return SVNMessages.format(SVNMessages.Operation_ShareProject_DefaultComment, new String[] {project.getName(), SVNUtility.encodeURL(remote.getUrl())});
+		return SVNMessages.format(SVNMessages.Operation_ShareProject_DefaultComment,
+				new String[] { project.getName(), SVNUtility.encodeURL(remote.getUrl()) });
 	}
-	
+
+	@Override
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IResource []resources = this.operableData();
-		
-		HashMap local2remote = new HashMap();
+		IResource[] resources = this.operableData();
+
+		HashMap<IResource, IRepositoryContainer> localResourceToRemoteRepoMap = new HashMap<IResource, IRepositoryContainer>();
 		for (int i = 0; i < resources.length; i++) {
-			String url = ShareProjectOperation.getTargetUrl(this.location, this.shareLayout, this.mapper == null ? resources[i].getName() : this.mapper.getRepositoryFolderName((IProject)resources[i]), this.rootName, this.managementFoldersEnabled);
+			String url = ShareProjectOperation.getTargetUrl(this.location, this.shareLayout,
+					this.mapper == null ? resources[i].getName()
+							: this.mapper.getRepositoryFolderName((IProject) resources[i]),
+					this.rootName, this.managementFoldersEnabled);
 			IRepositoryContainer remote = this.location.asRepositoryContainer(url, false);
-			local2remote.put(resources[i], remote);
+			localResourceToRemoteRepoMap.put(resources[i], remote);
 		}
-		
+
 		if (this.commitComment == null) {
 			this.commitComment = ""; //$NON-NLS-1$
-			for (Iterator it = local2remote.entrySet().iterator(); it.hasNext(); ) {
-				Map.Entry entry = (Map.Entry)it.next();
-				String commentPart = ShareProjectOperation.getDefaultComment((IProject)entry.getKey(), (IRepositoryContainer)entry.getValue());
+			for (Iterator it = localResourceToRemoteRepoMap.entrySet().iterator(); it.hasNext();) {
+				Map.Entry entry = (Map.Entry) it.next();
+				String commentPart = ShareProjectOperation.getDefaultComment((IProject) entry.getKey(),
+						(IRepositoryContainer) entry.getValue());
 				this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart); //$NON-NLS-1$
 			}
 		}
-		
-		Set fullSet = null;
+
+		Set newRepositoryResources = null;
 		switch (this.shareLayout) {
-			case ShareProjectOperation.LAYOUT_DEFAULT: {
-				fullSet = this.doDefaultLayout(local2remote);
-				break;
-			}
-			case ShareProjectOperation.LAYOUT_SINGLE: {
-				fullSet = this.doSingleLayout(local2remote);
-				break;
-			}
-			case ShareProjectOperation.LAYOUT_MULTIPLE: {
-				fullSet = this.doMultipleLayout(local2remote);
-				break;
-			}
-			default: {
-				String message = this.getNationalizedString("Error_UnknownProjectLayoutType"); //$NON-NLS-1$
-				throw new Exception(BaseMessages.format(message, new Object[] {String.valueOf(this.shareLayout)}));
-			}
+		case ShareProjectOperation.LAYOUT_DEFAULT: {
+			newRepositoryResources = this.createDefaultRepositoryResourceSet(localResourceToRemoteRepoMap);
+			break;
 		}
-		
-		final HashSet existingProjects = new HashSet();
-		for (Iterator it = local2remote.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
-			final Map.Entry entry = (Map.Entry)it.next();
+		case ShareProjectOperation.LAYOUT_SINGLE: {
+			newRepositoryResources = this.doSingleLayout(localResourceToRemoteRepoMap);
+			break;
+		}
+		case ShareProjectOperation.LAYOUT_MULTIPLE: {
+			newRepositoryResources = this.doMultipleLayout(localResourceToRemoteRepoMap);
+			break;
+		}
+		default: {
+			String message = this.getNationalizedString("Error_UnknownProjectLayoutType"); //$NON-NLS-1$
+			throw new Exception(BaseMessages.format(message, new Object[] { String.valueOf(this.shareLayout) }));
+		}
+		}
+
+		final HashSet existingRemoteProjects = new HashSet();
+		for (Iterator it = localResourceToRemoteRepoMap.entrySet().iterator(); it.hasNext() && !monitor.isCanceled();) {
+			final Map.Entry entry = (Map.Entry) it.next();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					try {
-						IRepositoryContainer remote = (IRepositoryContainer)entry.getValue();
+						IRepositoryContainer remote = (IRepositoryContainer) entry.getValue();
 						if (remote.getChildren().length > 0) {
-							existingProjects.add(entry.getKey());
+							existingRemoteProjects.add(entry.getKey());
 						}
-					}
-					catch (SVNConnectorException ex) {
+					} catch (SVNConnectorException ex) {
 						// do nothing
 					}
 				}
-			}, monitor, local2remote.size() * 2);
-		}			
-		
-		if (existingProjects.size() > 0 && this.shareProjectPrompt != null && !this.shareProjectPrompt.prompt((IProject [])existingProjects.toArray(new IProject[existingProjects.size()]))) {
+			}, monitor, localResourceToRemoteRepoMap.size() * 2);
+		}
+
+		if (existingRemoteProjects.size() > 0 && this.shareProjectPrompt != null && !this.shareProjectPrompt
+				.prompt((IProject[]) existingRemoteProjects.toArray(new IProject[existingRemoteProjects.size()]))) {
 			throw new SVNConnectorCancelException(this.getNationalizedString("Error_ShareCanceled")); //$NON-NLS-1$
 		}
-		
+
 		final ISVNConnector proxy = this.location.acquireSVNProxy();
 		try {
-			IRepositoryResource []resourceSet = this.getOrderedSet(fullSet);
-			this.mkdir(proxy, resourceSet, monitor);
-			
-			for (Iterator it = local2remote.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
-				final Map.Entry entry = (Map.Entry)it.next();
+			IRepositoryResource[] newOrderedRepositoryResources = this.getOrderedSet(newRepositoryResources);
+			this.mkdir(proxy, newOrderedRepositoryResources, monitor);
+
+			for (Iterator it = localResourceToRemoteRepoMap.entrySet().iterator(); it.hasNext()
+					&& !monitor.isCanceled();) {
+				final Map.Entry entry = (Map.Entry) it.next();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						IRepositoryContainer remote = (IRepositoryContainer)entry.getValue();
-						IProject project = (IProject)entry.getKey();
-						
-						File tempDir = existingProjects.contains(project) ? ShareProjectOperation.this.createTempDirectory(project) : null;
-						String checkoutTo = tempDir != null ? tempDir.toString() : FileUtility.getWorkingCopyPath(project);
-						long options = ShareProjectOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
-						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), checkoutTo, SVNDepth.INFINITY, options, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
-						
+						IRepositoryContainer remote = (IRepositoryContainer) entry.getValue();
+						IProject project = (IProject) entry.getKey();
+
+						File tempDir = existingRemoteProjects.contains(project)
+								? ShareProjectOperation.this.createTempDirectory(project)
+								: null;
+						String checkoutTo = tempDir != null ? tempDir.toString()
+								: FileUtility.getWorkingCopyPath(project);
+						long options = ShareProjectOperation.this.ignoreExternals
+								? ISVNConnector.Options.IGNORE_EXTERNALS
+								: ISVNConnector.Options.NONE;
+						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), checkoutTo, SVNDepth.INFINITY,
+								options, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
+
 						if (tempDir != null) {
-							ShareProjectOperation.this.copySVNMeta(tempDir, FileUtility.getResourcePath(project).toFile());
+							ShareProjectOperation.this.copySVNMeta(tempDir,
+									FileUtility.getResourcePath(project).toFile());
 							FileUtility.deleteRecursive(tempDir, monitor);
 						}
-						
+
 						SVNTeamProjectMapper.map(project, remote);
 					}
-				}, monitor, local2remote.size() * 2);
+				}, monitor, localResourceToRemoteRepoMap.size() * 2);
 			}
-		}
-		finally {
+		} finally {
 			this.location.releaseSVNProxy(proxy);
 		}
 	}
-	
-	protected Set doDefaultLayout(Map local2remote) throws Exception {
-		HashSet fullSet = new HashSet();
-		for (Iterator it = local2remote.values().iterator(); it.hasNext(); ) {
-			IRepositoryContainer remote = (IRepositoryContainer)it.next();
-			IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
+
+	protected Set<IRepositoryResource> createDefaultRepositoryResourceSet(Map local2remote) throws Exception {
+		HashSet<IRepositoryResource> fullSet = new HashSet<IRepositoryResource>();
+		for (Iterator it = local2remote.values().iterator(); it.hasNext();) {
+			IRepositoryContainer remote = (IRepositoryContainer) it.next();
+			IRepositoryResource[] resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(),
+					remote);
 			fullSet.addAll(Arrays.asList(resources));
 		}
 		return fullSet;
 	}
-	
+
 	protected Set doSingleLayout(Map local2remote) throws Exception {
 		if (this.managementFoldersEnabled) {
 			HashSet fullSet = new HashSet();
-			for (Iterator it = local2remote.values().iterator(); it.hasNext(); ) {
-				IRepositoryContainer remote = (IRepositoryContainer)it.next();
-				IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
+			for (Iterator it = local2remote.values().iterator(); it.hasNext();) {
+				IRepositoryContainer remote = (IRepositoryContainer) it.next();
+				IRepositoryResource[] resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(),
+						remote);
 				fullSet.addAll(Arrays.asList(resources));
-				IRepositoryContainer parent = (IRepositoryContainer)remote.getParent();
+				IRepositoryContainer parent = (IRepositoryContainer) remote.getParent();
 				fullSet.add(this.makeChild(parent, ShareProjectOperation.getTagsName(this.location)));
 				fullSet.add(this.makeChild(parent, ShareProjectOperation.getBranchesName(this.location)));
 			}
 			return fullSet;
 		}
-		return this.doDefaultLayout(local2remote);
+		return this.createDefaultRepositoryResourceSet(local2remote);
 	}
-	
+
 	protected Set doMultipleLayout(Map local2remote) throws Exception {
 		if (this.managementFoldersEnabled) {
 			HashSet fullSet = new HashSet();
-			for (Iterator it = local2remote.values().iterator(); it.hasNext(); ) {
-				IRepositoryContainer remote = (IRepositoryContainer)it.next();
-				IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
+			for (Iterator it = local2remote.values().iterator(); it.hasNext();) {
+				IRepositoryContainer remote = (IRepositoryContainer) it.next();
+				IRepositoryResource[] resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(),
+						remote);
 				fullSet.addAll(Arrays.asList(resources));
-				
-				String targetUrl = ShareProjectOperation.getTargetUrl(this.location, this.shareLayout, "", this.rootName, false); //$NON-NLS-1$
+
+				String targetUrl = ShareProjectOperation.getTargetUrl(this.location, this.shareLayout, "", //$NON-NLS-1$
+						this.rootName, false);
 				IRepositoryContainer parent = this.location.asRepositoryContainer(targetUrl, false);
 				fullSet.add(this.makeChild(parent, ShareProjectOperation.getTagsName(this.location)));
 				fullSet.add(this.makeChild(parent, ShareProjectOperation.getBranchesName(this.location)));
 			}
 			return fullSet;
 		}
-		return this.doDefaultLayout(local2remote);
+		return this.createDefaultRepositoryResourceSet(local2remote);
 	}
-	
-	protected IRepositoryResource []getOrderedSet(Set fullSet) {
-		IRepositoryResource [] resources = (IRepositoryResource [])fullSet.toArray(new IRepositoryResource[fullSet.size()]);
+
+	protected IRepositoryResource[] getOrderedSet(Set fullSet) {
+		IRepositoryResource[] resources = (IRepositoryResource[]) fullSet
+				.toArray(new IRepositoryResource[fullSet.size()]);
 		Arrays.sort(resources, new Comparator() {
 			public int compare(Object arg0, Object arg1) {
-				IRepositoryResource first = (IRepositoryResource)arg0;
-				IRepositoryResource second = (IRepositoryResource)arg1;
+				IRepositoryResource first = (IRepositoryResource) arg0;
+				IRepositoryResource second = (IRepositoryResource) arg1;
 				return first.getUrl().compareTo(second.getUrl());
 			}
 		});
 		return resources;
 	}
-	
-	protected void mkdir(ISVNConnector proxy, IRepositoryResource []resourceSet, IProgressMonitor monitor) throws Exception {
+
+	protected void mkdir(ISVNConnector proxy, IRepositoryResource[] resourceSet, IProgressMonitor monitor)
+			throws Exception {
 		ArrayList urlsList = new ArrayList();
 		for (int i = 0; i < resourceSet.length && !monitor.isCanceled(); i++) {
 			ProgressMonitorUtility.setTaskInfo(monitor, this, resourceSet[i].getUrl());
@@ -264,64 +288,67 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 			}
 			ProgressMonitorUtility.progress(monitor, IProgressMonitor.UNKNOWN, resourceSet.length);
 		}
-		String []urls = (String [])urlsList.toArray(new String[urlsList.size()]);
-		proxy.mkdir(urls, this.commitComment, ISVNConnector.Options.INCLUDE_PARENTS, null, new SVNProgressMonitor(this, monitor, null));
+		String[] urls = (String[]) urlsList.toArray(new String[urlsList.size()]);
+		proxy.mkdir(urls, this.commitComment, ISVNConnector.Options.INCLUDE_PARENTS, null,
+				new SVNProgressMonitor(this, monitor, null));
 	}
-	
+
 	protected IRepositoryContainer makeChild(IRepositoryContainer parent, String name) {
 		return this.location.asRepositoryContainer(parent.getUrl() + "/" + name, false); //$NON-NLS-1$
 	}
-	
+
 	protected File createTempDirectory(IProject project) {
 		try {
-			File tempDirectory = File.createTempFile("save_" + project.getName(), ".tmp", FileUtility.getResourcePath(project).toFile().getParentFile()); //$NON-NLS-1$ //$NON-NLS-2$
+			File tempDirectory = File.createTempFile("save_" + project.getName(), ".tmp", //$NON-NLS-1$ //$NON-NLS-2$
+					FileUtility.getResourcePath(project).toFile().getParentFile());
 			tempDirectory.deleteOnExit();
 			tempDirectory.delete();
 			return tempDirectory;
-		}
-		catch (IOException ex) {
-			String message = SVNMessages.formatErrorString("Error_CannotCheckOutMeta", new String[] {String.valueOf(project.getName())}); //$NON-NLS-1$
+		} catch (IOException ex) {
+			String message = SVNMessages.formatErrorString("Error_CannotCheckOutMeta", //$NON-NLS-1$
+					new String[] { String.valueOf(project.getName()) });
 			throw new UnreportableException(message, ex);
 		}
 	}
-	
+
 	protected void copySVNMeta(File fromFolder, File toFolder) {
 		if (!toFolder.isDirectory()) {
 			return;
 		}
-		File []tempFiles = fromFolder.listFiles();
+		File[] tempFiles = fromFolder.listFiles();
 		if (tempFiles != null) {
 			for (int i = 0; i < tempFiles.length; i++) {
 				File renameToFile = new File(toFolder + "/" + tempFiles[i].getName()); //$NON-NLS-1$
 				if (!renameToFile.exists()) {
 					tempFiles[i].renameTo(renameToFile);
-				}
-				else if (tempFiles[i].isDirectory()) {
+				} else if (tempFiles[i].isDirectory()) {
 					this.copySVNMeta(tempFiles[i], renameToFile);
 				}
 			}
 		}
 	}
-	
-	protected static String getTargetUrlImpl(IRepositoryLocation location, int shareLayout, String projectName, String rootName, boolean managementFoldersEnabled) {
+
+	protected static String getTargetUrlImpl(IRepositoryLocation location, int shareLayout, String projectName,
+			String rootName, boolean managementFoldersEnabled) {
 		String trunkName = managementFoldersEnabled ? ("/" + ShareProjectOperation.getTrunkName(location)) : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		switch (shareLayout) {
-			case ShareProjectOperation.LAYOUT_DEFAULT: {
-				return location.getUrl() + trunkName + "/" + projectName; //$NON-NLS-1$
-			}
-			case ShareProjectOperation.LAYOUT_SINGLE: {
-				return location.getUrl() + "/" + projectName + trunkName; //$NON-NLS-1$
-			}
-			case ShareProjectOperation.LAYOUT_MULTIPLE: {
-				return location.getUrl() + "/" + rootName + trunkName + "/" + projectName; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			default: {
-				String message = SVNMessages.formatErrorString("Error_UnknownProjectLayoutType", new String[] {String.valueOf(shareLayout)}); //$NON-NLS-1$
-				throw new RuntimeException(message);
-			}
+		case ShareProjectOperation.LAYOUT_DEFAULT: {
+			return location.getUrl() + trunkName + "/" + projectName; //$NON-NLS-1$
+		}
+		case ShareProjectOperation.LAYOUT_SINGLE: {
+			return location.getUrl() + "/" + projectName + trunkName; //$NON-NLS-1$
+		}
+		case ShareProjectOperation.LAYOUT_MULTIPLE: {
+			return location.getUrl() + "/" + rootName + trunkName + "/" + projectName; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		default: {
+			String message = SVNMessages.formatErrorString("Error_UnknownProjectLayoutType", //$NON-NLS-1$
+					new String[] { String.valueOf(shareLayout) });
+			throw new RuntimeException(message);
+		}
 		}
 	}
-	
+
 	public static String getTrunkName(IRepositoryLocation location) {
 		if (location.isStructureEnabled()) {
 			return location.getTrunkLocation();
