@@ -40,9 +40,6 @@ import org.eclipse.team.svn.tests.core.RemoteOperationFactory;
 import org.eclipse.team.svn.tests.core.file.FileOperationFactory;
 import org.eclipse.team.svn.tests.core.misc.AbstractLockingTestOperation;
 import org.eclipse.team.svn.tests.core.misc.TestUtil;
-import org.eclipse.team.svn.tests.workflow.repository.FileTestRepositoryManager;
-import org.eclipse.team.svn.tests.workflow.repository.RemoteTestRepositoryManager;
-import org.eclipse.team.svn.tests.workflow.repository.TestRepositoryManager;
 
 /**
  * 
@@ -50,19 +47,12 @@ import org.eclipse.team.svn.tests.workflow.repository.TestRepositoryManager;
  * @author Nicolas Peifer
  */
 public class ActionOperationWorkflowBuilder {
-	private FileOperationFactory fileOperationFactory = new FileOperationFactory();
+	private FileOperationFactory fileOperationFactory;
 	private LocalOperationFactory localOperationFactory = new LocalOperationFactory();
 	private RemoteOperationFactory remoteOperationFactory = new RemoteOperationFactory();
 
 	public ActionOperationWorkflowBuilder() throws Exception {
-		// very important setup
-		TestRepositoryManager remoteTestRepoManager = new RemoteTestRepositoryManager();
-		remoteTestRepoManager.createRepository();
-
-		TestRepositoryManager testRepositoryManager = new FileTestRepositoryManager();
-		testRepositoryManager.createRepository();
-
-		// NIC or do we need recreation for each method?
+		fileOperationFactory = new FileOperationFactory();
 	}
 
 	public ActionOperationWorkflow buildCommitUpdateWorkflow() {
@@ -426,10 +416,10 @@ public class ActionOperationWorkflowBuilder {
 		return new ActionOperationWorkflow(localOperationFactory.createShareNewProjectOperation(),
 				localOperationFactory.createFileUtilityTestOperation(),
 				localOperationFactory.createSvnUtilityTestOperation(), localOperationFactory.createAddToSvnOperation(),
-				// NIC add to svn ignore!
-				localOperationFactory.createCommitOperation(), remoteOperationFactory.createBranchTagOperation(),
-				localOperationFactory.createSwitchOperation(), remoteOperationFactory.createCheckoutOperation(),
-				localOperationFactory.createCleanupOperation(), localOperationFactory.createGetAllResourcesOperation(),
+				fileOperationFactory.createAddToSvnIgnoreOperation(), localOperationFactory.createCommitOperation(),
+				remoteOperationFactory.createBranchTagOperation(), localOperationFactory.createSwitchOperation(),
+				remoteOperationFactory.createCheckoutOperation(), localOperationFactory.createCleanupOperation(),
+				localOperationFactory.createGetAllResourcesOperation(),
 				localOperationFactory.createClearLocalStatusesOperation(),
 				remoteOperationFactory.createGetLogMessagesOperation(),
 				localOperationFactory.createRemoteStatusOperation(), localOperationFactory.createRevertOperation(),

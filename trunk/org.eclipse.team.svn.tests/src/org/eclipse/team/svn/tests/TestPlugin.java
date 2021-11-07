@@ -53,7 +53,7 @@ public class TestPlugin extends AbstractUIPlugin {
 		URL url = FileLocator.toFileURL(context.getBundle().getEntry("/"));
 		this.location = url.getFile();
 		if (this.location.startsWith("/")) {
-			this.location = this.location.substring(1);
+//			this.location = this.location.substring(1);// NIC review
 		}
 		this.remoteStorage = SVNRemoteStorage.instance();
 		HashMap preferences = new HashMap();
