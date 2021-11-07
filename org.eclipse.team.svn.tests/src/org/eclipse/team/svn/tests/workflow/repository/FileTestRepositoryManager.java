@@ -1,6 +1,5 @@
 package org.eclipse.team.svn.tests.workflow.repository;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -16,7 +15,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.ISVNStorage;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.tests.TestPlugin;
 
@@ -29,6 +27,7 @@ public class FileTestRepositoryManager implements TestRepositoryManager {
 		this.svnStorage = SVNFileStorage.instance();
 	}
 
+	@Override
 	public synchronized void createRepository() throws Exception {
 		// NIC compare with SVNTeamPlugin.start(..) and TestPlugin.start(..) and
 		// TestUtil.setUpRemoteRepository()
@@ -66,22 +65,9 @@ public class FileTestRepositoryManager implements TestRepositoryManager {
 				"createTags");
 		op.run(new NullProgressMonitor());
 
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-		root.delete(true, true, null);
-
-		String demoDataLocation = TestPlugin.instance().getLocation() + bundle.getString("DemoData.Location") + "/";
-
-		String prj1Name = bundle.getString("Project1.Name");
-		String prj2Name = bundle.getString("Project2.Name");
-
-		FileUtility.copyAll(root.getLocation().toFile(), new File(demoDataLocation + prj1Name),
-				new NullProgressMonitor());
-		FileUtility.copyAll(root.getLocation().toFile(), new File(demoDataLocation + prj2Name),
-				new NullProgressMonitor());
-
 	}
 
+	@Override
 	public synchronized void removeRepository() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -115,6 +101,7 @@ public class FileTestRepositoryManager implements TestRepositoryManager {
 		}
 	}
 
+	@Override
 	public IRepositoryLocation getRepositoryLocation() {
 		return repositoryLocation;
 	}

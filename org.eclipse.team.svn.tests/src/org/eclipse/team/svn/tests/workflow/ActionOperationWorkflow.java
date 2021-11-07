@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.tests.core.misc.TestUtil;
 import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 
 public class ActionOperationWorkflow {
@@ -18,7 +17,6 @@ public class ActionOperationWorkflow {
 	}
 
 	public void execute() {
-		TestUtil.refreshProjects();
 		for (Supplier<IActionOperation> operation : actionOperations) {
 			executeAndValidate(operation.get());
 		}
