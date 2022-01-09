@@ -174,17 +174,17 @@ public class HistoryActionManager {
 		
 		protected HistoryAction(String text, Object []args, String imageDescriptor) {
 			super(SVNUIMessages.format(text, args));
-			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
+			this.setImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
 		}
 		
 		protected HistoryAction(String text, String imageDescriptor) {
 			this(text);
-			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
+			this.setImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
 		}
 		
 		protected HistoryAction(String text, String imageDescriptor, int style) {
 			super(SVNUIMessages.getString(text), style);
-			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
+			this.setImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
 		}
 		
 	}
