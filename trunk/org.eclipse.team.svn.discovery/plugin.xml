@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.team.svn.core.connectorDiscovery">
+      <connectorCategory
+            description="External SVN connectors for the Eclipse Subversive project. Installation of one of the following connectors is required to operate with Subversive. Please select a connector depending on your SVN environment and operation system."
+            id="org.eclipse.team.svn.discovery.svn.connectors"
+            name="Subversive SVN Connectors"
+            relevance="50">
+         <icon image32="images/Subversive.png"/>
+         
+         <group id="org.eclipse.team.svn.discovery-svnkit"/>         
+                  
+      </connectorCategory>
+   
+   </extension>
+
+   <extension
+         point="org.eclipse.team.svn.core.connectorDiscovery">
+         
+      <!--   SVN Kit   -->
+      
+      <connectorDescriptor
+            categoryId="org.eclipse.team.svn.discovery.svn.connectors"
+            description="SVN connector based on SVNKit 1.10.4 library (http://svnkit.com/). Compatible with SVN from version 1.7 up to 1.10. Pure Java. Supported platforms: All."
+            groupId="org.eclipse.team.svn.discovery-svnkit"
+            id="org.polarion.eclipse.team.svn.connector,org.polarion.eclipse.team.svn.connector.svnkit1_10"
+            kind="task"
+            license="TMate Open Source License"
+            name="SVN Kit 1.10.4"
+            provider="Polarion"
+            siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/6.1/neon-site/">
+         <icon image32="images/Polarion.png">
+         </icon>
+         <overview
+               summary="SVN Kit connector for the Eclipse Subversive. Compatible with SVN version 1.7 up to 1.10. SVNKit is written in Java and does not require any additional binaries or native applications. It is portable and there is no need for OS specific code."
+               url="http://svnkit.com/">
+         </overview>
+      </connectorDescriptor>                            
+      
+   </extension>   
+	
+</plugin>
