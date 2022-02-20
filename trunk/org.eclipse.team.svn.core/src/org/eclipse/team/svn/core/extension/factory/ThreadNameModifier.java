@@ -47,7 +47,10 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.StringId;
 
 /**
- * Each method call through this wrapper redefines thread name then restores it
+ * This class servers as facade for {@link ISVNConnector}. During operation, the
+ * thread name is modified in order to reflect the current operation.
+ * 
+ * NIC misleading name. better: SvnConnectorFacade
  * 
  * Replace CRLF,CR to LF for svn:log property
  *   
@@ -288,36 +291,6 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public boolean isCommitMissingFiles() {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.connector.isCommitMissingFiles();
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public boolean isCredentialsCacheEnabled() {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.connector.isCredentialsCacheEnabled();
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public boolean isSSLCertificateCacheEnabled() {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.connector.isSSLCertificateCacheEnabled();
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
 	public void listEntries(SVNEntryRevisionReference reference, SVNDepth depth, int direntFields, long options, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
@@ -508,80 +481,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void setClientSSLCertificate(String certPath, String passphrase) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setClientSSLCertificate(FileUtility.normalizePathJavaHL(certPath), passphrase);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setCommitMissingFiles(boolean commitMissingFiles) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setCommitMissingFiles(commitMissingFiles);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setCredentialsCacheEnabled(boolean cacheCredentials) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setCredentialsCacheEnabled(cacheCredentials);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
 	public void setPrompt(ISVNCredentialsPrompt prompt) {
 		String oldName = this.overrideThreadName();
 		try {
 			this.connector.setPrompt(prompt);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setProxy(String host, int port, String userName, String password) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setProxy(host, port, userName, password);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setSSHCredentials(String userName, String privateKeyPath, String passphrase, int port) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setSSHCredentials(userName, FileUtility.normalizePathJavaHL(privateKeyPath), passphrase, port);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setSSHCredentials(String userName, String password, int port) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setSSHCredentials(userName, password, port);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setSSLCertificateCacheEnabled(boolean enabled) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setSSLCertificateCacheEnabled(enabled);
 		}
 		finally {
 			this.restoreThreadName(oldName);
