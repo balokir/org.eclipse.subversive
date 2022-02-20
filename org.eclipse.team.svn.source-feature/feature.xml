@@ -35,8 +35,4 @@
          id="org.eclipse.team.svn.m2e.sources"
          version="4.0.0.I20160226-1700"/>
 
-   <includes
-         id="org.eclipse.team.svn.revision.graph.sources"
-         version="4.0.0.I20160226-1700"/>
-
 </feature>
