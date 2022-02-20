@@ -272,13 +272,14 @@ public class CoreExtensionsManager {
 			}
 		}
 	}
-	
+	//NIC rename validateAndAddClient
 	private void validateClient(ISVNConnectorFactory connector) {
 		try {
 			connector.createConnector().dispose();
 			this.validConnectors.add(connector.getId());
 		}
 		catch (Throwable ex) {
+			ex.printStackTrace();
 			// do nothing
 		}
 	}

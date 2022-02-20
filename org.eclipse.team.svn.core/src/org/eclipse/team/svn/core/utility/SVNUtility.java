@@ -1009,29 +1009,6 @@ public final class SVNUtility {
 		String proxyType = protocol.equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE; //$NON-NLS-1$
     	SVNCachedProxyCredentialsManager proxyCredetialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
 		IProxyData proxyData = SVNUtility.getProxyData(host, proxyType);
-	    if (proxyData != null) {
-	    	proxy.setProxy(proxyData.getHost(), proxyData.getPort(), proxyCredetialsManager.getUsername(), proxyCredetialsManager.getPassword());
-	    }
-	    else {
-	    	proxy.setProxy(null, -1, null, null);
-	    }
-	    if (sslSettings.isAuthenticationEnabled()) {
-		    proxy.setClientSSLCertificate(sslSettings.getCertificatePath(), sslSettings.getPassPhrase());
-	    }
-	    else {
-	    	proxy.setClientSSLCertificate(null, null);
-	    }
-	    
-	    SSHSettings sshSettings = location.getSSHSettings();
-	    if (!sshSettings.isUseKeyFile()) {
-	    	proxy.setSSHCredentials(location.getUsername(), location.getPassword(), sshSettings.getPort());
-	    }
-	    else if (sshSettings.getPrivateKeyPath().length() > 0) {
-	    	proxy.setSSHCredentials(location.getUsername(), sshSettings.getPrivateKeyPath(), sshSettings.getPassPhrase(), sshSettings.getPort());
-	    }
-	    else {
-	    	proxy.setSSHCredentials(null, null, null, -1);
-	    }
 	}
 	
 	public static SVNChangeStatus getSVNInfoForNotConnected(IResource root) {

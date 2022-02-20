@@ -770,7 +770,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_FetchRepositoryRoot", SVNMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
-				proxy.setCredentialsCacheEnabled(false);
 				SVNUtility.configureProxy(proxy, location);
 				
 			    if (usePrompt) {
@@ -846,10 +845,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
 	    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().createConnector();
 	    
-		proxy.setCredentialsCacheEnabled(false);
-		proxy.setSSLCertificateCacheEnabled(true);
-		proxy.setCommitMissingFiles(true);
-		
 	    ISVNCredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
 	    if (externalPrompt != null) {
 			proxy.setPrompt(new CredentialsPromptWrapper(externalPrompt));

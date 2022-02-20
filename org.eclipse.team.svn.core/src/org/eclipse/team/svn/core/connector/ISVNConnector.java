@@ -471,18 +471,6 @@ public interface ISVNConnector {
 	public void setPassword(String password);
 
 	/**
-	 * Tells if credentials cache enabled or not.
-	 * @return
-	 */
-	public boolean isCredentialsCacheEnabled();
-
-	/**
-	 * Enables or disables a credentials cache. Works with SVN Kit only.
-	 * @param cacheCredentials
-	 */
-	public void setCredentialsCacheEnabled(boolean cacheCredentials);
-
-	/**
 	 * Sets a credentials prompt which will be asked if the provided authentication data weren't accepted by the server.
 	 * @param prompt
 	 */
@@ -493,64 +481,6 @@ public interface ISVNConnector {
 	 * @return
 	 */
 	public ISVNCredentialsPrompt getPrompt();
-
-	/**
-	 * Defines a proxy authentication data. Works with SVN Kit only.
-	 * @param host
-	 * @param port
-	 * @param userName
-	 * @param password
-	 */
-	public void setProxy(String host, int port, String userName, String password);
-
-	/**
-	 * Defines a client SSL certificate authentication data.
-	 * @param certPath
-	 * @param passphrase
-	 */
-	public void setClientSSLCertificate(String certPath, String passphrase);
-
-	/**
-	 * Tells if caching SSL certificates is enabled or not.
-	 * @return
-	 */
-	public boolean isSSLCertificateCacheEnabled();
-
-	/**
-	 * Enables or disables SSL certificates caching.
-	 * @param enabled
-	 */
-	public void setSSLCertificateCacheEnabled(boolean enabled);
-
-	/**
-	 * Defines SSH authentication credentials using private key. Works with SVN Kit only.
-	 * @param userName
-	 * @param privateKeyPath
-	 * @param passphrase
-	 * @param port
-	 */
-	public void setSSHCredentials(String userName, String privateKeyPath, String passphrase, int port);
-
-	/**
-	 * Defines SSH authentication credentials using username/password. Works with SVN Kit only.
-	 * @param userName
-	 * @param privateKeyPath
-	 * @param passphrase
-	 * @param port
-	 */
-	public void setSSHCredentials(String userName, String password, int port);
-
-	/**
-	 * Allows or disallows committing missing files.
-	 * @param commitMissingFiles
-	 */
-	public void setCommitMissingFiles(boolean commitMissingFiles);
-
-	/**
-	 * Tells if committing missing files is enabled or not.
-	 * @return
-	 */
-	public boolean isCommitMissingFiles();
 
 	/**
 	 * Installs a notification callback.
