@@ -1,0 +1,41 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 4.0.6.I20181122-1700 release date: 22 November 2018
+
+1. What's New
+
+   The version 4.0.6 is a service release.
+   
+   Changes comparatively to the previous release version are listed below. The full list of 
+   changes you can find in Change Log.
+		
+	Fixes:
+	 * 0x00400103: Compare with Revision' operation finished with error: Path is not an immediate child of the specified directory (bug 509424)
+	 * Saving changes in compare editor closes the editor (structural compare) (bug 509192)
+	 * Add/Open Project activates SVN Discovery Dialog (bug 514587)
+	
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.6 or higher and supports following versions of Eclipse:
+    * 4.4
+    * 4.5
+    * 4.6
+    * 4.7
+   
+   Subversive supports 
+    Migration for Subversion below version 1.8 to version 1.8 and higher,
+    Subversion version 1.8 with SVN Kit 1.8.14 and JavaHL 1.8.15,
+    Subversion version 1.9 with JavaHL 1.9.3
+
+2.2 Known issues
+
+	* 
+	

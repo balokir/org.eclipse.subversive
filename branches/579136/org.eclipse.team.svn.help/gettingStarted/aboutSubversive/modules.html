@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<title>Subversive modules</title>
+	<meta name="copyright"  content="Copyright (c) 2005-2011 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Gurov."/>
+	<LINK REL="STYLESHEET" HREF="../../book.css" CHARSET="ISO-8859-1" TYPE="text/css"/>
+</head>
+<body>
+
+	<table cellpadding = "0" cellspacing = "0" border = "0" width = "100%">
+		<tr>
+			<td class="head_picture">
+				<img src="../../images/guide_1.gif"/>
+			</td>
+			<td class="head_picture" width="100%"  align="right">
+				<img src="../../images/guide_2.gif"/>
+			</td>
+		</tr>
+	</table>
+<h3>Subversive modules</h3>
+	<p>There are two main plug-ins in the Subversive project: Core and UI. As you can see from the following diagram, there are several ways to extend Subversive:</p>
+	<ul>
+	<li>contributors may choose to implement their own SVN Client library plug-in and Subversive will use it automatically after it is installed into the Eclipse IDE;</li>
+	<li>there is a way to create an automated application using the Core module's API;</li>
+	<li>and there are ways to extend Subversive UI in order to cover the tasks you need.</li>
+	</ul>
+	<img border="0" src="../../images/modules.png" alt="Subversive modules"/>
+	<p>Subversive Core module provides flexible and easy to use API which allows user to interact with all the SVN functionality in an easy to use way. At the same time interface the simplicity does not impact performance in any way and the programmer is able to build a powerful and high-performance application on top of the Subversive Core base. Subversive Core is tested in the headless environment and is a solid ground for creation of an automated application.<br/>
+	Subversive UI module is designed with regards to usability and has a reach functionality. The most notable features are:</p>
+	<ul>
+		<li>Improved usability of menus and forms (pop-up menu enablement's, controls layout etc.);</li>
+		<li>Detailed descriptions on each UI form;</li>
+		<li>"On the fly" data validation in dialogs and wizards;</li>
+		<li>Strictly respecting Eclipse UI concepts;</li>
+		<li>Extensibility.</li>
+	</ul>
+	<p>The term 'extensibility' includes extension points for the following features:</p>
+	<ul>
+		<li>Synchronize View actions</li>
+		<li>Checkout functionality</li>
+		<li>Share Project functionality</li>
+		<li>Commit action (including dialog and workflow)</li>
+		<li>Resource decorations</li>
+		<li>History View's multiline comment viewer</li>
+		<li>Error reporting</li>
+		<li>Crash recovery</li>
+		<li>Core module options</li>
+		<li>SVN Client library</li>
+		<li>Resource ignore rules</li>
+		<li>SVN properties support</li>
+	</ul>
+	<p>And that is not all. We do accept community's proposals on how to improve API and extension points, so that the plug-in will truly become adaptable to a different tasks that could be found out there in the world.</p>
+</body>
+</html>
