@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (c) 2022 ArSysOp
+
+	This program and the accompanying materials are made available under the
+	terms of the Eclipse Public License 2.0 which is available at
+	https://www.eclipse.org/legal/epl-2.0/.
+
+	SPDX-License-Identifier: EPL-2.0
+
+	Contributors:
+		Alexander Fedorov (ArSysOp) - initial API and implementation
+-->
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.eclipse.team.svn</groupId>
+	<artifactId>org.eclipse.team.svn.aggregator</artifactId>
+	<version>4.8.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>..\..\releng\org.eclipse.team.svn.target</module>
+
+		<module>..\..\org.eclipse.team.svn</module>
+		<module>..\..\org.eclipse.team.svn.core</module>
+		<module>..\..\org.eclipse.team.svn.help</module>
+		<module>..\..\org.eclipse.team.svn.ui</module>
+		<module>..\..\org.eclipse.team.svn.ui.startup</module>
+		<module>..\..\org.eclipse.team.svn-feature</module>
+
+		<module>..\..\org.eclipse.team.svn.nl1</module>
+		<module>..\..\org.eclipse.team.svn.core.nl1</module>
+		<module>..\..\org.eclipse.team.svn.ui.nl1</module>
+		<module>..\..\org.eclipse.team.svn.nl1-feature</module>
+		<module>..\..\releng\org.eclipse.team.svn.repository</module>
+	</modules>
+
+</project>
