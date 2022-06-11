@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (c) 2022 ArSysOp
+
+	This program and the accompanying materials are made available under the
+	terms of the Eclipse Public License 2.0 which is available at
+	https://www.eclipse.org/legal/epl-2.0/.
+
+	SPDX-License-Identifier: EPL-2.0
+
+	Contributors:
+		Alexander Fedorov (ArSysOp) - initial API and implementation
+-->
+<site>
+	<category-def
+		name="org.eclipse.team.svn.category"
+		label="Subversive">
+		<description>
+			Eclipse Subversive Team Provider for the Subversion version control system.
+		</description>
+	</category-def>
+	<feature
+		id="org.eclipse.team.svn">
+		<category name="org.eclipse.team.svn.category" />
+	</feature>
+	<feature
+		id="org.eclipse.team.svn.nl1">
+		<category name="org.eclipse.team.svn.category" />
+	</feature>
+<!--
+	<category-def
+		name="org.eclipse.team.svn.integrations.category"
+		label="Subversive Integrations">
+		<description>
+         Eclipse Subversive Team Provider integration for third party tools.
+		</description>
+	</category-def>
+	<feature
+		id="org.eclipse.team.svn.mylyn">
+		<category name="org.eclipse.team.svn.integrations.category" />
+	</feature>
+	<feature
+		id="org.eclipse.team.svn.m2e">
+		<category name="org.eclipse.team.svn.integrations.category" />
+	</feature>
+-->
+<!-- No source references provider for SCM type 'svn' registered
+	<category-def
+		name="org.eclipse.team.svn.category.source"
+		label="Subversive Developer Resources">
+		<description>
+			Eclipse Subversive Team Provider for the Subversion version control system Developer Resources.
+		</description>
+	</category-def>
+	<feature
+		id="org.eclipse.team.svn.source">
+		<category name="org.eclipse.team.svn.category.source" />
+	</feature>
+	<feature
+		id="org.eclipse.team.svn.nl1.source">
+		<category name="org.eclipse.team.svn.category.source" />
+	</feature>
+	<category-def
+		name="org.eclipse.team.svn.integrations.category.source"
+		label="Subversive Integrations Developer Resources">
+		<description>
+         Eclipse Subversive Team Provider integration for third party tools Developer Resources.
+		</description>
+	</category-def>
+	<feature
+		id="org.eclipse.team.svn.mylyn.source">
+		<category name="org.eclipse.team.svn.integrations.category.source" />
+	</feature>
+	<feature
+		id="org.eclipse.team.svn.m2e.source">
+		<category name="org.eclipse.team.svn.integrations.category.source" />
+	</feature>
+-->
+</site>
