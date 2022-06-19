@@ -88,7 +88,6 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	protected ArrayList<IRevisionPropertyChangeListener> revPropChangeListeners;
 	
 	protected String migrateFromAuthDBPreferenceNode;
-	protected boolean isMigratedFromAuthorizationDatabase;
 	protected boolean noStoredAuthentication;
 	
 	protected class RepositoryPreferenceChangeListener implements IPreferenceChangeListener {
@@ -301,17 +300,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	}
 
 	public synchronized void saveConfiguration() throws Exception {
-		this.saveLocations();
-		
-		if (!this.isMigratedFromAuthorizationDatabase) {
-			IEclipsePreferences migratePref = (IEclipsePreferences) SVNTeamPlugin.instance().getPreferences().node(this.migrateFromAuthDBPreferenceNode);
-			migratePref.putBoolean("isMigrated", true); //$NON-NLS-1$
-			try {
-				migratePref.flush();
-			} catch (BackingStoreException e) {				
-				LoggedOperation.reportError(SVNMessages.getErrorString("Error_SaveMigratePreference"), e); //$NON-NLS-1$
-			}			
-		}		
+		this.saveLocations();	
 	}
 			
 	public byte[] revisionLinkAsBytes(IRevisionLink link, boolean saveRevisionLinksComments) {
@@ -509,11 +498,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		
 		//set flag whether we migrated from Authorization Database
 		this.migrateFromAuthDBPreferenceNode = migrateFromAuthDBPreferenceNode;		
-		IEclipsePreferences migratePref = (IEclipsePreferences) SVNTeamPlugin.instance().getPreferences().node(this.migrateFromAuthDBPreferenceNode);					
-		this.isMigratedFromAuthorizationDatabase = migratePref.getBoolean("isMigrated", false); //$NON-NLS-1$		
-		if (!this.isMigratedFromAuthorizationDatabase) {
-			SVNTeamPlugin.instance().setLocationsDirty(true);
-		}
+		IEclipsePreferences migratePref = (IEclipsePreferences) SVNTeamPlugin.instance().getPreferences().node(this.migrateFromAuthDBPreferenceNode);
 		
 		this.repositoriesPreferencesNode = repositoriesPreferencesNode;
 		this.repoPrefChangeListener = new RepositoryPreferenceChangeListener();
@@ -631,12 +616,8 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		}
 	}
 	
-	protected void loadAuthInfo(IRepositoryLocation location, String realm) throws Exception {						
-		if (this.isMigratedFromAuthorizationDatabase) {
-			this.loadAuthInfoFromSecureStorage(location, realm);			
-		} else {
-			this.loadAuthInfoFromAuthorizationDatabase(location, realm);
-		}		
+	protected void loadAuthInfo(IRepositoryLocation location, String realm) throws Exception {
+		this.loadAuthInfoFromSecureStorage(location, realm);
 	}
 	
 	protected void loadAuthInfoFromSecureStorage(IRepositoryLocation location, String realm) throws Exception {				
@@ -683,48 +664,6 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			} catch (StorageException e) {				
 				LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadAuthorizationInfo"), e); //$NON-NLS-1$
 			}														
-		}
-	}
-	
-	/*
-	 * Used for compatibility when we moved from Authorization Database to Equinox secure storage
-	 */
-	protected void loadAuthInfoFromAuthorizationDatabase(IRepositoryLocation location, String realm) throws Exception {
-		Map<String, String> authInfo = Platform.getAuthorizationInfo(new URL("http://eclipse.org/subversive/"), location.getId(), realm); //$NON-NLS-1$
-		if (authInfo != null) {
-			IRepositoryLocation tmp;
-			boolean toAddRealm = !realm.equals("");  //$NON-NLS-1$
-			if (toAddRealm) {
-				tmp = this.newRepositoryLocation();
-			}
-			else {
-				tmp = location;
-			}
-			
-			//recover normal password settings
-			tmp.setUsername(authInfo.get("username")); //$NON-NLS-1$
-			tmp.setPasswordSaved(authInfo.get("password_saved").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
-			tmp.setPassword(authInfo.get("password")); //$NON-NLS-1$
-			
-			//recover SSH settings
-			SSHSettings sshSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSHSettings(false) : tmp.getSSHSettings();
-			sshSettings.setUseKeyFile(authInfo.get("ssh_use_key").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
-			sshSettings.setPrivateKeyPath(authInfo.get("ssh_key")); //$NON-NLS-1$
-			sshSettings.setPassPhraseSaved(authInfo.get("ssh_passphrase_saved").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
-			sshSettings.setPassPhrase(authInfo.get("ssh_passprase")); //$NON-NLS-1$
-			//don't load port here as it wasn't saved
-			
-			//recover SSL settings
-			SSLSettings sslSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSLSettings(false) : tmp.getSSLSettings();
-			sslSettings.setAuthenticationEnabled(authInfo.get("ssl_enabled").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
-			sslSettings.setCertificatePath(authInfo.get("ssl_certificate")); //$NON-NLS-1$
-			sslSettings.setPassPhraseSaved(authInfo.get("ssl_passphrase_saved").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
-			sslSettings.setPassPhrase(authInfo.get("ssl_passphrase")); //$NON-NLS-1$
-			
-			//if realm, add it to realms
-			if (toAddRealm) {
-				location.addRealm(realm, tmp);
-			}
 		}
 	}
 	
