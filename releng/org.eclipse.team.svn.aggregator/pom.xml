@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.team.svn</groupId>
 	<artifactId>org.eclipse.team.svn.aggregator</artifactId>
-	<version>4.8.0-SNAPSHOT</version>
+	<version>4.8.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
