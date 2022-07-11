@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.m2e"
       label="%featureName"
-      version="4.8.0"
+      version="4.8.1.qualifier"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -33,9 +33,9 @@
 
    <plugin
          id="org.eclipse.team.svn.m2e"
-         download-size="26"
-         install-size="26"
-         version="4.8.0"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
