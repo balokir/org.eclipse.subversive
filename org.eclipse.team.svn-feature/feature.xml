@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn"
       label="%featureName"
-      version="4.8.0"
+      version="4.8.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn">
    <install-handler/>
@@ -48,37 +48,37 @@
 
    <plugin
          id="org.eclipse.team.svn"
-         download-size="4"
-         install-size="4"
-         version="4.0.6.I20181122-1700"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.core"
-         download-size="900"
-         install-size="900"
-         version="4.8.0"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.ui"
-         download-size="1600"
-         install-size="1600"
-         version="4.8.0"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.ui.startup"
-         download-size="1600"
-         install-size="1600"
-         version="4.0.0.I20160226-1700"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.help"
-         download-size="1900"
-         install-size="1900"
-         version="4.0.3.I20161129-1700"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>

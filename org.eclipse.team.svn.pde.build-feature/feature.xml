@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.pde.build"
       label="%featureName"
-      version="1.0.0.I20120601-1700"
+      version="1.0.1.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -26,9 +26,9 @@
 
    <plugin
          id="org.eclipse.team.svn.pde.build"
-         download-size="20"
-         install-size="20"
-         version="1.0.0.I20120601-1700"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>

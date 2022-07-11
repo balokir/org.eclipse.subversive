@@ -23,20 +23,34 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>..\..\releng\org.eclipse.team.svn.target</module>
+		<module>../../releng/org.eclipse.team.svn.target</module>
 
-		<module>..\..\org.eclipse.team.svn</module>
-		<module>..\..\org.eclipse.team.svn.core</module>
-		<module>..\..\org.eclipse.team.svn.help</module>
-		<module>..\..\org.eclipse.team.svn.ui</module>
-		<module>..\..\org.eclipse.team.svn.ui.startup</module>
-		<module>..\..\org.eclipse.team.svn-feature</module>
+		<module>../../org.eclipse.team.svn</module>
+		<module>../../org.eclipse.team.svn.core</module>
+		<module>../../org.eclipse.team.svn.core-feature</module>
+		<module>../../org.eclipse.team.svn.help</module>
+		<module>../../org.eclipse.team.svn.ui</module>
+		<module>../../org.eclipse.team.svn.ui.startup</module>
+		<module>../../org.eclipse.team.svn-feature</module>
 
-		<module>..\..\org.eclipse.team.svn.nl1</module>
-		<module>..\..\org.eclipse.team.svn.core.nl1</module>
-		<module>..\..\org.eclipse.team.svn.ui.nl1</module>
-		<module>..\..\org.eclipse.team.svn.nl1-feature</module>
-		<module>..\..\releng\org.eclipse.team.svn.repository</module>
+		<module>../../org.eclipse.team.svn.ui.capabilities</module>
+		<module>../../org.eclipse.team.svn.ui-feature.capabilities</module>
+
+		<module>../../org.eclipse.team.svn.nl1</module>
+		<module>../../org.eclipse.team.svn.core.nl1</module>
+		<module>../../org.eclipse.team.svn.ui.nl1</module>
+		<module>../../org.eclipse.team.svn.nl1-feature</module>
+
+		<module>../../org.eclipse.team.svn.m2e</module>
+		<module>../../org.eclipse.team.svn.m2e-feature</module>
+
+		<module>../../org.eclipse.team.svn.mylyn</module>
+		<module>../../org.eclipse.team.svn.mylyn-feature</module>
+
+		<module>../../org.eclipse.team.svn.pde.build</module>
+		<module>../../org.eclipse.team.svn.pde.build-feature</module>
+
+		<module>../../releng\org.eclipse.team.svn.repository</module>
 	</modules>
 
 </project>

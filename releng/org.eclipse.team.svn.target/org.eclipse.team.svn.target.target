@@ -12,16 +12,41 @@
 	Contributors:
 		Alexander Fedorov (ArSysOp) - initial API and implementation
 -->
-<target name="org.eclipse.team.svn.target" sequenceNumber="1">
+<target name="org.eclipse.team.svn.target" sequenceNumber="2">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/"/>
 			<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/eclipse/updates/4.22/R-4.22-202111241800/"/>
+			<repository location="https://download.eclipse.org/eclipse/updates/4.16/R-4.16-202006040540/"/>
 			<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.platform.sdk" version="0.0.0"/>
+			<unit id="org.eclipse.pde.feature.group" version="0.0.0"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/modeling/emf/emf/builds/release/2.22/"/>
+			<unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956/"/>
+			<unit id="org.eclipse.mylyn_feature.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.mylyn.bugzilla_feature.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.mylyn.ide_feature.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.mylyn.team_feature.feature.group" version="0.0.0"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/technology/m2e/releases/1.16.0/"/>
+			<unit id="org.eclipse.m2e.scm" version="0.0.0"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/"/>
+			<unit id="com.google.guava" version="0.0.0"/>
+			<unit id="javax.xml.stream" version="0.0.0"/>
+			<unit id="org.apache.xerces" version="0.0.0"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.18.0/R-3.18.0-20200605032700/repository/"/>
 		</location>
 	</locations>
 </target>
