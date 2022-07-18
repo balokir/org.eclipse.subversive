@@ -19,13 +19,13 @@
 
 	<groupId>org.eclipse.team.svn</groupId>
 	<artifactId>org.eclipse.team.svn.root</artifactId>
-	<version>4.8.1-SNAPSHOT</version>
+	<version>4.8.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>org.eclipse.team.svn</groupId>
 		<artifactId>org.eclipse.team.svn.parent</artifactId>
-		<version>4.8.1-SNAPSHOT</version>
+		<version>4.8.0-SNAPSHOT</version>
 		<relativePath>.\releng\org.eclipse.team.svn.parent</relativePath>
 	</parent>
 
