@@ -114,7 +114,7 @@ public class LocksView extends AbstractSVNView {
 	    };
 	    this.linkWithEditorAction.setToolTipText(SVNUIMessages.SVNView_LinkWith_ToolTip);
 	    this.linkWithEditorAction.setDisabledImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with_disabled.gif")); //$NON-NLS-1$
-	    this.linkWithEditorAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with.gif")); //$NON-NLS-1$	    
+	    this.linkWithEditorAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with.gif")); //$NON-NLS-1$	    
 	    
 	    this.linkWithEditorAction.setChecked(this.isLinkWithEditorEnabled);
 	    
