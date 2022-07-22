@@ -12,12 +12,15 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.core.resources.IResource;
@@ -62,10 +65,6 @@ import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.ULocale;
 
 /**
  * Main SVN Team preferences page
@@ -879,13 +878,13 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		//set example date
 		DateFormat dateTimeFormat;
 		if (this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_SHORT) {
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
 		} else if (this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM) {
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
 		} else if (this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_LONG) {
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.getDefault());
 		} else {
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
 		}
 												
 		Date exampleDate;
