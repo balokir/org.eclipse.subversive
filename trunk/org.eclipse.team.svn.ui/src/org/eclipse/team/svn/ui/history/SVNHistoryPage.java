@@ -15,6 +15,7 @@ package org.eclipse.team.svn.ui.history;
 
 import java.io.FileOutputStream;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -87,8 +88,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Generic HistoryView page

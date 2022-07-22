@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.console;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -33,8 +34,6 @@ import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.part.IPageBookViewPage;
-
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * SVN Console implementation

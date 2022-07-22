@@ -13,6 +13,10 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -22,10 +26,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.ULocale;
 
 /**
  * SVN Team plugin preference names
@@ -323,21 +323,21 @@ public final class SVNTeamPreferences {
 		DateFormat dateTimeFormat = null;
 		switch (formatMode) {
 		case SVNTeamPreferences.DATE_FORMAT_MODE_SHORT:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
 			break;
 		case SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
 			break;
 		case SVNTeamPreferences.DATE_FORMAT_MODE_LONG:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.getDefault());
 			break;
 		case SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM:
 			dateTimeFormat = new SimpleDateFormat(
 					SVNTeamPreferences.getDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME),
-					ULocale.getDefault());
+					Locale.getDefault());
 			break;
 		default:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
 			break;
 		}
 		return dateTimeFormat;
