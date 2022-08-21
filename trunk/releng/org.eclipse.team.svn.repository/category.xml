@@ -53,7 +53,7 @@
 		name="org.eclipse.team.svn.integrations.category"
 		label="Subversive Integrations">
 		<description>
-         Eclipse Subversive Team Provider integration for third party tools.
+			Eclipse Subversive Team Provider integration for third party tools.
 		</description>
 	</category-def>
 	<feature
@@ -68,14 +68,24 @@
 		name="org.eclipse.team.svn.pde.build.category"
 		label="SVN PDE Build Extension">
 		<description>
-          SVN fetch task implementation for the Eclipse PDE build.
+			SVN fetch task implementation for the Eclipse PDE build.
 		</description>
 	</category-def>
 	<feature
 		id="org.eclipse.team.svn.pde.build">
 		<category name="org.eclipse.team.svn.pde.build.category" />
 	</feature>
-<!-- No source references provider for SCM type 'svn' registered
+	<category-def
+		name="org.eclipse.team.svn.core.category.source"
+		label="Subversive SVN Team Provider Core Developer Resources">
+		<description>
+			Headless part of the Eclipse Subversive Team Provider for the Subversion version control system Developer Resources.
+		</description>
+	</category-def>
+	<feature
+		id="org.eclipse.team.svn.core.source">
+		<category name="org.eclipse.team.svn.core.category.source" />
+	</feature>
 	<category-def
 		name="org.eclipse.team.svn.category.source"
 		label="Subversive Developer Resources">
@@ -92,10 +102,21 @@
 		<category name="org.eclipse.team.svn.category.source" />
 	</feature>
 	<category-def
+		name="org.eclipse.team.svn.ui.capabilities.category.source"
+		label="Subversive UI Capabilites Developer Resources">
+		<description>
+			Subversive SVN Team Provider UI Capabilities Developer Resources.
+		</description>
+	</category-def>
+	<feature
+		id="org.eclipse.team.svn.ui.capabilities.source">
+		<category name="org.eclipse.team.svn.ui.capabilities.category.source" />
+	</feature>
+	<category-def
 		name="org.eclipse.team.svn.integrations.category.source"
 		label="Subversive Integrations Developer Resources">
 		<description>
-         Eclipse Subversive Team Provider integration for third party tools Developer Resources.
+			Eclipse Subversive Team Provider integration for third party tools Developer Resources.
 		</description>
 	</category-def>
 	<feature
@@ -106,5 +127,15 @@
 		id="org.eclipse.team.svn.m2e.source">
 		<category name="org.eclipse.team.svn.integrations.category.source" />
 	</feature>
--->
+	<category-def
+		name="org.eclipse.team.svn.pde.build.category.source"
+		label="SVN PDE Build Extension Developer Resources">
+		<description>
+			SVN fetch task implementation for the Eclipse PDE build Developer Resources.
+		</description>
+	</category-def>
+	<feature
+		id="org.eclipse.team.svn.pde.build.source">
+		<category name="org.eclipse.team.svn.pde.build.category.source" />
+	</feature>
 </site>

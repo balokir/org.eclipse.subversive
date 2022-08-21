@@ -39,9 +39,19 @@
 		<cbi-snapshots-repo.url>https://repo.eclipse.org/content/repositories/cbi-snapshots/</cbi-snapshots-repo.url>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
-	    <buildId>${buildTimestamp}</buildId>
+		<buildId>${buildTimestamp}</buildId>
 		<build.label>${unqualifiedVersion}.${buildQualifier}</build.label>
 	</properties>
+
+	<organization>
+		<name>Eclipse Foundation</name>
+		<url>https://www.eclipse.org/</url>
+	</organization>
+
+	<issueManagement>
+		<system>Bugzilla</system>
+		<url>https://bugs.eclipse.org/bugs/</url>
+	</issueManagement>
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -88,6 +98,30 @@
 	</repositories>
 
 	<profiles>
+		<!-- Automatic profile for features that shouldn't generate sources -->
+		<profile>
+			<id>feature-no-source</id>
+			<activation>
+				<file>
+				<exists>feature-no-source.properties</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-source-feature-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<executions>
+							<execution>
+								<id>source-feature</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>about-mappings</id>
 			<activation>
@@ -123,19 +157,6 @@
 						<configuration>
 							<includePackedArtifacts>true</includePackedArtifacts>
 						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-pack200a-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>pack200-normalize</id>
-								<goals>
-									<goal>normalize</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.eclipse.cbi.maven.plugins</groupId>
@@ -264,7 +285,6 @@
 					</environments>
 				</configuration>
 			</plugin>
-<!-- No source references provider for SCM type 'svn' registered
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-source-plugin</artifactId>
@@ -309,7 +329,6 @@
 					</execution>
 				</executions>
 			</plugin>
--->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-plugin</artifactId>
